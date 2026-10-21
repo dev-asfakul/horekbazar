@@ -133,7 +133,7 @@ Rules (all must be tested, including under concurrency):
 
 ### 4.1 Idempotency and concurrency contract (proposed at Checkpoint 4, awaiting owner approval)
 
-This section makes the keys in §4, §9 and §13 precise. It changes only one key format (receive and adjust, below). Nothing here is proven: every guarantee becomes a claim only when its test in `docs/BUILD-PLAN.md` §12 has run and passed.
+This section makes the keys in §4, §9 and §13 precise. It amends the Checkpoint 2 ledger-key format (a **proposed Checkpoint 4 amendment, awaiting owner approval**; see the key-format note under the §4 table): every inventory ledger key uses the canonical namespaced format `<namespace>:<entityId>:<lineRef>:<kind>`, with `order:` for reserve, release and commit; `return:` for customer-return restock and write-off; `rto:` for inspected goods returned to origin after a failed delivery; and `stock:` for receipts and adjustments. The rule itself is unchanged: one unique key per logical movement, reused on retry. Nothing here is proven: every guarantee becomes a claim only when its test in `docs/BUILD-PLAN.md` §12 has run and passed.
 
 **Why the change.** The draft `SCHEMA.md` v0.2 put one unique `idempotencyKey` on `reservations`. One order reserves several variants, so a single per-request key would either collide between lines or need ad-hoc suffixes. A single "adjustment id" on the ledger has the same problem when one adjustment covers several variants. **Each layer below therefore has its own scope and its own uniqueness constraint; no key is shared between unrelated operations.**
 

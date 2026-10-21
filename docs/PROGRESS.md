@@ -2,6 +2,22 @@
 
 Newest first. Each entry: date, phase, done, decided, open, next.
 
+## 2026-10-21 — Handoff: environment set up, skill installed, ledger-key wording aligned (proposed)
+
+- **Handoff audit:** fresh clone of `dev-asfakul/horekbazar`; `main` clean and level with `origin/main` at `25de626` (verified with `git status` and `git ls-remote`). No application code, no `package.json`, no CI configuration yet.
+- **Environment:** Linux, bash, Git 2.53.0, Node.js 20.20.2, npm 10.8.2. The repository pins no runtime or package manager yet, so there is nothing to install. The Motomation Design skill was installed with `npx skills add asfakulsiam/asfakulsiam-motomation-design` into `.agents/skills/asfakulsiam-motomation-design` (git-ignored); `VERSION` and `SKILL.md` report **3.0.2**, and `skills-lock.json` is unchanged (same `computedHash`).
+- **Done (documentation only):**
+  1. `docs/BUILD-PLAN.md` → Idempotency summary: the stock ledger key now reads `stock:<adjustmentId>:<variantId>:<kind>`, matching domain-rules §4, §4.1 and `SCHEMA.md`.
+  2. `docs/domain-rules.md` §4.1 opening: it no longer says only one key format changed. It now describes the canonical `<namespace>:<entityId>:<lineRef>:<kind>` format and its namespaces (`order:` reserve, release, commit; `return:` customer-return restock and write-off; `rto:` inspected goods returned to origin after a failed delivery; `stock:` receipts and adjustments), and keeps the **proposed Checkpoint 4 amendment** status.
+- **Checks run (real outcomes):**
+  - Search for stock keys without `:<kind>` and for "only one key format": 0 matches. Old un-namespaced formats remain only in the two historical change notes.
+  - Markdown table column-count check on the 2 changed plan files: 0 mismatches.
+  - Catalogue checker `validate`: 0 errors, 0 warnings. Ajv: 4 of 4 files valid. Catalogue data unchanged.
+  - Skill `completeness.mjs`: Template 10/20, Routes 0/33, Journeys 0/12, expected because nothing is built.
+- No build, concurrency, transaction, security, browser, accessibility or performance test was run, and none is claimed.
+- **Boundaries unchanged:** Checkpoints 3 and 4 **not approved**. D11 catalogue unapproved (235 prices: 39 historical TCB references, 196 estimates); images absent; compliance flags provisional; D12 open; D5 deferred; D17–D23 and coupon-on-cancel open.
+- **Next:** the owner explicitly approves, redirects or amends Checkpoint 3 and Checkpoint 4. Phase B0 starts only after that.
+
 ## 2026-10-21 — Checkpoint 4 final corrections: order-line identity and canonical ledger keys (proposed)
 
 - **Owner review:** two inconsistencies to fix. Documentation only. Checkpoint 3 and Checkpoint 4 remain **not approved**.
