@@ -281,3 +281,4 @@ See the end of `docs/domain-rules.md` (D7–D16).
 | 2026-10-21 | 1 Stack · D5 | Vercel scope still blocked; hosting tier undecided | **open** |
 | 2026-10-21 | 1 Stack · D6 | Basic commercial licence, provisional | **owner decision** |
 | 2026-10-21 | 2 Contract | Product contract and Scope below | **proposed** |
+| 2026-10-21 | Process | Push after every phase/change; summary in `docs/PROGRESS.md`; all `.md` delivered as one copy block | **owner decision** |

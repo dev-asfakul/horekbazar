@@ -14,6 +14,9 @@ The application reads only real, configured data sources. There is no mock or de
 
 ## For contributors and agents
 
+Start with [`AGENTS.md`](./AGENTS.md) and [`docs/PROGRESS.md`](./docs/PROGRESS.md).
+
+
 The design workflow skill is not vendored. Install it locally:
 
 ```bash
