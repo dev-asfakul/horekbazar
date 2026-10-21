@@ -30,6 +30,7 @@ Newest first. Each entry: date, phase, done, decided, open, next.
 - **Not run:** real devices (safe-area insets cannot be emulated; only the CSS rule and `viewport-fit` are checked), the 500 page in a browser (unit-tested markup only), Lighthouse, LCP, axe, screen readers, and any database, auth, transaction or concurrency test. None is claimed.
 - **Open:** D11, D12 (still blocks checkout that needs the location dataset), D5, D19–D23, and coupon-usage restoration on cancellation.
 - **Owner instruction (after the push):** CI passed on `01bcba4` (GitHub Actions run 39596727627, success). The owner asked to open a PR, merge to `main` and deploy the first Vercel preview. Recorded in the `DESIGN.md` Decision trace. This applies to B1 only; the skill gate had not passed at merge time.
+- **Merge and deploy:** [PR #1](https://github.com/dev-asfakul/horekbazar/pull/1) merged to `main` as `0f35772` (merge commit, no force). Vercel preview **not deployed**: the Vercel connection authenticates as `dev-asfakul`, but the account's personal scope is the Hobby team `dev-choice` (the default team), and every project read or write there returns 403 "Not authorized … scope dev-choice". No project was created and nothing was uploaded. The connection needs re-authorization with access to `dev-choice`.
 - **Next:** owner review of B1 on `preview/horekbazar-v1`; owner approval needed to start B2. B2 also needs D19 (a development database the owner provides).
 
 ## 2026-10-21 — Phase B0: toolchain skeleton and D17 CSP/caching spike (pushed to `preview/horekbazar-v1`)
