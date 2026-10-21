@@ -32,12 +32,15 @@ export type CatalogueErrorCode =
   | "idempotency_key_reused"
   | "invalid";
 
+// Plain fields rather than constructor parameter properties: scripts (db:seed) run this file under
+// Node's type stripping, which does not support parameter properties.
 export class CatalogueError extends Error {
-  constructor(
-    readonly code: CatalogueErrorCode,
-    readonly detail?: Record<string, unknown>,
-  ) {
+  readonly code: CatalogueErrorCode;
+  readonly detail?: Record<string, unknown> | undefined;
+  constructor(code: CatalogueErrorCode, detail?: Record<string, unknown>) {
     super(code);
+    this.code = code;
+    this.detail = detail;
   }
 }
 

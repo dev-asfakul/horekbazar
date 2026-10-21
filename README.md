@@ -55,7 +55,8 @@ The store needs a MongoDB **replica set**, because orders use multi-document tra
 
 1. Create `.env.local` (git-ignored) with `MONGODB_URI=` and optionally `MONGODB_DB=` (default `horekbazar`). Use a database user that can only reach this database, and a different cluster or database per environment.
 2. `npm run db:migrate` creates the collections with their validators and indexes. It is idempotent: run it after every pull or deploy.
-3. Background work goes through the outbox. Set `JOBS_TRIGGER=worker` and run `npm run worker` next to the web server, or `JOBS_TRIGGER=http` with a `CRON_SECRET` and a scheduler that calls `POST /api/jobs/drain` with `Authorization: Bearer <CRON_SECRET>` (`docs/domain-rules.md` §13).
+3. Optional, development databases only: `npm run db:seed` (dry run) and `npm run db:seed -- --confirm` load the generated sample catalogue (39 categories, 144 products, 235 variants) as drafts marked `sample: true`, so the admin can be tested with realistic data. It refuses any database whose name does not end in `_dev`. `--remove-samples --confirm` deletes only those records. Their prices are research estimates, not selling prices (`catalogue/horekbazar/IMPORT.md`).
+4. Background work goes through the outbox. Set `JOBS_TRIGGER=worker` and run `npm run worker` next to the web server, or `JOBS_TRIGGER=http` with a `CRON_SECRET` and a scheduler that calls `POST /api/jobs/drain` with `Authorization: Bearer <CRON_SECRET>` (`docs/domain-rules.md` §13).
 
 The integration tests never use `MONGODB_URI`; they start their own disposable replica set. On a Linux release that `mongodb-memory-server` does not recognise yet, set `MONGOMS_DISTRO=ubuntu-24.04`.
 

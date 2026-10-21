@@ -64,7 +64,18 @@ Steps (each is pushed to `preview/horekbazar-v1` when done; tick here in the sam
       lint (0 warnings), unit 107/107, integration 76/76, `next build` OK. Not yet exercised in a
       browser — that is step 6. `/admin/settings/features` was folded into `/admin/settings`;
       `/admin/settings/integrations` is deferred.
-- [ ] 5. `npm run db:seed` from `catalogue/horekbazar/` and its run on `horekbazar_dev`.
+- [x] 5. `npm run db:seed` from `catalogue/horekbazar/` and its run on `horekbazar_dev`. **Done:**
+      `scripts/db-seed.ts` + `lib/db/seed-samples.ts` (through the catalogue services; audit actor
+      `system:db-seed`; `--confirm`, `--remove-samples`); `tests/integration/seed.test.ts` (5: non-dev
+      refused, dry run writes nothing, real slug skipped, re-run creates nothing, remove-samples).
+      `CatalogueError` no longer uses parameter properties (Node type stripping). **Run 2026-10-22 on
+      `horekbazar_dev`** (name verified from the script output before writing): `db:migrate` created
+      the 10 B4 collections; dry run 39/144/235 to create; `--confirm` created 39 categories, 144
+      products, 235 variants (~10 min over Atlas); independent count: all `sample: true`, 0 published,
+      235 stock rows all 0, 0 ledger rows, 418 audit rows by `system:db-seed`; a second dry run: 0 to
+      create. Docs: DATA.md, README (Database step 3), catalogue IMPORT.md/README, domain-rules §16.
+      To reach Atlas from this sandbox the SRV record is resolved via DNS-over-HTTPS into a temporary
+      env file that is deleted afterwards (never committed).
 - [ ] 6. Playwright with a disposable database (sign in as a catalogue editor, create a product
       with a LabelTile, publish it); Motomation gate; docs; PR.
 
