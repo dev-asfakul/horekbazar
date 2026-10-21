@@ -94,6 +94,34 @@ for (const vp of widths) {
       expect(seen.size).toBeGreaterThanOrEqual(vp.dock ? 12 : 8);
     });
 
+    // Regression for the intermittent WebKit failure above: the dock slides back for 200 ms after a
+    // text field loses focus, and a fast keyboard user (or a loaded CI machine) could land on a dock
+    // link while it was still partly below the viewport (measured: bottom 869 px in an 812 px view).
+    // Deterministic: focus a dock link in the first frames after leaving the search field.
+    if (vp.dock) test("focus entering the dock right after the search field is fully visible at once", async ({ page }) => {
+      await page.goto("/");
+      await waitForHydration(page);
+      await page.locator("#site-search").focus();
+      await expect(page.locator("#bottom-dock")).toHaveAttribute("data-hidden", "true");
+      const bottoms = await page.evaluate(async () => {
+        const raf = () => new Promise<void>((r) => requestAnimationFrame(() => r()));
+        (document.querySelector("#site-header button[type=submit]") as HTMLElement).focus();
+        await raf();
+        await raf();
+        const link = document.querySelector("#bottom-dock a") as HTMLElement;
+        link.focus();
+        if (document.activeElement !== link) return null;
+        const out: number[] = [];
+        for (let i = 0; i < 6; i++) {
+          out.push(link.getBoundingClientRect().bottom);
+          await raf();
+        }
+        return out;
+      });
+      expect(bottoms, "the dock link could not take focus").not.toBeNull();
+      for (const b of bottoms!) expect(b).toBeLessThanOrEqual(vp.height + 0.5);
+    });
+
     test("skip link is the first focusable element and moves focus to main", async ({ page, browserName }) => {
       await page.goto("/en");
       await waitForHydration(page);
