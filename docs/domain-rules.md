@@ -1,6 +1,6 @@
 # HorekBazar: Domain Rules (part of the Product contract)
 
-Checkpoint 2 of 6. Status: **amended 2026-10-21 with owner decisions (D5, D7–D16); awaiting final Checkpoint 2 approval.** Items still open are marked **open**; items the owner approved in principle are marked **approved in principle**. Once approved this document is authority level 4 (`principles/authority.md`): only the owner, or a higher constraint (safety, accessibility, correctness, law), changes it.
+Checkpoint 2 of 6. Status: **approved by the owner 2026-10-21 with conditions** (listed in `DESIGN.md` → Product contract). This document is now authority level 4 (`principles/authority.md`): only the owner, or a higher constraint (safety, accessibility, correctness, law), changes it. Items still open are marked **open**; **[A]** defaults stay proposals; every **[L]** item still needs qualified local legal review.
 
 Conventions: "must" = acceptance-tested; **[L]** = a legal interpretation that requires qualified Bangladeshi legal review before launch (see §15); "configurable" = a store setting with the stated default; **[A]** = an assumption from type research, open to change; **[D#]** = an unresolved decision listed at the end.
 
@@ -25,7 +25,7 @@ Rules:
 - Permissions are **capabilities** (`orders.confirm`, `inventory.adjust`, `settings.integrations.write`, …) grouped into the roles above; a buyer can rename roles or create a custom role from capabilities without code changes.
 - At least one Owner must always exist; the last Owner cannot be demoted or deleted.
 - Staff accounts require **email verification** (mandatory, D13).
-- **Two-factor authentication (D7, approved in principle):** mandatory for **Owner** and **Store Manager**, optional for other staff roles. Implemented with Better Auth's two-factor plugin (TOTP authenticator apps; the plugin is exported by `better-auth@1.7.12` as `better-auth/plugins/two-factor`).
+- **Two-factor authentication (D7, approved at Checkpoint 2):** mandatory for **Owner** and **Store Manager**, optional for other staff roles. Implemented with Better Auth's two-factor plugin (TOTP authenticator apps; the plugin is exported by `better-auth@1.7.12` as `better-auth/plugins/two-factor`).
   - Enrolment is forced at the next sign-in for any account that holds a mandatory-2FA role; until enrolled, the account can reach only the enrolment screen.
   - **Recovery:** ten single-use backup codes generated at enrolment, stored hashed, shown once, regenerable after re-authentication. If a staff member loses both factor and codes, an Owner (with 2FA) resets their 2FA from `/admin/staff`; the action is audited and the user must re-enrol. If the **last Owner** is locked out, recovery is a documented server-side command (`npm run admin:recover-owner`) that requires direct server/database access, writes an audit row and forces re-enrolment; there is no email-only bypass.
   - **Session revocation:** enabling, disabling or resetting 2FA, changing a password, or changing a role revokes all other sessions of that user. Users can view and revoke sessions in their security page; Owners can revoke any staff session.
@@ -85,7 +85,7 @@ placed ──► pending_confirmation ──► confirmed ──► processing �
 
 Rules:
 - Transitions are enforced by a single state-machine function; any other transition is rejected with `409`. Every transition writes an `orderEvents` row (who, when, from, to, reason) in the same transaction as the stock effect.
-- **Customer verification for COD (D13, approved in principle):** checkout requires a signed-in account and a **format-valid Bangladeshi mobile number** (`01[3-9]` followed by 8 digits, stored in E.164 as `+8801…`) on the delivery address. A valid format is not proof of ownership; ownership is checked by the **mandatory admin confirmation** step (`pending_confirmation → confirmed`) before any processing. Customer email verification is optional; **no phone OTP** until an SMS provider is explicitly approved (D14).
+- **Customer verification for COD (D13, approved at Checkpoint 2):** checkout requires a signed-in account and a **format-valid Bangladeshi mobile number** (`01[3-9]` followed by 8 digits, stored in E.164 as `+8801…`) on the delivery address. A valid format is not proof of ownership; ownership is checked by the **mandatory admin confirmation** step (`pending_confirmation → confirmed`) before any processing. Customer email verification is optional; **no phone OTP** until an SMS provider is explicitly approved (D14).
 - Customer self-cancel is allowed only in `pending_confirmation` or `confirmed` **[A]**; later, the customer can request cancellation and an operator decides.
 - **Partial cancellation**: lines carry their own status; cancelling a line releases (before shipping) or creates a return-to-stock task (after shipping) for that line only; order totals, coupon eligibility and delivery fee are recalculated and the customer is shown the change.
 - **Auto-cancel**: `pending_confirmation` older than a configurable window (default 48 h, in line with the reported guideline's 48-hour notice for unavailable products **[L]**) is flagged to operators; auto-cancel is configurable and off by default **[A]**.
@@ -122,7 +122,7 @@ Rules (all must be tested, including under concurrency):
 5. A nightly reconciliation job recomputes `onHand`/`reserved` from the ledger and reports (does not silently fix) any drift.
 6. Displayed stock: exact counts when `available ≤ lowStockThreshold`, otherwise "In stock" (configurable); never fabricated scarcity.
 
-## 5. Pricing, promotions, coupons, rewards (D8 and D9, approved in principle)
+## 5. Pricing, promotions, coupons, rewards (D8 approved; D9 approved as a proposal pending legal review; Checkpoint 2)
 
 ### 5.1 Money
 
@@ -177,7 +177,7 @@ For each line, then for the order:
 
 Start/end time in the store timezone; optional per-sale quantity cap enforced with the same guarded atomic update as stock; countdowns only for real end times. A sale that ends between cart and placement re-prices the cart and the customer sees the change before confirming.
 
-### 5.7 Rewards (D9, approved in principle as a proposal; legal review required **[L]**)
+### 5.7 Rewards (D9, approved as a proposal at Checkpoint 2; legal review required **[L]**)
 
 - HorekBazar calls it "HB Credit"; the **name, earning rate, eligible orders, redemption cap (% of merchandise subtotal), minimum redemption, expiry period and enable flag are all store settings**.
 - Shape: a **non-cash loyalty discount** only. It is earned only on `completed` orders, redeemable only as a discount on future orders in the same store, and reversed on returns. It is never withdrawable, never convertible to cash, never transferable, never paid out as a refund, and never described as a wallet, balance of money, cashback or deposit.
@@ -263,7 +263,7 @@ Three layers, so buyers customise without editing core code:
 
 - Indexable: home, categories, collections, products, deals/new/preorder listings, information and policy pages. Noindex: cart, checkout, account, admin, search results, filtered combinations beyond the first facet **[A]**, flow pages.
 - Canonicals: products have one canonical URL regardless of category path; paginated pages are self-canonical; filtered URLs canonicalise to the unfiltered category.
-- **Localisation (D10, approved in principle):** Bengali at `/`, English at `/en/…`, the same stable Latin slug in both (`/p/<slug>` and `/en/p/<slug>`); slugs never change when names are edited (old slugs redirect 301).
+- **Localisation (D10, approved at Checkpoint 2):** Bengali at `/`, English at `/en/…`, the same stable Latin slug in both (`/p/<slug>` and `/en/p/<slug>`); slugs never change when names are edited (old slugs redirect 301).
 - The locale switcher keeps the current page and query (`/c/kitchen?page=2` ↔ `/en/c/kitchen?page=2`) and sets a preference cookie; the default locale never auto-redirects crawlers by `Accept-Language`.
 - Each locale page is **self-canonical**; `hreflang` pairs (`bn`, `en`, and `x-default` → Bengali) are emitted only when both language versions have real content. A page without an English translation is not indexed in English: it canonicalises to the Bengali page and is left out of the English sitemap.
 - Titles, descriptions, Open Graph and structured data are localised; `<html lang>` matches the content; sitemap index split by type and locale; robots rules per environment (staging disallows all).
@@ -371,14 +371,14 @@ The owner had no catalogue and authorized the agent (2026-10-21) to generate a *
 
 | ID | Decision | Status |
 |---|---|---|
-| D5 | Deployment and Vercel account resolution deferred to the deployment checkpoint; the app stays host-portable | **deferred** (owner) |
-| D7 | Staff 2FA mandatory for Owner and Store Manager, optional for others; recovery and session revocation as in §1 | **approved in principle** |
-| D8 | Single best automatic promotion; tiers only without a flash sale; one coupon; rewards last; interactions as in §5 | **approved in principle** (the **[A]** defaults inside §5 are proposals) |
-| D9 | HB Credit as a non-cash loyalty discount, fully configurable, no cash/wallet claims, disabled for BD production until legal review | **approved in principle, proposed pending legal review** |
-| D10 | Bengali at `/`, English at `/en`, shared stable Latin slugs, rules in §10 | **approved in principle** |
+| D5 | Deployment and Vercel account resolution deferred to the deployment checkpoint; the app stays host-portable; does not block the product contract | **deferred** (owner) |
+| D7 | Staff 2FA mandatory for Owner and Store Manager, optional for others; recovery and session revocation as in §1 | **approved** (Checkpoint 2) |
+| D8 | Single best automatic promotion; tiers only without a flash sale; one coupon; rewards last; interactions as in §5 | **approved** (Checkpoint 2; the **[A]** defaults inside §5 stay proposals) |
+| D9 | HB Credit as a non-cash loyalty discount, fully configurable, no cash/wallet claims, disabled for BD production until legal review | **approved as a proposal** (Checkpoint 2); disabled for BD production until legal review |
+| D10 | Bengali at `/`, English at `/en`, shared stable Latin slugs, rules in §10 | **approved** (Checkpoint 2) |
 | D11 | Catalogue: the owner authorized generation of a proposed starter catalogue (`catalogue/horekbazar/`, workflow §16); records are drafts with zero stock, no images and owner-review prices; empty dev database remains valid | **Owner authorized catalogue generation; generated catalogue pending owner review and approval.** |
-| D12 | Location dataset: research done (§6.1); COD-AB backbone + licensed Bengali names proposed; licence, attribution, completeness and version still to verify | **open** (proposed approach) |
-| D13 | Valid BD phone required + admin confirmation before COD processing; customer email verification optional; staff email verification mandatory; no phone OTP | **approved in principle** |
-| D14 | SMS excluded from v1; `sms` port reserved | **approved in principle** |
-| D15 | Online payments excluded from v1; COD only | **approved in principle** |
-| D16 | Excluded from v1: product Q&A, gift cards, subscriptions, POS, multiple warehouses; wishlist disabled unless separately approved | **approved in principle** |
+| D12 | Location dataset: research done (§6.1); COD-AB backbone + licensed Bengali names proposed; licence, attribution, completeness and version still to verify; must be resolved before any location-data-dependent behaviour (zone mapping, address pickers, delivery-charge lookup by area) is implemented | **open** (proposed approach) |
+| D13 | Valid BD phone required + admin confirmation before COD processing; customer email verification optional; staff email verification mandatory; no phone OTP | **approved** (Checkpoint 2) |
+| D14 | SMS excluded from v1; `sms` port reserved | **approved** (Checkpoint 2) |
+| D15 | Online payments excluded from v1; COD only | **approved** (Checkpoint 2) |
+| D16 | Excluded from v1: product Q&A, gift cards, subscriptions, POS, multiple warehouses; wishlist disabled unless separately approved | **approved** (Checkpoint 2) |

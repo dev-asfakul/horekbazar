@@ -22,7 +22,10 @@ Read this first, then `docs/PROGRESS.md`, then `DESIGN.md`.
 
 ## Hard rules
 
-- `catalogue/horekbazar/` is a draft review package (D11). Never read it from application code, never import it into any database, never mark it approved. Only owner-approved records move to `data/` (`docs/domain-rules.md` §16).
+- `catalogue/horekbazar/` is a draft review package (D11: generated catalogue pending owner review and approval; Checkpoint 2 condition: unapproved research artifact). Never read it from application code, never import it into any database, never mark it approved. Only owner-approved records move to `data/` (`docs/domain-rules.md` §16).
+- Catalogue prices are unapproved: keep historical TCB references and estimates distinct; never present either as a current selling price. Images stay missing until exact-product suitability and commercial rights are verified. BSTI and other compliance flags are provisional.
+- D12 (location dataset) is open: do not implement location-data-dependent behaviour until it is resolved. D5 (hosting) is deferred.
+- Current checkpoint and open decisions: see the newest entry in `docs/PROGRESS.md`.
 - No mock or fabricated data, no simulated success. Real configured services only; clear setup-required states otherwise.
 - Never commit secrets, `.env` files, or customer data. `.env.example` has placeholders only.
 - Separate dev, staging and production credentials.

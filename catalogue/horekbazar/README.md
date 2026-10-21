@@ -1,7 +1,7 @@
 # HorekBazar starter catalogue (DRAFT, pending owner review)
 
 > **Status: DRAFT. NOT APPROVED. NOT FOR IMPORT.**
-> The owner authorized generation of this catalogue (decision D11, 2026-10-21). Nothing in this package has been approved. Every category, product, variant, price, attribute and SEO text is a proposal for review.
+> The owner authorized generation of this catalogue (decision D11, 2026-10-21). Nothing in this package has been approved. Checkpoint 2 was approved with the condition that this package remains an **unapproved research artifact**: not imported, not published, not included in the reusable template. Every category, product, variant, price, attribute and SEO text is a proposal for review.
 
 ## What this is
 
