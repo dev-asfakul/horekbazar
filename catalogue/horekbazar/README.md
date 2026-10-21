@@ -45,4 +45,4 @@ node catalogue/horekbazar/tools/catalogue.mjs validate
 node catalogue/horekbazar/tools/catalogue.mjs report   # regenerates prices.csv and the table in PRICE-RESEARCH.md
 ```
 
-The validator runs without dependencies. The formal JSON Schema check is run with Ajv outside the repository, so no dependency is added before the app exists. The command is in [`CATALOGUE-SCHEMA.md`](CATALOGUE-SCHEMA.md). Once the application has a `package.json` (Checkpoint 4 or later, if approved), both checks move into CI.
+The validator runs without dependencies. The formal JSON Schema check uses Ajv, now a pinned dev dependency (Phase B0): run `npm ci`, then `npm run catalogue:schema` (details in [`CATALOGUE-SCHEMA.md`](CATALOGUE-SCHEMA.md)). `npm run catalogue:validate` runs the validator. CI runs both. Running them does not approve or import the catalogue.

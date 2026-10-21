@@ -1,10 +1,10 @@
 # HorekBazar template: build plan (Checkpoint 4)
 
-Status: **proposed 2026-10-21; amended the same day after the owner's plan review (idempotency contract, CSP and caching plan, exact breakpoints); awaiting owner approval.** Checkpoint 3 is also still awaiting explicit approval. This is a plan only. No application code, database migration, catalogue import, production data or deployment is authorised by it.
+Status: **approved by the owner 2026-10-21 with conditions** (after amendments the same day for the idempotency contract, CSP and caching plan and exact breakpoints). Checkpoint 3 approved the same day. Conditions: the approval does not authorise invented catalogue data, unapproved prices, unlicensed images or location data, or silently resolving open business, security or deployment decisions. The owner authorised **Phase B0 only**; every later phase needs its own approval. Items labelled [H], [NV], [L] or [A] keep their labels. No application code, database migration, catalogue import, production data or deployment is authorised by it.
 
 Authority and sources:
 - **Approved:** product contract and Scope (`DESIGN.md`); domain rules (`docs/domain-rules.md`, authority level 4); stack (`DESIGN.md` §1).
-- **Proposed, still open:** the Checkpoint 3 direction "Khata" (`DESIGN.md` → Research record … Verification status); motion (`MOTION.md`); data contract (`SCHEMA.md` v0.2).
+- **Approved 2026-10-21:** the Checkpoint 3 direction "Khata" (`DESIGN.md` → Research record … Verification status); with conditions (Checkpoint 4): motion (`MOTION.md`), data contract (`SCHEMA.md` v0.2.2).
 - **Workflow:** skill v3.0.2 (`thinking/sequence.md`, `gates/rules.md`, `adapters/next.md`, `craft/components.md`, `motion/*`).
 
 Where this plan and an approved document differ, the approved document wins. Every such difference found is listed in §0.
@@ -32,8 +32,8 @@ Labels used throughout:
 |---|---|
 | 1 Stack | approved 2026-10-21 with amendments |
 | 2 Product contract | approved 2026-10-21 with seven conditions |
-| 3 Research and direction | "Khata" accepted in principle and amended. **Not yet explicitly approved.** The owner's Checkpoint 4 brief says "We are deliberately moving forward from Checkpoint 3". This plan records that as **proceeding by owner direction** and asks the owner to confirm Checkpoint 3 approval together with Checkpoint 4 |
-| 4 Build plan | this document, proposed |
+| 3 Research and direction | the amended "Khata" direction: **approved** by the owner 2026-10-21 |
+| 4 Build plan | this document, `MOTION.md`, `SCHEMA.md` v0.2.2 and the domain-rules §4.1 ledger-key format: **approved with conditions** by the owner 2026-10-21; Phase B0 only |
 
 ### Contradictions found and how this plan handles them
 | # | Contradiction | Sources | Handling |
@@ -382,6 +382,14 @@ Private routes already need dynamic rendering, so a nonce costs them nothing **[
 
 **Proposal:** run the B0 spike, report its real result, then the owner chooses (a) or (b). Until then, (a) is the working assumption, because it matches the approved rule. B5's caching design is written so that it works under (a) (data caching only) and gets faster under (b) (HTML caching).
 
+**B0 spike result (2026-10-21) [M on the spike only; the decision stays with the owner]:**
+- Setup: local throwaway branch `spike/csp` (never merged, not pushed). Next.js 16.4.2 with `experimental.sri` (`sha256`), standalone production build with zero environment variables, served on `127.0.0.1` over HTTP. Browsers: Chromium 156.0.8078.4, Firefox 157.0, WebKit 27.2 (Playwright 1.64.1).
+- **Option (b) as specified fails.** The prerendered route (`●` SSG, `revalidate = 60`) was cached (`x-nextjs-cache` STALE on the first request, then HIT; `Cache-Control: s-maxage=60, stale-while-revalidate=31535940`). But its HTML has **3 inline scripts**, and `script-src 'self'` blocked all three in all three browsers (3 `script-src-elem` violations each). The client component did not hydrate and `window.next` was undefined. SRI put `integrity` on 5 of 7 `<script src>` tags; 2 `async` chunk tags had none.
+- **Option (a) works on the spike.** On the nonce route (`await connection()`), all inline and chunk scripts carried the nonce, with 0 CSP violations in all three browsers, and `Cache-Control: private, no-cache, no-store, max-age=0, must-revalidate`. `unstable_cache` (revalidate 300) returned the same value on 3 requests while the per-request render time changed, so server data caching works under nonce rendering.
+- **WebKit over plain HTTP:** the production CSP's `upgrade-insecure-requests` makes WebKit upgrade script requests to HTTPS on `127.0.0.1`. The scripts fail with TLS errors and the app does not boot. With that one directive removed by the test harness, WebKit had 0 errors, 0 violations and booted. Chromium and Firefox were not affected. Browser tests that check scripts in WebKit therefore need HTTPS, or a test-only policy without that directive **[H, proposed; to be decided where those tests are added]**.
+- **Not tested:** CSP hashes for the inline scripts. Their content is the per-page data payload, so it changes per page and per revalidation, and the proxy sets the header before the page is rendered **[H]**. Also not tested: `"use cache"` / `cacheTag` (they need the `cacheComponents` setting; whether that works with nonces was not checked), CDN behaviour and production hosting (D5).
+- Raw results: `spike/result-2026-10-21.json` and `spike/webkit-no-uir-2026-10-21.json` on the local `spike/csp` branch.
+
 **Verification in implementation (all [NV]):**
 - Playwright collects `securitypolicyviolation` events and console CSP errors on every route class at all four bands. Pass: zero.
 - Response-header assertions per route class: CSP directives, HSTS, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`, `frame-ancestors`, `Cache-Control`.
@@ -504,8 +512,8 @@ All run against a disposable real replica set, with the parallel requests launch
 ### Decisions needed from the owner (none is assumed)
 | ID | Decision | Options | Blocks | If left open |
 |---|---|---|---|---|
-| **D17** | CSP and caching for the public storefront (§9.1, C1, C13) | (a) nonces everywhere (approved rule; stable; fallback); (b) experimental SRI with a strict static CSP on public storefront routes, **only if the B0 spike proves it**; (c) `'unsafe-inline'`, rejected | B5 (HTML caching), B11 (headers) | B5 is built for (a); storefront HTML is not cached; scale cost rises (§12) |
-| **D18** | Branch and push workflow (C3) | **proposed**: build pushes to `preview/horekbazar-v1` after every phase; handoff to `design/horekbazar-v1` after the gate; the owner merges to `main`; planning docs stay on `main` | B0 | no build work can be pushed, so B0 cannot start |
+| **D17** | CSP and caching for the public storefront (§9.1, C1, C13) | (a) nonces everywhere (approved rule; stable; fallback); (b) experimental SRI with a strict static CSP on public storefront routes, **only if the B0 spike proves it**. B0 spike result: (b) as specified fails, with inline scripts blocked and no hydration in Chromium, Firefox and WebKit; (a) works, with data caching (§9.1); (c) `'unsafe-inline'`, rejected | B5 (HTML caching), B11 (headers) | B5 is built for (a); storefront HTML is not cached; scale cost rises (§12) |
+| **D18** | Branch and push workflow (C3) | **proposed**: build pushes to `preview/horekbazar-v1` after every phase; handoff to `design/horekbazar-v1` after the gate; the owner merges to `main`; planning docs stay on `main` | B0 | no build work can be pushed. B0 is committed locally only (branches `b0-toolchain`, `spike/csp`) and waits for D18 |
 | **D19** | Development database | (a) owner-provided Atlas dev cluster (URI through the secure credential form, never committed); (b) a local single-node replica set in the agent's environment (real `mongod`, data lost when the environment ends) | B2 onward | B2–B11 cannot run their integration checks against a development database (tests still use disposable replica sets) |
 | **D20** | Content for the Checkpoint 5 filled-state review (C7) | (a) the owner approves a named subset of D11 drafts for **dev-database-only** import, prices still unapproved and labelled, images missing; (b) the owner enters a few real products in the dev admin; (c) empty and setup states only | Checkpoint 5 | the review shows only empty and setup states |
 | **D21** | Addresses and zones until D12 is resolved (C6) | (a) block B7 until D12 is resolved; (b) interim: the customer chooses a configured zone and types district and area as free text, checked by the operator at confirmation | B7 (and B8, B9, which follow it) | checkout and everything after it wait for D12 |

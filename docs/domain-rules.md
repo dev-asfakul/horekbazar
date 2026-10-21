@@ -115,7 +115,7 @@ Per variant (`stock`): `onHand`, `reserved`, `available = onHand − reserved` (
 | `restock` | returned to origin (failed delivery), inspected resellable | onHand +n | `rto:<orderId>:<lineId>:restock` |
 | `write_off` | inspected not resellable (customer return or returned to origin) | ledger only (onHand already deducted) | `return:<returnId>:<lineId>:write_off` or `rto:<orderId>:<lineId>:write_off` |
 
-**Key format: Checkpoint 4 amendment, proposed and awaiting owner approval.**
+**Key format: Checkpoint 4 amendment, approved by the owner 2026-10-21 as a design contract.** Not yet implemented or tested.
 - **What changed:** the Checkpoint 2 table used `orderId:lineId:<kind>` for order movements, `returnId:lineId:<kind>` for returns (including returned-to-origin goods) and "adjustment id" for `receive` and `adjust`. The canonical format is now `<namespace>:<entityId>:<lineRef>:<kind>`, defined in §4.1.
 - **What did not change:** the rule itself. There is still one unique key per logical movement, and a retry reuses it.
 - **Why:**
@@ -131,9 +131,9 @@ Rules (all must be tested, including under concurrency):
 5. A nightly reconciliation job recomputes `onHand`/`reserved` from the ledger and reports (does not silently fix) any drift.
 6. Displayed stock: exact counts when `available ≤ lowStockThreshold`, otherwise "In stock" (configurable); never fabricated scarcity.
 
-### 4.1 Idempotency and concurrency contract (proposed at Checkpoint 4, awaiting owner approval)
+### 4.1 Idempotency and concurrency contract (Checkpoint 4, approved with conditions 2026-10-21)
 
-This section makes the keys in §4, §9 and §13 precise. It amends the Checkpoint 2 ledger-key format (a **proposed Checkpoint 4 amendment, awaiting owner approval**; see the key-format note under the §4 table): every inventory ledger key uses the canonical namespaced format `<namespace>:<entityId>:<lineRef>:<kind>`, with `order:` for reserve, release and commit; `return:` for customer-return restock and write-off; `rto:` for inspected goods returned to origin after a failed delivery; and `stock:` for receipts and adjustments. The rule itself is unchanged: one unique key per logical movement, reused on retry. Nothing here is proven: every guarantee becomes a claim only when its test in `docs/BUILD-PLAN.md` §12 has run and passed.
+This section makes the keys in §4, §9 and §13 precise. It amends the Checkpoint 2 ledger-key format (a **Checkpoint 4 amendment, approved by the owner 2026-10-21 as a design contract**; see the key-format note under the §4 table): every inventory ledger key uses the canonical namespaced format `<namespace>:<entityId>:<lineRef>:<kind>`, with `order:` for reserve, release and commit; `return:` for customer-return restock and write-off; `rto:` for inspected goods returned to origin after a failed delivery; and `stock:` for receipts and adjustments. The rule itself is unchanged: one unique key per logical movement, reused on retry. Nothing here is proven: every guarantee becomes a claim only when its test in `docs/BUILD-PLAN.md` §12 has run and passed.
 
 **Why the change.** The draft `SCHEMA.md` v0.2 put one unique `idempotencyKey` on `reservations`. One order reserves several variants, so a single per-request key would either collide between lines or need ad-hoc suffixes. A single "adjustment id" on the ledger has the same problem when one adjustment covers several variants. **Each layer below therefore has its own scope and its own uniqueness constraint; no key is shared between unrelated operations.**
 

@@ -2,6 +2,44 @@
 
 Newest first. Each entry: date, phase, done, decided, open, next.
 
+## 2026-10-21 — Phase B0: toolchain skeleton and D17 CSP/caching spike (local only, not pushed)
+
+- **Owner decision:** Checkpoint 3 (the amended "Khata" direction) **approved**. Checkpoint 4 **approved with conditions**: `docs/BUILD-PLAN.md`, `MOTION.md`, `SCHEMA.md` v0.2.2 and the canonical ledger-key format in `docs/domain-rules.md` §4.1, as a design contract (`order:<orderId>:<lineId>:<kind>`; `return:<returnId>:<lineId>:<kind>`; `rto:<orderId>:<lineId>:<kind>`; `stock:<adjustmentId>:<variantId>:<kind>`). The approval does not authorise invented catalogue data, unapproved prices, unlicensed images or location data, or silently resolving open decisions. The owner authorised **Phase B0 only**.
+- **Audit before work:** `main` clean and level with `origin/main` at `dacc199`. No application code existed. Skill v3.0.2 installed (git-ignored). Node.js 24.22.0 was installed locally for the build (SHA-256 verified); the system Node.js 20 is end-of-life and below Vitest 5's engine range.
+- **Done (code, local branch `b0-toolchain`, not pushed):**
+  - Toolchain, all versions pinned exactly in `package.json` and `package-lock.json`: next 16.4.2, react and react-dom 19.3.1, zod 4.6.7; dev: typescript 6.0.3, tailwindcss and @tailwindcss/postcss 4.3.3, eslint 9.39.5 with eslint-config-next 16.4.2, vitest 5.0.5, @playwright/test 1.64.1, ajv 8.20.0, ajv-formats 3.0.1. `.nvmrc` 24; `engines` `>=24 <25`.
+  - Strict `tsconfig.json`, with `noUncheckedIndexedAccess` and `exactOptionalPropertyTypes`. `next.config.ts` uses `output: "standalone"`, no `X-Powered-By` header and no browser source maps.
+  - ESLint (Next core-web-vitals and TypeScript rules). Application code may not import `catalogue/**`, and `console` is not allowed.
+  - `lib/env.ts`: Zod schema that validates each variable separately. It reports integration states and never echoes values.
+  - `proxy.ts` skeleton: `/` serves Bengali, `/en` serves English, `/bn/...` gets a 308 redirect to the canonical URL, and unknown locale-like segments return 404. A fresh nonce CSP is sent per request (D17 option a, the approved rule). Security headers: HSTS outside development (no preload), `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`, and `frame-ancestors 'none'` on private prefixes.
+  - Setup-required page in Bengali and English (noindex). `/api/health` returns `setupRequired` and database `not_configured` or `not_checked`, with `no-store`. It never claims a database connection.
+  - Vitest unit tests (locales, headers, env). A Playwright smoke suite runs against the standalone production server. Scripts: secret scan of the client bundle, standalone start, catalogue JSON Schema check.
+  - `.github/workflows/ci.yml`: lint, typecheck, unit tests, both catalogue checks, a zero-environment build, Playwright (Chromium), and a build with canary values followed by the bundle secret scan.
+- **Done (documentation, this commit):** approval status in `README.md`, `DESIGN.md` (status, §1 TypeScript pin, Checkpoint 3 and 4 status, Decision trace), `docs/BUILD-PLAN.md` (status, checkpoint table, §9.1 spike result, D17 and D18 rows), `MOTION.md`, `SCHEMA.md` and `docs/domain-rules.md` §4 and §4.1. `README.md` has a development setup section. `catalogue/horekbazar/README.md` and `CATALOGUE-SCHEMA.md` now point to `npm run catalogue:schema`. Catalogue data unchanged.
+- **Checks run (real outcomes, this sandbox, Node.js 24.22.0, npm 11.19.1):**
+  - `npm run lint`: exit 0. `npm run typecheck`: exit 0. `npm test`: 18 of 18 passed (3 files).
+  - `next build` with zero environment variables (`env -i`): success. Routes: `ƒ /[locale]`, `ƒ /api/health`, `○ /_not-found`, plus the proxy.
+  - Playwright smoke suite, standalone server: Chromium 7 of 7 passed (the CI configuration). A one-off run with a temporary configuration (not committed): Firefox 7 of 7 and WebKit 7 of 7. These tests do not check script loading in WebKit (see the spike note).
+  - `npm run check:bundle`: OK on the zero-environment build. Earlier in B0: OK on a build with 7 server-only canary values, and a planted canary made it exit 1 as expected.
+  - `catalogue:validate`: 0 errors and 0 warnings. `catalogue:schema`: 4 of 4 files valid.
+  - Lint probe: importing `catalogue/` from app code was flagged (1 error).
+  - `npm audit --omit=dev`: 0 vulnerabilities. Full audit: 5 high, all in the dev-only chain eslint-config-next → @next/eslint-plugin-next → fast-glob → micromatch → braces 3.0.3 ([GHSA-vfj7-8cjw-p6xm](https://github.com/advisories/GHSA-vfj7-8cjw-p6xm)). No patched `braces` exists. npm's suggested fix downgrades eslint-config-next to 14, so it was rejected. Recorded as a known issue.
+  - Skill `completeness.mjs`: exit 1 (expected, the template is not built). Template 11/22, Routes 18/33, Journeys 1/12, Functions 0/8, States 0/11, Admin 1/29. The route count is the script's own match; only `/[locale]` and `/api/health` exist. It flags `.env.example` for missing the test-only `E2E_PORT`.
+  - **Not run:** CI on GitHub (nothing pushed); the skill gate; any database, auth, transaction, concurrency, accessibility, performance or load test. None is claimed.
+- **D17 spike (local branch `spike/csp`, never merged, not pushed).** Full result in `docs/BUILD-PLAN.md` §9.1. Production standalone build over HTTP; Chromium 156, Firefox 157, WebKit 27.2.
+
+  | Route on the spike | CSP | Build | Cache headers (3 requests) | Scripts in HTML | Violations (Cr / Fx / WK) | Hydration |
+  |---|---|---|---|---|---|---|
+  | `/spike-static` (`revalidate 60`) + `experimental.sri` | `script-src 'self'` (static, no nonce) | `●` SSG | `x-nextjs-cache` STALE then HIT; `s-maxage=60, stale-while-revalidate=31535940` | 3 inline; 7 `src`, 5 with `integrity`; 0 nonce | 3 / 3 / 3 (`script-src-elem` inline) | **failed** in all three |
+  | `/spike-data` (`connection()` + `unstable_cache` 300 s) | nonce + `'strict-dynamic'` | `ƒ` | `private, no-cache, no-store, max-age=0, must-revalidate`; cached value identical across requests | 3 inline + 6 `src`, all 9 nonced | 0 / 0 / 0 | n/a (no client component); app booted in Chromium and Firefox |
+  | `/` (B0 page) | nonce | `ƒ` | same as above | 9 nonced | 0 / 0 / 0 | WebKit booted only with `upgrade-insecure-requests` removed (plain-HTTP artifact) |
+
+  - **Reading:** option (b), "experimental SRI with a strict static CSP", **does not work as specified** on Next.js 16.4.2: the inline scripts are not covered. Option (a), the approved rule, works on the spike, and server data caching still works. CSP hashes, `"use cache"` and CDN behaviour were **not tested**. **D17 stays open for the owner.**
+  - Process note: the spike's files were not committed when its worktree was first removed. They were rebuilt exactly from the session record, the spike was rebuilt and measured again (same numbers), and then committed (`spike/csp` at `16a5264`). No owner work was affected.
+- **Known issues (proposed handling, not decided):** the dev-only `braces` advisory above. npm 11 notes that the `unrs-resolver` install script was not run; lint works without it. WebKit over plain HTTP with `upgrade-insecure-requests` (§9.1). CI uses Chromium only.
+- **Open (unchanged):** D11 catalogue (235 unapproved prices: 39 historical TCB references, 196 estimates; images absent; compliance flags provisional); D12 location dataset (still blocks checkout behaviour that needs it); D5 hosting; D17 CSP and caching; **D18 push workflow, which blocks pushing B0**; D19–D23; coupon-usage restoration on cancellation.
+- **Next:** the owner decides D18 (where B0 code is pushed, and whether `spike/csp` is pushed). After the push, CI must pass on GitHub from a clean clone; only then is B0 complete. Then the owner decides D17 and approves Phase B1.
+
 ## 2026-10-21 — Handoff: environment set up, skill installed, ledger-key wording aligned (proposed)
 
 - **Handoff audit:** fresh clone of `dev-asfakul/horekbazar`; `main` clean and level with `origin/main` at `25de626` (verified with `git status` and `git ls-remote`). No application code, no `package.json`, no CI configuration yet.
