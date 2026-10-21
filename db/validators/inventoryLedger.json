@@ -1,0 +1,114 @@
+{
+  "$jsonSchema": {
+    "bsonType": "object",
+    "properties": {
+      "_id": {
+        "bsonType": "objectId"
+      },
+      "variantId": {
+        "bsonType": "objectId"
+      },
+      "kind": {
+        "bsonType": "string",
+        "enum": [
+          "receive",
+          "adjust",
+          "reserve",
+          "release",
+          "commit",
+          "restock",
+          "write_off"
+        ]
+      },
+      "qty": {
+        "bsonType": [
+          "int",
+          "long"
+        ]
+      },
+      "onHandAfter": {
+        "bsonType": [
+          "int",
+          "long"
+        ],
+        "minimum": 0
+      },
+      "reservedAfter": {
+        "bsonType": [
+          "int",
+          "long"
+        ],
+        "minimum": 0
+      },
+      "actor": {
+        "bsonType": "object",
+        "properties": {
+          "type": {
+            "bsonType": "string",
+            "enum": [
+              "staff",
+              "system"
+            ]
+          },
+          "id": {
+            "bsonType": "string",
+            "minLength": 1,
+            "maxLength": 100
+          }
+        },
+        "required": [
+          "type",
+          "id"
+        ],
+        "additionalProperties": false
+      },
+      "reason": {
+        "bsonType": "string",
+        "minLength": 1,
+        "maxLength": 300
+      },
+      "refType": {
+        "bsonType": "string",
+        "enum": [
+          "order",
+          "rto",
+          "return",
+          "stock"
+        ]
+      },
+      "refId": {
+        "bsonType": "string",
+        "maxLength": 100,
+        "pattern": "^[A-Za-z0-9_-]+$"
+      },
+      "lineRef": {
+        "bsonType": "string",
+        "maxLength": 100,
+        "pattern": "^[A-Za-z0-9_-]+$"
+      },
+      "idempotencyKey": {
+        "bsonType": "string",
+        "maxLength": 300,
+        "pattern": "^(order|return|rto|stock):[A-Za-z0-9_-]+:[A-Za-z0-9_-]+:(receive|adjust|reserve|release|commit|restock|write_off)$"
+      },
+      "createdAt": {
+        "bsonType": "date"
+      }
+    },
+    "required": [
+      "_id",
+      "variantId",
+      "kind",
+      "qty",
+      "onHandAfter",
+      "reservedAfter",
+      "actor",
+      "refType",
+      "refId",
+      "lineRef",
+      "idempotencyKey",
+      "createdAt"
+    ],
+    "additionalProperties": false
+  }
+}

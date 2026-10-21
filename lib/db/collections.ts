@@ -5,6 +5,19 @@ import type { IndexDescription } from "mongodb";
 import type { z } from "zod";
 import { auditLogSchema, jobsSchema, migrationsSchema, outboxSchema } from "../modules/platform/schema.ts";
 import { AUTH_COLLECTIONS, INSTALLATION, installationSchema, STAFF_ROLES, staffRoleSchema } from "../modules/identity/schema.ts";
+import {
+  CATEGORIES,
+  categorySchema,
+  INVENTORY_LEDGER,
+  inventoryLedgerSchema,
+  PRODUCTS,
+  productSchema,
+  STOCK,
+  stockSchema,
+  VARIANTS,
+  variantSchema,
+} from "../modules/catalogue/schema.ts";
+import { CATALOGUE_LOCKS, catalogueLockSchema } from "../modules/catalogue/locks.ts";
 
 export interface CollectionSpec {
   name: string;
@@ -63,6 +76,69 @@ export const collections: CollectionSpec[] = [
     schema: installationSchema,
     indexes: [],
     serviceEnforced: ["written once by the first-owner claim; the unique _id serialises concurrent claims (identity/staff.ts)"],
+  },
+  {
+    name: CATEGORIES,
+    module: "catalogue",
+    schema: categorySchema,
+    indexes: [
+      { key: { slug: 1 }, name: "slug_unique", unique: true },
+      { key: { parentId: 1, position: 1 }, name: "parent_position" },
+      { key: { status: 1 }, name: "status" },
+    ],
+    serviceEnforced: [
+      "depth ≤ 3 on create and move, no cycles, structural changes serialised by catalogueLocks (catalogue/categories.ts)",
+      "slug frozen once published; publish needs a published parent; archive needs no live children or products",
+    ],
+  },
+  {
+    name: PRODUCTS,
+    module: "catalogue",
+    schema: productSchema,
+    indexes: [
+      { key: { slug: 1 }, name: "slug_unique", unique: true },
+      { key: { categoryIds: 1, status: 1 }, name: "categoryIds_status" },
+      { key: { primaryCategoryId: 1 }, name: "primaryCategoryId" },
+      { key: { status: 1, updatedAt: -1 }, name: "status_updatedAt" },
+    ],
+    serviceEnforced: [
+      "primary category is a leaf and in categoryIds; publish needs a published category and a priced active variant (catalogue/products.ts)",
+      "slug frozen once published; sample records publish only in a _dev database; version compare-and-set on every edit",
+    ],
+  },
+  {
+    name: VARIANTS,
+    module: "catalogue",
+    schema: variantSchema,
+    indexes: [
+      { key: { sku: 1 }, name: "sku_unique", unique: true },
+      { key: { productId: 1, position: 1 }, name: "productId_position" },
+    ],
+    serviceEnforced: ["compareAt > price; SKU frozen once stock has moved; a published product keeps one priced active variant (catalogue/products.ts)"],
+  },
+  {
+    name: STOCK,
+    module: "inventory",
+    schema: stockSchema,
+    indexes: [{ key: { variantId: 1 }, name: "variantId_unique", unique: true }],
+    serviceEnforced: ["available = onHand − reserved, written in the same update; negative moves are guarded updates (catalogue/inventory.ts)"],
+  },
+  {
+    name: INVENTORY_LEDGER,
+    module: "inventory",
+    schema: inventoryLedgerSchema,
+    indexes: [
+      { key: { idempotencyKey: 1 }, name: "idempotencyKey_unique", unique: true },
+      { key: { variantId: 1, createdAt: -1 }, name: "variantId_createdAt" },
+    ],
+    serviceEnforced: ["append-only; one row per movement with the canonical key; written in the stock transaction (catalogue/inventory.ts)"],
+  },
+  {
+    name: CATALOGUE_LOCKS,
+    module: "catalogue",
+    schema: catalogueLockSchema,
+    indexes: [],
+    serviceEnforced: ["incremented inside every structural category transaction (catalogue/categories.ts)"],
   },
 ];
 

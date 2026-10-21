@@ -195,6 +195,16 @@ Shared rules for every entity:
 | `jobs.lastSuccessAt`? | Time of the last drain that finished without error; health turns failing when rows wait and it is older than 5 minutes (domain-rules §13). `lastRunAt` alone cannot tell a failing drain from a working one | `name` unique (existing) | optional; absent means "never succeeded"; written by `recordJobRun` | `outbox.test.ts` "records each drain …", `tests/unit/health.test.ts` jobs cases, `drain-route.test.ts` |
 | `migrations` collection | Records each one-time data migration (`_id` = `NNNN-name`, `appliedAt`) so `npm run db:migrate` runs it exactly once and stays safe to run on every deploy | `_id` (built in) | created by `db:migrate` if missing; a database migrated before this collection existed simply has no records, so all data migrations are pending (there are none yet) | `migrate.test.ts` "runs each one-time data migration once and records it", plus the valid/invalid insert per collection |
 
+**B4 catalogue additions (implemented 2026-10-22, B4 approved by the owner; listed for review).**
+
+| Addition | Purpose | Tested by |
+|---|---|---|
+| `categories.version`, `categories.publishedAt`?, `products.publishedAt`?, `variants.version` | Optimistic concurrency on every edit; the slug is frozen from the first publish (domain-rules §10; no redirects collection yet, so a published slug cannot change) | `tests/integration/catalogue.test.ts` "rejects a stale version and freezes the slug …" |
+| `variants.title` LT, `variants.options` as a list of `{key, value LT}`, `variants.position`, `variants.status` (`active`/`archived`), `netQuantity.verified` | Chip label; a list instead of a map because MongoDB validators cannot constrain arbitrary keys; archived variants keep order history intact; the LabelTile shows only a verified net quantity (`DESIGN.md` → Missing image) | catalogue and migrate tests |
+| `sample: true`? on categories, products, variants | Owner change to D11 (2026-10-22): generated records loaded by `npm run db:seed` into a `_dev` database are marked; the admin shows a "Sample" badge; a sample record can be published only in a database whose name ends in `_dev` | "sample records …" |
+| `catalogueLocks` (`_id: "categoryTree"`, `seq`, `updatedAt`) | Every structural category change (create, move, delete) increments it inside its transaction, so concurrent changes conflict and are re-checked; without it two opposite moves formed a cycle in 3 of 3 runs | "two concurrent opposite moves never form a cycle" |
+| Rules in the services (validators cannot express them) | primary category is a leaf; a category with products cannot get children; publish needs a published category and an active variant priced above zero; a published product keeps one; `compareAt > price`; SKU frozen once stock has moved; only never-published, never-stocked drafts can be deleted; inventory replay with the same `adjustmentId` and different lines is `idempotency_key_reused` | catalogue tests |
+
 ### Data files
 There is no mock data (owner decision D2; see `DATA.md`).
 

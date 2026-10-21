@@ -32,10 +32,12 @@ but on GitHub Free a private personal repository loses branch protection and sec
 
 Steps (each is pushed to `preview/horekbazar-v1` when done; tick here in the same commit):
 
-- [ ] 1. Catalogue domain: schemas, validators, indexes for `categories`, `products`, `variants`,
+- [x] 1. Catalogue domain: schemas, validators, indexes for `categories`, `products`, `variants`,
       `stock`, `inventoryLedger`; services (category depth 3 and cycle rules, product and variant
       upsert with `version`, publish/archive, inventory receive/adjust with ledger idempotency);
-      audit on every write; integration tests.
+      audit on every write; integration tests. **Done:** `lib/modules/catalogue/` (schema, common,
+      categories, products, inventory, locks), 6 validators, `tests/integration/catalogue.test.ts`
+      (19 tests). ESLint draft-folder rule narrowed to exclude `lib/modules/catalogue/`.
 - [ ] 2. Settings and delivery zones (`settings` singleton with `version`; accent contrast check;
       zones without area mapping, D12) and merchandising (`collections` manual, `homeSections` six
       types, `banners`); tests.

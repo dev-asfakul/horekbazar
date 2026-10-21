@@ -39,6 +39,30 @@ const fixtures: Record<string, { valid: Record<string, unknown>; invalid: Record
     valid: { _id: "0001-test", appliedAt: now },
     invalid: { _id: "not a migration id", appliedAt: now },
   },
+  categories: {
+    valid: { _id: new ObjectId(), slug: "rice-and-flour", parentId: null, name: { bn: "চাল ও আটা", en: "Rice & Flour" }, position: 1, status: "draft", version: 1, createdAt: now, updatedAt: now },
+    invalid: { _id: new ObjectId(), slug: "Rice Flour", parentId: "grocery", name: { bn: "" }, position: -1, status: "live", version: 0, createdAt: now, updatedAt: now },
+  },
+  products: {
+    valid: { _id: new ObjectId(), slug: "miniket-rice", name: { bn: "মিনিকেট চাল" }, primaryCategoryId: new ObjectId(), categoryIds: [new ObjectId()], attributes: [], media: [], status: "draft", version: 1, createdAt: now, updatedAt: now },
+    invalid: { _id: new ObjectId(), slug: "miniket-rice-2", name: { bn: "মিনিকেট চাল" }, primaryCategoryId: new ObjectId(), categoryIds: [], attributes: [], media: [], status: "draft", version: 1, createdAt: now, updatedAt: now, rating: 5 },
+  },
+  variants: {
+    valid: { _id: new ObjectId(), productId: new ObjectId(), sku: "HB-GRC-001-1KG", title: { bn: "১ কেজি" }, options: [], price: { amountMinor: 8500, currency: "BDT" }, position: 0, status: "active", version: 1, createdAt: now, updatedAt: now },
+    invalid: { _id: new ObjectId(), productId: new ObjectId(), sku: "hb-lower", title: { bn: "১ কেজি" }, options: [], price: { amountMinor: 85.5, currency: "USD" }, position: 0, status: "active", version: 1, createdAt: now, updatedAt: now },
+  },
+  stock: {
+    valid: { _id: new ObjectId(), variantId: new ObjectId(), onHand: 0, reserved: 0, available: 0, lowStockThreshold: 5, version: 1, updatedAt: now },
+    invalid: { _id: new ObjectId(), variantId: new ObjectId(), onHand: 1, reserved: 2, available: -1, lowStockThreshold: 5, version: 1, updatedAt: now },
+  },
+  inventoryLedger: {
+    valid: { _id: new ObjectId(), variantId: new ObjectId(), kind: "receive", qty: 5, onHandAfter: 5, reservedAfter: 0, actor: { type: "staff", id: "u1" }, refType: "stock", refId: "adj12345", lineRef: "v1", idempotencyKey: "stock:adj12345:v1:receive", createdAt: now },
+    invalid: { _id: new ObjectId(), variantId: new ObjectId(), kind: "receive", qty: 5, onHandAfter: 5, reservedAfter: 0, actor: { type: "staff", id: "u1" }, refType: "stock", refId: "adj12345", lineRef: "v1", idempotencyKey: "adj12345:receive", createdAt: now },
+  },
+  catalogueLocks: {
+    valid: { _id: "categoryTree", seq: 1, updatedAt: now },
+    invalid: { _id: "anything", seq: 0, updatedAt: now },
+  },
 };
 
 describe("db:migrate on a replica set", () => {
