@@ -2,7 +2,7 @@
 
 > The data contract, written together with `DESIGN.md` as the skill requires (`templates/SCHEMA.md`).
 >
-> **Status: draft v0.2.1, Checkpoint 4 (proposed 2026-10-21, amended after the owner's plan review the same day, awaiting owner approval).** v0.2.1 replaces the single reservation key with scoped constraints (domain-rules §4.1), aligns `outbox` with domain-rules §13 and makes the breakpoints exact. v0.2 added the remaining entity fields, the API surface, the admin section contracts and the category-depth definition with its move rule (see `docs/BUILD-PLAN.md`). v0.1 had set category depth to up to 3 levels (from the approved contract), removed the per-category `display` field and added the bottom dock section.
+> **Status: draft v0.2.2, Checkpoint 4 (proposed 2026-10-21, amended after the owner's plan review the same day, awaiting owner approval).** v0.2.2 defines the order-line `lineId` explicitly and uses the canonical ledger-key format everywhere (domain-rules §4 and §4.1). v0.2.1 replaced the single reservation key with scoped constraints (domain-rules §4.1), aligns `outbox` with domain-rules §13 and makes the breakpoints exact. v0.2 added the remaining entity fields, the API surface, the admin section contracts and the category-depth definition with its move rule (see `docs/BUILD-PLAN.md`). v0.1 had set category depth to up to 3 levels (from the approved contract), removed the per-category `display` field and added the bottom dock section.
 >
 > Business rules live in `docs/domain-rules.md` (approved at Checkpoint 2). Where this file and the rules differ, the rules win until this file is corrected.
 
@@ -127,7 +127,16 @@ Prices are **never stored on the cart**; they are re-resolved on every read (§5
 | `version` | int | required | `0` | compare-and-set for transitions (§4.1) |
 | `placedAt` | datetime | required | — | timeline |
 
-OrderLine is a snapshot: `variantId`, `sku`, `name` (LocalizedText), `options`, `unitPrice`, `quantity`, `lineTotal`, `appliedPromotion`, and a line `status`. Later edits to the product never change it.
+OrderLine is a snapshot. Later edits to the product never change it.
+
+| Field | Type | Required | Notes |
+|---|---|---|---|
+| `lineId` | string (ObjectId hex) | required; unique within the order | **the line's stable identity** (domain-rules §4.1). Created by the server in the placement transaction, one per line. Never regenerated, reused, renumbered or removed: cancelled and returned lines keep it. Referenced by `reservations {orderId, lineId}`, ledger keys (`order:`, `rto:` and `return:` namespaces), partial cancellation, `returns.lines[].lineId`, and line status changes. Never substituted by `variantId`, because one order may contain separate lines for the same variant |
+| `variantId`, `sku`, `name` (LocalizedText), `options` | snapshot | required | — |
+| `unitPrice`, `quantity`, `lineTotal`, `appliedPromotion` | money / int / money / ref? | required (promotion optional) | — |
+| `status` | enum (line states: active\|cancelled\|shipped\|delivered\|returned) **[A]** | required | partial cancellation and partial delivery (domain-rules §3) |
+
+The cart is different: cart lines are keyed by `variantId` inside one cart (the cart merges a variant into one line). Cart operations use `variantId`; the order `lineId` is created only at placement.
 
 ### Address (customer, embedded in User profile; snapshotted onto orders)
 Fields as in §6: `name`, `phone` (Bangladeshi format, required), `division`, `district`, `upazila`, `area`, `line`, `landmark`, `label` (home or office). The structured location fields (codes plus bn and en names) are **pending D12**. Until then they are not implemented, and no dataset is bundled.
@@ -155,13 +164,13 @@ Shared rules for every entity:
 | `couponRedemptions` | `couponId`, `userId`, `orderId`, `amount` int, `status` enum(held\|consumed\|released) (compare-and-set) | `{orderId}` unique (one coupon per order) |
 | `couponCustomerUsage` (proposed, §4.1) | `couponId`, `userId`, `count` int ≥ 0 (guarded `$inc`, `count < perCustomerLimit`) | `{couponId, userId}` unique |
 | `reservations` | `orderId`, `lineId`, `variantId`, `qty` int > 0, `status` enum(active\|committed\|released) (compare-and-set from `active` only) | `{orderId, lineId}` unique; `variantId, status` (domain-rules §4.1: no shared per-request key) |
-| `inventoryLedger` | `variantId`, `kind` enum(receive\|adjust\|reserve\|release\|commit\|restock\|write_off), `qty` int, `onHandAfter`, `reservedAfter`, `actor` {type, id}, `reason`?, `refId`?, `idempotencyKey` (deterministic per movement: `order:<orderId>:<lineId>:<kind>`, `return:<returnId>:<lineId>:<kind>`, `stock:<adjustmentId>:<variantId>:<kind>`) | `idempotencyKey` unique; `variantId, createdAt` |
+| `inventoryLedger` | `variantId`, `kind` enum(receive\|adjust\|reserve\|release\|commit\|restock\|write_off), `qty` int, `onHandAfter`, `reservedAfter`, `actor` {type, id}, `reason`?, `refType` enum(order\|rto\|return\|stock), `refId` (orderId, returnId or adjustmentId), `lineRef` (`lineId`, or `variantId` for `stock`), `idempotencyKey` (canonical `<refType>:<refId>:<lineRef>:<kind>`, domain-rules §4 and §4.1) | `idempotencyKey` unique; `variantId, createdAt` |
 | `stock` | `variantId` (unique), `onHand` int ≥ 0, `reserved` int ≥ 0, `available` int ≥ 0 (validator), `lowStockThreshold` int, `version` int | `variantId` unique |
 | `orderEvents` | `orderId`, `seq` int (= the order's new `version`), `from`, `to`, `actor`, `reason`?, `requestKeyId`? | `{orderId, seq}` unique |
 | `idempotencyKeys` | `scope` enum(checkout\|order_transition\|customer_cancel\|return_transition\|inventory\|rewards_adjust), `principalId`, `key` (client UUID), `fingerprint` (hash of the normalised request), `resultRef`, `result` (stored response), `expiresAt` (TTL 7 days **[A]**) | `{scope, principalId, key}` unique; TTL on `expiresAt` |
 | `shipments` | `orderId`, `courier` enum(manual\|steadfast\|pathao\|redx), `consignmentId`?, `trackingUrl`?, `status` (monotonic), `codAmount` int, `events` summary | `orderId`; `courier, consignmentId` unique (sparse) |
 | `courierEvents` | `provider`, `eventId`, `consignmentId`, `status`, `occurredAt`, `raw` (redacted) | `provider, eventId` unique |
-| `returns` | `orderId`, `lines` [{lineId, qty, reason}], `status` enum(requested\|approved\|rejected\|received\|inspected\|restocked\|written_off\|refunded\|credited\|closed) (domain-rules §3 returns), per-line `outcome` enum(restock\|write_off), `inspection` {result, note, by, at}?, `refund` {method enum(bkash\|nagad\|bank\|store_reward), amount, ref} (recorded, not executed)? | `orderId` |
+| `returns` | `orderId`, `lines` [{lineId (the order line's `lineId`; each at most once per return), qty, reason}], `status` enum(requested\|approved\|rejected\|received\|inspected\|restocked\|written_off\|refunded\|credited\|closed) (domain-rules §3 returns), per-line `outcome` enum(restock\|write_off), `inspection` {result, note, by, at}?, `refund` {method enum(bkash\|nagad\|bank\|store_reward), amount, ref} (recorded, not executed)? | `orderId` |
 | `rewardLedger` | `userId`, `kind` enum(accrue\|redeem\|reverse\|expire), `points` int, `orderId`?, `idempotencyKey` (`order:<orderId>:accrue\|redeem`, `return:<returnId>:reverse`) | `idempotencyKey` unique; `userId, createdAt` |
 | `reviews` | `productId`, `userId`, `orderId` (verified purchase, required), `rating` int 1–5, `body` (sanitised), `status` enum(pending\|published\|rejected), `reply`? | `productId, status`; `{userId, productId}` unique |
 | `conversations` / `messages` | `userId`, `orderId`?, `status` enum(open\|closed) / `conversationId`, `from` enum(customer\|staff), `body` (sanitised), `readAt`? | `userId`; `conversationId, createdAt` |
@@ -286,7 +295,7 @@ Rules for every entry:
 | Operation | Input | Output | Errors | Auth / RL / IK |
 |---|---|---|---|---|
 | `cart.add` | `variantId`, `qty` (1–99) | cart summary | `NOT_FOUND`, `UNAVAILABLE`, `INSUFFICIENT_STOCK`, `QTY_RANGE` | device or customer; RL 60/min |
-| `cart.setQty` / `cart.remove` | `lineId`, `qty` | cart summary | `NOT_FOUND`, `INSUFFICIENT_STOCK` | same |
+| `cart.setQty` / `cart.remove` | `variantId` (the cart line's key; not the order `lineId`), `qty` | cart summary | `NOT_FOUND`, `INSUFFICIENT_STOCK` | same |
 | `cart.applyCoupon` / `removeCoupon` | `code` | cart summary + discount lines | `COUPON_INVALID`, `COUPON_EXPIRED`, `COUPON_LIMIT`, `COUPON_INELIGIBLE` | customer; RL 10/min |
 | `cart.merge` | (session) | cart summary | — | on sign-in |
 | `checkout.quote` | `addressId`, `zoneId` | priced totals (domain-rules §5) | `ADDRESS_INVALID`, `ZONE_UNAVAILABLE` (**D12 / D21**) | customer |

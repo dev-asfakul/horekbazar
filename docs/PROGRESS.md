@@ -2,6 +2,27 @@
 
 Newest first. Each entry: date, phase, done, decided, open, next.
 
+## 2026-10-21 — Checkpoint 4 final corrections: order-line identity and canonical ledger keys (proposed)
+
+- **Owner review:** two inconsistencies to fix. Documentation only. Checkpoint 3 and Checkpoint 4 remain **not approved**.
+- **Audit:** `main` clean, level with `origin/main` at `34d4c31` (verified with `git status` and the GitHub API). Found:
+  1. `SCHEMA.md` OrderLine had no `lineId`, although reservations, ledger keys and returns referenced one.
+  2. The `docs/domain-rules.md` §4 table still used `orderId:lineId:<kind>`, `returnId:lineId:<kind>` and "adjustment id", while §4.1 used namespaced keys.
+  3. Returned-to-origin restock was keyed by `returnId`, but that case has no return record.
+  4. §4.1 assumed at most one line per variant.
+  5. `docs/BUILD-PLAN.md` §4 still showed `orderId:lineId:release`.
+- **Done:**
+  - **`lineId`** defined in `SCHEMA.md` → OrderLine and in domain-rules §4.1: a server-generated ObjectId created in the placement transaction, stable for the line's lifetime, never replaced by `variantId`. Reservations, ledger keys, partial cancellation (§3), returns and line status all reference it. The "one line per variant" assumption is removed. Cart operations use `variantId` (the cart's own key) and are kept distinct from order `lineId`.
+  - **One canonical ledger-key format** `<namespace>:<entityId>:<lineRef>:<kind>` in the §4 table, §4.1, `SCHEMA.md` and `docs/BUILD-PLAN.md`. The namespaces are `order`, `rto` (new, for returned-to-origin goods), `return` and `stock`. `adjustmentId` is the inventory request key.
+  - The §4 table change is marked as a **proposed Checkpoint 4 amendment** of the approved Checkpoint 2 format; the rule itself is unchanged.
+  - `SCHEMA.md` → v0.2.2: ledger `refType`/`refId`/`lineRef`; line-status enum marked **[A]**.
+- **Checks run (real outcomes):**
+  - Markdown table column-count check on the 4 changed files: 0 mismatches.
+  - Search for old key formats and the one-line-per-variant assumption outside the two change notes: 0 matches.
+  - Catalogue checker: 0 errors and 0 warnings; Ajv: 4 of 4 files valid. The catalogue is unaffected and was re-run as a guard.
+  - Diff review: only the 4 intended files changed.
+- No concurrency, transaction, security, browser, accessibility or performance test was run, and none is claimed.
+
 ## 2026-10-21 — Checkpoint 4 amended after the owner's plan review; awaiting owner approval
 
 - **Owner review:** three corrections requested (idempotency, CSP and caching, breakpoints). Checkpoint 3 and Checkpoint 4 are **not approved**. Moving to Checkpoint 4 authorised planning only.

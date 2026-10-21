@@ -87,7 +87,7 @@ Rules:
 - Transitions are enforced by a single state-machine function; any other transition is rejected with `409`. Every transition writes an `orderEvents` row (who, when, from, to, reason) in the same transaction as the stock effect.
 - **Customer verification for COD (D13, approved at Checkpoint 2):** checkout requires a signed-in account and a **format-valid Bangladeshi mobile number** (`01[3-9]` followed by 8 digits, stored in E.164 as `+8801…`) on the delivery address. A valid format is not proof of ownership; ownership is checked by the **mandatory admin confirmation** step (`pending_confirmation → confirmed`) before any processing. Customer email verification is optional; **no phone OTP** until an SMS provider is explicitly approved (D14).
 - Customer self-cancel is allowed only in `pending_confirmation` or `confirmed` **[A]**; later, the customer can request cancellation and an operator decides.
-- **Partial cancellation**: lines carry their own status; cancelling a line releases (before shipping) or creates a return-to-stock task (after shipping) for that line only; order totals, coupon eligibility and delivery fee are recalculated and the customer is shown the change.
+- **Partial cancellation**: lines carry their own status and are identified by their `lineId` (§4.1, `SCHEMA.md` → OrderLine); cancelling a line releases (before shipping) or creates a return-to-stock task (after shipping) for that line only; order totals, coupon eligibility and delivery fee are recalculated and the customer is shown the change.
 - **Auto-cancel**: `pending_confirmation` older than a configurable window (default 48 h, in line with the reported guideline's 48-hour notice for unavailable products **[L]**) is flagged to operators; auto-cancel is configurable and off by default **[A]**.
 - Delivery time promise shown at checkout comes from the zone settings and, for the BD demo, is set to respect the reported 5-day same-city / 10-day other-city guideline **[L]**; the template lets other stores set their own.
 - Order numbers are human-readable, non-sequential across stores (prefix + date + random), and never expose the database id.
@@ -106,13 +106,22 @@ Per variant (`stock`): `onHand`, `reserved`, `available = onHand − reserved` (
 
 | Movement | When | Effect | Idempotency key |
 |---|---|---|---|
-| `receive` | stock in | onHand +n | adjustment id **(Checkpoint 4 proposed: `stock:<adjustmentId>:<variantId>:receive`, §4.1)** |
-| `adjust` | manual correction (reason required) | onHand ±n | adjustment id **(Checkpoint 4 proposed: `stock:<adjustmentId>:<variantId>:adjust`, §4.1)** |
-| `reserve` | order placed | reserved +n (guarded: `available ≥ n`) | `orderId:lineId:reserve` |
-| `release` | cancel/reject before shipping, partial cancel | reserved −n | `orderId:lineId:release` |
-| `commit` | shipped | onHand −n, reserved −n | `orderId:lineId:commit` |
-| `restock` | verified return or returned-to-origin, inspected resellable | onHand +n | `returnId:lineId:restock` |
-| `write_off` | inspected not resellable | ledger only (onHand already deducted) | `returnId:lineId:write_off` |
+| `receive` | stock in | onHand +n | `stock:<adjustmentId>:<variantId>:receive` |
+| `adjust` | manual correction (reason required) | onHand ±n | `stock:<adjustmentId>:<variantId>:adjust` |
+| `reserve` | order placed | reserved +n (guarded: `available ≥ n`) | `order:<orderId>:<lineId>:reserve` |
+| `release` | cancel/reject before shipping, partial cancel | reserved −n | `order:<orderId>:<lineId>:release` |
+| `commit` | shipped | onHand −n, reserved −n | `order:<orderId>:<lineId>:commit` |
+| `restock` | verified customer return, inspected resellable | onHand +n | `return:<returnId>:<lineId>:restock` |
+| `restock` | returned to origin (failed delivery), inspected resellable | onHand +n | `rto:<orderId>:<lineId>:restock` |
+| `write_off` | inspected not resellable (customer return or returned to origin) | ledger only (onHand already deducted) | `return:<returnId>:<lineId>:write_off` or `rto:<orderId>:<lineId>:write_off` |
+
+**Key format: Checkpoint 4 amendment, proposed and awaiting owner approval.**
+- **What changed:** the Checkpoint 2 table used `orderId:lineId:<kind>` for order movements, `returnId:lineId:<kind>` for returns (including returned-to-origin goods) and "adjustment id" for `receive` and `adjust`. The canonical format is now `<namespace>:<entityId>:<lineRef>:<kind>`, defined in §4.1.
+- **What did not change:** the rule itself. There is still one unique key per logical movement, and a retry reuses it.
+- **Why:**
+  - The namespace keeps orders, returned-to-origin goods, customer returns and stock documents apart.
+  - `<lineRef>` lets one adjustment cover several variants.
+  - Returned-to-origin goods have no return record, so they cannot use a `returnId` key.
 
 Rules (all must be tested, including under concurrency):
 1. `available` never goes below zero. Reservation uses a single guarded update (`{variantId, available: {$gte: n}}` → `$inc`) inside the order transaction; if any line fails, the whole order fails with a clear "only N left" message.
@@ -133,8 +142,9 @@ This section makes the keys in §4, §9 and §13 precise. It changes only one ke
 | Request key | the same request processed twice (double tap, both Place order buttons, client retry) | `idempotencyKeys` unique `{scope, principalId, key}`; stores `fingerprint` (hash of the normalised request) and `resultRef` | client UUID. Checkout: generated once per checkout view, renewed after success or when the cart changes. Staff: one per action dialog |
 | Order | a second order for the same checkout request, including after the request key has expired | `orders` unique `{userId, checkoutKey}` | the checkout request key |
 | Cart | two different checkout requests (two tabs) both ordering the same cart | compare-and-set on the customer's cart `{userId, version}`; placement marks the cart `converted` | — |
-| Reservation | two reservations for one order line | `reservations` unique `{orderId, lineId}`; an order has at most one line per variant (`{orderId, lines.variantId}` checked in the service) | — |
-| Ledger movement | the same stock movement twice | `inventoryLedger.idempotencyKey` unique, deterministic: `order:<orderId>:<lineId>:reserve\|release\|commit`, `return:<returnId>:<lineId>:restock\|write_off`, `stock:<adjustmentId>:<variantId>:receive\|adjust` | the type prefix keeps the namespaces apart |
+| Order line | ambiguous line identity | every order line has a `lineId`: a server-generated ObjectId (hex string) created in the placement transaction, unique within the order (and in practice globally), **never regenerated, reused, renumbered or removed**; cancelled and returned lines keep their `lineId` and change only their status. Lines are never identified by `variantId`: one order may contain separate lines for the same variant, and services must not assume otherwise | — |
+| Reservation | two reservations for one order line | `reservations` unique `{orderId, lineId}` | — |
+| Ledger movement | the same stock movement twice | `inventoryLedger.idempotencyKey` unique. **Canonical format `<namespace>:<entityId>:<lineRef>:<kind>`** (the §4 table uses it): `order:<orderId>:<lineId>:reserve\|release\|commit`; `return:<returnId>:<lineId>:restock\|write_off`; `rto:<orderId>:<lineId>:restock\|write_off`; `stock:<adjustmentId>:<variantId>:receive\|adjust` | the namespace keeps unrelated operations apart. A retry of the same logical movement rebuilds the same key; a separate movement has a different entity or kind. Each order line is reserved, released, committed and returned-to-origin at most once in its lifetime. A re-ship after `delivery_failed` does not commit again. Separate customer returns of one line differ by `returnId`. `adjustmentId` is the inventory request's client key (request-key scope `inventory`), so a retried submission reuses it and a new submission gets a new one. One adjustment lists each variant at most once |
 | Order transition | lost updates and transitions applied twice | compare-and-set on `{_id, status: from, version: v}` → `version: v + 1`; `orderEvents` unique `{orderId, seq}` with `seq = v + 1` | plus the request key for the request itself |
 | Coupon | the order's one coupon counted twice; usage limits exceeded under concurrency | `couponRedemptions` unique `{orderId}` (one coupon per order, §5); `coupons.used` guarded `$inc` with `used < usageLimit`; per-customer counter `couponCustomerUsage` unique `{couponId, userId}`, updated with a guarded `$inc` (`count < perCustomerLimit`) | — |
 | Outbox | the same side effect queued twice | `outbox.idempotencyKey` unique, deterministic `<type>:<aggregateId>:<seq>`, for example `email.order_confirmed:<orderId>:3` | consumers dedupe on it (for example `emailLog` unique `outboxKey`) and pass it to providers that support idempotency **[NV per provider]** |
@@ -157,7 +167,7 @@ Lines are processed in `variantId` order, so concurrent orders touch shared docu
    - If both are in flight, they conflict on the request-key document. The loser retries, finds the committed result and returns it. If the first request aborted (for example on stock), the second runs fresh.
    - The same key with a different fingerprint returns `409 IDEMPOTENCY_KEY_REUSED` and writes nothing.
    - A second tab with a new key fails `409 CART_CHANGED` once the cart is converted.
-2. **One order with several variants:** each line gets its own reservation `{orderId, lineId}` and ledger key. If any line fails its guard, the whole transaction aborts, with no partial reservation, and the response names the lines with their real `available` quantity (`409 INSUFFICIENT_STOCK`).
+2. **One order with several variants:** each line gets its own reservation `{orderId, lineId}` and ledger key. If two lines use the same variant, both guarded updates run on that variant's `stock` document in sequence inside the same transaction. If any line fails its guard, the whole transaction aborts, with no partial reservation, and the response names the lines with their real `available` quantity (`409 INSUFFICIENT_STOCK`).
 3. **Two customers, the same stock:** each transaction applies the guarded update `{variantId, available: {$gte: n}}`.
    - Concurrent writers to the same stock document conflict, and one retries.
    - On retry the guard sees the committed value, so the request either succeeds within the remaining stock or returns `409 INSUFFICIENT_STOCK`.
