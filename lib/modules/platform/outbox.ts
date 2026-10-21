@@ -111,6 +111,37 @@ export async function failJob(
 
 export type OutboxHandler = (job: OutboxDoc) => Promise<{ providerRef?: string }>;
 
+/**
+ * Runs one specific row immediately (for example a verification e-mail the shopper is waiting for).
+ * It uses the same atomic claim, lease and retry bookkeeping as the drain, so a failure here simply
+ * leaves the row for the next drain. Returns "done" only when the handler reported provider acceptance.
+ */
+export async function runOutboxJobNow(
+  db: Db,
+  idempotencyKey: string,
+  handlers: Record<string, OutboxHandler>,
+  options: { workerId: string; leaseMs?: number; now?: Date } = { workerId: "inline" },
+): Promise<"done" | "retrying" | "dead" | "not_claimed"> {
+  const now = options.now ?? new Date();
+  const leaseUntil = new Date(now.getTime() + (options.leaseMs ?? DEFAULT_LEASE_MS));
+  const job = await db.collection<OutboxDoc>(OUTBOX).findOneAndUpdate(
+    { idempotencyKey, status: { $in: ["pending", "failed"] }, availableAt: { $lte: now } },
+    { $set: { status: "processing", leaseUntil, leaseOwner: options.workerId, updatedAt: now }, $inc: { attempts: 1 } },
+    { returnDocument: "after" },
+  );
+  if (!job) return "not_claimed";
+  const handler = Object.hasOwn(handlers, job.type) ? handlers[job.type] : undefined;
+  try {
+    if (!handler) throw new Error(`no handler registered for ${job.type}`);
+    const outcome = await handler(job);
+    await completeJob(db, job._id, options.workerId, outcome.providerRef ? { providerRef: outcome.providerRef } : {});
+    return "done";
+  } catch (error) {
+    const failed = await failJob(db, job, options.workerId, error);
+    return failed.dead ? "dead" : "retrying";
+  }
+}
+
 export interface DrainOptions {
   workerId: string;
   trigger: JobRunResult["trigger"];
