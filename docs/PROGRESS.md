@@ -2,11 +2,11 @@
 
 Newest first. Each entry: date, phase, done, decided, open, next.
 
-## 2026-10-21 — Phase B0: toolchain skeleton and D17 CSP/caching spike (local only, not pushed)
+## 2026-10-21 — Phase B0: toolchain skeleton and D17 CSP/caching spike (pushed to `preview/horekbazar-v1`)
 
 - **Owner decision:** Checkpoint 3 (the amended "Khata" direction) **approved**. Checkpoint 4 **approved with conditions**: `docs/BUILD-PLAN.md`, `MOTION.md`, `SCHEMA.md` v0.2.2 and the canonical ledger-key format in `docs/domain-rules.md` §4.1, as a design contract (`order:<orderId>:<lineId>:<kind>`; `return:<returnId>:<lineId>:<kind>`; `rto:<orderId>:<lineId>:<kind>`; `stock:<adjustmentId>:<variantId>:<kind>`). The approval does not authorise invented catalogue data, unapproved prices, unlicensed images or location data, or silently resolving open decisions. The owner authorised **Phase B0 only**.
 - **Audit before work:** `main` clean and level with `origin/main` at `dacc199`. No application code existed. Skill v3.0.2 installed (git-ignored). Node.js 24.22.0 was installed locally for the build (SHA-256 verified); the system Node.js 20 is end-of-life and below Vitest 5's engine range.
-- **Done (code, local branch `b0-toolchain`, not pushed):**
+- **Done (code, branch `preview/horekbazar-v1`):**
   - Toolchain, all versions pinned exactly in `package.json` and `package-lock.json`: next 16.4.2, react and react-dom 19.3.1, zod 4.6.7; dev: typescript 6.0.3, tailwindcss and @tailwindcss/postcss 4.3.3, eslint 9.39.5 with eslint-config-next 16.4.2, vitest 5.0.5, @playwright/test 1.64.1, ajv 8.20.0, ajv-formats 3.0.1. `.nvmrc` 24; `engines` `>=24 <25`.
   - Strict `tsconfig.json`, with `noUncheckedIndexedAccess` and `exactOptionalPropertyTypes`. `next.config.ts` uses `output: "standalone"`, no `X-Powered-By` header and no browser source maps.
   - ESLint (Next core-web-vitals and TypeScript rules). Application code may not import `catalogue/**`, and `console` is not allowed.
@@ -25,8 +25,8 @@ Newest first. Each entry: date, phase, done, decided, open, next.
   - Lint probe: importing `catalogue/` from app code was flagged (1 error).
   - `npm audit --omit=dev`: 0 vulnerabilities. Full audit: 5 high, all in the dev-only chain eslint-config-next → @next/eslint-plugin-next → fast-glob → micromatch → braces 3.0.3 ([GHSA-vfj7-8cjw-p6xm](https://github.com/advisories/GHSA-vfj7-8cjw-p6xm)). No patched `braces` exists. npm's suggested fix downgrades eslint-config-next to 14, so it was rejected. Recorded as a known issue.
   - Skill `completeness.mjs`: exit 1 (expected, the template is not built). Template 11/22, Routes 18/33, Journeys 1/12, Functions 0/8, States 0/11, Admin 1/29. The route count is the script's own match; only `/[locale]` and `/api/health` exist. It flags `.env.example` for missing the test-only `E2E_PORT`.
-  - **Not run:** CI on GitHub (nothing pushed); the skill gate; any database, auth, transaction, concurrency, accessibility, performance or load test. None is claimed.
-- **D17 spike (local branch `spike/csp`, never merged, not pushed).** Full result in `docs/BUILD-PLAN.md` §9.1. Production standalone build over HTTP; Chromium 156, Firefox 157, WebKit 27.2.
+  - **Not run locally:** the skill gate; any database, auth, transaction, concurrency, accessibility, performance or load test. None is claimed.
+- **D17 spike (local branch `spike/csp`, never merged, not pushed by owner decision).** Full result in `docs/BUILD-PLAN.md` §9.1. Production standalone build over HTTP; Chromium 156, Firefox 157, WebKit 27.2.
 
   | Route on the spike | CSP | Build | Cache headers (3 requests) | Scripts in HTML | Violations (Cr / Fx / WK) | Hydration |
   |---|---|---|---|---|---|---|
@@ -37,8 +37,9 @@ Newest first. Each entry: date, phase, done, decided, open, next.
   - **Reading:** option (b), "experimental SRI with a strict static CSP", **does not work as specified** on Next.js 16.4.2: the inline scripts are not covered. Option (a), the approved rule, works on the spike, and server data caching still works. CSP hashes, `"use cache"` and CDN behaviour were **not tested**. **D17 stays open for the owner.**
   - Process note: the spike's files were not committed when its worktree was first removed. They were rebuilt exactly from the session record, the spike was rebuilt and measured again (same numbers), and then committed (`spike/csp` at `16a5264`). No owner work was affected.
 - **Known issues (proposed handling, not decided):** the dev-only `braces` advisory above. npm 11 notes that the `unrs-resolver` install script was not run; lint works without it. WebKit over plain HTTP with `upgrade-insecure-requests` (§9.1). CI uses Chromium only.
-- **Open (unchanged):** D11 catalogue (235 unapproved prices: 39 historical TCB references, 196 estimates; images absent; compliance flags provisional); D12 location dataset (still blocks checkout behaviour that needs it); D5 hosting; D17 CSP and caching; **D18 push workflow, which blocks pushing B0**; D19–D23; coupon-usage restoration on cancellation.
-- **Next:** the owner decides D18 (where B0 code is pushed, and whether `spike/csp` is pushed). After the push, CI must pass on GitHub from a clean clone; only then is B0 complete. Then the owner decides D17 and approves Phase B1.
+- **Open (unchanged):** D11 catalogue (235 unapproved prices: 39 historical TCB references, 196 estimates; images absent; compliance flags provisional); D12 location dataset (still blocks checkout behaviour that needs it); D5 hosting; D17 CSP and caching; D19–D23; coupon-usage restoration on cancellation.
+- **D18 decided (owner, 2026-10-21):** B0 is pushed to `preview/horekbazar-v1`; `main` is untouched; `spike/csp` stays local, so its code exists only in the sandbox, and its results are recorded here and in BUILD-PLAN §9.1.
+- **Next:** CI must pass on GitHub for `preview/horekbazar-v1`; only then is B0 complete. Then the owner decides D17 and approves Phase B1.
 
 ## 2026-10-21 — Handoff: environment set up, skill installed, ledger-key wording aligned (proposed)
 
