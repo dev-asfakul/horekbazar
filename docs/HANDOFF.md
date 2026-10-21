@@ -17,6 +17,36 @@ Deployment: `horekbazar-preview.vercel.app` runs B3 code but reports `database: 
 (`horekbazar`, `horekbazar-preview` in team `dev-choice`); the owner has not said which is
 canonical. Do not guess.
 
+## B4 in progress (resume here)
+
+Owner approval 2026-10-22: B4 approved; D11 changed: "generate some catalogue source data and push
+to database, and admin will curd them for real and test". Implementation of that change: the
+existing generated package `catalogue/horekbazar/` (39 categories, 144 products) is loaded into the
+**development** database only, by `npm run db:seed` (dry run by default; `--confirm` writes; refuses
+unless the database name ends with `_dev`; idempotent by slug and SKU; never deletes; every seeded
+document carries `sample: true` and the admin shows a "Sample" badge; products stay draft, stock 0).
+Its prices are research estimates, not selling prices. Repository visibility: owner approved private,
+but on GitHub Free a private personal repository loses branch protection and secret scanning
+(docs.github.com); held for the owner's choice. Secret scanning and push protection were enabled
+2026-10-22 while public.
+
+Steps (each is pushed to `preview/horekbazar-v1` when done; tick here in the same commit):
+
+- [ ] 1. Catalogue domain: schemas, validators, indexes for `categories`, `products`, `variants`,
+      `stock`, `inventoryLedger`; services (category depth 3 and cycle rules, product and variant
+      upsert with `version`, publish/archive, inventory receive/adjust with ledger idempotency);
+      audit on every write; integration tests.
+- [ ] 2. Settings and delivery zones (`settings` singleton with `version`; accent contrast check;
+      zones without area mapping, D12) and merchandising (`collections` manual, `homeSections` six
+      types, `banners`); tests.
+- [ ] 3. Media: `/api/media/sign` (Cloudinary signed upload, `catalogue.write`, allow-list);
+      disabled with a notice when Cloudinary is not configured.
+- [ ] 4. Admin pages and server actions: products (list with search, filter, pagination; editor),
+      categories, inventory, collections, homepage, banners, settings; bn/en messages.
+- [ ] 5. `npm run db:seed` from `catalogue/horekbazar/` and its run on `horekbazar_dev`.
+- [ ] 6. Playwright with a disposable database (sign in as a catalogue editor, create a product
+      with a LabelTile, publish it); Motomation gate; docs; PR.
+
 ## Rules that are easy to break
 
 - Never invent catalogue data, prices, stock, reviews, discounts or urgency (D11 is open).
