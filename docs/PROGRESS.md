@@ -8,7 +8,7 @@ Newest first. Each entry: date, phase, done, decided, open, next.
 - **This time GitHub delivered the push:** CI `push` run on `a8a26a6` succeeded, and Vercel reported a completed deployment for `horekbazar-preview`.
 - **Deployed behaviour (https://horekbazar-preview.vercel.app):** `/admin/health` answers 307 to `/login?next=%2Fadmin%2Fhealth` (B3 behaviour; B1 answered 404), `/api/auth/sign-in/email` 404 (auth HTTP API narrowed), `/login` 200, `/api/health` `{"setupRequired":true,"checks":{"database":"not_configured"}}`. So the deployment runs B3 code with **no database configured** on Vercel; nothing beyond setup-required works there until the owner adds the variables. Whether this project is the canonical production is still the owner's decision.
 
-## 2026-10-21 — Phase B3: identity (branch `feat/b3-identity`)
+## 2026-10-21 — Phase B3: identity (built locally on `feat/b3-identity`, pushed to `preview/horekbazar-v1`, PR #4)
 
 - **Owner instruction:** "yes … continue building" in answer to the B3 approval request and to running `db:migrate` on the development database `horekbazar_dev`. D23 was not answered explicitly, so the BUILD-PLAN default, **option (a) email verification**, is implemented, with the deployer's `SETUP_TOKEN` as an added, **proposed** hardening (see DESIGN.md Decision trace).
 - **Built:**
@@ -18,7 +18,7 @@ Newest first. Each entry: date, phase, done, decided, open, next.
   - Server enforcement: `gateStaffPage()` in `lib/auth/server.ts` on every admin page; every admin action re-checks the principal and capability on the server. `proxy.ts` only does a cookie-presence 307 to `/login?next=` (not an authorisation decision) and sets the `x-hb-path` request header so the 403 page can name the missing capability.
   - Owner recovery CLI `npm run admin:recover-owner` (audited, revokes sessions).
   - Email through the outbox (`lib/adapters/email/`, `lib/modules/identity/mail.ts`, bn/en templates in `emails.ts`) with inline delivery on request and outbox retry on failure.
-  - Removed the development-open admin (`lib/platform/access.ts`, HealthView dev notice); `/admin/health` now needs `platform.health` like every other admin page.
+  - Removed the development-open admin (`lib/platform/access.ts`, HealthView dev notice); `/admin/health` now needs `platform.read` like every other admin page.
 - **Defects found by the tests and fixed:**
   - `verifyTOTP` returns the *old* session token, while it rotates the cookie; the new token is now read from `Set-Cookie` (`sessionTokenFromSetCookie`) before marking the second factor.
   - Google sign-in bypassed staff 2FA, because Better Auth only challenges the email/password path. Fixed with a `secondFactorAt` session field: staff with 2FA enabled are sent to `/admin/security` until the TOTP or backup code is verified in this session (**proposed**, DESIGN.md).
