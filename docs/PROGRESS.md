@@ -2,6 +2,12 @@
 
 Newest first. Each entry: date, phase, done, decided, open, next.
 
+## 2026-10-21 — B3 merged to `main` and deployed (preview project)
+
+- **Merge:** PR #4 merged by the agent on the owner's instruction ("pr and marge if margable") at 17:14:58 UTC, after every check passed on head `ec40573`: CI `check` on push and pull_request (unit 86/86, integration 39/39, Playwright 179 passed / 58 skipped / 0 failed), Vercel `horekbazar-preview` preview success. `main` is `a8a26a6`.
+- **This time GitHub delivered the push:** CI `push` run on `a8a26a6` succeeded, and Vercel reported a completed deployment for `horekbazar-preview`.
+- **Deployed behaviour (https://horekbazar-preview.vercel.app):** `/admin/health` answers 307 to `/login?next=%2Fadmin%2Fhealth` (B3 behaviour; B1 answered 404), `/api/auth/sign-in/email` 404 (auth HTTP API narrowed), `/login` 200, `/api/health` `{"setupRequired":true,"checks":{"database":"not_configured"}}`. So the deployment runs B3 code with **no database configured** on Vercel; nothing beyond setup-required works there until the owner adds the variables. Whether this project is the canonical production is still the owner's decision.
+
 ## 2026-10-21 — Phase B3: identity (branch `feat/b3-identity`)
 
 - **Owner instruction:** "yes … continue building" in answer to the B3 approval request and to running `db:migrate` on the development database `horekbazar_dev`. D23 was not answered explicitly, so the BUILD-PLAN default, **option (a) email verification**, is implemented, with the deployer's `SETUP_TOKEN` as an added, **proposed** hardening (see DESIGN.md Decision trace).

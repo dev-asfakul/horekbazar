@@ -11,10 +11,10 @@ verified), **Partial**, **Missing**, **Blocked** (by an owner decision or creden
 
 | Item | Observed |
 |---|---|
-| `main` | `63474d9` (merge of PR #3, docs). B3 is on `preview/horekbazar-v1` with a PR to `main` |
-| `preview/horekbazar-v1` | `63474d9` + the B3 commits (fast-forward) |
-| CI on `main` | **none**: GitHub's activity log has no entry for the PR #2 merge (nor for the `a7b4a64` push), so no Actions run and no Vercel build started. PR #1's merge was recorded normally. CI on preview commits passed; one WebKit focus test failed once on PR #3 and passed on re-run (intermittent) |
-| Canonical deployment | **Not determined.** `dev-choice` has two Git-connected projects, `horekbazar` and `horekbazar-preview`. `https://horekbazar-preview.vercel.app` serves **B1**: `/admin/health` and `/api/jobs/drain` return 404, so it is not `a22f81b`. The deployed SHA cannot be read: the agent's Vercel token gets 403 on `dev-choice` (CLI and REST API) |
+| `main` | `a8a26a6` (merge of PR #4: B3). CI `push` run success; Vercel `horekbazar-preview` deployment completed |
+| `preview/horekbazar-v1` | level with `main` plus this docs update |
+| CI on `main` | PR #3 and PR #4 merges: `push` runs succeeded (`a8a26a6` verified). Earlier, GitHub recorded no push event for the PR #2 merge or `a7b4a64`. The WebKit 375 px focus test is intermittent (failed once on PR #3, passed on re-run) |
+| Canonical deployment | **Not determined.** `dev-choice` has two Git-connected projects, `horekbazar` and `horekbazar-preview`. `https://horekbazar-preview.vercel.app` now serves B3 (`/admin/health` 307 to login) with `database: not_configured`. The deployed SHA cannot be read: the agent's Vercel token gets 403 on `dev-choice` (CLI and REST API) |
 | Local re-run (B3 branch) | lint OK; typecheck OK; unit 86/86; `db:validators --check` OK; integration 39/39 (disposable MongoDB 8.0.4 replica set); zero-variable `next build` OK; Playwright 178 passed, 58 skipped (opt-in screenshots and the WebKit maintenance check), 1 intermittent WebKit failure that passed 12/12 on repeat. Motomation gate on `/login`: **not verified** (exit 3, timeouts in this sandbox) |
 
 ## Requirements
