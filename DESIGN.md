@@ -1,6 +1,6 @@
 # HorekBazar: Design and Architecture Record
 
-Status: **Checkpoint 1 (Stack) approved 2026-10-21 with amendments. Checkpoint 2 (Product contract) approved 2026-10-21 with conditions (below). Checkpoint 3 (Research and direction) proposed; "Khata" direction accepted in principle by the owner, amended after review 2026-10-21; the owner directed moving forward to Checkpoint 4, and explicit approval is requested together with Checkpoint 4. Checkpoint 4 (Build plan) proposed 2026-10-21, awaiting owner approval (`docs/BUILD-PLAN.md`, `MOTION.md`, `SCHEMA.md` v0.2).** D11: Owner authorized catalogue generation; generated catalogue pending owner review and approval. D12 (location data) remains open; D5 deferred.
+Status: **Checkpoint 1 (Stack) approved 2026-10-21 with amendments. Checkpoint 2 (Product contract) approved 2026-10-21 with conditions (below). Checkpoint 3 (Research and direction) proposed; "Khata" direction accepted in principle by the owner, amended after review 2026-10-21; the owner directed moving forward to Checkpoint 4, and explicit approval is requested together with Checkpoint 4. Checkpoint 4 (Build plan) proposed 2026-10-21 and amended after the owner's plan review the same day, awaiting owner approval (`docs/BUILD-PLAN.md`, `MOTION.md`, `SCHEMA.md` v0.2.1, `docs/domain-rules.md` §4.1 proposed).** D11: Owner authorized catalogue generation; generated catalogue pending owner review and approval. D12 (location data) remains open; D5 deferred.
 No application code exists yet.
 
 Skill: `asfakulsiam-motomation-design` v3.0.2 (installed with `npx skills add`, hash in `skills-lock.json`, verified identical to upstream `main`).
@@ -285,7 +285,7 @@ Checkpoint 3 of 6. Status: **proposed 2026-10-21; "Khata" direction accepted in 
 1. **Mobile navigation:** restored the contract's five-item bottom bar (Home, Categories, Search, Cart, Account). The RunningTotalBar now sits above it inside one bottom dock, with safe-area and no-obscuring rules (Layout → Bottom dock).
 2. **Category depth:** the contract says "category tree up to 3 levels". `SCHEMA.md` v0 had said depth 2 and cited `docs/domain-rules.md` §2, but that section has no depth rule, so the citation was wrong. **Resolution: maximum 3 levels everywhere, with the approved contract as the source.** The generated taxonomy uses 2 levels, which is within the limit. The catalogue checker now enforces ≤ 3 instead of 2 (details in `docs/PROGRESS.md`).
 3. **Listing density:** the contract says "2 columns at 375px, 4–5 at 1440px" and "3-column grids" at 768 px. v0 had single-column rows on mobile listings. Listings now use the contract's column counts, laid out as a **ruled khata grid**: hairline rules between entries, no card boxes. Single-column ruled rows remain for the cart, checkout summary, order lines and search suggestions.
-4. **Header:** aligned with the contract: persistent search on every storefront page with the category entry beside it; mega-menu at 1440 px; persistent filter sidebar at 1440 px; filter sheet at 768 px and below; admin card lists on a phone, full tables from 1024 px.
+4. **Header:** aligned with the contract: persistent search on every storefront page with the category entry beside it; mega-menu at 1440 px; persistent filter sidebar at 1440 px; filter sheet below 1280 px (exact edges: Layout → Viewport bands, Checkpoint 4); admin card lists on a phone, full tables from 1024 px.
 5. **Verification:** results are now labelled **measured**, **hypothesis** or **build check** (section "Verification status").
 
 **Access:** web (searched 2026-10-21). Font files were downloaded from the official [google/fonts](https://github.com/google/fonts) repository and measured locally with fontTools 4.67. Number formatting was checked in Node 20 (ICU). Baymard's full reports are paywalled, so only their public articles and summaries were used. Shwapno was read from a cached copy, so what it showed may since have changed.
@@ -442,7 +442,17 @@ Light theme only in v1. Tokens are semantic, and buyers set the brand colours (`
 
 ## Layout
 
-- **Grid:** 4 columns under 640 px, 8 from 640 px, 12 from 1024 px; content max-width 1240 px.
+- **Viewport bands (the single definition; Checkpoint 4, proposed).** The edges follow Tailwind's `md` 768, `lg` 1024 and `xl` 1280; each band starts **at** its lower edge, so exactly one layout applies at 768, 1024 and 1280 px. Other documents point here.
+
+  | Band | Widths | Test width | Navigation | Listing columns | Filters | Context strips | Admin lists |
+  |---|---|---|---|---|---|---|---|
+  | S | 0–767 px (`width < 768px`) | 375 (also 320 reflow, 390) | **bottom dock**: five-item bottom bar + at most one context strip; sticky search row with the category button (opens the department sheet) | **2** | `FilterSheet` | StickyBuyStrip (`/p`), CheckoutSummaryStrip (`/checkout`), RunningTotalBar (other routes, cart not empty, not `/cart`) | cards |
+  | M | 768–1023 px | **768** | **no dock**: header with persistent search, category button (department sheet), account and cart links | **3** | `FilterSheet` | none: buy box, checkout summary and cart total stay in the page flow | cards |
+  | L | 1024–1279 px | 1024 | as M | 4 | `FilterSheet` | none | **tables** |
+  | XL | ≥ 1280 px | **1440** | as M, with the **mega-menu** in place of the category button | **4** with the filter sidebar; **5** without | persistent `FilterSidebar` | none | tables |
+
+  The contract's 1440 px behaviours (sidebar, mega-menu, 4–5 columns) begin at 1280 px, which includes 1440. Bands M–XL add no new feature; they only stop showing the mobile dock. Phones in landscape wider than 767 px get band M **[H: checked on devices]**.
+- **Page layout grid** (not the listing columns): 4 columns under 640 px, 8 from 640 px, 12 from 1024 px; content max-width 1240 px.
 - **Margins / gutters:** margins 16 / 24 / 32 px; gutters 12 / 16 / 24 px; 4 px spacing base (`4 8 12 16 24 32 48 64 96`).
 - **Listing entry (ruled khata grid):** **2 columns at 375 px, 3 at 768 px, 4–5 at 1440 px** (contract).
   - Each entry: 1:1 image slot (photo or LabelTile) · name (two lines maximum) · pack and unit price in `--muted` · price in tabular figures · AddToCart, which becomes a stepper.
@@ -454,14 +464,14 @@ Light theme only in v1. Tokens are semantic, and buyers set the brand colours (`
 - **Nav (contract navigation, unchanged):**
   - Header on every storefront page: wordmark, **persistent search field** with the **category entry beside it**, language switch (`EN` / `বাংলা`, keeps the page per §10), account and cart on desktop.
   - At 375 px the search field is a full-width row under the wordmark, and the category button (বিভাগ) sits beside it. **Checkpoint 4 refinement (proposed):** the wordmark row scrolls away and the search row stays sticky (about 52 px **[H]**), so Search in the bottom bar can focus it without a scroll jump (`docs/BUILD-PLAN.md` §5).
-  - 375 px: **five-item bottom bar: Home (হোম), Categories (বিভাগ), Search (খুঁজুন), Cart (কার্ট, with a count), Account (অ্যাকাউন্ট)**.
+  - Band S (below 768 px, tested at 375 px): **five-item bottom bar: Home (হোম), Categories (বিভাগ), Search (খুঁজুন), Cart (কার্ট, with a count), Account (অ্যাকাউন্ট)**.
     - Categories opens the department sheet (9 departments, then their sub-categories; up to 3 levels).
     - Search moves focus to the header search field (it scrolls into view if needed) and opens suggestions.
     - Cart and Account go to `/cart` and `/account`.
     - The current item has `aria-current="page"` and a text label, never an icon alone.
-  - 768 px: header navigation, filter sheet.
-  - 1440 px: **mega-menu** for categories and a persistent filter sidebar.
-- **Bottom dock (375 px; proposed rules so the two bars coexist):**
+  - Bands M and L (768–1279 px): header navigation, no dock, filter sheet.
+  - Band XL (≥ 1280 px, tested at 1440): **mega-menu** for categories and a persistent filter sidebar.
+- **Bottom dock (band S only, below 768 px; tested at 375 px; proposed rules so the two bars coexist):**
   - **One fixed container at the bottom**, stacking from top to bottom:
     1. at most one **context strip**, chosen by priority: PDP sticky add-to-cart (contract) > checkout sticky summary with the place-order button (contract) > RunningTotalBar;
     2. then the five-item bottom bar.
@@ -505,7 +515,7 @@ The stack is shadcn/ui on Radix primitives with Tailwind (Checkpoint 1). Choice 
   - `OrderTimeline`: status steps with text labels.
   - `DeliveryFeeLine`.
   - `SetupRequired` and `EmptyState` (contract D2 and D11 states).
-- **Reuse from Radix/shadcn (never rebuilt):** Dialog and Sheet (department sheet from the bottom bar, filter sheet at 768 px and below, cart on desktop), NavigationMenu (mega-menu at 1440 px), Select, RadioGroup (variant chips with an out-of-stock state), Checkbox, Tabs, Accordion, DropdownMenu, Toast.
+- **Reuse from Radix/shadcn (never rebuilt):** Dialog and Sheet (department sheet from the bottom bar, filter sheet below 1280 px, cart on desktop), NavigationMenu (mega-menu from 1280 px, band XL), Select, RadioGroup (variant chips with an out-of-stock state), Checkbox, Tabs, Accordion, DropdownMenu, Toast.
 - **Adapt from the skill library:** `loader-skeleton` without its moving shimmer; skeletons are static blocks matching the grid-entry or row layout, so reduced-motion users see no difference.
 - **Rejected from the skill library:**
   - `gallery-shop-carousel`: carousel.
@@ -576,7 +586,7 @@ Three labels, so that nothing proposed reads as proven. **No item in the build-c
 
 ## Build plan (Checkpoint 4)
 
-Checkpoint 4 of 6. Status: **proposed 2026-10-21, awaiting owner approval.**
+Checkpoint 4 of 6. Status: **proposed 2026-10-21; amended after the owner's plan review (idempotency contract in domain-rules §4.1, CSP and caching plan §9.1, viewport bands in Layout); awaiting owner approval.**
 - The full plan is in `docs/BUILD-PLAN.md`: route inventory, component architecture, state matrix, domain mapping, responsive plan, accessibility, SEO, performance, security, integrations, phases B0–B11, verification matrix with the k6 plan, risks and definition of done.
 - Motion is in `MOTION.md`; the data and API contract is in `SCHEMA.md` v0.2.
 - The plan adds no product scope and changes no approved rule.
@@ -636,6 +646,7 @@ Checkpoint 4 of 6. Status: **proposed 2026-10-21, awaiting owner approval.**
 | 2026-10-21 | 3 Direction | Research record, directions A/B/C, chosen synthesis "Khata" (A with B's photo grid per category and C's serif title voice), dials, type and colour written | **proposed**, awaiting owner approval |
 | 2026-10-21 | 3 Review | Owner accepted the "Khata" direction in principle and asked for amendments: restore the contract's five-item bottom bar, coexisting with the RunningTotalBar; reconcile category depth; label verification. Category depth resolved to **3 levels maximum**, source: the approved product contract; the generated taxonomy uses 2. Listings realigned to the contract's column counts | **proposed**, awaiting explicit approval; contract unchanged |
 | 2026-10-21 | 4 Build plan | Build plan (B0–B11), MOTION.md, SCHEMA v0.2. Contradictions recorded: nonce CSP vs caching (D17), `middleware.ts` → `proxy.ts`, push workflow vs "main is the shipping truth" (D18), row-level security → repository scoping, D12 blocking checkout (D21), review content under D11 (D20), preview vs D5, first-Owner verification (D23), JS budget (D22) | **proposed**, awaiting owner approval |
+| 2026-10-21 | 4 Plan review | Owner review asked for three corrections. (1) Scoped idempotency and concurrency contract (domain-rules §4.1) replacing the single reservation key. (2) D17 rewritten: SRI is unproven (B0 spike), and the fallback keeps the approved nonce rule. (3) Viewport bands S/M/L/XL with exact edges, so 768 px is band M: no dock, 3 columns | **proposed**, awaiting owner approval |
 | 2026-10-21 | 2 · Correction | Atlas Free clusters do support backups (daily snapshot, up to 4 kept); earlier statement corrected | done |
 
 ### Design decision trace (Checkpoint 3, proposed)

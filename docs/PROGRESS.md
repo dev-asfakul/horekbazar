@@ -2,6 +2,43 @@
 
 Newest first. Each entry: date, phase, done, decided, open, next.
 
+## 2026-10-21 — Checkpoint 4 amended after the owner's plan review; awaiting owner approval
+
+- **Owner review:** three corrections requested (idempotency, CSP and caching, breakpoints). Checkpoint 3 and Checkpoint 4 are **not approved**. Moving to Checkpoint 4 authorised planning only.
+- **Audit:**
+  - `main` clean and level with `origin/main` at `8d9987b` (verified with `git status` and the GitHub API).
+  - The commit contains the 6 files reported.
+  - The approved Next.js version is 16.4.2 (`DESIGN.md` §1).
+  - The Next.js CSP guide was re-fetched live; its version label is "Latest v16.4.2".
+- **Corrections:**
+  1. **Idempotency and concurrency:** new **`docs/domain-rules.md` §4.1 (proposed)**.
+     - Each layer gets its own key: request keys `{scope, principalId, key}` with a fingerprint; orders `{userId, checkoutKey}`; cart compare-and-set; reservations `{orderId, lineId}`; deterministic ledger keys (including the corrected `stock:<adjustmentId>:<variantId>:<kind>`); order compare-and-set with `orderEvents {orderId, seq}`; coupon redemption per order plus guarded counters (new `couponCustomerUsage`); deterministic outbox keys.
+     - The section also defines the transaction boundary, bounded retries, conflict responses and all seven cases.
+     - `SCHEMA.md` → v0.2.1: reservation key fixed; `outbox` aligned with domain-rules §13 (v0.2 had used different field names); `cart.status`/`version`, `orders.checkoutKey`/`version` added; API errors added.
+     - `docs/BUILD-PLAN.md` §4 points to §4.1; tests I1–I10 added; B6–B8 pass criteria use them.
+  2. **CSP and caching:** new **`docs/BUILD-PLAN.md` §9.1**, with route requirements, documented facts quoted, and SRI marked **unverified**.
+     - D17 options: (a) nonces everywhere (approved rule, fallback); (b) SRI only if a B0 spike proves it; (c) `'unsafe-inline'`, rejected.
+     - B0 gains the spike (a throwaway branch, never merged).
+     - "ISR" in SCHEMA and the plan is marked conditional on D17.
+     - D17 stays owner-pending.
+  3. **Breakpoints:** one definition in `DESIGN.md` → Layout → **Viewport bands**: S 0–767, M 768–1023, L 1024–1279, XL ≥ 1280. 768 px is band M: no dock, 3 columns, filter sheet.
+     - SCHEMA, DESIGN and the plan were aligned to it.
+     - B1 pass criteria and the responsive tests now cover both sides of each edge.
+  4. **Decisions table:** "Blocks" and "If left open" columns added for D17–D23, plus the coupon-on-cancel assumption and the Checkpoint 3 and 4 approvals. Risk R10 updated; R16 added (hot-SKU write conflicts).
+- **Unchanged:**
+  - The Khata direction and its amended interaction rules.
+  - The phases B0–B11 (only the B0 spike was added).
+  - Every measured / hypothesis / not-verified label.
+  - `MOTION.md`, `README.md` and `DATA.md` (no material change needed).
+- **Checks run (real outcomes):**
+  - Catalogue checker: 0 errors and 0 warnings; Ajv: 4 of 4 files valid. Catalogue data unchanged.
+  - Skill `completeness.mjs`: Template 10/20, Routes 0/33. These are expected because nothing is built.
+  - Markdown table column-count check on the 5 changed files: 0 mismatches.
+  - A search for leftover statements ("768 px and below", the old reservation key, the old outbox field names, the old D17 wording) found none outside the C12–C14 descriptions.
+  - A diff review for excluded scope (payments, SMS, wishlist, gift cards, subscriptions, POS, warehouses, Q&A): none added.
+- Nothing was built, so no build, browser, accessibility, security, concurrency or load test was run, and none is claimed.
+- **Boundaries unchanged:** D11 catalogue unapproved; all 235 prices unapproved (39 historical TCB references, 196 estimates); images absent; compliance flags provisional; D12 open; D5 deferred. No application code, migrations, imports or deployment.
+
 ## 2026-10-21 — Checkpoint 4 (build plan) proposed; awaiting owner approval
 
 - **Owner direction:** the Checkpoint 4 brief says "We are deliberately moving forward from Checkpoint 3". Recorded as proceeding by owner direction. Explicit Checkpoint 3 approval is requested together with Checkpoint 4.

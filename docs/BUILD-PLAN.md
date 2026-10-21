@@ -1,6 +1,6 @@
 # HorekBazar template: build plan (Checkpoint 4)
 
-Status: **proposed 2026-10-21, awaiting owner approval.** This is a plan only. No application code, database migration, catalogue import, production data or deployment is authorised by it.
+Status: **proposed 2026-10-21; amended the same day after the owner's plan review (idempotency contract, CSP and caching plan, exact breakpoints); awaiting owner approval.** Checkpoint 3 is also still awaiting explicit approval. This is a plan only. No application code, database migration, catalogue import, production data or deployment is authorised by it.
 
 Authority and sources:
 - **Approved:** product contract and Scope (`DESIGN.md`); domain rules (`docs/domain-rules.md`, authority level 4); stack (`DESIGN.md` §1).
@@ -38,7 +38,7 @@ Labels used throughout:
 ### Contradictions found and how this plan handles them
 | # | Contradiction | Sources | Handling |
 |---|---|---|---|
-| C1 | **Nonce-based CSP vs cached storefront.** `docs/domain-rules.md` §9 requires "CSP with nonces". Next.js docs: with nonces "all pages must be dynamically rendered", and "Static optimization and Incremental Static Regeneration (ISR) are disabled" ([Next.js CSP guide](https://nextjs.org/docs/app/guides/content-security-policy)). That conflicts with the cached storefront in `SCHEMA.md` and with the scale goal | domain-rules §9 (approved), SCHEMA routes | **Not silently changed.** Proposed decision **D17** (§13): nonces on dynamic routes only; a strict static CSP plus Next.js's experimental hash-based SRI on cached storefront routes. Until the owner decides, §9 stands and the cost is recorded |
+| C1 | **Nonce-based CSP vs cached storefront.** `docs/domain-rules.md` §9 requires "CSP with nonces". Next.js docs: with nonces "all pages must be dynamically rendered", and "Static optimization and Incremental Static Regeneration (ISR) are disabled" ([Next.js CSP guide](https://nextjs.org/docs/app/guides/content-security-policy)). That conflicts with the cached storefront in `SCHEMA.md` and with the scale goal | domain-rules §9 (approved), SCHEMA routes | **Not silently changed.** D17 (§9.1, owner-pending): the approved nonce rule stays in force and is the fallback; experimental SRI is considered only if a B0 spike proves it on the approved version; `'unsafe-inline'` on the storefront is rejected |
 | C2 | **`middleware.ts` vs `proxy.ts`.** The skill's template list and `scripts/completeness.mjs` look for `middleware.ts`. Next.js 16 states "The `middleware` file convention is deprecated and has been renamed to `proxy`" ([Next.js proxy](https://nextjs.org/docs/app/api-reference/file-conventions/proxy)) | Scope row `template middleware.ts`; stack next 16.4.2 | Use `proxy.ts`, the framework's current convention (correctness outranks a template heuristic). The completeness item `middleware.ts` will report missing; it is recorded as an exception with this reason in `GATE.md`, and the Scope row is noted. No skill file is changed |
 | C3 | **Push-every-update vs "main is the shipping truth".** The owner's standing rule says push every update. The skill says preview pushes go to "any temporary location that is **not main**" and "Nothing reaches main until the design is approved and the gate passes" | AGENTS.md process rule; skill `thinking/sequence.md` | Proposed decision **D18**: build code is pushed after every phase to `preview/horekbazar-v1` (this satisfies push-every-update); the handoff goes to `design/horekbazar-v1` after the gate; only the owner merges to `main`. Planning documents keep going to `main` |
 | C4 | **Row-level security rule.** Skill `sec-03` requires row-level security "where the database supports it". MongoDB has no row-level security of that kind | `gates/rules.md`; domain-rules §1 (repository scoping) | Covered by domain-rules §1: every repository function takes the session principal and scopes the query, with no unscoped customer query outside `lib/db/`. Enforced by tests per repository and recorded in `GATE.md` as the equivalent control |
@@ -49,6 +49,9 @@ Labels used throughout:
 | C9 | **First Owner verification without email.** Staff email verification is mandatory (domain-rules §1). `/admin/setup` creates the first Owner, but email is an optional integration (§7) | domain-rules §1, §7, §8 | Proposed decision **D23** (§13). Until it is decided, setup requires a configured email provider and says so clearly |
 | C10 | **JS budget.** Skill Tier 1 allows ≤ 30 KB gzipped JS beyond the framework per page. The admin (forms, tables, sheets) is likely to exceed it **[H]** | `gates/rules.md` | Storefront is designed to fit **[H]**; it is measured per route. If the admin exceeds the budget, the owner decides (**D22**); the budget is never quietly raised |
 | C11 | **Rewards timing wording.** The Checkpoint 4 brief says "granted only after successful delivery"; domain-rules §5.7 says "earned only on `completed` orders" | brief; domain-rules §5.7 | Consistent: `completed` comes after `delivered` and after the return window. The plan uses the stricter approved rule (accrual at `completed`) |
+| C12 | **Single reservation key.** `SCHEMA.md` v0.2 gave `reservations` one unique `idempotencyKey`, but an order reserves several variants. The ledger's "adjustment id" key collides when one adjustment covers several variants. The outbox fields in `SCHEMA.md` v0.2 also differed from the approved domain-rules §13 | SCHEMA v0.2; domain-rules §4, §13 | Scoped constraints per layer, defined once in **domain-rules §4.1** (proposed): request keys `{scope, principalId, key}`, orders `{userId, checkoutKey}`, reservations `{orderId, lineId}`, deterministic ledger and outbox keys, order compare-and-set with `orderEvents {orderId, seq}`. SCHEMA v0.2.1 now matches §13 |
+| C13 | **SRI presented as viable.** v0 described "a strict static CSP plus experimental SRI" as the proposal. The Next.js 16.4.2 guide calls SRI experimental ("Feature may change or be removed") and does not say how the inline scripts Next.js puts in each page are allowed without nonces | [Next.js CSP guide](https://nextjs.org/docs/app/guides/content-security-policy) (version label "Latest v16.4.2", fetched 2026-10-21) | D17 rewritten (§9.1): SRI is an **unverified option** that must pass a spike in B0. The fallback keeps the approved nonce policy (§9) and gives up HTML caching, not security |
+| C14 | **Breakpoint edges.** v0 said "dock below 768 px" in one place and "filter sheet at 768 px and below" in another; the mega-menu and sidebar were placed at "1440 px" in one place and "≥ 1280 px" in another | DESIGN, SCHEMA, this plan | One definition: `DESIGN.md` → Layout → **Viewport bands** (S 0–767, M 768–1023, L 1024–1279, XL ≥ 1280). Each band starts at its lower edge, so 768 px is band M: no dock, 3 columns, filter sheet |
 
 ### Missing decisions and dependencies (detail in §13)
 - **Open, owner-held:** D11 (catalogue), D12 (location data), D5 (hosting).
@@ -61,7 +64,7 @@ Labels used throughout:
 
 Every storefront route exists at `/…` (Bengali, default) and `/en/…` (English) with the **same Latin slug** (D10). next-intl uses a `[locale]` segment with `localePrefix: "as-needed"` **[H: exact option verified in phase B1]**. `/` is never auto-redirected by `Accept-Language` (domain-rules §10).
 
-"Index" means whether the page appears in search engines: `idx` = indexable; `noidx` = `noindex`. Rendering options: `cache` (cached and revalidated by tag), `dyn` (rendered per request) and `static`.
+"Index" means whether the page appears in search engines: `idx` = indexable; `noidx` = `noindex`. Rendering options: `cache` (HTML cached and revalidated by tag **only under D17 option b**; under the approved nonce rule, option a, it renders per request with cached data reads, §9.1), `dyn` (rendered per request) and `static`.
 
 ### Storefront
 | Route | Purpose | Render | Index | Auth | Phase |
@@ -209,9 +212,13 @@ Modules, collections and owners are as in `docs/domain-rules.md` §2. Field-leve
 ### Order lifecycle
 State machine exactly as domain-rules §3. One `transition(order, to, actor, reason, idempotencyKey)` function, called inside a transaction. It writes the `orderEvents` row, the stock effect and the outbox rows in that transaction, and returns 409 for illegal transitions.
 
-### Idempotency and transactions
-- Keys: checkout uses a client-generated UUID per checkout attempt, stored in `idempotencyKeys` with the first result. Staff transitions use the same scheme. Ledger keys are `orderId:lineId:<kind>`.
-- Transactions use majority write concern with retryable writes. A transient-error retry wraps the whole transaction, using the driver's `withTransaction`.
+### Idempotency, concurrency and transactions
+The contract is defined once in **`docs/domain-rules.md` §4.1** (proposed at Checkpoint 4). This plan does not restate it. In summary:
+- **Each layer has its own key:** request key (`idempotencyKeys {scope, principalId, key}` + fingerprint), order (`{userId, checkoutKey}`), cart (compare-and-set), reservation (`{orderId, lineId}`), ledger (`order:<orderId>:<lineId>:<kind>`, `return:…`, `stock:<adjustmentId>:<variantId>:<kind>`), transition (compare-and-set on `version`, `orderEvents {orderId, seq}`), coupon (`couponRedemptions {orderId}`, guarded counters), outbox (`<type>:<aggregateId>:<seq>`).
+- **Transaction boundary:** one transaction per placement or transition, on a replica set with majority concern.
+- **Retries:** `TransientTransactionError` retries the body in a bounded loop (5 attempts / 3 s **[A]**, then `503 CHECKOUT_BUSY`, nothing written). `UnknownTransactionCommitResult` retries the commit only.
+- **Conflicts:** `200 replayed`; `409 IDEMPOTENCY_KEY_REUSED`, `CART_CHANGED`, `INSUFFICIENT_STOCK`, `PRICE_CHANGED`, `COUPON_LIMIT`, `STATE_CHANGED`, `ILLEGAL_TRANSITION`.
+- **Status:** nothing here is proven. The tests in §12 ("Idempotency and concurrency") decide it.
 
 ---
 
@@ -219,20 +226,22 @@ State machine exactly as domain-rules §3. One `transition(order, to, actor, rea
 
 Mobile-first. Tailwind breakpoints: `md` 768, `lg` 1024, `xl` 1280 (all [M] Tailwind defaults). The contract widths 375 / 768 / 1440 are the test widths.
 
-### Listing columns (contract)
-| Viewport | Columns | Filters | Category nav |
-|---|---|---|---|
-| < 768 px (tested at 375, 390) | **2** | `FilterSheet` | `CategoryButton` → `DepartmentSheet`; bottom bar "Categories" |
-| 768–1023 px (tested at 768) | **3** | `FilterSheet` | header nav + `DepartmentSheet` |
-| 1024–1279 px | 4 | `FilterSheet` | header nav |
-| ≥ 1280 px (tested at 1440) | **4** with the filter sidebar (category, search and filtered listings); **5** on listings without a sidebar (home sections, collections) | persistent `FilterSidebar` | `MegaMenu` |
+### Viewport bands (single definition in `DESIGN.md` → Layout → Viewport bands)
+Each band starts **at** its lower edge, so exactly one layout applies at 768, 1024 and 1280 px. CSS uses `width < 768px` (Tailwind `max-md:`) for band S, and `md:`, `lg:` and `xl:` for the others.
+
+| Band | Widths (test width) | Navigation | Columns | Filters | Context strips | Admin |
+|---|---|---|---|---|---|---|
+| S | 0–767 px (**375**, 390; 320 reflow) | bottom dock (five-item bar + ≤ 1 strip); sticky search row + `CategoryButton` → `DepartmentSheet` | **2** | `FilterSheet` | yes (below) | `RecordCards` |
+| M | 768–1023 px (**768**) | no dock; header with search, `CategoryButton` → `DepartmentSheet`, account and cart links | **3** | `FilterSheet` | none; buy box, checkout summary and cart total stay in the page flow | `RecordCards` |
+| L | 1024–1279 px (1024) | as M | 4 | `FilterSheet` | none | `DataTable` |
+| XL | ≥ 1280 px (**1440**) | as M, with `MegaMenu` instead of the category button | **4** with `FilterSidebar` (category, search and filtered listings); **5** without (home sections, collections) | persistent `FilterSidebar` | none | `DataTable` |
 
 Within a 1240 px container this gives entries of about 240 px with the sidebar and about 248 px without **[H: arithmetic; checked in the build]**. At 375 px an entry is about 165 px wide **[H]**.
 
 ### Ruled grid
 Rules are drawn as 1 px `--line` borders on the grid cells (the row separator is the cell's bottom border, the column separator its inline-end border, the last column has none) **[H: technique]**. No card boxes, no shadows. Cart, checkout and order lines are single-column `KhataRow`s at every width.
 
-### Bottom dock (< 768 px only)
+### Bottom dock (band S only: width < 768 px; at 768 px there is no dock)
 - **Structure:** one `position: fixed` container at `bottom: 0`. Inside it, from top to bottom: an optional **context strip**, then `BottomNav` (five items, each with an icon and a text label).
 - **Context strip, by priority (one at most):**
   1. `StickyBuyStrip` on `/p/[slug]`, shown only while the in-page `#buy` section is out of view (IntersectionObserver).
@@ -251,10 +260,11 @@ Rules are drawn as 1 px `--line` borders on the grid cells (the row separator is
 - **Checkout:** the primary `PlaceOrderButton` sits at the end of the form in normal flow. The strip's button submits the same form (`form` attribute) with the same idempotency key, and both disable together while submitting.
 - **Never stacked:** the toast region sits above the dock; Radix sheets cover the dock while open; there is no second fixed bar anywhere.
 
-### Header (< 768 px)
+### Header (band S)
 - The wordmark row scrolls away. The **search row is sticky** (about 52 px **[H]**), with `CategoryButton` beside the search field.
 - "Search" in the bottom bar focuses that field and opens suggestions. Because the field is always on screen, there is no scroll jump.
 - Hypothesis to test **[H]**: about 52 px at the top plus 56–112 px at the bottom leaves enough content at 375 × 667 px.
+- From band M (768 px) the header, including the persistent search field, sits at the top of the page in normal flow. With no dock in M–XL there is no Search button to coordinate with.
 
 ### Admin
 Below 1024 px, `RecordCards` (one card per record, priority fields, actions in a menu). From 1024 px, `DataTable`, built from the same column definition. The order detail page works on a phone (contract: order confirmation and messaging on a phone). The storefront dock is not used in `/admin`.
@@ -305,7 +315,7 @@ Verification: gate `S` rules (seo-03 … seo-18); a JSON-LD parse test; a canoni
 | Fonts | `next/font/google`: Noto Sans Bengali (weight 400–600, no width axis) preloaded (one file per locale); Tiro Bangla 400, `display: swap`, not preloaded. Preset `plain` = Noto only | sizes **[M]** locally (≈ 68 KB / 78 KB Bengali subsets); per-locale preload behaviour **[H]**, checked in B1; served sizes **[NV]** |
 | Images | `next/image` with a **Cloudinary loader** (host-portable, no host image-optimisation dependency); `sizes` per layout; AVIF/WebP; widths 160 / 320 / 640 / 1200; `priority` only on the product-page main image; 1:1 reserved boxes | **[H]** |
 | JS | server components by default; client islands: header search, locale switch, dock, AddToCart/stepper, sheets, variant picker, checkout form, admin tables; client components receive only the strings they need (no full message catalogue on the client) | Tier 1 budget ≤ 30 KB gzipped beyond the framework per storefront page **[NV]**; admin per D22 |
-| Caching | storefront pages cached and revalidated by tag (`settings`, `home`, `category:<id>`, `product:<id>`); exact Next 16 caching API (`use cache` / `cacheTag` or route revalidation) chosen in B1 after checking the installed version's documentation | **[H]**; depends on D17 (nonces disable caching, C1) |
+| Caching | storefront pages cached and revalidated by tag (`settings`, `home`, `category:<id>`, `product:<id>`); exact Next 16 caching API (`use cache` / `cacheTag` or route revalidation) chosen in B1 after checking the installed version's documentation | **[H]**; depends on D17 (§9.1: under the nonce fallback, HTML is rendered per request and only data caching remains) |
 | Server/client data | prices, stock and totals are always re-resolved on the server at add-to-cart and at placement; the cached product page shows cached price and stock, then refreshes them on the client | **[H]** |
 | Layout stability | reserved image boxes, server-rendered `--dock-h`, static skeletons with final dimensions, fallback-font metrics adjusted for Bengali | CLS ≤ 0.1 **[NV]** |
 | Database | per-process singleton driver client; indexes defined with the schema (`SCHEMA.md`); projections on listing queries; listing pages 24 items | **[H]** |
@@ -327,12 +337,59 @@ Mapped from domain-rules §9 and skill `craft/security.md`; nothing is new scope
 | Rate limits | Upstash: sign-in, registration, reset, checkout placement, coupon checks, search suggestions, reviews, messages, AI drafting, webhooks. Auth limits fail closed; read caches fail open (domain-rules §7) |
 | Secrets | env only; validated at boot by a Zod env schema; never in client bundles (gate `sec-07`); never logged; the integrations page shows only configured / healthy / failing |
 | Errors | safe messages with an error id; PII redacted in logs; no stack traces to the client; `sec-17` (no debug build or public source maps in production) |
-| Headers | HSTS, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`, `frame-ancestors 'none'` (admin) / `'self'` (storefront); CSP per **D17** (C1) |
+| Headers | HSTS, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`, `frame-ancestors 'none'` (admin) / `'self'` (storefront); CSP per **D17** (§9.1, owner-pending) |
 | Uploads | server-signed Cloudinary uploads, folder-scoped, type and size allow-list, no SVG from users |
 | Webhooks | signature or shared secret, timestamp tolerance, replay protection by event id, monotonic courier status |
 | Admin protection | 2FA, step-up, audit log for every staff write, last-Owner protection, `noindex`, no admin in the sitemap |
 | Personal data | minimum collection; phone and address visible only with the capability; export and deletion requests (`/account/privacy`); retention settings **[L]** |
 | Reliability | outbox with leases, backoff and dead letters; real scheduler (`JOBS_TRIGGER`); replica-set check on boot; backups and a rehearsed restore before launch (§9) |
+
+### 9.1 CSP and caching plan (D17, proposed and owner-pending)
+
+**Approved rule:** domain-rules §9 says "CSP with nonces". It stays in force until the owner decides D17. Nothing below weakens a route's policy to gain caching.
+
+**What the framework documents [M: Next.js CSP guide, version label "Latest v16.4.2", the approved version, fetched 2026-10-21]:**
+- Nonces: "you **must use dynamic rendering** to add nonces"; "Static optimization and Incremental Static Regeneration (ISR) are disabled"; "Pages cannot be cached by CDNs without additional configuration"; "Partial Prerendering (PPR) is incompatible with nonce-based CSP". A page can opt into dynamic rendering with `await connection()`. These are **stable** features.
+- SRI: "experimental support for hash-based CSP using Subresource Integrity (SRI)", enabled with `experimental.sri`; limits are "Feature may change or be removed" and "Cannot handle dynamically generated scripts". Its example policy uses `script-src 'self'` without `'unsafe-inline'`.
+- **Not documented:** how the inline scripts Next.js puts in each App Router page are allowed under that policy without nonces. **SRI is therefore not proven viable for this app [NV].**
+- CSP without nonces: the documented example needs `script-src 'self' 'unsafe-inline'`. That is weaker against injected inline script.
+
+**Route requirements:**
+
+| Route class | Personal data in the HTML | Caching need | CSP requirement | `frame-ancestors` |
+|---|---|---|---|---|
+| Public storefront (`/`, `/categories`, `/c`, `/collections`, `/p`, `/deals`, `/new`, `/preorder`, information and legal) | none (cart, account and live stock come from client calls) | high: this is where the scale goal applies | strict: no `'unsafe-inline'` for scripts; `object-src 'none'`; `base-uri 'self'`; `img-src` self + Cloudinary; first-party scripts only (no analytics in v1) | `'self'` |
+| `/search` | none | low (dynamic, noindex) | nonce + `'strict-dynamic'` | `'self'` |
+| `/cart` | yes | none | nonce + `'strict-dynamic'` | `'self'` |
+| `/checkout`, `/checkout/success` | yes | none (`Cache-Control: private, no-store`) | nonce + `'strict-dynamic'` | `'none'` |
+| Auth (`/login` … `/verify-email`) | session-adjacent | none (`no-store`) | nonce + `'strict-dynamic'` | `'none'` |
+| `/account/**` | yes | none (`no-store`) | nonce + `'strict-dynamic'` | `'none'` |
+| `/admin/**` | yes | none (`no-store`) | nonce + `'strict-dynamic'` | `'none'` |
+
+Private routes already need dynamic rendering, so a nonce costs them nothing **[M from the docs]**. The conflict is only on the public storefront.
+
+**D17 options for the public storefront:**
+- **(a) Nonces everywhere** (the approved rule as written; stable).
+  - Every storefront page renders per request, with no ISR or CDN caching of HTML.
+  - Data reads can still be cached on the server **[NV: which data-cache API works with nonce rendering on 16.4.2, given that PPR is incompatible, is checked in the B0 spike]**.
+  - Cost: more server load and slower first byte. The 50,000-user goal (§12) becomes harder and more expensive.
+  - **This is the fallback whenever (b) is not proven.**
+- **(b) Experimental SRI with a strict static CSP** on public storefront routes, and nonces on all other routes.
+  - Keeps static generation, ISR and CDN caching.
+  - **Viable only if the B0 spike proves it:** a production build of the approved versions, with every inline script either covered or absent, zero CSP violations in Chromium, WebKit and Firefox, and pages still cached.
+  - If it is adopted, it is re-checked at every Next.js upgrade (R10).
+- **(c) Not proposed:** a static CSP with `script-src 'unsafe-inline'` on the storefront. It weakens the approved policy to gain caching, so it is listed only so the owner can see why it is rejected.
+
+**Proposal:** run the B0 spike, report its real result, then the owner chooses (a) or (b). Until then, (a) is the working assumption, because it matches the approved rule. B5's caching design is written so that it works under (a) (data caching only) and gets faster under (b) (HTML caching).
+
+**Verification in implementation (all [NV]):**
+- Playwright collects `securitypolicyviolation` events and console CSP errors on every route class at all four bands. Pass: zero.
+- Response-header assertions per route class: CSP directives, HSTS, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`, `frame-ancestors`, `Cache-Control`.
+- Nonce tests: a fresh nonce per request; never present in cached HTML; never reused.
+- Under (b): every `<script src>` carries `integrity`, and cached responses are actually served from the cache.
+- An injected inline `<script>` test is blocked on every route class.
+- The skill gate's `K` axis on the local production build.
+- Optional production reporting (`report-to`) needs its own owner decision; it is not part of v1 scope.
 
 ---
 
@@ -367,14 +424,14 @@ Nothing goes to `main` before Checkpoint 6. **Checkpoint 5 (design review) follo
 
 | Phase | Builds | Why now | Depends on | Verified by | Blocked by |
 |---|---|---|---|---|---|
-| **B0 Toolchain** | `package.json` (approved stack, pinned), strict TS (version compatible with Next 16, Checkpoint 1 note), Tailwind v4, ESLint, Vitest, Playwright, CI (lint, typecheck, unit, build), Zod env schema, `proxy.ts` skeleton (locale + headers), `/api/health` | everything else needs it | Checkpoint 4 approval; D18 | CI green; `next build` succeeds; no secrets in the bundle | D18 (where to push) |
+| **B0 Toolchain** | `package.json` (approved stack, pinned), strict TS (version compatible with Next 16, Checkpoint 1 note), Tailwind v4, ESLint, Vitest, Playwright, CI (lint, typecheck, unit, build), Zod env schema, `proxy.ts` skeleton (locale + headers), `/api/health`; **CSP/caching spike** on a throwaway `spike/csp` branch, never merged (§9.1) | everything else needs it; the spike decides D17 before B5 depends on it | Checkpoint 4 approval; D18 | CI green; `next build` succeeds; no secrets in the bundle; spike report (violations, headers, cache status) in `docs/PROGRESS.md` | D18 (where to push) |
 | **B1 Tokens, fonts, shell** | CSS tokens (Checkpoint 3 palette), font presets, the `[locale]` layout with next-intl, `SiteHeader` + sticky search row, `BottomDock`/`BottomNav` (Home, Categories, Search, Cart, Account), footer, skip link, error pages (404 / 500 / maintenance / offline), `SetupRequired`, `PriceTag` formatter, `LabelTile`, button and focus states | the design system and the dock are used by every later screen; testable without a database (every page shows setup-required) | B0 | unit (formatter: `৳১,২৫,০০০`, Latin option, poisha); Playwright at 375 / 768 / 1440: dock, safe-area padding, focus not obscured, Search focuses the header field; conjunct and mixed-script fixture; font preload count; reduced motion | — |
 | **B2 Platform** | db port (singleton, replica-set check, `SetupRequired`), Zod → `$jsonSchema` generator, committed validators, idempotent `db:migrate`, outbox + worker + HTTP drain, audit log, cache/rate-limit port, integration health registry, `/admin/health` (read-only) | every module writes through these; schema consistency must exist before the first collection | B0; D19 | CI: validator diff check, live-validator compare, invalid-insert test per collection (§14); replica-set refusal test; outbox lease and retry tests | D19 (dev database) |
 | **B3 Identity** | Better Auth (email/password, optional Google), email verification, reset, sessions, roles and capabilities, 2FA for mandatory roles, step-up, `/login` … `/verify-email`, `/account`, `/account/security`, `/account/profile`, `/admin/setup`, `/admin/staff`, `/admin/security` | every customer and staff feature needs a principal | B2; email decision D23 | integration per capability (allowed and denied); 2FA forced enrolment; session revocation; rate limits; Playwright register → verify → sign in | D23; Resend credentials for real email |
 | **B4 Settings and catalogue admin** | settings document (identity, theme preset, locale numerals, features), delivery zones (fees and estimates; **area mapping waits for D12**), categories (depth ≤ 3, move rule, cycles), products and variants, attributes, media (Cloudinary signed upload), collections, homepage sections (six types), banners, inventory `receive`/`adjust` with ledger | the storefront needs real data entered through the admin, never through fixtures | B3 | integration: depth-4 rejected, cycle rejected, subtree-move rule; ledger idempotency; Playwright: add a product with a LabelTile, publish it | D12 (zone area mapping only); Cloudinary credentials (upload only) |
-| **B5 Storefront catalogue** | `/`, `/categories`, `/c/[...slug]`, `/collections/**`, `/p/[slug]`, `/search` (MongoDB text index with `default_language: "none"` plus prefix suggestions **[H]**, see R9), `/deals`, `/new`, `/preorder`, KhataGrid (2 / 3 / 4–5), filters (sheet and sidebar), mega-menu, metadata, canonical, hreflang, JSON-LD, sitemap, robots | browsing is the first core journey; it needs B4 data | B4 | Playwright browse and search journeys at 3 widths; SEO tests (§7); empty-database states; gate J for browse | none beyond B4; content for review per D20 |
+| **B5 Storefront catalogue** | `/`, `/categories`, `/c/[...slug]`, `/collections/**`, `/p/[slug]`, `/search` (MongoDB text index with `default_language: "none"` plus prefix suggestions **[H]**, see R9), `/deals`, `/new`, `/preorder`, KhataGrid (2 / 3 / 4–5), filters (sheet and sidebar), mega-menu, metadata, canonical, hreflang, JSON-LD, sitemap, robots | browsing is the first core journey; it needs B4 data | B4 | Playwright browse and search journeys at 3 widths; SEO tests (§7); empty-database states; gate J for browse | D17 decides whether storefront HTML is cached (built for option a until decided); content for review per D20 |
 | **B6 Cart and pricing** | device cart + server cart + merge, pricing engine (domain-rules §5 steps 1–9), quantity tiers, promotions, flash sales (real end times only), coupons (eligibility, allocation, usage), free-delivery rules, `KhataRow`, `RunningTotalBar`, `StickyBuyStrip`, `/admin/promotions`, `/admin/coupons` | checkout depends on correct totals | B5 | unit: every §5 rule, largest-remainder allocation, rounding; integration: coupon limit under concurrency; Playwright: cart states (price changed, sale ended, out of stock) | — |
-| **B7 Checkout and orders** | addresses, checkout, placement transaction (reserve + coupon + order + outbox + idempotency), `/checkout/success/[n]`, account orders, customer cancel, invoice; admin orders list and detail with the state machine; `CheckoutSummaryStrip` and the repeated Place order | the core transaction | B6; **D12 or D21** | **concurrency proof (§11)**; idempotent double submit; 409 on illegal transitions; release on cancel and reject; Playwright: browse → checkout → success at 375 with the keyboard open | **D12 / D21** (addresses and zones) |
+| **B7 Checkout and orders** | addresses, checkout, placement transaction (reserve + coupon + order + outbox + idempotency), `/checkout/success/[n]`, account orders, customer cancel, invoice; admin orders list and detail with the state machine; `CheckoutSummaryStrip` and the repeated Place order | the core transaction | B6; **D12 or D21** | the §12 "Idempotency and concurrency" tests (I1–I10); Playwright: browse → checkout → success at 375 with the keyboard open | **D12 / D21** (addresses and zones) |
 | **B8 Fulfilment and returns** | shipments, courier port (manual first; thin clients from official docs), webhooks (signature, dedupe, monotonic), `/admin/shipments`, returns with inspection, restock and write-off, `/admin/returns` | completes the order lifecycle and the stock rules | B7 | integration: commit on ship, restock only after inspection, duplicate and out-of-order webhooks | courier credentials (live calls only) |
 | **B9 Engagement** | rewards (flag, accrual at `completed`, reversal), reviews (verified purchase, moderation), messaging (polling, optional Ably), notifications (email via outbox; push opt-in with separate marketing consent; D3 library fit check), AI drafts (Gemini, per-field approval), `/account/rewards`, `/account/reviews`, `/account/messages`, `/account/notifications`, matching admin pages | depends on orders and on the identity and outbox platform | B7, B8 | integration per acceptance row (§11 of domain-rules); push consent tests; AI "no live change without approval" | D3 fit check; optional credentials; rewards stay disabled for BD production **[L]** |
 | **B10 Information, privacy, audit** | `/about`, `/contact`, `/faq`, legal pages (Bangla mandatory), `/offline` + service worker, `/account/privacy` (export and deletion requests), `/admin/audit`, `/admin/customers` | content and compliance surfaces; legal text is owner-supplied **[L]** | B3 | Playwright; legal pages show `[NEEDS COPY]` until the owner supplies text | owner legal copy **[L]** |
@@ -391,15 +448,31 @@ Nothing goes to `main` before Checkpoint 6. **Checkpoint 5 (design review) follo
 | Kind | Tool | What | Phase | Status |
 |---|---|---|---|---|
 | Unit | Vitest | formatters, pricing engine, coupon allocation, state machine table, depth and move rules, env schema, Zod → `$jsonSchema` converter | B1–B9 | not run |
-| Integration | Vitest + disposable test replica set | repositories (scoping), services, transactions, idempotency, ledger, concurrency proof, outbox, webhooks, capabilities | B2–B9 | not run |
+| Integration | Vitest + disposable test replica set | repositories (scoping), services, transactions, idempotency and concurrency (I1–I10 below), ledger, outbox, webhooks, capabilities | B2–B9 | not run |
 | Schema/domain | CI scripts | validator diff, live-validator compare, invalid-insert per collection; catalogue checker for `catalogue/` | B2+ | catalogue checker run **[M]**; app checks not run |
 | Accessibility | axe (Playwright), keyboard-only scripts, screen readers TalkBack / VoiceOver / NVDA (manual) | every core journey, admin included | B1+ | **[NV]** |
-| Responsive | Playwright at 375, 390, 768, 1440, and 320 reflow; touch emulation; on-screen-keyboard simulation is limited, so real devices are needed for that | dock never obscures content or focus; columns 2 / 3 / 4–5; admin cards < 1024 | B1+ | **[NV]**; real-device checks need the owner's devices or a device cloud |
+| Responsive | Playwright at 320 (reflow), 375, 390, 767, 768, 1023, 1024, 1279, 1280 and 1440 (both sides of every band edge); touch emulation; on-screen-keyboard simulation is limited, so real devices are needed for that | dock never obscures content or focus; columns 2 / 3 / 4–5; admin cards < 1024 | B1+ | **[NV]**; real-device checks need the owner's devices or a device cloud |
 | Browser | Chromium, WebKit, Firefox (Playwright); real iOS Safari and Android Chrome for Bengali shaping and safe area | Bengali conjuncts (ক্ষ, ন্ত্র, র্য, ঙ্ক, স্ট্র) at 12 / 14 / 16 px; mixed script; fallback-font CLS | B1, B11 | **[NV]** |
 | SEO | gate `S`, JSON-LD parse, canonical and hreflang tests, sitemap crawl | indexable vs noindex per §1 | B5, B11 | **[NV]** |
 | Performance | Lighthouse lab (throttled), gate `P`, bundle check | LCP / INP / CLS, JS budget, ≤ 1 preloaded font | B1, B11 | **[NV]** |
 | Security | gate `K`, `npm audit`, header checks, capability tests | §9 | B11 | **[NV]** |
 | Production build | `next build` + `next start` locally; the skill gate on the built site | every route builds; no dev flags | every phase (build), B11 (gate) | **[NV]** |
+
+### Idempotency and concurrency tests (domain-rules §4.1; phase B6–B8; all **not run**)
+All run against a disposable real replica set, with the parallel requests launched together.
+
+| # | Case | Pass condition |
+|---|---|---|
+| I1 | Same checkout key submitted 20 times in parallel | one order, one set of reservations and ledger rows; 19 responses `200 replayed` with the same `orderNumber` |
+| I2 | Same key, changed cart or total | `409 IDEMPOTENCY_KEY_REUSED`; nothing written |
+| I3 | Two tabs, different keys, same cart | one order; the other gets `409 CART_CHANGED` |
+| I4 | Order with 5 variants, one short of stock | whole order aborted; no reservation, ledger, coupon or outbox row; response names the short line |
+| I5 | 100 customers in parallel for 10 units of one variant | exactly 10 orders, 90 `INSUFFICIENT_STOCK` or `CHECKOUT_BUSY`, 10 `reserve` rows, `available` never negative, reconciliation clean |
+| I6 | Fault injection: commit succeeds, response dropped; client retries | the original result is returned; nothing is executed twice |
+| I7 | Fault injection: `UnknownTransactionCommitResult` | only the commit is retried; one order |
+| I8 | Cancel and reject sent concurrently for one order | one terminal state; one `release` per line; the other request gets `409 STATE_CHANGED` |
+| I9 | Repeated and out-of-order transitions (replay, stale `expectedVersion`, skip-ahead, older courier event) | replay → first result; stale → `409 STATE_CHANGED`; skip-ahead → `409 ILLEGAL_TRANSITION`; older courier event → ignored, logged |
+| I10 | Coupon with a usage limit of 5, 20 parallel placements; then cancellations; outbox drain run twice | ≤ 5 redemptions; counters released once per cancelled order; each outbox key delivered at most once per consumer record |
 
 ### k6 load-test plan: 50,000 concurrent users (goal, **not a capacity claim**)
 - **Target:** 50,000 concurrent virtual users. This is an unverified goal from the brief; no result exists and none will be claimed without a real run and its infrastructure listed.
@@ -429,16 +502,18 @@ Nothing goes to `main` before Checkpoint 6. **Checkpoint 5 (design review) follo
 ## 13. Risk register and decisions
 
 ### Decisions needed from the owner (none is assumed)
-| ID | Decision | Options | Impact if open |
-|---|---|---|---|
-| **D17** | CSP strategy (C1) | (a) keep nonces everywhere: every page dynamic, no ISR or CDN caching, higher cost and load; (b) **proposed**: nonces on dynamic routes (`/cart`, `/checkout`, `/account`, `/admin`, auth); a strict static CSP plus experimental SRI on cached storefront routes. Experimental means it may change, so it is re-checked at B11 | B11 headers; caching design in B5; the scale goal |
-| **D18** | Branch and push workflow (C3) | **proposed**: build pushes to `preview/horekbazar-v1` after every phase; handoff to `design/horekbazar-v1` after the gate; the owner merges to `main`; planning docs stay on `main` | B0 cannot start pushing |
-| **D19** | Development database | (a) owner-provided Atlas dev cluster (URI supplied through the secure credential form, never committed); (b) a local single-node replica set inside the agent's environment (real `mongod`, data lost when the environment ends) | B2 onward |
-| **D20** | Content for the Checkpoint 5 filled-state review (C7) | (a) the owner approves a named subset of D11 drafts for **dev-database-only** import, prices still unapproved and labelled, images missing; (b) the owner enters a few real products in the dev admin; (c) review empty and setup states only, filled states later | Checkpoint 5 completeness |
-| **D21** | Addresses and zones until D12 is resolved (C6) | (a) block B7 until D12 is resolved; (b) interim: the customer chooses the zone (for example Inside / Outside Dhaka from the configured zones) and types the district and area as free text, checked by the operator at confirmation; structured codes added after D12 | B7 (checkout) |
-| **D22** | JS budget for the admin (C10) | (a) hold the admin to Tier 1 (≤ 30 KB) and simplify; (b) accept a measured higher budget for `/admin` only, recorded in `GATE.md` | B11 gate result |
-| **D23** | First-Owner email verification without an email provider (C9) | (a) require email to be configured before `/admin/setup` completes; (b) a server-side command (`npm run owner:verify -- <email>`) run by the deployer, audited | B3 |
-| Checkpoint 3 | explicit approval of the "Khata" direction as amended | approve / redirect | the design basis of B1 |
+| ID | Decision | Options | Blocks | If left open |
+|---|---|---|---|---|
+| **D17** | CSP and caching for the public storefront (§9.1, C1, C13) | (a) nonces everywhere (approved rule; stable; fallback); (b) experimental SRI with a strict static CSP on public storefront routes, **only if the B0 spike proves it**; (c) `'unsafe-inline'`, rejected | B5 (HTML caching), B11 (headers) | B5 is built for (a); storefront HTML is not cached; scale cost rises (§12) |
+| **D18** | Branch and push workflow (C3) | **proposed**: build pushes to `preview/horekbazar-v1` after every phase; handoff to `design/horekbazar-v1` after the gate; the owner merges to `main`; planning docs stay on `main` | B0 | no build work can be pushed, so B0 cannot start |
+| **D19** | Development database | (a) owner-provided Atlas dev cluster (URI through the secure credential form, never committed); (b) a local single-node replica set in the agent's environment (real `mongod`, data lost when the environment ends) | B2 onward | B2–B11 cannot run their integration checks against a development database (tests still use disposable replica sets) |
+| **D20** | Content for the Checkpoint 5 filled-state review (C7) | (a) the owner approves a named subset of D11 drafts for **dev-database-only** import, prices still unapproved and labelled, images missing; (b) the owner enters a few real products in the dev admin; (c) empty and setup states only | Checkpoint 5 | the review shows only empty and setup states |
+| **D21** | Addresses and zones until D12 is resolved (C6) | (a) block B7 until D12 is resolved; (b) interim: the customer chooses a configured zone and types district and area as free text, checked by the operator at confirmation | B7 (and B8, B9, which follow it) | checkout and everything after it wait for D12 |
+| **D22** | JS budget for the admin (C10) | (a) hold the admin to Tier 1 (≤ 30 KB) and simplify; (b) accept a measured higher budget for `/admin` only, recorded in `GATE.md` | B11 (gate) | the gate fails on admin routes if they are over budget |
+| **D23** | First-Owner email verification without an email provider (C9) | (a) require email to be configured before `/admin/setup` completes; (b) a server-side command (`npm run owner:verify -- <email>`) run by the deployer, audited | B3 | setup requires a configured email provider (option a is the default until decided) |
+| Coupon on cancel **[A]** | Whether a cancelled or rejected order restores coupon usage (domain-rules §4.1, case 7) | restore (proposed) / do not restore | B6 | the proposed behaviour (restore) is built |
+| Checkpoint 3 | explicit approval of the "Khata" direction as amended | approve / redirect | B1 (design basis) and every later phase | no design work starts |
+| Checkpoint 4 | approval of this plan | approve / amend | B0 and all implementation | nothing is built |
 
 ### Risks
 | # | Risk | Likelihood / impact | Mitigation | Owner input |
@@ -452,7 +527,8 @@ Nothing goes to `main` before Checkpoint 6. **Checkpoint 5 (design review) follo
 | R7 | JS budget exceeded (admin, checkout) | medium / medium | islands, no new libraries, measure early in B1 | D22 |
 | R8 | Bengali rendering problems (conjuncts, fallback CLS) | medium / medium | B1 fixture tests; Noto fallback; metric overrides | real devices |
 | R9 | MongoDB text search is weak for Bengali (no Bengali stemming; `default_language: "none"`) **[H]** | medium / medium | prefix suggestions, transliteration-insensitive normalisation; Atlas Search only if the tier allows and the owner approves | possible later decision |
-| R10 | Experimental SRI changes or is removed (if D17 b) | low / medium | re-check at B11; fallback to option (a) for affected routes | — |
+| R10 | Experimental SRI is unproven, or changes or is removed (if D17 b) | medium / medium | B0 spike before any reliance; re-check at B11 and at every Next.js upgrade; fallback to option (a), which keeps the approved nonce policy | D17 |
+| R16 | Write-conflict contention on a hot SKU under load (many transactions on one `stock` document) | medium / medium | bounded retry with `503 CHECKOUT_BUSY` (nothing written); measured only in the k6 run | — |
 | R11 | Next 16 caching API details differ from the plan | medium / low | verified against installed-version docs in B1 before use | — |
 | R12 | Courier APIs change; unofficial SDKs rejected | medium / low | thin clients from official docs; manual mode always available | courier sandbox credentials |
 | R13 | Legal items (rewards, delivery times, data protection, VAT, reviews) | — / high | every **[L]** item stays flagged; rewards disabled for BD production; legal copy owner-supplied | qualified local review |
@@ -478,14 +554,14 @@ Nothing goes to `main` before Checkpoint 6. **Checkpoint 5 (design review) follo
 | Phase | Passes when |
 |---|---|
 | B0 | CI green on a clean clone; `next build` works with zero env vars and the app shows setup-required |
-| B1 | at 375 / 768 / 1440: the dock shows five labelled items below 768 px only; Search focuses the header field; no content, focused control or error message is hidden behind the dock (automated check over every focusable element); the formatter tests pass; one preloaded font file per locale; reduced-motion emulation shows no travel |
+| B1 | at 375 / 767 / 768 / 1024 / 1280 / 1440: the dock with five labelled items appears at 375 and 767 and is absent at 768 and above; exactly one band layout applies at each edge (768, 1024, 1280); Search focuses the header field; no content, focused control or error message is hidden behind the dock (automated check over every focusable element); the formatter tests pass; one preloaded font file per locale; reduced-motion emulation shows no travel |
 | B2 | validator diff, live compare and invalid-insert tests pass; a standalone `mongod` is refused; outbox jobs survive a worker crash (lease reclaim) |
 | B3 | every capability has an allowed and a denied test; Owner and Store Manager cannot reach the admin without 2FA; password change revokes other sessions |
 | B4 | depth-4 create and move rejected, cycles rejected; ledger replay changes nothing; a product can be created, given a LabelTile and published |
 | B5 | listings show 2 / 3 / 4–5 columns at the test widths; canonical, hreflang and JSON-LD tests pass; noindex on search; empty-database states shown |
-| B6 | every §5 rule has a unit test; coupon usage holds under concurrency; cart notices for price change, sale end and stock |
-| B7 | the concurrency proof passes (10 / 90 / 10 / never negative); double submit creates one order; anonymous checkout is impossible; no order reaches `processing` before `confirmed` |
-| B8 | stock committed on ship; restock only after inspection; duplicate and out-of-order webhooks do not regress status |
+| B6 | every §5 rule has a unit test; I10 (coupon part) passes; cart notices for price change, sale end and stock |
+| B7 | tests I1–I8 pass (I5: 10 orders, never negative); double submit creates one order; anonymous checkout is impossible; no order reaches `processing` before `confirmed` |
+| B8 | I9 passes; stock committed on ship; restock only after inspection; duplicate and out-of-order webhooks do not regress status |
 | B9 | rewards accrue only at `completed` and reverse on return; marketing push reaches only opted-in subscribers; no AI text reaches a live field without approval |
 | B10 | legal pages are Bangla-first and show `[NEEDS COPY]` until the owner supplies text; privacy requests are recorded |
 | B11 | skill gate run on the local production build with its real output pasted; every failure fixed or recorded with an owner-approved exception |

@@ -2,7 +2,7 @@
 
 > The data contract, written together with `DESIGN.md` as the skill requires (`templates/SCHEMA.md`).
 >
-> **Status: draft v0.2, Checkpoint 4 (proposed 2026-10-21, awaiting owner approval).** v0.2 adds the remaining entity fields, the API surface, the admin section contracts and the category-depth definition with its move rule (see `docs/BUILD-PLAN.md`). v0.1 had set category depth to up to 3 levels (from the approved contract), removed the per-category `display` field and added the bottom dock section.
+> **Status: draft v0.2.1, Checkpoint 4 (proposed 2026-10-21, amended after the owner's plan review the same day, awaiting owner approval).** v0.2.1 replaces the single reservation key with scoped constraints (domain-rules §4.1), aligns `outbox` with domain-rules §13 and makes the breakpoints exact. v0.2 added the remaining entity fields, the API surface, the admin section contracts and the category-depth definition with its move rule (see `docs/BUILD-PLAN.md`). v0.1 had set category depth to up to 3 levels (from the approved contract), removed the per-category `display` field and added the bottom dock section.
 >
 > Business rules live in `docs/domain-rules.md` (approved at Checkpoint 2). Where this file and the rules differ, the rules win until this file is corrected.
 
@@ -104,6 +104,8 @@ Defined in `docs/domain-rules.md` §4: `onHand`, `reserved` and `available` per 
 | `userId` | ref(User) | optional | — | — |
 | `lines` | list<{ variantId, quantity int ≥ 1 }> | required | — | `/cart`, running total bar |
 | `couponCode` | string | optional | — | `/cart` coupon row |
+| `status` | enum(active\|converted) | required | `active` | placement marks it `converted` (domain-rules §4.1) |
+| `version` | int | required | `0` | compare-and-set at placement (§4.1) |
 | `updatedAt` | datetime | required | — | — |
 
 Prices are **never stored on the cart**; they are re-resolved on every read (§5.2) and snapshotted only onto the order.
@@ -121,7 +123,8 @@ Prices are **never stored on the cart**; they are re-resolved on every read (§5
 | `deliveryZoneId` + `deliveryFee` | string + money | required | — | totals |
 | `totals` | { merchandise, discounts, rewards, delivery, grandTotal } money | required | — | totals block |
 | `paymentMethod` | enum(cod) | required | `cod` | COD line (D15) |
-| `idempotencyKey` | string | required, unique | — | duplicate-submit protection |
+| `checkoutKey` | string (UUID) | required; unique with `userId` (`{userId, checkoutKey}`) | — | duplicate-submit protection that survives request-key expiry (domain-rules §4.1) |
+| `version` | int | required | `0` | compare-and-set for transitions (§4.1) |
 | `placedAt` | datetime | required | — | timeline |
 
 OrderLine is a snapshot: `variantId`, `sku`, `name` (LocalizedText), `options`, `unitPrice`, `quantity`, `lineTotal`, `appliedPromotion`, and a line `status`. Later edits to the product never change it.
@@ -149,23 +152,24 @@ Shared rules for every entity:
 | `banners` | `image` (Cloudinary public id; rights note required), `alt` LT (required), `href` (internal path), `placement` enum, `visibleFrom`/`visibleTo`, `status` | `placement, status` |
 | `promotions` | `kind` enum(percent\|fixed\|flashSale\|freeDelivery), `value` int, `scope` {all\|categoryIds\|productIds\|variantIds}, `startsAt`, `endsAt` (required for flash sales; real end time only), `minSubtotal` int?, `status` | `status, startsAt, endsAt` |
 | `coupons` | `code` (unique, upper case), `kind` enum(percent\|fixed\|freeDelivery), `value`, `maxDiscount`?, `minSubtotal`?, `usageLimit`?, `perCustomerLimit`?, `used` int (guarded `$inc`), `startsAt`, `endsAt`, `eligibility` {firstOrderOnly, categoryIds?}, `status` | `code` unique |
-| `couponRedemptions` | `couponId`, `userId`, `orderId`, `amount` int, `status` enum(held\|consumed\|released) | `{couponId, orderId}` unique |
-| `reservations` | `orderId`, `variantId`, `qty` int > 0, `status` enum(active\|committed\|released), `idempotencyKey` | `idempotencyKey` unique |
-| `inventoryLedger` | `variantId`, `kind` enum(receive\|adjust\|reserve\|release\|commit\|restock\|write_off), `qty` int, `onHandAfter`, `reservedAfter`, `actor` {type, id}, `reason`?, `refId`?, `idempotencyKey` | `idempotencyKey` unique; `variantId, createdAt` |
+| `couponRedemptions` | `couponId`, `userId`, `orderId`, `amount` int, `status` enum(held\|consumed\|released) (compare-and-set) | `{orderId}` unique (one coupon per order) |
+| `couponCustomerUsage` (proposed, §4.1) | `couponId`, `userId`, `count` int ≥ 0 (guarded `$inc`, `count < perCustomerLimit`) | `{couponId, userId}` unique |
+| `reservations` | `orderId`, `lineId`, `variantId`, `qty` int > 0, `status` enum(active\|committed\|released) (compare-and-set from `active` only) | `{orderId, lineId}` unique; `variantId, status` (domain-rules §4.1: no shared per-request key) |
+| `inventoryLedger` | `variantId`, `kind` enum(receive\|adjust\|reserve\|release\|commit\|restock\|write_off), `qty` int, `onHandAfter`, `reservedAfter`, `actor` {type, id}, `reason`?, `refId`?, `idempotencyKey` (deterministic per movement: `order:<orderId>:<lineId>:<kind>`, `return:<returnId>:<lineId>:<kind>`, `stock:<adjustmentId>:<variantId>:<kind>`) | `idempotencyKey` unique; `variantId, createdAt` |
 | `stock` | `variantId` (unique), `onHand` int ≥ 0, `reserved` int ≥ 0, `available` int ≥ 0 (validator), `lowStockThreshold` int, `version` int | `variantId` unique |
-| `orderEvents` | `orderId`, `from`, `to`, `actor`, `reason`?, `idempotencyKey` | `orderId, createdAt`; `idempotencyKey` unique |
-| `idempotencyKeys` | `key`, `scope` enum(checkout\|transition), `principalId`, `result` (stored response), `expiresAt` (TTL) | `key` unique; TTL on `expiresAt` |
+| `orderEvents` | `orderId`, `seq` int (= the order's new `version`), `from`, `to`, `actor`, `reason`?, `requestKeyId`? | `{orderId, seq}` unique |
+| `idempotencyKeys` | `scope` enum(checkout\|order_transition\|customer_cancel\|return_transition\|inventory\|rewards_adjust), `principalId`, `key` (client UUID), `fingerprint` (hash of the normalised request), `resultRef`, `result` (stored response), `expiresAt` (TTL 7 days **[A]**) | `{scope, principalId, key}` unique; TTL on `expiresAt` |
 | `shipments` | `orderId`, `courier` enum(manual\|steadfast\|pathao\|redx), `consignmentId`?, `trackingUrl`?, `status` (monotonic), `codAmount` int, `events` summary | `orderId`; `courier, consignmentId` unique (sparse) |
 | `courierEvents` | `provider`, `eventId`, `consignmentId`, `status`, `occurredAt`, `raw` (redacted) | `provider, eventId` unique |
 | `returns` | `orderId`, `lines` [{lineId, qty, reason}], `status` enum(requested\|approved\|rejected\|received\|inspected\|restocked\|written_off\|refunded\|credited\|closed) (domain-rules §3 returns), per-line `outcome` enum(restock\|write_off), `inspection` {result, note, by, at}?, `refund` {method enum(bkash\|nagad\|bank\|store_reward), amount, ref} (recorded, not executed)? | `orderId` |
-| `rewardLedger` | `userId`, `kind` enum(accrue\|redeem\|reverse\|expire), `points` int, `orderId`?, `idempotencyKey` | `idempotencyKey` unique; `userId, createdAt` |
+| `rewardLedger` | `userId`, `kind` enum(accrue\|redeem\|reverse\|expire), `points` int, `orderId`?, `idempotencyKey` (`order:<orderId>:accrue\|redeem`, `return:<returnId>:reverse`) | `idempotencyKey` unique; `userId, createdAt` |
 | `reviews` | `productId`, `userId`, `orderId` (verified purchase, required), `rating` int 1–5, `body` (sanitised), `status` enum(pending\|published\|rejected), `reply`? | `productId, status`; `{userId, productId}` unique |
 | `conversations` / `messages` | `userId`, `orderId`?, `status` enum(open\|closed) / `conversationId`, `from` enum(customer\|staff), `body` (sanitised), `readAt`? | `userId`; `conversationId, createdAt` |
 | `pushSubscriptions` | `userId`?, `endpoint` (unique), `keys` {p256dh, auth}, `topics` {orders bool, marketing bool (default **false**)}, `consentAt` date, `consentSource` | `endpoint` unique; `topics.marketing` |
 | `campaigns` | `title` LT, `body` LT, `url`, `audience` (marketing opt-in only), `status` enum(draft\|scheduled\|sent\|failed), `sentAt`? | `status` |
-| `emailLog` | `to` (hashed for search, masked in display), `template`, `providerId`?, `status` enum(queued\|sent\|failed), `error`? | `createdAt` (TTL per retention setting **[L]**) |
+| `emailLog` | `outboxKey` (unique), `to` (hashed for search, masked in display), `template`, `providerId`?, `status` enum(queued\|sent\|failed), `error`? | `createdAt` (TTL per retention setting **[L]**) |
 | `aiDrafts` | `targetType` enum(product\|category\|collection), `targetId`, `targetVersion` int, `fields` {name?, description?, seo?} (LT), `model`, `status` enum(pending\|partially_applied\|applied\|discarded), `appliedFields` [] | `targetType, targetId, status` |
-| `outbox` | `topic`, `payload`, `status` enum(pending\|leased\|done\|dead), `attempts` int, `leaseUntil`?, `nextAt`, `lastError`? | `status, nextAt` |
+| `outbox` | as approved in domain-rules §13: `type`, `payload`, `idempotencyKey` (deterministic `<type>:<aggregateId>:<seq>`, §4.1), `status` enum(pending\|processing\|done\|failed\|dead), `attempts` int, `availableAt`, `leaseUntil`?, `lastError`?, `providerRef`? | `idempotencyKey` unique; `status, availableAt` |
 | `auditLog` | `actor` {id, role}, `action`, `target` {type, id}, `before`/`after` (redacted diff), `ip` (truncated), `at` | `at`; `target.type, target.id` |
 | `jobs` | `name`, `lastRunAt`, `lastResult`, `lockUntil`? | `name` unique |
 | `staffRoles` | `key` (unique), `name` LT, `capabilities` string[] (from the capability list), `builtIn` bool (the six roles of domain-rules §1: owner, store_manager, marketing_manager, catalogue_editor, order_operator, support_agent; renamable), `twoFactorRequired` bool (true and locked for owner and store_manager, D7); staff users carry `staffRoleKey` | `key` unique |
@@ -181,6 +185,8 @@ There is no mock data (owner decision D2; see `DATA.md`).
 | Generated draft catalogue | `catalogue/horekbazar/` | 39 categories, 144 products (draft) | **none**: never read at runtime, never imported without record-level approval (D11) |
 
 ## Routes
+
+> "ISR" below is conditional on D17 (`docs/BUILD-PLAN.md` §9.1); under the approved nonce rule those pages render per request.
 
 All storefront routes exist twice: `/…` (Bengali) and `/en/…` (English), with the same slug (D10). The full route list is the Scope table in `DESIGN.md`. Rendering for the main families:
 
@@ -212,7 +218,7 @@ Core journey routes. Section ids match the markup `id`. The other routes follow 
 | Section id | Reads | Empty | Loading | Error | Filled |
 |---|---|---|---|---|---|
 | `#site-header` | Settings, top categories | wordmark only if Settings cannot be read | static | — | wordmark, **persistent search field with the category entry beside it** (contract), language switch; mega-menu at 1440 px |
-| `#bottom-dock` (375 px) | Cart (count, subtotal), delivery zones | the bottom bar always shows; no context strip when the cart is empty | count reserved | count hidden; the bar still works | **five-item bottom bar** (Home, Categories, Search, Cart, Account; contract), with **at most one context strip** above it, by priority: `StickyBuyStrip` on `/p/[slug]` > `CheckoutSummaryStrip` on `/checkout` > `RunningTotalBar` (cart not empty; not on `/p`, `/cart` or `/checkout`). It publishes `--dock-h`; `main` padding-bottom and `scroll-padding-bottom` = `--dock-h` + 16 px; safe-area inset applied; hidden while a text field is focused (proposed rules, `DESIGN.md` → Layout → Bottom dock) |
+| `#bottom-dock` (below 768 px only) | Cart (count, subtotal), delivery zones | the bottom bar always shows; no context strip when the cart is empty | count reserved | count hidden; the bar still works | **five-item bottom bar** (Home, Categories, Search, Cart, Account; contract), with **at most one context strip** above it, by priority: `StickyBuyStrip` on `/p/[slug]` > `CheckoutSummaryStrip` on `/checkout` > `RunningTotalBar` (cart not empty; not on `/p`, `/cart` or `/checkout`). It publishes `--dock-h`; `main` padding-bottom and `scroll-padding-bottom` = `--dock-h` + 16 px; safe-area inset applied; hidden while a text field is focused (proposed rules, `DESIGN.md` → Layout → Bottom dock) |
 
 ### `/`
 | Section id | Reads | Empty | Loading | Error | Filled |
@@ -224,7 +230,7 @@ Core journey routes. Section ids match the markup `id`. The other routes follow 
 | Section id | Reads | Empty | Loading | Error | Filled |
 |---|---|---|---|---|---|
 | `#category-header` | Category | never empty: a 404 instead | static | — | title (display face), breadcrumb, product count |
-| `#filters` | facets from the products in the category | hidden when there are no products | — | filters disabled with a message | filter sheet at 768 px and below; persistent sidebar at 1440 px (contract) |
+| `#filters` | facets from the products in the category | hidden when there are no products | — | filters disabled with a message | `FilterSheet` below 1280 px (so at 375 and 768 px); persistent `FilterSidebar` from 1280 px (so at 1440 px, contract) |
 | `#product-list` | Products (24 per page) | "no products in this category yet", with a link to other departments; when filters give no results, "no matches" with a clear-filters action | static KhataEntry skeletons | message and retry | KhataEntries in the ruled grid: 2 columns at 375 px, 3 at 768 px, 4–5 at 1440 px (contract); "load more" button with a paginated URL |
 
 ### `/p/[slug]`
@@ -249,7 +255,7 @@ Core journey routes. Section ids match the markup `id`. The other routes follow 
 | `#address` | Addresses | address form | — | field errors | saved addresses as radio cards plus "add new" |
 | `#delivery` | zone for the address | "this area is not delivered to", with contact | — | — | fee and estimate |
 | `#summary` | cart totals | redirects to `/cart` | reserved | — | collapsible khata on mobile |
-| `#place-order` | — | — | loading button (idempotency key; double-tap safe); shown in `CheckoutSummaryStrip` at 375 px and repeated at the end of the form in normal flow | stock lost, duplicate submit, server error, invalid phone (Scope states) | COD line, "what happens next", place-order button |
+| `#place-order` | — | — | loading button (idempotency key; double-tap safe); shown in `CheckoutSummaryStrip` below 768 px and always at the end of the form in normal flow | stock lost, duplicate submit, server error, invalid phone (Scope states) | COD line, "what happens next", place-order button |
 
 ### `/checkout/success/[orderNumber]`
 | Section id | Reads | Empty | Loading | Error | Filled |
@@ -266,7 +272,7 @@ Core journey routes. Section ids match the markup `id`. The other routes follow 
 | `/cart` | empty · out of stock · price changed · invalid coupon | `#cart-lines`, `#cart-summary` |
 | `/checkout` | area not delivered to · stock lost · duplicate submit · server error · invalid phone | `#place-order`, `#delivery` |
 | Integrations (email, push, courier, AI, chat) | configured · healthy · failing · not configured | `docs/domain-rules.md` §7 |
-| Bottom dock (375 px) | empty cart · cart filled · text field focused (bars hidden) · PDP strip · checkout strip · reduced motion | `#bottom-dock` |
+| Bottom dock (below 768 px) | empty cart · cart filled · text field focused (bars hidden) · PDP strip · checkout strip · reduced motion | `#bottom-dock` |
 | Micro-states | button, form, list, image and async-action states (`gates/rules.md`) | `DESIGN.md` → Components |
 
 ## API surface (proposed, Checkpoint 4)
@@ -284,7 +290,7 @@ Rules for every entry:
 | `cart.applyCoupon` / `removeCoupon` | `code` | cart summary + discount lines | `COUPON_INVALID`, `COUPON_EXPIRED`, `COUPON_LIMIT`, `COUPON_INELIGIBLE` | customer; RL 10/min |
 | `cart.merge` | (session) | cart summary | — | on sign-in |
 | `checkout.quote` | `addressId`, `zoneId` | priced totals (domain-rules §5) | `ADDRESS_INVALID`, `ZONE_UNAVAILABLE` (**D12 / D21**) | customer |
-| `checkout.place` | `addressId`, `zoneId`, `note`?, `rewardsToRedeem`?, `expectedTotal`, `idempotencyKey` (UUID) | `{orderNumber}` | `PRICE_CHANGED` (with new totals), `INSUFFICIENT_STOCK` (lines), `COUPON_*`, `NOT_SIGNED_IN`, `SETUP_REQUIRED` | **customer**; RL 5/min; **IK** |
+| `checkout.place` | `addressId`, `zoneId`, `note`?, `rewardsToRedeem`?, `expectedTotal`, `idempotencyKey` (UUID) | `{orderNumber}` | `PRICE_CHANGED` (with new totals), `INSUFFICIENT_STOCK` (lines), `COUPON_*`, `CART_CHANGED`, `IDEMPOTENCY_KEY_REUSED`, `CHECKOUT_BUSY` (503), `NOT_SIGNED_IN`, `SETUP_REQUIRED`; a replay returns `200` with `replayed: true` (domain-rules §4.1) | **customer**; RL 5/min; **IK** |
 | `orders.cancelByCustomer` | `orderNumber`, `reason` | order | `NOT_CANCELLABLE` (from `processing` onward; allowed from `pending_confirmation`, `awaiting_stock` and `confirmed`, per §3) | customer, owner of the order; IK |
 | `returns.request` | `orderNumber`, `lines`, `reason` | return | `WINDOW_CLOSED`, `NOT_RETURNABLE` | customer; RL 5/h |
 | `reviews.submit` | `productId`, `rating`, `body` | review (pending) | `NOT_VERIFIED_PURCHASE`, `DUPLICATE` | customer; RL 5/h |
@@ -305,7 +311,7 @@ Rules for every entry:
 | `inventory.receive` / `inventory.adjust` | `inventory.adjust` | **IK**; reason required for adjust |
 | `merch.upsertSection` / `upsertBanner` / `upsertCollection` | `merch.write` | |
 | `promotions.upsert` / `coupons.upsert` | `promotions.write` | flash sales need a real end time |
-| `orders.transition` | `orders.confirm` / `fulfilment.write` (by target state) | state machine; **IK**; 409 on illegal transitions |
+| `orders.transition` | `orders.confirm` / `fulfilment.write` (by target state) | state machine; **IK**; input includes `expectedVersion`; `409 STATE_CHANGED` / `409 ILLEGAL_TRANSITION` (domain-rules §4.1) |
 | `shipments.create` / `shipments.update` | `fulfilment.write` | manual mode or courier port |
 | `returns.transition` / `returns.inspect` | `returns.process` | restock only from `inspected` |
 | `reviews.moderate`, `messages.reply` | `reviews.moderate`, `messages.reply` | |
@@ -367,7 +373,7 @@ From `.env.example`. The app starts with none set and shows setup-required state
 
 - **Content source:** MongoDB, edited in `/admin`. `data/` holds only owner-approved seed records; `catalogue/horekbazar/` is a draft research artifact and is never a content source.
 - **Images and media:** Cloudinary (the store's own account); 1:1 product images, AVIF or WebP at 160 / 320 / 640 / 1200 px; rights recorded in `MEDIA.md`.
-- **Caching and revalidation:** ISR by tag (`settings`, `category:<id>`, `product:<id>`, `home`); prices and stock are always re-resolved on the server at add-to-cart and at order placement.
+- **Caching and revalidation:** "ISR" in the route table means HTML cached and revalidated by tag (`settings`, `category:<id>`, `product:<id>`, `home`). That holds **only under D17 option (b)**. Under the approved nonce rule (option a, the fallback) these pages render per request and only data reads are cached (`docs/BUILD-PLAN.md` §9.1, owner-pending); prices and stock are always re-resolved on the server at add-to-cart and at order placement.
 - **Auth flow, rate limits, security items:** `docs/domain-rules.md` §9 and Checkpoint 4.
 - **Open decisions affecting this file:** D12 (location dataset: address codes and zone mapping); D5 (hosting: caching specifics); D11 (no catalogue content approved).
 - **Assumptions:** the order number format `HB-YYMM-NNNNN` is a proposal **[A]**. Dock heights (56 px bar, 56 px strip) are proposals, checked at 375 px in the build.

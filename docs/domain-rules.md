@@ -41,7 +41,7 @@ Rules:
 | Identity | Better Auth collections (`user`, `session`, `account`, `verification`), `staffRoles` | Settings, Email |
 | Catalogue | `products`, `variants`, `categories`, `collections`, `brands` (flagged), `attributes` | Media, Search |
 | Merchandising | `homeSections`, `banners` | Catalogue |
-| Pricing & promotions | `promotions` (flash sale, product promo, quantity tier), `coupons`, `couponRedemptions` | Catalogue |
+| Pricing & promotions | `promotions` (flash sale, product promo, quantity tier), `coupons`, `couponRedemptions`, `couponCustomerUsage` (proposed, §4.1) | Catalogue |
 | Inventory | `stock` (per variant), `inventoryLedger`, `reservations` | Catalogue |
 | Cart | `carts` | Pricing, Inventory |
 | Orders | `orders`, `orderEvents`, `idempotencyKeys` | Cart, Pricing, Inventory, Delivery |
@@ -106,8 +106,8 @@ Per variant (`stock`): `onHand`, `reserved`, `available = onHand − reserved` (
 
 | Movement | When | Effect | Idempotency key |
 |---|---|---|---|
-| `receive` | stock in | onHand +n | adjustment id |
-| `adjust` | manual correction (reason required) | onHand ±n | adjustment id |
+| `receive` | stock in | onHand +n | adjustment id **(Checkpoint 4 proposed: `stock:<adjustmentId>:<variantId>:receive`, §4.1)** |
+| `adjust` | manual correction (reason required) | onHand ±n | adjustment id **(Checkpoint 4 proposed: `stock:<adjustmentId>:<variantId>:adjust`, §4.1)** |
 | `reserve` | order placed | reserved +n (guarded: `available ≥ n`) | `orderId:lineId:reserve` |
 | `release` | cancel/reject before shipping, partial cancel | reserved −n | `orderId:lineId:release` |
 | `commit` | shipped | onHand −n, reserved −n | `orderId:lineId:commit` |
@@ -121,6 +121,66 @@ Rules (all must be tested, including under concurrency):
 4. Order, ledger, stock and outbox writes for one operation happen in one MongoDB transaction.
 5. A nightly reconciliation job recomputes `onHand`/`reserved` from the ledger and reports (does not silently fix) any drift.
 6. Displayed stock: exact counts when `available ≤ lowStockThreshold`, otherwise "In stock" (configurable); never fabricated scarcity.
+
+### 4.1 Idempotency and concurrency contract (proposed at Checkpoint 4, awaiting owner approval)
+
+This section makes the keys in §4, §9 and §13 precise. It changes only one key format (receive and adjust, below). Nothing here is proven: every guarantee becomes a claim only when its test in `docs/BUILD-PLAN.md` §12 has run and passed.
+
+**Why the change.** The draft `SCHEMA.md` v0.2 put one unique `idempotencyKey` on `reservations`. One order reserves several variants, so a single per-request key would either collide between lines or need ad-hoc suffixes. A single "adjustment id" on the ledger has the same problem when one adjustment covers several variants. **Each layer below therefore has its own scope and its own uniqueness constraint; no key is shared between unrelated operations.**
+
+| Layer | Protects against | Uniqueness constraint | Key or value |
+|---|---|---|---|
+| Request key | the same request processed twice (double tap, both Place order buttons, client retry) | `idempotencyKeys` unique `{scope, principalId, key}`; stores `fingerprint` (hash of the normalised request) and `resultRef` | client UUID. Checkout: generated once per checkout view, renewed after success or when the cart changes. Staff: one per action dialog |
+| Order | a second order for the same checkout request, including after the request key has expired | `orders` unique `{userId, checkoutKey}` | the checkout request key |
+| Cart | two different checkout requests (two tabs) both ordering the same cart | compare-and-set on the customer's cart `{userId, version}`; placement marks the cart `converted` | — |
+| Reservation | two reservations for one order line | `reservations` unique `{orderId, lineId}`; an order has at most one line per variant (`{orderId, lines.variantId}` checked in the service) | — |
+| Ledger movement | the same stock movement twice | `inventoryLedger.idempotencyKey` unique, deterministic: `order:<orderId>:<lineId>:reserve\|release\|commit`, `return:<returnId>:<lineId>:restock\|write_off`, `stock:<adjustmentId>:<variantId>:receive\|adjust` | the type prefix keeps the namespaces apart |
+| Order transition | lost updates and transitions applied twice | compare-and-set on `{_id, status: from, version: v}` → `version: v + 1`; `orderEvents` unique `{orderId, seq}` with `seq = v + 1` | plus the request key for the request itself |
+| Coupon | the order's one coupon counted twice; usage limits exceeded under concurrency | `couponRedemptions` unique `{orderId}` (one coupon per order, §5); `coupons.used` guarded `$inc` with `used < usageLimit`; per-customer counter `couponCustomerUsage` unique `{couponId, userId}`, updated with a guarded `$inc` (`count < perCustomerLimit`) | — |
+| Outbox | the same side effect queued twice | `outbox.idempotencyKey` unique, deterministic `<type>:<aggregateId>:<seq>`, for example `email.order_confirmed:<orderId>:3` | consumers dedupe on it (for example `emailLog` unique `outboxKey`) and pass it to providers that support idempotency **[NV per provider]** |
+| Rewards | accrual or reversal twice | `rewardLedger.idempotencyKey` unique: `order:<orderId>:accrue`, `return:<returnId>:reverse` | — |
+
+**Transaction boundary.** One MongoDB transaction, on a replica set with majority read and write concern, holds all the writes of one operation:
+- **Checkout placement:** request-key insert, cart compare-and-set, every line's guarded stock update with its reservation and ledger rows, coupon writes, the order insert, the `orderEvents` row and the outbox rows.
+- **Transition:** the order compare-and-set, its event, its stock and coupon effects, and its outbox rows.
+
+Lines are processed in `variantId` order, so concurrent orders touch shared documents in a consistent sequence **[H]**.
+
+**Retry behaviour** (driver error labels):
+- `TransientTransactionError` (including write conflicts between concurrent transactions): the whole transaction body is retried in a **bounded** loop (5 attempts or 3 s, whichever comes first) **[A]**. When the bound is reached the request returns `503 CHECKOUT_BUSY` with `Retry-After` and nothing is written.
+- `UnknownTransactionCommitResult`: only the commit is retried. The body is never re-executed after a commit that may have succeeded.
+- Lost response (browser timeout, server crash after commit): the client retries with the same key. The request-key lookup, or the order's `{userId, checkoutKey}` index once the key has expired, returns the original result. The work is never repeated.
+
+**The seven cases:**
+1. **Same customer submits twice:**
+   - If the first request has committed, the second returns `200` with the same `orderNumber` and `replayed: true`.
+   - If both are in flight, they conflict on the request-key document. The loser retries, finds the committed result and returns it. If the first request aborted (for example on stock), the second runs fresh.
+   - The same key with a different fingerprint returns `409 IDEMPOTENCY_KEY_REUSED` and writes nothing.
+   - A second tab with a new key fails `409 CART_CHANGED` once the cart is converted.
+2. **One order with several variants:** each line gets its own reservation `{orderId, lineId}` and ledger key. If any line fails its guard, the whole transaction aborts, with no partial reservation, and the response names the lines with their real `available` quantity (`409 INSUFFICIENT_STOCK`).
+3. **Two customers, the same stock:** each transaction applies the guarded update `{variantId, available: {$gte: n}}`.
+   - Concurrent writers to the same stock document conflict, and one retries.
+   - On retry the guard sees the committed value, so the request either succeeds within the remaining stock or returns `409 INSUFFICIENT_STOCK`.
+   - The validator `available ≥ 0` is the backstop.
+4. **Retry after an uncertain result:** the retry rules above apply. The request key and the order index make "commit happened, response lost" return the original result.
+5. **Cancel or reject releases stock exactly once:** the release step updates each reservation with `{orderId, lineId, status: "active"}` → `released`. It changes `stock` and writes the `release` ledger row **only if that update matched**. The ledger key is a second guard. The order compare-and-set lets only one terminal transition win; the other gets `409 STATE_CHANGED`.
+6. **Repeated or out-of-order transitions:**
+   - The same request key returns the first result.
+   - A different key, when the order has already moved, returns `409 STATE_CHANGED` with the current state.
+   - A transition not allowed from the current state (§3) returns `409 ILLEGAL_TRANSITION`.
+   - Courier events are applied only if they move the shipment forward in a fixed order of statuses; older and duplicate events are recorded in `courierEvents` and ignored (`200`).
+7. **Coupon and outbox duplication:**
+   - Coupon writes happen inside the placement transaction, so an aborted placement leaves no redemption and no usage.
+   - A cancel or reject before dispatch releases the redemption once (compare-and-set `held → released`) and decrements both counters once **[A: usage is restored on cancellation; owner may change]**.
+   - Outbox rows are inserted in the same transaction with deterministic keys, so a retried transaction cannot duplicate them.
+   - Delivery from the outbox is at least once; consumers dedupe by the outbox key.
+
+**Conflict responses:**
+- `200 replayed` (same request, same result).
+- `409`, each with a localised message and the data needed to recover: `IDEMPOTENCY_KEY_REUSED`, `CART_CHANGED`, `INSUFFICIENT_STOCK` (lines and available quantities), `PRICE_CHANGED` (new totals), `COUPON_LIMIT`, `STATE_CHANGED` (current state), `ILLEGAL_TRANSITION`.
+- `503 CHECKOUT_BUSY` (retry bound reached, nothing written).
+
+**Retention.** Request keys expire after 7 days (TTL) **[A]**. The order's `{userId, checkoutKey}` index is permanent, so expiry cannot create a duplicate order.
 
 ## 5. Pricing, promotions, coupons, rewards (D8 approved; D9 approved as a proposal pending legal review; Checkpoint 2)
 
@@ -250,7 +310,7 @@ Three layers, so buyers customise without editing core code:
 - CSRF: same-origin checks on all mutations; server actions only.
 - Validation: every input validated server-side with Zod (`sec-11`); output encoded; rich text sanitised with an allowlist.
 - Rate limits (Redis): sign-in, registration, password reset, checkout placement, coupon validation, search suggestions, review posting, messages, AI drafting, webhook endpoints.
-- Idempotency: checkout and every staff state transition take an idempotency key; duplicates return the first result.
+- Idempotency: checkout and every staff state transition take an idempotency key; duplicates return the first result. Scopes, constraints and retry rules: §4.1 (proposed at Checkpoint 4).
 - Uploads: server-signed, folder-scoped, type and size limited, no SVG uploads from users.
 - Webhooks: signature or shared-secret verification, timestamp tolerance, replay protection by event id.
 - Headers: CSP with nonces, HSTS, X-Content-Type-Options, Referrer-Policy, Permissions-Policy, frame-ancestors none (admin) / self (storefront).
