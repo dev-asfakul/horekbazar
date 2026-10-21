@@ -13,7 +13,7 @@ verified), **Partial**, **Missing**, **Blocked** (by an owner decision or creden
 |---|---|
 | `main` | `a22f81b` (merge of PR #2: B2). PRs #1 and #2 merged; none open before this audit |
 | `preview/horekbazar-v1` | `a22f81b` + docs commits (progress and this audit) |
-| CI on `main` | **none**: GitHub recorded no push event for the PR #2 merge (no Actions run, no Vercel status). Every commit on the preview branch passed CI |
+| CI on `main` | **none**: GitHub's activity log has no entry for the PR #2 merge (nor for the `a7b4a64` push), so no Actions run and no Vercel build started. PR #1's merge was recorded normally. CI on preview commits passed; one WebKit focus test failed once on PR #3 and passed on re-run (intermittent) |
 | Canonical deployment | **Not determined.** `dev-choice` has two Git-connected projects, `horekbazar` and `horekbazar-preview`. `https://horekbazar-preview.vercel.app` serves **B1**: `/admin/health` and `/api/jobs/drain` return 404, so it is not `a22f81b`. The deployed SHA cannot be read: the agent's Vercel token gets 403 on `dev-choice` (CLI and REST API) |
 | Local re-run | lint OK; typecheck OK; unit 74/74; `db:validators --check` OK; integration 24/24 (disposable MongoDB 8.0.4 replica set); catalogue checks OK; zero-variable `next build` OK; Playwright 134 passed, 58 skipped (opt-in screenshots and the WebKit maintenance check), 0 failed |
 

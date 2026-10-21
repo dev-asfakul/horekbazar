@@ -2,6 +2,13 @@
 
 Newest first. Each entry: date, phase, done, decided, open, next.
 
+## 2026-10-21 — Owner decision report: deployment evidence, D19/D23 guidance (no feature phase started)
+
+- **Push events (GitHub activity API, `repos/…/activity`):** the PR #1 merge appears as `pr_merge refs/heads/main 0f35772`, and a CI `push` run exists for it. The PR #2 merge (`a22f81b`, 14:03 UTC) and the push of `a7b4a64` (14:47 UTC) **do not appear at all**, although `git ls-remote` shows both refs. Neither commit has an Actions `push` run or a Vercel status. Pull-request events were delivered (PR #2 `merged`, PR #3 `opened`, and its CI ran). GitHub status: operational. Conclusion: GitHub did not process these two ref updates as push events, so no consumer (Actions, Vercel) was notified. This is not a Vercel build failure. Why GitHub dropped them is not established from the repository side.
+- Vercel: the agent's token now gets 403 even on `/v2/user`, not only on the `dev-choice` team. A re-authorisation was requested; nothing changed afterwards.
+- **CI on PR #3 (docs only):** first run failed one WebKit test (`shell.spec.ts` "at 375 px › keyboard focus is never hidden by the dock": the focus box of the dock's Home link measured 831.5 > 812.5). The re-run of the same commit passed. Recorded as an **intermittent test** (`retries: 0`); not fixed, not weakened.
+- Sandbox hygiene: the local `.env.local` holding the pasted (compromised) values and the agent-generated `AUTH_SECRET`/`CRON_SECRET`/VAPID keys was deleted. Treat those generated values as never issued.
+
 ## 2026-10-21 — Full audit (no feature phase started)
 
 - **Owner instruction:** a full audit and completion request, explicitly *not* crossing approval gates; B3 stays unapproved.
