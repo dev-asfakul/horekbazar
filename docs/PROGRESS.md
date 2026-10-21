@@ -2,6 +2,11 @@
 
 Newest first. Each entry: date, phase, done, decided, open, next.
 
+## 2026-10-21 — B2 owner decisions; PR #2 merge authorised
+
+- **Owner answers (19:50 +06):** merge PR #2 now. Decisions: fail closed without Upstash in production **approved**; development-only open `/admin/health` **approved** provided deployed environments always require authentication (met: only `NODE_ENV=development`; every build and Vercel deployment is `production`); `experimental.authInterrupts` **kept proposed** until its necessity, compatibility and 403 behaviour are shown (explanation added to the DESIGN.md Decision trace; 403 demonstrated by Playwright and on the deployed URL after merge); schema additions **approved** with documentation and tests (SCHEMA.md "B2 platform additions" table). **D19: (a) owner-provided Atlas dev cluster** (URI not yet supplied). **B3: not yet** (not approved).
+- **Next:** merge PR #2, verify the production deployment of `main`; then the owner adds the Atlas dev `MONGODB_URI`; B3 waits for the owner.
+
 ## 2026-10-21 — Phase B2: data platform (pushed to `preview/horekbazar-v1`; PR to `main` awaiting the owner's merge answer)
 
 - **Owner instruction (this session):** the owner asked to inherit the latest state, set up the environment, install and use Motomation, audit every branch, and "continue the remaining roadmap … start the next authorized implementation task", with a PR per phase, verified CI and Vercel checks, and merges only after required owner approval. Read as authorising **B2** (the next phase in §11). B2 approval does not approve B3. Merging B2 to `main` waits for the owner's explicit answer (D18: the owner merges to `main`).

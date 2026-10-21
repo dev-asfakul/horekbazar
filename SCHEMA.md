@@ -186,6 +186,14 @@ Shared rules for every entity:
 | `redirects` | `from` (path), `to` (path), `code` 301 | `from` unique |
 | Better Auth (`user`, `session`, `account`, `verification`, `twoFactor`) | per Better Auth's MongoDB adapter; extended fields `locale`, `phone`?, `staffRoleKey`? on `user` | per adapter |
 
+**B2 platform additions (approved by the owner 2026-10-21 with documentation and tests as the condition).**
+
+| Addition | Purpose | Index | Migration and backward compatibility | Tested by |
+|---|---|---|---|---|
+| `outbox.leaseOwner`? | The worker id that holds a row's lease. Complete and fail match `{status: "processing", leaseOwner}`, so a worker whose lease expired and was reclaimed cannot overwrite the new owner's result | none (lookups are by `_id`; claims use `status, availableAt`) | optional field, set at claim and `$unset` on complete/fail; rows written without it remain valid; `db:migrate` applies the validator with `collMod` | `tests/integration/outbox.test.ts` "reclaims an expired lease after a crash, and the crashed worker cannot complete it" |
+| `jobs.lastSuccessAt`? | Time of the last drain that finished without error; health turns failing when rows wait and it is older than 5 minutes (domain-rules §13). `lastRunAt` alone cannot tell a failing drain from a working one | `name` unique (existing) | optional; absent means "never succeeded"; written by `recordJobRun` | `outbox.test.ts` "records each drain …", `tests/unit/health.test.ts` jobs cases, `drain-route.test.ts` |
+| `migrations` collection | Records each one-time data migration (`_id` = `NNNN-name`, `appliedAt`) so `npm run db:migrate` runs it exactly once and stays safe to run on every deploy | `_id` (built in) | created by `db:migrate` if missing; a database migrated before this collection existed simply has no records, so all data migrations are pending (there are none yet) | `migrate.test.ts` "runs each one-time data migration once and records it", plus the valid/invalid insert per collection |
+
 ### Data files
 There is no mock data (owner decision D2; see `DATA.md`).
 
