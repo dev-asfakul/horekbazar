@@ -2,6 +2,44 @@
 
 Newest first. Each entry: date, phase, done, decided, open, next.
 
+## 2026-10-21 — Checkpoint 4 (build plan) proposed; awaiting owner approval
+
+- **Owner direction:** the Checkpoint 4 brief says "We are deliberately moving forward from Checkpoint 3". Recorded as proceeding by owner direction. Explicit Checkpoint 3 approval is requested together with Checkpoint 4.
+- **Audit:**
+  - Branch `main`, clean, level with `origin/main` at `4a87a82` (verified with `git status` and the GitHub API).
+  - No application code exists.
+  - The Checkpoint 3 amendments were confirmed in the files.
+  - Read the skill's workflow (`thinking/sequence.md` Checkpoint 4 to 6, preview vs handoff push), `gates/rules.md`, `adapters/next.md`, `motion/*` and `templates/MOTION.md`.
+- **Done (documentation only):**
+  - New `docs/BUILD-PLAN.md`:
+    - audit and contradictions C1–C11;
+    - routes; components; states; domain mapping; responsive plan; accessibility; SEO and i18n; performance; security; integrations;
+    - phases B0–B11, then Checkpoints 5–6;
+    - verification matrix and k6 plan (goal, not a claim);
+    - risks R1–R15; owner decisions D17–D23; definition of done.
+  - New `MOTION.md` (required by the skill at this checkpoint): Tier 1 only, no motion library.
+  - `SCHEMA.md` v0.2: category-depth definition with the move rule; remaining entity fields; API surface; admin section contracts.
+    - While writing it I checked roles, order states and return states against `docs/domain-rules.md` and corrected my draft to match: six roles, custom roles allowed, customer cancellation up to `confirmed`, and return states including `credited` and `closed`.
+  - `DESIGN.md`: status; build-plan pointer; `proxy.ts` note on the Scope row; sticky search-row refinement (proposed); decision-trace row.
+  - `README.md`: status.
+- **Contradictions recorded, not silently resolved:**
+  - C1 nonce CSP vs cached pages: Next.js documents that nonces disable static optimisation and ISR. Proposed D17.
+  - C2 `middleware.ts` → `proxy.ts` (Next.js 16 rename).
+  - C3 push-every-update vs the skill's "nothing reaches main" before the gate. Proposed D18: `preview/` branch.
+  - C4 row-level security → repository scoping.
+  - C6 D12 blocks checkout (D21).
+  - C7 review content under D11 (D20).
+  - C8 preview vs D5.
+  - C9 first-Owner verification (D23).
+  - C10 JS budget (D22).
+- **Checks run:**
+  - The catalogue checker and Ajv still pass. No catalogue data changed.
+  - `scripts/completeness.mjs`: expected missing-build failures only.
+  - Consistency search across the documents for columns, dock rules, depth, Index/noindex classification and decision IDs.
+  - Nothing was built, so no build, browser, accessibility, performance or load test was run, and none is claimed.
+- **Boundaries unchanged:** D11 catalogue unapproved; all 235 prices unapproved (39 historical TCB 26 Feb 2026 references, 196 estimates); images missing; compliance flags provisional; D12 open; D5 deferred. No application code, migrations, imports or deployment.
+- **Next:** the owner approves, redirects or amends Checkpoint 4 (and confirms Checkpoint 3), and decides D17–D23. Implementation (phase B0) starts only after explicit approval.
+
 ## 2026-10-21 — Checkpoint 3 amended after owner review ("Khata" accepted in principle; not yet approved)
 
 - **Owner decision:** the "Khata" direction is accepted in principle; **Checkpoint 3 is not approved**. Six amendments requested; the product contract is not to be changed to fit the design.

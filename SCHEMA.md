@@ -2,7 +2,7 @@
 
 > The data contract, written together with `DESIGN.md` as the skill requires (`templates/SCHEMA.md`).
 >
-> **Status: draft v0.1, Checkpoint 3 (proposed 2026-10-21; amended after the owner's review the same day; awaiting explicit approval).** v0.1 changes: category depth is now up to 3 levels (from the approved contract); the per-category `display` field is removed, because listings follow the contract's column counts; the bottom dock section is added. This version fixes the storefront entities, the routes and their rendering, the section contract for the core journey routes and the environment variables. Not yet complete: the field-level API surface, the admin section contracts and the remaining entity fields are finished at Checkpoint 4 (build plan), before any code.
+> **Status: draft v0.2, Checkpoint 4 (proposed 2026-10-21, awaiting owner approval).** v0.2 adds the remaining entity fields, the API surface, the admin section contracts and the category-depth definition with its move rule (see `docs/BUILD-PLAN.md`). v0.1 had set category depth to up to 3 levels (from the approved contract), removed the per-category `display` field and added the bottom dock section.
 >
 > Business rules live in `docs/domain-rules.md` (approved at Checkpoint 2). Where this file and the rules differ, the rules win until this file is corrected.
 
@@ -129,8 +129,48 @@ OrderLine is a snapshot: `variantId`, `sku`, `name` (LocalizedText), `options`, 
 ### Address (customer, embedded in User profile; snapshotted onto orders)
 Fields as in §6: `name`, `phone` (Bangladeshi format, required), `division`, `district`, `upazila`, `area`, `line`, `landmark`, `label` (home or office). The structured location fields (codes plus bn and en names) are **pending D12**. Until then they are not implemented, and no dataset is bundled.
 
-### Other entities (fields completed at Checkpoint 4)
-`collections`, `homeSections` (six types), `banners`, `promotions`, `coupons`, `couponRedemptions`, `reservations`, `orderEvents`, `shipments`, `courierEvents`, `returns`, `rewardLedger`, `reviews`, `conversations`, `messages`, `pushSubscriptions`, `campaigns`, `emailLog`, `aiDrafts`, `outbox`, `auditLog`, `jobs`, `staffRoles`, and the Better Auth collections. Owners, invariants and rules for each are already in `docs/domain-rules.md` §2–§14.
+### Category depth (definition and validation)
+- **Depth:** the number of categories on the path from the root to the node, inclusive; a top-level category has depth 1. **Maximum depth is 3** (approved contract).
+- **On create:** the service checks `depth(parent) + 1 ≤ 3`.
+- **On move:** the service requires `depth(new parent) + height(subtree) ≤ 3` and rejects any move that would put a node under itself or one of its descendants (a cycle).
+- Ancestors are walked with a visited set, so a corrupt cycle in stored data is detected rather than looped on.
+- MongoDB validators can't express ancestry, so the rule lives in `catalogue.service` and is covered by tests. The catalogue checker (`catalogue/horekbazar/tools/catalogue.mjs`) uses the same definition.
+
+### Other entities (proposed fields, Checkpoint 4)
+Shared rules for every entity:
+- Every document has `_id` and `createdAt`/`updatedAt` (UTC).
+- Money is integer poisha; localised text is `{bn, en?}` (`LT`).
+- Owners, invariants and lifecycles are in `docs/domain-rules.md`; these lists add field shapes only.
+
+| Collection | Fields (type; constraint) | Key indexes |
+|---|---|---|
+| `collections` | `slug` (unique, Latin), `name` LT, `description` LT, `kind` enum(manual\|rule), `productIds` ref[] (manual), `rule` {categoryIds, tagIds, priceMax} (rule), `status` enum(draft\|published), `seo` | `slug` unique |
+| `homeSections` | `type` enum(hero\|categoryTiles\|productRail\|banner\|collectionGrid\|richText) (six types, contract), `order` int, `data` (type-specific, Zod discriminated union), `visibleFrom`/`visibleTo` date?, `status` | `order` |
+| `banners` | `image` (Cloudinary public id; rights note required), `alt` LT (required), `href` (internal path), `placement` enum, `visibleFrom`/`visibleTo`, `status` | `placement, status` |
+| `promotions` | `kind` enum(percent\|fixed\|flashSale\|freeDelivery), `value` int, `scope` {all\|categoryIds\|productIds\|variantIds}, `startsAt`, `endsAt` (required for flash sales; real end time only), `minSubtotal` int?, `status` | `status, startsAt, endsAt` |
+| `coupons` | `code` (unique, upper case), `kind` enum(percent\|fixed\|freeDelivery), `value`, `maxDiscount`?, `minSubtotal`?, `usageLimit`?, `perCustomerLimit`?, `used` int (guarded `$inc`), `startsAt`, `endsAt`, `eligibility` {firstOrderOnly, categoryIds?}, `status` | `code` unique |
+| `couponRedemptions` | `couponId`, `userId`, `orderId`, `amount` int, `status` enum(held\|consumed\|released) | `{couponId, orderId}` unique |
+| `reservations` | `orderId`, `variantId`, `qty` int > 0, `status` enum(active\|committed\|released), `idempotencyKey` | `idempotencyKey` unique |
+| `inventoryLedger` | `variantId`, `kind` enum(receive\|adjust\|reserve\|release\|commit\|restock\|write_off), `qty` int, `onHandAfter`, `reservedAfter`, `actor` {type, id}, `reason`?, `refId`?, `idempotencyKey` | `idempotencyKey` unique; `variantId, createdAt` |
+| `stock` | `variantId` (unique), `onHand` int ≥ 0, `reserved` int ≥ 0, `available` int ≥ 0 (validator), `lowStockThreshold` int, `version` int | `variantId` unique |
+| `orderEvents` | `orderId`, `from`, `to`, `actor`, `reason`?, `idempotencyKey` | `orderId, createdAt`; `idempotencyKey` unique |
+| `idempotencyKeys` | `key`, `scope` enum(checkout\|transition), `principalId`, `result` (stored response), `expiresAt` (TTL) | `key` unique; TTL on `expiresAt` |
+| `shipments` | `orderId`, `courier` enum(manual\|steadfast\|pathao\|redx), `consignmentId`?, `trackingUrl`?, `status` (monotonic), `codAmount` int, `events` summary | `orderId`; `courier, consignmentId` unique (sparse) |
+| `courierEvents` | `provider`, `eventId`, `consignmentId`, `status`, `occurredAt`, `raw` (redacted) | `provider, eventId` unique |
+| `returns` | `orderId`, `lines` [{lineId, qty, reason}], `status` enum(requested\|approved\|rejected\|received\|inspected\|restocked\|written_off\|refunded\|credited\|closed) (domain-rules §3 returns), per-line `outcome` enum(restock\|write_off), `inspection` {result, note, by, at}?, `refund` {method enum(bkash\|nagad\|bank\|store_reward), amount, ref} (recorded, not executed)? | `orderId` |
+| `rewardLedger` | `userId`, `kind` enum(accrue\|redeem\|reverse\|expire), `points` int, `orderId`?, `idempotencyKey` | `idempotencyKey` unique; `userId, createdAt` |
+| `reviews` | `productId`, `userId`, `orderId` (verified purchase, required), `rating` int 1–5, `body` (sanitised), `status` enum(pending\|published\|rejected), `reply`? | `productId, status`; `{userId, productId}` unique |
+| `conversations` / `messages` | `userId`, `orderId`?, `status` enum(open\|closed) / `conversationId`, `from` enum(customer\|staff), `body` (sanitised), `readAt`? | `userId`; `conversationId, createdAt` |
+| `pushSubscriptions` | `userId`?, `endpoint` (unique), `keys` {p256dh, auth}, `topics` {orders bool, marketing bool (default **false**)}, `consentAt` date, `consentSource` | `endpoint` unique; `topics.marketing` |
+| `campaigns` | `title` LT, `body` LT, `url`, `audience` (marketing opt-in only), `status` enum(draft\|scheduled\|sent\|failed), `sentAt`? | `status` |
+| `emailLog` | `to` (hashed for search, masked in display), `template`, `providerId`?, `status` enum(queued\|sent\|failed), `error`? | `createdAt` (TTL per retention setting **[L]**) |
+| `aiDrafts` | `targetType` enum(product\|category\|collection), `targetId`, `targetVersion` int, `fields` {name?, description?, seo?} (LT), `model`, `status` enum(pending\|partially_applied\|applied\|discarded), `appliedFields` [] | `targetType, targetId, status` |
+| `outbox` | `topic`, `payload`, `status` enum(pending\|leased\|done\|dead), `attempts` int, `leaseUntil`?, `nextAt`, `lastError`? | `status, nextAt` |
+| `auditLog` | `actor` {id, role}, `action`, `target` {type, id}, `before`/`after` (redacted diff), `ip` (truncated), `at` | `at`; `target.type, target.id` |
+| `jobs` | `name`, `lastRunAt`, `lastResult`, `lockUntil`? | `name` unique |
+| `staffRoles` | `key` (unique), `name` LT, `capabilities` string[] (from the capability list), `builtIn` bool (the six roles of domain-rules §1: owner, store_manager, marketing_manager, catalogue_editor, order_operator, support_agent; renamable), `twoFactorRequired` bool (true and locked for owner and store_manager, D7); staff users carry `staffRoleKey` | `key` unique |
+| `redirects` | `from` (path), `to` (path), `code` 301 | `from` unique |
+| Better Auth (`user`, `session`, `account`, `verification`, `twoFactor`) | per Better Auth's MongoDB adapter; extended fields `locale`, `phone`?, `staffRoleKey`? on `user` | per adapter |
 
 ### Data files
 There is no mock data (owner decision D2; see `DATA.md`).
@@ -229,9 +269,78 @@ Core journey routes. Section ids match the markup `id`. The other routes follow 
 | Bottom dock (375 px) | empty cart · cart filled · text field focused (bars hidden) · PDP strip · checkout strip · reduced motion | `#bottom-dock` |
 | Micro-states | button, form, list, image and async-action states (`gates/rules.md`) | `DESIGN.md` → Components |
 
-## API surface
+## API surface (proposed, Checkpoint 4)
 
-To be completed at Checkpoint 4. Planned shape: server actions and route handlers that call module services only (§2). Webhooks: `POST /api/webhooks/courier/[provider]` (signature check, event-id dedupe). Jobs: `POST /api/jobs/[name]` (bearer `CRON_SECRET`). Health: `GET /api/health`. Each will get its request, response, errors, validation and rate limit here before it is built.
+Rules for every entry:
+- Mutations are **server actions** that call module services only (domain-rules §2), except webhooks, jobs and auth, which are route handlers.
+- Every input is parsed by Zod. Errors are `{code, message (localised), fields?}` with no stack traces.
+- The capability is checked in the service. RL means rate limit (Upstash) with fixed windows **[A]**. IK means idempotency key required.
+
+### Storefront and customer
+| Operation | Input | Output | Errors | Auth / RL / IK |
+|---|---|---|---|---|
+| `cart.add` | `variantId`, `qty` (1–99) | cart summary | `NOT_FOUND`, `UNAVAILABLE`, `INSUFFICIENT_STOCK`, `QTY_RANGE` | device or customer; RL 60/min |
+| `cart.setQty` / `cart.remove` | `lineId`, `qty` | cart summary | `NOT_FOUND`, `INSUFFICIENT_STOCK` | same |
+| `cart.applyCoupon` / `removeCoupon` | `code` | cart summary + discount lines | `COUPON_INVALID`, `COUPON_EXPIRED`, `COUPON_LIMIT`, `COUPON_INELIGIBLE` | customer; RL 10/min |
+| `cart.merge` | (session) | cart summary | — | on sign-in |
+| `checkout.quote` | `addressId`, `zoneId` | priced totals (domain-rules §5) | `ADDRESS_INVALID`, `ZONE_UNAVAILABLE` (**D12 / D21**) | customer |
+| `checkout.place` | `addressId`, `zoneId`, `note`?, `rewardsToRedeem`?, `expectedTotal`, `idempotencyKey` (UUID) | `{orderNumber}` | `PRICE_CHANGED` (with new totals), `INSUFFICIENT_STOCK` (lines), `COUPON_*`, `NOT_SIGNED_IN`, `SETUP_REQUIRED` | **customer**; RL 5/min; **IK** |
+| `orders.cancelByCustomer` | `orderNumber`, `reason` | order | `NOT_CANCELLABLE` (from `processing` onward; allowed from `pending_confirmation`, `awaiting_stock` and `confirmed`, per §3) | customer, owner of the order; IK |
+| `returns.request` | `orderNumber`, `lines`, `reason` | return | `WINDOW_CLOSED`, `NOT_RETURNABLE` | customer; RL 5/h |
+| `reviews.submit` | `productId`, `rating`, `body` | review (pending) | `NOT_VERIFIED_PURCHASE`, `DUPLICATE` | customer; RL 5/h |
+| `messages.send` | `conversationId`?, `orderNumber`?, `body` | message | `TOO_LONG` | customer; RL 20/h |
+| `push.subscribe` / `push.updateTopics` / `push.unsubscribe` | subscription, `topics` {orders, marketing} | prefs | `UNSUPPORTED`, `NOT_CONFIGURED` | customer; marketing only with an explicit `true` |
+| `privacy.requestExport` / `requestDeletion` | — | request record | — | customer; step-up re-auth |
+| `search.suggest` (GET handler) | `q` (1–64 chars), `locale` | ≤ 8 suggestions | — | public; RL 30/10 s |
+
+### Admin (all staff; capability in brackets; step-up where marked)
+| Operation | Capability | Notes |
+|---|---|---|
+| `settings.update`, `settings.updateTheme` | `settings.write` | brand colour rejected below 4.5:1 |
+| `settings.updateIntegrations` | `settings.integrations.write` + **step-up** | secrets never returned |
+| `delivery.upsertZone` | `delivery.write` | area mapping waits for **D12** |
+| `catalogue.upsertCategory` / `moveCategory` | `catalogue.write` | depth and cycle rules above |
+| `catalogue.upsertProduct` / `upsertVariant` / `publish` / `archive` | `catalogue.write` | optimistic `version` check |
+| `media.sign` (route handler) | `catalogue.write` | signed, folder-scoped, type and size allow-list |
+| `inventory.receive` / `inventory.adjust` | `inventory.adjust` | **IK**; reason required for adjust |
+| `merch.upsertSection` / `upsertBanner` / `upsertCollection` | `merch.write` | |
+| `promotions.upsert` / `coupons.upsert` | `promotions.write` | flash sales need a real end time |
+| `orders.transition` | `orders.confirm` / `fulfilment.write` (by target state) | state machine; **IK**; 409 on illegal transitions |
+| `shipments.create` / `shipments.update` | `fulfilment.write` | manual mode or courier port |
+| `returns.transition` / `returns.inspect` | `returns.process` | restock only from `inspected` |
+| `reviews.moderate`, `messages.reply` | `reviews.moderate`, `messages.reply` | |
+| `rewards.adjust` | `rewards.write` | **IK**; audit |
+| `campaigns.send` | `campaigns.send` | audience = marketing opt-in only |
+| `ai.draft` / `ai.applyField` / `ai.discard` | `catalogue.write` | apply per field; version check; RL 20/h |
+| `staff.invite` / `staff.setRole` / `staff.remove` | `staff.manage` + **step-up** | last-Owner protection |
+| `data.export` | `customers.export` + **step-up** | audit |
+
+### Route handlers
+| Handler | Auth | Behaviour |
+|---|---|---|
+| `GET /api/health` | public (summary) / `platform.read` (detail) | database and port status; never secrets |
+| `POST /api/jobs/drain` | bearer `CRON_SECRET` | drains due outbox rows with leases |
+| `POST /api/webhooks/courier/[provider]` | provider signature or secret + timestamp | dedupe by `(provider, eventId)`; monotonic status; 200 on duplicates |
+| `/api/auth/[...all]` | Better Auth | RL on sign-in, registration and reset (fail closed) |
+| `/sitemap.xml`, `/robots.txt`, `/manifest.webmanifest`, `/sw.js` | public | per environment (`docs/BUILD-PLAN.md` §7) |
+
+### Admin section contracts (proposed)
+Every admin list works with **RecordCards below 1024 px and DataTable from 1024 px**, from one column definition. Every admin list has these states:
+- **empty:** a "create the first …" action;
+- **loading:** static rows;
+- **error:** retry plus an error id;
+- **permission:** 403 naming the missing capability.
+
+| Route | Sections | Primary action |
+|---|---|---|
+| `/admin` | `#needs-action` (orders awaiting confirmation, low stock, dead letters), `#today` (real counts only) | open the oldest pending order |
+| `/admin/orders` | `#filters` (status, date, zone), `#list` | open an order |
+| `/admin/orders/[n]` | `#summary`, `#lines`, `#customer` (masked until opened, with audit), `#timeline`, `#actions` (only legal transitions), `#messages` | confirm / reject with a reason |
+| `/admin/products`, `/[id]` | `#list`; `#basics`, `#variants`, `#media` (rights note), `#seo`, `#ai-drafts` (diff), `#publish` | save draft / publish |
+| `/admin/categories` | `#tree` (depth ≤ 3, drag-free move dialog), `#editor` | move with the depth check |
+| `/admin/inventory` | `#stock` (on hand, reserved, available), `#ledger` | receive / adjust |
+| `/admin/settings/**` | `#identity`, `#theme` (preset, colour with a live contrast check), `#delivery`, `#features`, `#integrations` (configured / healthy / failing) | save |
+| `/admin/health` | `#ports`, `#outbox`, `#jobs` | retry dead letters |
 
 ## Environment variables
 

@@ -1,6 +1,6 @@
 # HorekBazar: Design and Architecture Record
 
-Status: **Checkpoint 1 (Stack) approved 2026-10-21 with amendments. Checkpoint 2 (Product contract) approved 2026-10-21 with conditions (below). Checkpoint 3 (Research and direction) proposed; "Khata" direction accepted in principle by the owner, amended after review 2026-10-21, awaiting explicit approval.** D11: Owner authorized catalogue generation; generated catalogue pending owner review and approval. D12 (location data) remains open; D5 deferred.
+Status: **Checkpoint 1 (Stack) approved 2026-10-21 with amendments. Checkpoint 2 (Product contract) approved 2026-10-21 with conditions (below). Checkpoint 3 (Research and direction) proposed; "Khata" direction accepted in principle by the owner, amended after review 2026-10-21; the owner directed moving forward to Checkpoint 4, and explicit approval is requested together with Checkpoint 4. Checkpoint 4 (Build plan) proposed 2026-10-21, awaiting owner approval (`docs/BUILD-PLAN.md`, `MOTION.md`, `SCHEMA.md` v0.2).** D11: Owner authorized catalogue generation; generated catalogue pending owner review and approval. D12 (location data) remains open; D5 deferred.
 No application code exists yet.
 
 Skill: `asfakulsiam-motomation-design` v3.0.2 (installed with `npx skills add`, hash in `skills-lock.json`, verified identical to upstream `main`).
@@ -260,7 +260,7 @@ Evidence (file#pattern) is filled in during the build; Notes describe intent. Ma
 | skeleton | cart and checkout summary | required |  |  |  |
 | skeleton | account order list and detail | required |  |  |  |
 | skeleton | admin tables and order detail | required |  |  |  |
-| template | middleware.ts | required |  |  | auth gate, locale routing, rate limiting, security headers |
+| template | middleware.ts | required |  |  | auth gate, locale routing, rate limiting, security headers. **Checkpoint 4 note:** Next.js 16 renamed `middleware` to `proxy`, so this is built as `proxy.ts`; the skill's completeness check will report `middleware.ts` missing, and that is recorded as an exception in `GATE.md` (`docs/BUILD-PLAN.md` §0, C2) |
 | template | data/ with schema.json | required |  |  | seed input only, owner-supplied or approved content, may be empty (D2, D11); draft review package in `catalogue/horekbazar/` is separate and never read at runtime |
 | template | README demo line | not required for this brief, reason: owner decision D2 (no mock data); README instead states that data/ holds only owner-supplied or approved catalogue content for a development database and may be empty |  |  |  |
 | template | README, DESIGN, MOTION, MEDIA, SCHEMA, CRITIQUE, GATE, LICENSE, CHANGELOG, .env.example | required |  |  |  |
@@ -453,7 +453,7 @@ Light theme only in v1. Tokens are semantic, and buyers set the brand colours (`
 - **Section spacing:** home sections 48 px mobile / 72 px desktop; within routes 24 / 32 px.
 - **Nav (contract navigation, unchanged):**
   - Header on every storefront page: wordmark, **persistent search field** with the **category entry beside it**, language switch (`EN` / `বাংলা`, keeps the page per §10), account and cart on desktop.
-  - At 375 px the search field is a full-width row under the wordmark, and the category button (বিভাগ) sits beside it.
+  - At 375 px the search field is a full-width row under the wordmark, and the category button (বিভাগ) sits beside it. **Checkpoint 4 refinement (proposed):** the wordmark row scrolls away and the search row stays sticky (about 52 px **[H]**), so Search in the bottom bar can focus it without a scroll jump (`docs/BUILD-PLAN.md` §5).
   - 375 px: **five-item bottom bar: Home (হোম), Categories (বিভাগ), Search (খুঁজুন), Cart (কার্ট, with a count), Account (অ্যাকাউন্ট)**.
     - Categories opens the department sheet (9 departments, then their sub-categories; up to 3 levels).
     - Search moves focus to the header search field (it scrolls into view if needed) and opens suggestions.
@@ -574,6 +574,14 @@ Three labels, so that nothing proposed reads as proven. **No item in the build-c
 | Performance budgets | Mid- and low-tier Android, throttled mobile network, field data once live | LCP ≤ 2.5 s, INP ≤ 200 ms, CLS ≤ 0.1; JS within the Tier 1 budget; ≤ 1 preloaded font; served font sizes re-measured |
 | Contrast on rendered pages | Real rendered states (hover, focus, disabled, status chips, brand-colour presets) | text ≥ 4.5:1, UI components ≥ 3:1 |
 
+## Build plan (Checkpoint 4)
+
+Checkpoint 4 of 6. Status: **proposed 2026-10-21, awaiting owner approval.**
+- The full plan is in `docs/BUILD-PLAN.md`: route inventory, component architecture, state matrix, domain mapping, responsive plan, accessibility, SEO, performance, security, integrations, phases B0–B11, verification matrix with the k6 plan, risks and definition of done.
+- Motion is in `MOTION.md`; the data and API contract is in `SCHEMA.md` v0.2.
+- The plan adds no product scope and changes no approved rule.
+- Contradictions are listed in `docs/BUILD-PLAN.md` §0 (C1–C11); the decisions the owner needs to make are D17–D23 (§13).
+
 ## Decision status (Checkpoint 2, approved with conditions)
 
 | ID | Status |
@@ -625,8 +633,9 @@ Three labels, so that nothing proposed reads as proven. **No item in the build-c
 | 2026-10-21 | 2 · D13 | Valid BD phone + admin confirmation; customer email verification optional; staff mandatory; no OTP | approved in principle |
 | 2026-10-21 | 2 · D14–D16 | SMS and online payments excluded; Q&A, gift cards, subscriptions, POS, multi-warehouse excluded; wishlist disabled | approved in principle |
 | 2026-10-21 | 2 Contract | **Checkpoint 2 approved with conditions** (catalogue stays an unapproved research artifact; prices unapproved and source-distinguished; images missing; compliance flags provisional; D12 open and resolved before dependent behaviour; D5 deferred; proceed to Checkpoint 3 only) | **approved** (owner) |
-| 2026-10-21 | 3 Review | Owner accepted the "Khata" direction in principle and asked for amendments: restore the contract's five-item bottom bar, coexisting with the RunningTotalBar; reconcile category depth; label verification. Category depth resolved to **3 levels maximum**, source: the approved product contract; the generated taxonomy uses 2. Listings realigned to the contract's column counts | **proposed**, awaiting explicit approval; contract unchanged |
 | 2026-10-21 | 3 Direction | Research record, directions A/B/C, chosen synthesis "Khata" (A with B's photo grid per category and C's serif title voice), dials, type and colour written | **proposed**, awaiting owner approval |
+| 2026-10-21 | 3 Review | Owner accepted the "Khata" direction in principle and asked for amendments: restore the contract's five-item bottom bar, coexisting with the RunningTotalBar; reconcile category depth; label verification. Category depth resolved to **3 levels maximum**, source: the approved product contract; the generated taxonomy uses 2. Listings realigned to the contract's column counts | **proposed**, awaiting explicit approval; contract unchanged |
+| 2026-10-21 | 4 Build plan | Build plan (B0–B11), MOTION.md, SCHEMA v0.2. Contradictions recorded: nonce CSP vs caching (D17), `middleware.ts` → `proxy.ts`, push workflow vs "main is the shipping truth" (D18), row-level security → repository scoping, D12 blocking checkout (D21), review content under D11 (D20), preview vs D5, first-Owner verification (D23), JS budget (D22) | **proposed**, awaiting owner approval |
 | 2026-10-21 | 2 · Correction | Atlas Free clusters do support backups (daily snapshot, up to 4 kept); earlier statement corrected | done |
 
 ### Design decision trace (Checkpoint 3, proposed)
