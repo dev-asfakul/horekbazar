@@ -25,7 +25,7 @@ Route: **full** (new brand, new product experience, commerce). Delivery mode: **
 
 ## 1. Stack (Checkpoint 1)
 
-### Proposed default
+### Approved stack (Checkpoint 1, 2026-10-21; open to override)
 
 | Layer | Choice | Version checked (npm, 2026-10-21) | Licence | Why |
 |---|---|---|---|---|
@@ -261,11 +261,11 @@ See the end of `docs/domain-rules.md` (D7–D16).
 
 ## Open decisions (Checkpoint 1)
 
-- **D1 Auth**: Better Auth (proposed) vs. Auth.js v5 beta.
+- ~~D1 Auth~~: **approved**: Better Auth + official Mongo adapter.
 - ~~D2 Demo mode~~: **decided**: no mock fallback; real dev database; setup-required states (see Conflicts 1).
-- **D3 Web Push library**: evaluate `@block65/webcrypto-web-push` / `@pushforge/builder`, or in-house.
-- **D4 Live chat default**: polling/SSE fallback + optional Ably (proposed) vs. Vercel WebSockets (beta) vs. ship chat later.
-- **D5 Hosting for the flagship demo**: Vercel Hobby (non-commercial demo only) vs. Vercel Pro. Also: which Vercel scope/team should own the project (current token cannot access `dev-choice`).
+- ~~D3 Web Push library~~: **approved approach**: choose between `@block65/webcrypto-web-push`, `@pushforge/builder` or in-house after fit checks at the push phase.
+- ~~D4 Live chat~~: **approved**: polling fallback by default, Ably adapter optional.
+- **D5 Hosting for the flagship demo (still open)**: Vercel Hobby (non-commercial demo only) vs. Vercel Pro. Also: which Vercel scope/team should own the project (current token cannot access `dev-choice`).
 - ~~D6 Licence~~: **decided provisionally**: one basic commercial licence; no tiers, no enforcement mechanism. Notes for legal review in `docs/LICENSING.md`.
 
 ## Decision trace
