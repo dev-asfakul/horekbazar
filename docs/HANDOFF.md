@@ -44,8 +44,12 @@ Steps (each is pushed to `preview/horekbazar-v1` when done; tick here in the sam
       `tests/integration/settings-merch.test.ts` (8), `tests/unit/settings.test.ts` (2). Settings
       start as DEFAULT_SETTINGS (version 0, nothing persisted, no zones invented); storefront use of
       settings (accent, numerals) is B5.
-- [ ] 3. Media: `/api/media/sign` (Cloudinary signed upload, `catalogue.write`, allow-list);
-      disabled with a notice when Cloudinary is not configured.
+- [x] 3. Media: `/api/media/sign` (Cloudinary signed upload, `catalogue.write`, allow-list);
+      disabled with a notice when Cloudinary is not configured. **Done:** `lib/adapters/media/cloudinary.ts`,
+      `app/api/media/sign/route.ts` (same-origin, capability by purpose, 503 `not_configured`), admin
+      CSP `connect-src` adds `https://api.cloudinary.com` on /admin only; `tests/unit/media.test.ts`.
+      Not done: checking with Cloudinary that an uploaded asset exists (the server accepts only
+      public ids inside the purpose folder). No Cloudinary credentials yet (owner action).
 - [ ] 4. Admin pages and server actions: products (list with search, filter, pagination; editor),
       categories, inventory, collections, homepage, banners, settings; bn/en messages.
 - [ ] 5. `npm run db:seed` from `catalogue/horekbazar/` and its run on `horekbazar_dev`.

@@ -3,6 +3,7 @@
 // storefront, so storefront HTML is rendered per request. Nothing here weakens a policy to gain caching.
 
 const CLOUDINARY_IMAGES = "https://res.cloudinary.com";
+const CLOUDINARY_UPLOAD = "https://api.cloudinary.com";
 
 /** Route classes that carry personal or session data never allow framing (BUILD-PLAN §9.1 table). */
 const PRIVATE_PREFIXES = ["/checkout", "/account", "/admin", "/login", "/register", "/forgot-password", "/reset-password", "/verify-email"];
@@ -36,7 +37,8 @@ export function buildCsp(nonce: string, options: { pathname: string; isDev: bool
     `style-src 'self' ${isDev ? "'unsafe-inline'" : `'nonce-${nonce}'`}`,
     `img-src 'self' blob: data: ${CLOUDINARY_IMAGES}`,
     "font-src 'self'",
-    "connect-src 'self'",
+    // Admin pages upload images straight to Cloudinary with a server-signed request (B4 media).
+    `connect-src 'self'${stripLocale(pathname) === "/admin" || stripLocale(pathname).startsWith("/admin/") ? ` ${CLOUDINARY_UPLOAD}` : ""}`,
     "object-src 'none'",
     "base-uri 'self'",
     "form-action 'self'",
