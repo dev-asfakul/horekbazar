@@ -12,6 +12,8 @@ export const serverEnvSchema = z.object({
   NEXT_PUBLIC_SITE_URL: optional(z.string().url()),
   NEXT_PUBLIC_DEFAULT_LOCALE: z.preprocess((v) => (v === "" ? undefined : v), z.enum(["bn", "en"]).optional()),
   STORE_TIMEZONE: optional(z.string().min(1)),
+  // "on" answers every storefront page with the maintenance state (503). Anything else, or unset, is off.
+  MAINTENANCE_MODE: z.preprocess((v) => (typeof v === "string" && v.trim() !== "" ? v.trim().toLowerCase() : undefined), z.enum(["on", "off"]).optional()),
 
   MONGODB_URI: optional(z.string().regex(/^mongodb(\+srv)?:\/\/.+/, "must start with mongodb:// or mongodb+srv://")),
   MONGODB_DB: optional(z.string().regex(/^[A-Za-z0-9_-]{1,63}$/, "letters, digits, _ and - only")),

@@ -1,3 +1,4 @@
+// CSP and security-header regression tests (D17 approved, option (a): nonce CSP on every page).
 import { describe, expect, it } from "vitest";
 import { baseSecurityHeaders, buildCsp, createNonce, isPrivatePath } from "@/lib/security/headers";
 

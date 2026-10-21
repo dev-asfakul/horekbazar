@@ -1,6 +1,10 @@
-# CI for the HorekBazar template (BUILD-PLAN B0): lint, typecheck, unit tests, catalogue
-# checks, a production build with zero environment variables, the setup-required smoke test,
-# and a client-bundle secret scan on a second build with harmless canary values.
+# CI for the HorekBazar template (BUILD-PLAN B0, B1): lint, typecheck, unit tests, catalogue
+# checks, a production build with zero environment variables, the Playwright suite in Chromium,
+# Firefox and WebKit (WebKit through the test-only HTTPS proxy), and a client-bundle secret scan
+# on a second build with harmless canary values.
+# B1: actions/checkout v4 -> v7 and actions/setup-node v4 -> v7 (both run on Node 24; the
+# Node 20 action runtime is deprecated). Runner pinned to ubuntu-24.04 while ubuntu-latest moves
+# to a newer image, so Playwright's --with-deps keeps a known package set.
 name: CI
 
 on:
@@ -16,11 +20,11 @@ concurrency:
 
 jobs:
   check:
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
           cache: npm
@@ -33,9 +37,18 @@ jobs:
 
       - name: Build with zero environment variables
         run: npm run build
-      - run: npx playwright install --with-deps chromium
-      - name: Setup-required smoke test
+      - run: npx playwright install --with-deps chromium firefox webkit
+      - name: Playwright (375 / 768 / 1440, three engines)
         run: npm run test:e2e
+      - name: Keep the Playwright report when a test fails
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: playwright-report
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 7
 
       - name: Build with canary server-only values
         env:

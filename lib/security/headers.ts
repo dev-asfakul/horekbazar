@@ -1,6 +1,6 @@
 // Security headers and the Content-Security-Policy (docs/domain-rules.md §9, docs/BUILD-PLAN.md §9.1).
-// Working assumption until the owner decides D17: option (a), a fresh nonce per request on every route,
-// which is the approved rule as written. Nothing here weakens a policy to gain caching.
+// D17 approved, option (a): a fresh nonce per request on every rendered page, including the public
+// storefront, so storefront HTML is rendered per request. Nothing here weakens a policy to gain caching.
 
 const CLOUDINARY_IMAGES = "https://res.cloudinary.com";
 

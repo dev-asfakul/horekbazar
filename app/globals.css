@@ -1,2 +1,709 @@
-/* Tailwind CSS v4. Design tokens (Checkpoint 3 palette) arrive in phase B1. */
+/* HorekBazar design tokens (DESIGN.md: Typography, Colour, Layout; MOTION.md) and the shell's base styles.
+   Tokens are semantic CSS variables so a buyer's brand colour (settings, B4) can override them at runtime.
+   No inline style attributes anywhere: the production CSP does not allow them (BUILD-PLAN §9.1, D17 option a). */
 @import "tailwindcss";
+
+/* ── Fonts: self-hosted OFL files in /public/fonts/v1 (licences next to them). Bengali and Latin
+   subsets are split by unicode-range, so a page downloads only the scripts it shows. The layout
+   preloads exactly one file per locale (the Noto Bengali subset on "/", the Noto Latin subset on "/en"). */
+@font-face {
+  font-family: "HB Noto Sans Bengali";
+  font-style: normal;
+  font-weight: 400 600;
+  font-display: swap;
+  src: url("/fonts/v1/noto-sans-bengali-bengali.woff2") format("woff2");
+  unicode-range: U+0951-0952, U+0964-0965, U+0980-09FE, U+1CD0, U+1CD2, U+1CD5-1CD6, U+1CD8, U+1CE1, U+1CEA, U+1CED, U+1CF2, U+1CF5-1CF7, U+200C-200D, U+20B9, U+25CC, U+A8F1, U+11DF0-11DF1;
+}
+@font-face {
+  font-family: "HB Noto Sans Bengali";
+  font-style: normal;
+  font-weight: 400 600;
+  font-display: swap;
+  src: url("/fonts/v1/noto-sans-bengali-latin-ext.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: "HB Noto Sans Bengali";
+  font-style: normal;
+  font-weight: 400 600;
+  font-display: swap;
+  src: url("/fonts/v1/noto-sans-bengali-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "HB Tiro Bangla";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/v1/tiro-bangla-bengali.woff2") format("woff2");
+  unicode-range: U+0951-0952, U+0964-0965, U+0980-09FE, U+1CD0, U+1CD2, U+1CD5-1CD6, U+1CD8, U+1CE1, U+1CEA, U+1CED, U+1CF2, U+1CF5-1CF7, U+200C-200D, U+20B9, U+25CC, U+A8F1, U+11DF0-11DF1;
+}
+@font-face {
+  font-family: "HB Tiro Bangla";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/v1/tiro-bangla-latin-ext.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: "HB Tiro Bangla";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/v1/tiro-bangla-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* Latin fallback sized to Noto's metrics so the swap shifts less. Values computed from the font
+   files against Arial's published metrics [H: the real shift is measured in the browser]. Bengali
+   falls through to the system's Bengali face; its shift is checked on devices [NV]. */
+@font-face {
+  font-family: "HB Fallback Latin";
+  src: local("Arial"), local("ArialMT"), local("Liberation Sans");
+  size-adjust: 108.51%;
+  ascent-override: 84.51%;
+  descent-override: 37.6%;
+  line-gap-override: 0%;
+  unicode-range: U+0000-00FF;
+}
+
+:root {
+  /* Colour (DESIGN.md → Colour; contrast measured at Checkpoint 3). */
+  --ground: #faf7f0;
+  --surface: #f1ece1;
+  --raised: #ffffff;
+  --ink: #1b1a17;
+  --muted: #5c574e;
+  --line-strong: #8c857a;
+  --line: #d9d2c3;
+  --accent: #1e4e9c;
+  --accent-ink: #ffffff;
+  --success: #1f6b3a;
+  --warning: #8a5a00;
+  --danger: #b3261e;
+
+  /* Type families. The display family depends on the font preset (config/fonts.ts). */
+  --font-family-text: "HB Noto Sans Bengali", "Noto Sans Bengali", "HB Fallback Latin", "Kohinoor Bangla", "Bangla Sangam MN", "Vrinda", system-ui, sans-serif;
+  --font-family-display: var(--font-family-text);
+
+  /* Motion (MOTION.md; skill motion/tokens.md). */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+
+  /* Shell measurements (DESIGN.md → Layout → Bottom dock; BUILD-PLAN §5). */
+  --nav-h: 56px;
+  --wordmark-row-h: 56px;
+  --search-row-h: 52px;
+  /* Server-rendered first value of the dock height, so first paint reserves the right space.
+     BottomDock replaces it with the measured height (ResizeObserver). */
+  --dock-h: 0px;
+  --sticky-top: 0px;
+}
+
+@media (width < 768px) {
+  :root {
+    --dock-h: calc(var(--nav-h) + env(safe-area-inset-bottom, 0px));
+    --sticky-top: var(--search-row-h);
+  }
+}
+
+/* Preset "khata": Tiro Bangla for the house-style voice. Preset "plain": Noto only (template default load). */
+html[data-font-preset="khata"] {
+  --font-family-display: "HB Tiro Bangla", var(--font-family-text);
+}
+
+@theme inline {
+  --color-ground: var(--ground);
+  --color-surface: var(--surface);
+  --color-raised: var(--raised);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line-strong: var(--line-strong);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-danger: var(--danger);
+
+  --font-text: var(--font-family-text);
+  --font-display: var(--font-family-display);
+
+  /* Scale: ratio about 1.2, base 16 px (DESIGN.md → Typography). */
+  --text-step--2: 0.75rem;
+  --text-step--1: 0.875rem;
+  --text-step-0: 1rem;
+  --text-step-1: 1.1875rem;
+  --text-step-2: 1.4375rem;
+  --text-step-3: 1.75rem;
+  --text-step-4: 2.0625rem;
+  --text-step-5: clamp(2.0625rem, 4vw + 1rem, 2.75rem);
+}
+
+/* ── Base ─────────────────────────────────────────────────────────────── */
+html {
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--font-family-text);
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  /* Focus and in-page jumps never land behind the sticky search row or the dock (WCAG 2.2 SC 2.4.11, C43). */
+  scroll-padding-top: calc(var(--sticky-top) + 8px);
+  scroll-padding-bottom: calc(var(--dock-h) + 16px);
+}
+
+body {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  font-size: var(--text-step-0);
+  line-height: 1.5;
+  font-variant-numeric: tabular-nums;
+}
+html:lang(bn) body {
+  line-height: 1.6;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-weight: 600;
+  line-height: 1.2;
+  text-wrap: balance;
+}
+html:lang(bn) :is(h1, h2, h3, h4) {
+  line-height: 1.3;
+}
+/* House-style voice: page titles, section titles, the wordmark (never prices, buttons, forms). */
+.font-display {
+  font-family: var(--font-family-display);
+  font-weight: 400;
+  line-height: 1.2;
+}
+
+/* No letter-spacing or text-transform on Bengali (BUILD-PLAN §6). */
+:lang(bn) {
+  letter-spacing: normal;
+  text-transform: none;
+}
+
+/* Links: accent and underlined in body text; ink in navigation (DESIGN.md → Components). */
+.prose-link {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  transition: color 140ms var(--ease-out);
+}
+.nav-link {
+  color: var(--ink);
+  text-decoration: none;
+  text-underline-offset: 0.2em;
+}
+.nav-link:hover,
+.nav-link:focus-visible {
+  text-decoration: underline;
+}
+
+/* Focus: 2 px accent ring with a 2 px offset, never removed, never animated (MOTION.md). */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Skip link: the first focusable element; visible when focused. */
+.skip-link {
+  position: absolute;
+  inset-inline-start: 8px;
+  top: 8px;
+  z-index: 100;
+  transform: translateY(-200%);
+  background: var(--raised);
+  color: var(--ink);
+  padding: 10px 16px;
+  border: 2px solid var(--accent);
+  border-radius: 8px;
+}
+.skip-link:focus {
+  transform: none;
+}
+
+/* ── Shell ────────────────────────────────────────────────────────────── */
+/* Band S: the wordmark row scrolls away and the search row stays (sticky header, negative top). */
+@media (width < 768px) {
+  .site-header {
+    position: sticky;
+    top: calc(-1 * var(--wordmark-row-h));
+    z-index: 40;
+  }
+}
+
+main#main {
+  flex: 1 0 auto;
+  padding-bottom: 32px;
+}
+/* The dock's space is reserved on <body>, below the footer, so the last content, the footer and
+   form actions are never under it. (The plan put this padding on <main>; the footer comes after
+   <main>, so it would still end under the dock. Refinement recorded in PROGRESS.md, proposed.) */
+body {
+  padding-bottom: var(--dock-h);
+}
+
+/* Bottom dock (band S only). Hidden while a text field has focus; --dock-h is not reduced then. */
+.bottom-dock {
+  position: fixed;
+  inset-inline: 0;
+  bottom: 0;
+  z-index: 50;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  padding-inline: env(safe-area-inset-left, 0px) env(safe-area-inset-right, 0px);
+  background: var(--raised);
+  border-top: 1px solid var(--line-strong);
+  transition: transform 200ms var(--ease-drawer);
+}
+.bottom-dock[data-hidden="true"] {
+  transform: translateY(100%);
+}
+@media (width >= 768px) {
+  .bottom-dock {
+    display: none;
+  }
+}
+
+/* ── Buttons (DESIGN.md → Components; MOTION.md: press 0.97 / 120 ms, hover 160 ms) ── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  min-width: 44px;
+  padding: 0 16px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  font-weight: 500;
+  line-height: 1.2;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background-color 160ms var(--ease-out),
+    color 160ms var(--ease-out),
+    border-color 160ms var(--ease-out),
+    transform 120ms var(--ease-out);
+}
+.btn:active:not(:disabled, [aria-disabled="true"]) {
+  transform: scale(0.97);
+}
+.btn:disabled,
+.btn[aria-disabled="true"] {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+.btn[aria-busy="true"] {
+  cursor: progress;
+  opacity: 1;
+}
+.btn-primary {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+.btn-primary:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--accent) 86%, var(--ink));
+}
+.btn-secondary {
+  background: var(--raised);
+  color: var(--ink);
+  border-color: var(--line-strong);
+}
+.btn-secondary:hover:not(:disabled) {
+  border-color: var(--ink);
+}
+.btn-quiet {
+  background: transparent;
+  color: var(--accent);
+  padding-inline: 8px;
+}
+.btn-quiet:hover:not(:disabled) {
+  text-decoration: underline;
+}
+.btn-danger {
+  background: var(--raised);
+  color: var(--danger);
+  border-color: var(--danger);
+}
+.btn-danger:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--danger) 8%, var(--raised));
+}
+
+.spinner {
+  width: 1em;
+  height: 1em;
+  border-radius: 50%;
+  border: 2px solid currentColor;
+  border-inline-end-color: transparent;
+  animation: hb-spin 1s linear infinite;
+}
+.spinner-static {
+  display: none;
+}
+@keyframes hb-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ── Reduced motion: no travel; the spinner becomes a static "…" (MOTION.md → Global). ── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+  }
+  .btn:active:not(:disabled) {
+    transform: none;
+  }
+  .spinner {
+    display: none;
+  }
+  .spinner-static {
+    display: inline;
+  }
+}
+
+/* ── Utilities ────────────────────────────────────────────────────────── */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+/* ── Header (#site-header) ────────────────────────────────────────────── */
+.site-header {
+  background: var(--ground);
+  border-bottom: 1px solid var(--line);
+}
+.site-header-inner {
+  max-width: 1240px;
+  margin-inline: auto;
+  padding-inline: max(16px, env(safe-area-inset-left, 0px)) max(16px, env(safe-area-inset-right, 0px));
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-areas:
+    "wordmark actions"
+    "search search";
+  align-items: center;
+  column-gap: 12px;
+}
+.header-wordmark-row {
+  grid-area: wordmark;
+  height: var(--wordmark-row-h);
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+.wordmark {
+  font-size: var(--text-step-2);
+  color: var(--ink);
+  text-decoration: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+}
+.header-actions {
+  grid-area: actions;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: var(--wordmark-row-h);
+}
+.header-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  min-width: 44px;
+  padding-inline: 8px;
+  font-weight: 500;
+}
+.header-action-wide {
+  display: none;
+}
+.header-search-row {
+  grid-area: search;
+  height: var(--search-row-h);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--ground);
+}
+.category-button {
+  flex: none;
+  padding-inline: 12px;
+}
+.header-search {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: stretch;
+  /* The 1 px border sits outside the 44 px input and button, so both touch targets measure 44 px. */
+  background: var(--surface);
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+}
+.header-search:focus-within {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+.header-search-input {
+  flex: 1;
+  min-width: 0;
+  min-height: 44px;
+  padding-inline: 12px;
+  background: transparent;
+  border: 0;
+  color: var(--ink);
+  /* 16 px keeps iOS Safari from zooming on focus. */
+  font-size: var(--text-step-0);
+}
+.header-search-input::placeholder {
+  color: var(--muted);
+  opacity: 1;
+}
+.header-search-input:focus-visible {
+  outline: none; /* the form shows the ring (focus-within) */
+}
+.header-search-submit {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  min-height: 44px;
+  color: var(--ink);
+  background: transparent;
+  border: 0;
+  border-radius: 0 8px 8px 0;
+  cursor: pointer;
+}
+@media (width >= 768px) {
+  .site-header-inner {
+    padding-inline: 24px;
+    grid-template-columns: auto 1fr auto;
+    grid-template-areas: "wordmark search actions";
+    column-gap: 24px;
+    height: 72px;
+  }
+  .header-wordmark-row,
+  .header-search-row,
+  .header-actions {
+    height: auto;
+  }
+  .header-action-wide {
+    display: inline-flex;
+  }
+}
+@media (width >= 1024px) {
+  .site-header-inner {
+    padding-inline: 32px;
+  }
+}
+
+/* ── Bottom navigation (inside the dock) ──────────────────────────────── */
+.bottom-nav ul {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  height: var(--nav-h);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.bottom-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  height: 100%;
+  min-width: 44px;
+  color: var(--muted);
+  text-decoration: none;
+  font-size: var(--text-step--2);
+  font-weight: 500;
+  line-height: 1.2;
+}
+.bottom-nav-item[aria-current="page"] {
+  color: var(--accent);
+}
+.bottom-nav-item:focus-visible {
+  outline-offset: -2px;
+}
+
+/* ── Footer (#site-footer) ────────────────────────────────────────────── */
+.site-footer {
+  border-top: 1px solid var(--line);
+  background: var(--surface);
+  font-size: var(--text-step--1);
+}
+.site-footer-inner {
+  max-width: 1240px;
+  margin-inline: auto;
+  padding: 24px max(16px, env(safe-area-inset-left, 0px));
+  display: grid;
+  gap: 12px;
+}
+.footer-payment {
+  font-weight: 500;
+}
+.footer-contact {
+  color: var(--muted);
+}
+.footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.footer-links a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+}
+@media (width >= 768px) {
+  .site-footer-inner {
+    padding: 32px 24px;
+  }
+}
+@media (width >= 1024px) {
+  .site-footer-inner {
+    padding-inline: 32px;
+  }
+}
+
+/* ── Full-page states ─────────────────────────────────────────────────── */
+.contents {
+  display: contents;
+}
+.state-page {
+  max-width: 68ch;
+  margin-inline: auto;
+  padding: 48px max(16px, env(safe-area-inset-left, 0px)) 24px;
+}
+.state-title {
+  font-size: var(--text-step-4);
+}
+.state-body {
+  margin-top: 12px;
+  max-width: 68ch;
+}
+.state-meta {
+  margin-top: 12px;
+  color: var(--muted);
+  font-size: var(--text-step--1);
+}
+.state-actions {
+  margin-top: 24px;
+}
+.setup-owner {
+  margin-top: 32px;
+  padding: 16px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+.setup-owner-title {
+  font-size: var(--text-step-1);
+  margin-bottom: 8px;
+}
+.setup-vars {
+  margin-top: 4px;
+  padding-inline-start: 24px;
+  list-style: disc;
+}
+code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.9em;
+}
+@media (width >= 768px) {
+  .state-page {
+    padding-top: 72px;
+  }
+  .state-title {
+    font-size: var(--text-step-5);
+  }
+}
+
+/* ── PriceTag and LabelTile ───────────────────────────────────────────── */
+.price-tag {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 8px;
+  font-variant-numeric: tabular-nums;
+}
+.price-tag-amount {
+  font-weight: 600;
+  color: var(--ink);
+}
+.price-tag[data-size="lg"] .price-tag-amount {
+  font-size: var(--text-step-2);
+}
+.price-tag-compare {
+  color: var(--muted);
+}
+.price-tag-unit {
+  color: var(--muted);
+  font-size: var(--text-step--1);
+  font-weight: 500;
+}
+.label-tile {
+  aspect-ratio: 1 / 1;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 8px;
+  background: var(--surface);
+  color: var(--ink);
+  text-align: center;
+  overflow: hidden;
+}
+.label-tile[data-size="row"] {
+  width: 64px;
+  height: 64px;
+}
+.label-tile-quantity {
+  font-size: var(--text-step-3);
+  font-weight: 600;
+  line-height: 1.2;
+}
+.label-tile[data-size="row"] .label-tile-quantity {
+  font-size: var(--text-step-0);
+}
+.label-tile-category {
+  color: var(--muted);
+  font-size: var(--text-step--1);
+  font-weight: 500;
+  line-height: 1.3;
+}
+.label-tile[data-size="row"] .label-tile-category {
+  font-size: var(--text-step--2);
+}

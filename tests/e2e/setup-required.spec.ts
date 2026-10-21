@@ -1,4 +1,4 @@
-// B0 smoke test on a production build started with zero environment variables.
+// Smoke test on a production build started with zero environment variables (B0, updated in B1).
 import { expect, test } from "@playwright/test";
 
 test("Bengali home at / shows setup-required with a nonce CSP and no violations", async ({ page }) => {
@@ -22,7 +22,8 @@ test("Bengali home at / shows setup-required with a nonce CSP and no violations"
 
   await expect(page.locator("html")).toHaveAttribute("lang", "bn");
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("সেটআপ প্রয়োজন");
-  await expect(page.locator("main[data-state='setup-required']")).toContainText("MONGODB_URI");
+  await expect(page.locator("main#main [data-state='setup-required']")).toContainText("MONGODB_URI");
+  await expect(page.locator("#setup-required")).toHaveCount(1);
 
   // Every script Next.js emitted carries the request's nonce.
   const nonce = /'nonce-([^']+)'/.exec(csp)?.[1];
@@ -61,7 +62,7 @@ test("/api/health reports setup-required without claiming a database connection"
   const r = await request.get("/api/health");
   expect(r.status()).toBe(200);
   expect(r.headers()["cache-control"]).toContain("no-store");
-  expect(await r.json()).toEqual({ status: "ok", setupRequired: true, checks: { database: "not_configured" } });
+  expect(await r.json()).toEqual({ status: "ok", setupRequired: true, maintenance: false, checks: { database: "not_configured" } });
 });
 
 test("a client-sent internal-rewrite header cannot bypass the /bn redirect", async ({ request }) => {

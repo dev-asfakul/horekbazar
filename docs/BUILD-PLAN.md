@@ -62,9 +62,9 @@ Labels used throughout:
 
 ## 1. Route and page inventory
 
-Every storefront route exists at `/…` (Bengali, default) and `/en/…` (English) with the **same Latin slug** (D10). next-intl uses a `[locale]` segment with `localePrefix: "as-needed"` **[H: exact option verified in phase B1]**. `/` is never auto-redirected by `Accept-Language` (domain-rules §10).
+Every storefront route exists at `/…` (Bengali, default) and `/en/…` (English) with the **same Latin slug** (D10). next-intl uses a `[locale]` segment. **B1 (measured):** routing stays in `proxy.ts` (rewrite `/…` to the internal `bn` segment, `/bn/…` → 308, nonce CSP); next-intl's middleware and `localePrefix` are not used; the request locale comes from `next/root-params` in `i18n/request.ts` (proposed implementation detail). `/` is never auto-redirected by `Accept-Language` (domain-rules §10).
 
-"Index" means whether the page appears in search engines: `idx` = indexable; `noidx` = `noindex`. Rendering options: `cache` (HTML cached and revalidated by tag **only under D17 option b**; under the approved nonce rule, option a, it renders per request with cached data reads, §9.1), `dyn` (rendered per request) and `static`.
+"Index" means whether the page appears in search engines: `idx` = indexable; `noidx` = `noindex`. Rendering options: `cache` (**D17 decided, option (a): HTML is rendered per request**; only server data reads are cached, §9.1. The label marks pages whose data reads are cached), `dyn` (rendered per request) and `static`.
 
 ### Storefront
 | Route | Purpose | Render | Index | Auth | Phase |
@@ -312,10 +312,10 @@ Verification: gate `S` rules (seo-03 … seo-18); a JSON-LD parse test; a canoni
 
 | Area | Plan | Status |
 |---|---|---|
-| Fonts | `next/font/google`: Noto Sans Bengali (weight 400–600, no width axis) preloaded (one file per locale); Tiro Bangla 400, `display: swap`, not preloaded. Preset `plain` = Noto only | sizes **[M]** locally (≈ 68 KB / 78 KB Bengali subsets); per-locale preload behaviour **[H]**, checked in B1; served sizes **[NV]** |
+| Fonts | Self-hosted in `public/fonts/v1/` (B1, proposed; `next/font/google` preloaded both subsets on both locales, measured): Noto Sans Bengali (weight 400–600, no width axis), one file preloaded per locale; Tiro Bangla 400, `display: swap`, not preloaded. Preset `plain` = Noto only | shipped sizes **[M]** in B1: Noto Bengali 74,068 B, Noto Latin 17,300 B, Tiro Bengali 81,932 B, Tiro Latin 26,892 B; one preload per locale **[M]** (Playwright, three engines); `Cache-Control: public, max-age=31536000, immutable` |
 | Images | `next/image` with a **Cloudinary loader** (host-portable, no host image-optimisation dependency); `sizes` per layout; AVIF/WebP; widths 160 / 320 / 640 / 1200; `priority` only on the product-page main image; 1:1 reserved boxes | **[H]** |
 | JS | server components by default; client islands: header search, locale switch, dock, AddToCart/stepper, sheets, variant picker, checkout form, admin tables; client components receive only the strings they need (no full message catalogue on the client) | Tier 1 budget ≤ 30 KB gzipped beyond the framework per storefront page **[NV]**; admin per D22 |
-| Caching | storefront pages cached and revalidated by tag (`settings`, `home`, `category:<id>`, `product:<id>`); exact Next 16 caching API (`use cache` / `cacheTag` or route revalidation) chosen in B1 after checking the installed version's documentation | **[H]**; depends on D17 (§9.1: under the nonce fallback, HTML is rendered per request and only data caching remains) |
+| Caching | **D17 decided, option (a):** storefront HTML is rendered per request and is not cached. Server data reads are cached and revalidated by tag (`settings`, `home`, `category:<id>`, `product:<id>`) with an API verified under nonce rendering on the installed version (`unstable_cache` worked in the B0 spike; `"use cache"` / `cacheTag` untested). The data-cache API is chosen and tested where data first exists (B2/B5); B1 has no data | data caching under nonce **[M]** in the B0 spike only; `"use cache"`, CSP hashes and CDN behaviour **[NV]** |
 | Server/client data | prices, stock and totals are always re-resolved on the server at add-to-cart and at placement; the cached product page shows cached price and stock, then refreshes them on the client | **[H]** |
 | Layout stability | reserved image boxes, server-rendered `--dock-h`, static skeletons with final dimensions, fallback-font metrics adjusted for Bengali | CLS ≤ 0.1 **[NV]** |
 | Database | per-process singleton driver client; indexes defined with the schema (`SCHEMA.md`); projections on listing queries; listing pages 24 items | **[H]** |
@@ -337,16 +337,20 @@ Mapped from domain-rules §9 and skill `craft/security.md`; nothing is new scope
 | Rate limits | Upstash: sign-in, registration, reset, checkout placement, coupon checks, search suggestions, reviews, messages, AI drafting, webhooks. Auth limits fail closed; read caches fail open (domain-rules §7) |
 | Secrets | env only; validated at boot by a Zod env schema; never in client bundles (gate `sec-07`); never logged; the integrations page shows only configured / healthy / failing |
 | Errors | safe messages with an error id; PII redacted in logs; no stack traces to the client; `sec-17` (no debug build or public source maps in production) |
-| Headers | HSTS, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`, `frame-ancestors 'none'` (admin) / `'self'` (storefront); CSP per **D17** (§9.1, owner-pending) |
+| Headers | HSTS, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`, `frame-ancestors 'none'` (admin) / `'self'` (storefront); CSP per **D17**, decided: option (a), nonce on every rendered page (§9.1) |
 | Uploads | server-signed Cloudinary uploads, folder-scoped, type and size allow-list, no SVG from users |
 | Webhooks | signature or shared secret, timestamp tolerance, replay protection by event id, monotonic courier status |
 | Admin protection | 2FA, step-up, audit log for every staff write, last-Owner protection, `noindex`, no admin in the sitemap |
 | Personal data | minimum collection; phone and address visible only with the capability; export and deletion requests (`/account/privacy`); retention settings **[L]** |
 | Reliability | outbox with leases, backoff and dead letters; real scheduler (`JOBS_TRIGGER`); replica-set check on boot; backups and a rehearsed restore before launch (§9) |
 
-### 9.1 CSP and caching plan (D17, proposed and owner-pending)
+### 9.1 CSP and caching plan (D17, decided: option (a))
 
-**Approved rule:** domain-rules §9 says "CSP with nonces". It stays in force until the owner decides D17. Nothing below weakens a route's policy to gain caching.
+**Owner decision (2026-10-21): D17 approved, option (a).** Nonce-based CSP on every rendered page, including the public storefront. The strict policy is kept; `'unsafe-inline'` is not used to enable HTML caching. Server-side data caching is kept where it is verified to work with the approved Next.js version and nonce rendering. Storefront HTML is rendered per request and is not claimed as cached. CSP and security-header regression tests stay in the plan. WebKit browser tests that check script loading use HTTPS or a clearly isolated test-only setup that accounts for `upgrade-insecure-requests`; production CSP is not weakened for HTTP tests. CSP hashes, CDN behaviour and `"use cache"` remain unverified unless separately tested. The options, the spike result and the failure of option (b) are kept below as the record.
+
+**B1 implementation of the WebKit condition [M]:** Playwright runs WebKit through `scripts/e2e-https-proxy.mjs`, a test-only HTTPS front with a throwaway self-signed certificate that forwards requests unchanged; a test asserts the real response still carries `upgrade-insecure-requests`. Chromium and Firefox run over HTTP against the same production server.
+
+**Approved rule:** domain-rules §9 says "CSP with nonces". Nothing below weakens a route's policy to gain caching.
 
 **What the framework documents [M: Next.js CSP guide, version label "Latest v16.4.2", the approved version, fetched 2026-10-21]:**
 - Nonces: "you **must use dynamic rendering** to add nonces"; "Static optimization and Incremental Static Regeneration (ISR) are disabled"; "Pages cannot be cached by CDNs without additional configuration"; "Partial Prerendering (PPR) is incompatible with nonce-based CSP". A page can opt into dynamic rendering with `await connection()`. These are **stable** features.
@@ -380,7 +384,7 @@ Private routes already need dynamic rendering, so a nonce costs them nothing **[
   - If it is adopted, it is re-checked at every Next.js upgrade (R10).
 - **(c) Not proposed:** a static CSP with `script-src 'unsafe-inline'` on the storefront. It weakens the approved policy to gain caching, so it is listed only so the owner can see why it is rejected.
 
-**Proposal:** run the B0 spike, report its real result, then the owner chooses (a) or (b). Until then, (a) is the working assumption, because it matches the approved rule. B5's caching design is written so that it works under (a) (data caching only) and gets faster under (b) (HTML caching).
+**Proposal (B0, superseded by the owner decision above):** run the B0 spike, report its real result, then the owner chooses (a) or (b). Until then, (a) is the working assumption, because it matches the approved rule. B5's caching design is written so that it works under (a) (data caching only) and gets faster under (b) (HTML caching).
 
 **B0 spike result (2026-10-21) [M on the spike only; the decision stays with the owner]:**
 - Setup: local throwaway branch `spike/csp` (never merged, not pushed). Next.js 16.4.2 with `experimental.sri` (`sha256`), standalone production build with zero environment variables, served on `127.0.0.1` over HTTP. Browsers: Chromium 156.0.8078.4, Firefox 157.0, WebKit 27.2 (Playwright 1.64.1).
@@ -512,7 +516,7 @@ All run against a disposable real replica set, with the parallel requests launch
 ### Decisions needed from the owner (none is assumed)
 | ID | Decision | Options | Blocks | If left open |
 |---|---|---|---|---|
-| **D17** | CSP and caching for the public storefront (§9.1, C1, C13) | (a) nonces everywhere (approved rule; stable; fallback); (b) experimental SRI with a strict static CSP on public storefront routes, **only if the B0 spike proves it**. B0 spike result: (b) as specified fails, with inline scripts blocked and no hydration in Chromium, Firefox and WebKit; (a) works, with data caching (§9.1); (c) `'unsafe-inline'`, rejected | B5 (HTML caching), B11 (headers) | B5 is built for (a); storefront HTML is not cached; scale cost rises (§12) |
+| **D17** | CSP and caching for the public storefront (§9.1, C1, C13) | **approved by the owner 2026-10-21: option (a)**, nonce CSP on every rendered page; storefront HTML rendered per request; data caching only where verified; no `'unsafe-inline'`. Spike record: (b) as specified failed (inline scripts blocked, no hydration in Chromium, Firefox and WebKit); (a) worked with data caching (§9.1); (c) `'unsafe-inline'` rejected | B5 (data caching), B11 (headers) | decided |
 | **D18** | Branch and push workflow (C3) | **approved by the owner 2026-10-21** (B0 push): build pushes to `preview/horekbazar-v1` after every phase; handoff to `design/horekbazar-v1` after the gate; the owner merges to `main`; planning docs stay on `main`. The `spike/csp` branch stays local (owner) | B0 | decided |
 | **D19** | Development database | (a) owner-provided Atlas dev cluster (URI through the secure credential form, never committed); (b) a local single-node replica set in the agent's environment (real `mongod`, data lost when the environment ends) | B2 onward | B2–B11 cannot run their integration checks against a development database (tests still use disposable replica sets) |
 | **D20** | Content for the Checkpoint 5 filled-state review (C7) | (a) the owner approves a named subset of D11 drafts for **dev-database-only** import, prices still unapproved and labelled, images missing; (b) the owner enters a few real products in the dev admin; (c) empty and setup states only | Checkpoint 5 | the review shows only empty and setup states |
@@ -535,7 +539,7 @@ All run against a disposable real replica set, with the parallel requests launch
 | R7 | JS budget exceeded (admin, checkout) | medium / medium | islands, no new libraries, measure early in B1 | D22 |
 | R8 | Bengali rendering problems (conjuncts, fallback CLS) | medium / medium | B1 fixture tests; Noto fallback; metric overrides | real devices |
 | R9 | MongoDB text search is weak for Bengali (no Bengali stemming; `default_language: "none"`) **[H]** | medium / medium | prefix suggestions, transliteration-insensitive normalisation; Atlas Search only if the tier allows and the owner approves | possible later decision |
-| R10 | Experimental SRI is unproven, or changes or is removed (if D17 b) | medium / medium | B0 spike before any reliance; re-check at B11 and at every Next.js upgrade; fallback to option (a), which keeps the approved nonce policy | D17 |
+| R10 | Experimental SRI is unproven, or changes or is removed (if D17 b; **not applicable**: D17 decided (a)) | medium / medium | B0 spike before any reliance; re-check at B11 and at every Next.js upgrade; fallback to option (a), which keeps the approved nonce policy | D17 |
 | R16 | Write-conflict contention on a hot SKU under load (many transactions on one `stock` document) | medium / medium | bounded retry with `503 CHECKOUT_BUSY` (nothing written); measured only in the k6 run | — |
 | R11 | Next 16 caching API details differ from the plan | medium / low | verified against installed-version docs in B1 before use | — |
 | R12 | Courier APIs change; unofficial SDKs rejected | medium / low | thin clients from official docs; manual mode always available | courier sandbox credentials |

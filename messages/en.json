@@ -1,0 +1,67 @@
+{
+  "shell": {
+    "skipToMain": "Skip to main content",
+    "wordmarkUnconfigured": "New store",
+    "homeLinkLabel": "Home",
+    "search": {
+      "label": "Search products",
+      "placeholder": "Search products",
+      "submit": "Search"
+    },
+    "categories": "Categories",
+    "account": "Account",
+    "cart": "Cart",
+    "localeSwitch": { "label": "বাংলা", "ariaLabel": "পাতাটি বাংলায় পড়ুন" },
+    "nav": {
+      "label": "Main",
+      "home": "Home",
+      "categories": "Categories",
+      "search": "Search",
+      "cart": "Cart",
+      "account": "Account"
+    },
+    "headerNavLabel": "Shopping",
+    "footer": {
+      "payment": "Payment: cash on delivery. Orders are confirmed by the store before dispatch.",
+      "contactPending": "The store's contact details will appear here once setup is complete.",
+      "policiesLabel": "Policies",
+      "terms": "Terms",
+      "privacy": "Privacy",
+      "delivery": "Delivery",
+      "returns": "Returns"
+    }
+  },
+  "setup": {
+    "title": "Setup required",
+    "body": "This store is still being set up, so no products can be shown yet.",
+    "ownerHeading": "For the person running this store",
+    "ownerBody": "The database is not connected yet. The setup steps are in the project's README.md file.",
+    "missing": "Variables that are not set:",
+    "invalid": "Variables with an invalid value:"
+  },
+  "notFound": {
+    "title": "Page not found",
+    "body": "The address may be wrong, or the page may have moved.",
+    "action": "Go to the home page"
+  },
+  "error": {
+    "title": "Something went wrong",
+    "body": "This page can't be shown right now. Please try again in a moment.",
+    "retry": "Try again",
+    "reference": "Error reference:"
+  },
+  "maintenance": {
+    "title": "Down for maintenance",
+    "body": "The store is closed for a short while. Please check back soon."
+  },
+  "offline": {
+    "title": "You're offline",
+    "body": "Reload the page when your connection is back.",
+    "reload": "Reload"
+  },
+  "common": {
+    "loading": "Loading",
+    "wasPrice": "Was",
+    "nowPrice": "Price"
+  }
+}
