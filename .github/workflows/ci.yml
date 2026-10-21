@@ -1,0 +1,49 @@
+# CI for the HorekBazar template (BUILD-PLAN B0): lint, typecheck, unit tests, catalogue
+# checks, a production build with zero environment variables, the setup-required smoke test,
+# and a client-bundle secret scan on a second build with harmless canary values.
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run catalogue:validate
+      - run: npm run catalogue:schema
+
+      - name: Build with zero environment variables
+        run: npm run build
+      - run: npx playwright install --with-deps chromium
+      - name: Setup-required smoke test
+        run: npm run test:e2e
+
+      - name: Build with canary server-only values
+        env:
+          MONGODB_URI: mongodb://ci-canary-user:ci-canary-pass-7f3a@ci-canary.invalid/db
+          AUTH_SECRET: ci-canary-auth-secret-0123456789abcdef0123
+          UPSTASH_REDIS_REST_TOKEN: ci-canary-upstash-token-9d2e
+          CLOUDINARY_API_SECRET: ci-canary-cloudinary-secret-4b1c
+          RESEND_API_KEY: ci-canary-resend-key-8a6f
+          GEMINI_API_KEY: ci-canary-gemini-key-2c7d
+          CRON_SECRET: ci-canary-cron-secret-5e9b
+        run: npm run build && npm run check:bundle
