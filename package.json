@@ -18,9 +18,16 @@
     "test:e2e": "playwright test",
     "check:bundle": "node scripts/check-bundle-secrets.mjs",
     "catalogue:validate": "node catalogue/horekbazar/tools/catalogue.mjs validate",
-    "catalogue:schema": "node scripts/validate-catalogue-schema.mjs"
+    "catalogue:schema": "node scripts/validate-catalogue-schema.mjs",
+    "test:integration": "vitest run --config vitest.integration.config.ts",
+    "db:validators": "node scripts/db-validators.ts",
+    "db:migrate": "node --env-file-if-exists=.env.local scripts/db-migrate.ts",
+    "worker": "node --env-file-if-exists=.env.local scripts/worker.ts"
   },
   "dependencies": {
+    "@upstash/ratelimit": "2.2.0",
+    "@upstash/redis": "1.39.0",
+    "mongodb": "7.7.0",
     "next": "16.4.2",
     "next-intl": "4.14.9",
     "react": "19.3.1",
@@ -37,6 +44,7 @@
     "ajv-formats": "3.0.1",
     "eslint": "9.39.5",
     "eslint-config-next": "16.4.2",
+    "mongodb-memory-server": "11.3.0",
     "tailwindcss": "4.3.3",
     "typescript": "6.0.3",
     "vitest": "5.0.5"

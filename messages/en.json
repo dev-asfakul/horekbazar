@@ -11,7 +11,10 @@
     "categories": "Categories",
     "account": "Account",
     "cart": "Cart",
-    "localeSwitch": { "label": "বাংলা", "ariaLabel": "পাতাটি বাংলায় পড়ুন" },
+    "localeSwitch": {
+      "label": "বাংলা",
+      "ariaLabel": "পাতাটি বাংলায় পড়ুন"
+    },
     "nav": {
       "label": "Main",
       "home": "Home",
@@ -35,7 +38,12 @@
     "title": "Setup required",
     "body": "This store is still being set up, so no products can be shown yet.",
     "ownerHeading": "For the person running this store",
-    "ownerBody": "The database is not connected yet. The setup steps are in the project's README.md file.",
+    "ownerBody": {
+      "not_configured": "The database is not connected yet. The setup steps are in the project's README.md file.",
+      "unreachable": "The database is configured, but the server cannot reach it. Check MONGODB_URI and the database's network access list.",
+      "not_replica_set": "The database is reachable, but it is not a replica set, so orders cannot be saved safely. Use a MongoDB Atlas cluster or a single-node replica set.",
+      "connected": "The database is connected. The store's settings and owner account have not been created yet."
+    },
     "missing": "Variables that are not set:",
     "invalid": "Variables with an invalid value:"
   },
@@ -63,5 +71,85 @@
     "loading": "Loading",
     "wasPrice": "Was",
     "nowPrice": "Price"
+  },
+  "admin": {
+    "shell": {
+      "label": "Admin",
+      "skipToMain": "Skip to main content"
+    },
+    "denied": {
+      "title": "You do not have permission to view this page",
+      "body": "Viewing this page needs a staff account with the {capability} permission."
+    },
+    "health": {
+      "title": "System health",
+      "intro": "The state of each service this store uses. Only names and states are shown, never configuration values.",
+      "devNotice": "Development server: this page opens without signing in until staff accounts exist. A production build always requires the platform.read permission.",
+      "checkedAt": "Checked {time}",
+      "portsHeading": "Services",
+      "outboxHeading": "Outbox",
+      "jobsHeading": "Background jobs",
+      "required": "Required",
+      "optional": "Optional",
+      "variables": "Variables",
+      "notCheckedLive": "Not checked live yet",
+      "states": {
+        "healthy": "Working",
+        "configured": "Configured",
+        "degraded": "Limited",
+        "not_configured": "Not set up",
+        "failing": "Not working"
+      },
+      "ports": {
+        "database": "Database (MongoDB)",
+        "cache": "Rate limits (Upstash Redis)",
+        "googleSignIn": "Google sign-in",
+        "media": "Images (Cloudinary)",
+        "email": "Email (Resend)",
+        "push": "Push notifications",
+        "ai": "AI drafts (Gemini)",
+        "courierSteadfast": "Courier: Steadfast",
+        "courierPathao": "Courier: Pathao",
+        "realtime": "Live chat (Ably)"
+      },
+      "reasons": {
+        "database_connected": "Connected to a replica set. Transactions are available.",
+        "database_not_configured": "MONGODB_URI is not set. The store shows the setup page until it is.",
+        "database_not_replica_set": "Reachable, but not a replica set. Orders need transactions, so database writes are refused.",
+        "database_unreachable": "Configured, but the server cannot reach it. Check the connection string and the database's network access list.",
+        "cache_connected": "Connected.",
+        "cache_not_configured": "Not set. Sign-in, checkout and forms refuse requests in production until it is.",
+        "cache_memory_fallback": "Not set. This development server limits requests per process instead, which is not shared between instances.",
+        "cache_unreachable": "Configured, but the server cannot reach it. Limited requests are refused.",
+        "configured_not_checked": "Configured. A live check is added when the feature that uses it is built.",
+        "optional_not_configured": "Optional and not set. The features that use it stay hidden.",
+        "incomplete": "Partly set. Every listed variable is needed.",
+        "jobs_trigger_not_set": "JOBS_TRIGGER is not set, so nothing drains the outbox.",
+        "jobs_cron_secret_missing": "The HTTP trigger needs CRON_SECRET.",
+        "jobs_database_unavailable": "The trigger is set. Outbox numbers need the database.",
+        "jobs_never_drained": "Rows are waiting and the outbox has never been drained.",
+        "jobs_drain_stale": "Rows are waiting and the last successful drain is older than {minutes} minutes.",
+        "jobs_dead_letters": "Some rows failed every attempt and need attention.",
+        "jobs_no_drain_yet": "No drain has run yet. Nothing is waiting.",
+        "jobs_ok": "Draining normally."
+      },
+      "trigger": "Trigger",
+      "triggerValues": {
+        "worker": "Separate worker process",
+        "http": "HTTP drain called by a scheduler",
+        "vercelCron": "Vercel Cron (HTTP drain)",
+        "none": "Not set"
+      },
+      "pending": "Waiting",
+      "processing": "In progress",
+      "dead": "Dead letters",
+      "oldest": "Oldest waiting",
+      "lastDrain": "Last successful drain",
+      "lastRun": "Last run",
+      "never": "Never",
+      "none": "None",
+      "minutes": "{count} min",
+      "outboxUnavailable": "Outbox numbers need a connected database."
+    }
   }
 }

@@ -19,5 +19,5 @@ export async function generateMetadata({ params }: PageProps<"/[locale]/[...rest
 export default async function PendingStorefrontPage({ params }: PageProps<"/[locale]/[...rest]">) {
   const { locale, rest } = await params;
   if (!isLocale(locale) || !isPendingStorefrontPath(rest)) notFound();
-  return <SetupRequired locale={locale} status={getSetupStatus(process.env)} />;
+  return <SetupRequired locale={locale} status={await getSetupStatus(process.env)} />;
 }

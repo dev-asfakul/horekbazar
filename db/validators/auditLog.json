@@ -1,0 +1,78 @@
+{
+  "$jsonSchema": {
+    "bsonType": "object",
+    "properties": {
+      "_id": {
+        "bsonType": "objectId"
+      },
+      "actor": {
+        "bsonType": "object",
+        "properties": {
+          "id": {
+            "bsonType": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "role": {
+            "bsonType": "string",
+            "minLength": 1,
+            "maxLength": 50
+          }
+        },
+        "required": [
+          "id",
+          "role"
+        ],
+        "additionalProperties": false
+      },
+      "action": {
+        "bsonType": "string",
+        "maxLength": 100,
+        "pattern": "^[a-z][a-z0-9_.]*$"
+      },
+      "target": {
+        "bsonType": "object",
+        "properties": {
+          "type": {
+            "bsonType": "string",
+            "minLength": 1,
+            "maxLength": 50
+          },
+          "id": {
+            "bsonType": "string",
+            "minLength": 1,
+            "maxLength": 200
+          }
+        },
+        "required": [
+          "type",
+          "id"
+        ],
+        "additionalProperties": false
+      },
+      "before": {
+        "bsonType": "object",
+        "additionalProperties": {}
+      },
+      "after": {
+        "bsonType": "object",
+        "additionalProperties": {}
+      },
+      "ip": {
+        "bsonType": "string",
+        "maxLength": 64
+      },
+      "at": {
+        "bsonType": "date"
+      }
+    },
+    "required": [
+      "_id",
+      "actor",
+      "action",
+      "target",
+      "at"
+    ],
+    "additionalProperties": false
+  }
+}

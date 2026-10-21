@@ -21,4 +21,9 @@ describe("routeLocale", () => {
   it("bypasses API routes", () => {
     expect(routeLocale("/api/health")).toEqual({ kind: "bypass" });
   });
+  it("does not locale-route /admin (own root layout), but keeps /administration a storefront path", () => {
+    expect(routeLocale("/admin")).toEqual({ kind: "bypass" });
+    expect(routeLocale("/admin/health")).toEqual({ kind: "bypass" });
+    expect(routeLocale("/administration")).toEqual({ kind: "rewrite", locale: "bn", pathname: "/bn/administration" });
+  });
 });

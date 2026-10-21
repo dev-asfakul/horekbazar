@@ -1,0 +1,77 @@
+{
+  "$jsonSchema": {
+    "bsonType": "object",
+    "properties": {
+      "_id": {
+        "bsonType": "objectId"
+      },
+      "type": {
+        "bsonType": "string",
+        "maxLength": 64,
+        "pattern": "^[a-z][a-z0-9_.]*$"
+      },
+      "payload": {
+        "bsonType": "object",
+        "additionalProperties": {}
+      },
+      "idempotencyKey": {
+        "bsonType": "string",
+        "maxLength": 200,
+        "pattern": "^[a-z][a-z0-9_.]*:[A-Za-z0-9_-]+:[0-9]+$"
+      },
+      "status": {
+        "bsonType": "string",
+        "enum": [
+          "pending",
+          "processing",
+          "done",
+          "failed",
+          "dead"
+        ]
+      },
+      "attempts": {
+        "bsonType": [
+          "int",
+          "long"
+        ],
+        "minimum": 0
+      },
+      "availableAt": {
+        "bsonType": "date"
+      },
+      "leaseUntil": {
+        "bsonType": "date"
+      },
+      "leaseOwner": {
+        "bsonType": "string",
+        "maxLength": 100
+      },
+      "lastError": {
+        "bsonType": "string",
+        "maxLength": 2000
+      },
+      "providerRef": {
+        "bsonType": "string",
+        "maxLength": 200
+      },
+      "createdAt": {
+        "bsonType": "date"
+      },
+      "updatedAt": {
+        "bsonType": "date"
+      }
+    },
+    "required": [
+      "_id",
+      "type",
+      "payload",
+      "idempotencyKey",
+      "status",
+      "attempts",
+      "availableAt",
+      "createdAt",
+      "updatedAt"
+    ],
+    "additionalProperties": false
+  }
+}

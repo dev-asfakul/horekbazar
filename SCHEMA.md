@@ -2,7 +2,7 @@
 
 > The data contract, written together with `DESIGN.md` as the skill requires (`templates/SCHEMA.md`).
 >
-> **Status: draft v0.2.2, Checkpoint 4 (approved by the owner 2026-10-21 with conditions, after amendments the same day).** Nothing in this contract is implemented yet; no data has been imported. v0.2.2 defines the order-line `lineId` explicitly and uses the canonical ledger-key format everywhere (domain-rules §4 and §4.1). v0.2.1 replaced the single reservation key with scoped constraints (domain-rules §4.1), aligns `outbox` with domain-rules §13 and makes the breakpoints exact. v0.2 added the remaining entity fields, the API surface, the admin section contracts and the category-depth definition with its move rule (see `docs/BUILD-PLAN.md`). v0.1 had set category depth to up to 3 levels (from the approved contract), removed the per-category `display` field and added the bottom dock section.
+> **Status: draft v0.2.2, Checkpoint 4 (approved by the owner 2026-10-21 with conditions, after amendments the same day).** B2 implemented the Platform collections (`outbox`, `auditLog`, `jobs`, proposed `migrations`) with generated validators in `db/validators/`; nothing else is implemented and no data has been imported. v0.2.2 defines the order-line `lineId` explicitly and uses the canonical ledger-key format everywhere (domain-rules §4 and §4.1). v0.2.1 replaced the single reservation key with scoped constraints (domain-rules §4.1), aligns `outbox` with domain-rules §13 and makes the breakpoints exact. v0.2 added the remaining entity fields, the API surface, the admin section contracts and the category-depth definition with its move rule (see `docs/BUILD-PLAN.md`). v0.1 had set category depth to up to 3 levels (from the approved contract), removed the per-category `display` field and added the bottom dock section.
 >
 > Business rules live in `docs/domain-rules.md` (approved at Checkpoint 2). Where this file and the rules differ, the rules win until this file is corrected.
 
@@ -178,12 +178,21 @@ Shared rules for every entity:
 | `campaigns` | `title` LT, `body` LT, `url`, `audience` (marketing opt-in only), `status` enum(draft\|scheduled\|sent\|failed), `sentAt`? | `status` |
 | `emailLog` | `outboxKey` (unique), `to` (hashed for search, masked in display), `template`, `providerId`?, `status` enum(queued\|sent\|failed), `error`? | `createdAt` (TTL per retention setting **[L]**) |
 | `aiDrafts` | `targetType` enum(product\|category\|collection), `targetId`, `targetVersion` int, `fields` {name?, description?, seo?} (LT), `model`, `status` enum(pending\|partially_applied\|applied\|discarded), `appliedFields` [] | `targetType, targetId, status` |
-| `outbox` | as approved in domain-rules §13: `type`, `payload`, `idempotencyKey` (deterministic `<type>:<aggregateId>:<seq>`, §4.1), `status` enum(pending\|processing\|done\|failed\|dead), `attempts` int, `availableAt`, `leaseUntil`?, `lastError`?, `providerRef`? | `idempotencyKey` unique; `status, availableAt` |
+| `outbox` | as approved in domain-rules §13: `type`, `payload`, `idempotencyKey` (deterministic `<type>:<aggregateId>:<seq>`, §4.1), `status` enum(pending\|processing\|done\|failed\|dead), `attempts` int, `availableAt`, `leaseUntil`?, `lastError`?, `providerRef`?; `leaseOwner`? **(proposed in B2: only the worker holding the lease may complete or fail a row)** | `idempotencyKey` unique; `status, availableAt` |
 | `auditLog` | `actor` {id, role}, `action`, `target` {type, id}, `before`/`after` (redacted diff), `ip` (truncated), `at` | `at`; `target.type, target.id` |
-| `jobs` | `name`, `lastRunAt`, `lastResult`, `lockUntil`? | `name` unique |
+| `jobs` | `name`, `lastRunAt`, `lastResult`, `lockUntil`?, `lastSuccessAt`? **(proposed in B2: health needs the last successful drain, domain-rules §13)** | `name` unique |
+| `migrations` **(proposed in B2)** | `_id` = migration id `NNNN-name`, `appliedAt` (one-time data migrations run once; `npm run db:migrate`) | `_id` |
 | `staffRoles` | `key` (unique), `name` LT, `capabilities` string[] (from the capability list), `builtIn` bool (the six roles of domain-rules §1: owner, store_manager, marketing_manager, catalogue_editor, order_operator, support_agent; renamable), `twoFactorRequired` bool (true and locked for owner and store_manager, D7); staff users carry `staffRoleKey` | `key` unique |
 | `redirects` | `from` (path), `to` (path), `code` 301 | `from` unique |
 | Better Auth (`user`, `session`, `account`, `verification`, `twoFactor`) | per Better Auth's MongoDB adapter; extended fields `locale`, `phone`?, `staffRoleKey`? on `user` | per adapter |
+
+**B2 platform additions (approved by the owner 2026-10-21 with documentation and tests as the condition).**
+
+| Addition | Purpose | Index | Migration and backward compatibility | Tested by |
+|---|---|---|---|---|
+| `outbox.leaseOwner`? | The worker id that holds a row's lease. Complete and fail match `{status: "processing", leaseOwner}`, so a worker whose lease expired and was reclaimed cannot overwrite the new owner's result | none (lookups are by `_id`; claims use `status, availableAt`) | optional field, set at claim and `$unset` on complete/fail; rows written without it remain valid; `db:migrate` applies the validator with `collMod` | `tests/integration/outbox.test.ts` "reclaims an expired lease after a crash, and the crashed worker cannot complete it" |
+| `jobs.lastSuccessAt`? | Time of the last drain that finished without error; health turns failing when rows wait and it is older than 5 minutes (domain-rules §13). `lastRunAt` alone cannot tell a failing drain from a working one | `name` unique (existing) | optional; absent means "never succeeded"; written by `recordJobRun` | `outbox.test.ts` "records each drain …", `tests/unit/health.test.ts` jobs cases, `drain-route.test.ts` |
+| `migrations` collection | Records each one-time data migration (`_id` = `NNNN-name`, `appliedAt`) so `npm run db:migrate` runs it exactly once and stays safe to run on every deploy | `_id` (built in) | created by `db:migrate` if missing; a database migrated before this collection existed simply has no records, so all data migrations are pending (there are none yet) | `migrate.test.ts` "runs each one-time data migration once and records it", plus the valid/invalid insert per collection |
 
 ### Data files
 There is no mock data (owner decision D2; see `DATA.md`).

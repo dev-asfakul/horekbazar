@@ -1,0 +1,95 @@
+{
+  "$jsonSchema": {
+    "bsonType": "object",
+    "properties": {
+      "_id": {
+        "bsonType": "objectId"
+      },
+      "name": {
+        "bsonType": "string",
+        "maxLength": 64,
+        "pattern": "^[a-z][a-z0-9_.-]*$"
+      },
+      "lastRunAt": {
+        "bsonType": "date"
+      },
+      "lastResult": {
+        "bsonType": "object",
+        "properties": {
+          "ok": {
+            "bsonType": "bool"
+          },
+          "trigger": {
+            "bsonType": "string",
+            "enum": [
+              "worker",
+              "http"
+            ]
+          },
+          "claimed": {
+            "bsonType": [
+              "int",
+              "long"
+            ],
+            "minimum": 0
+          },
+          "done": {
+            "bsonType": [
+              "int",
+              "long"
+            ],
+            "minimum": 0
+          },
+          "retried": {
+            "bsonType": [
+              "int",
+              "long"
+            ],
+            "minimum": 0
+          },
+          "dead": {
+            "bsonType": [
+              "int",
+              "long"
+            ],
+            "minimum": 0
+          },
+          "durationMs": {
+            "bsonType": [
+              "int",
+              "long"
+            ],
+            "minimum": 0
+          },
+          "error": {
+            "bsonType": "string",
+            "maxLength": 500
+          }
+        },
+        "required": [
+          "ok",
+          "trigger",
+          "claimed",
+          "done",
+          "retried",
+          "dead",
+          "durationMs"
+        ],
+        "additionalProperties": false
+      },
+      "lastSuccessAt": {
+        "bsonType": "date"
+      },
+      "lockUntil": {
+        "bsonType": "date"
+      }
+    },
+    "required": [
+      "_id",
+      "name",
+      "lastRunAt",
+      "lastResult"
+    ],
+    "additionalProperties": false
+  }
+}

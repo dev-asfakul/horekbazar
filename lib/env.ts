@@ -48,6 +48,7 @@ export const serverEnvSchema = z.object({
 
   ABLY_API_KEY: optional(z.string()),
 
+  JOBS_TRIGGER: z.preprocess((v) => (typeof v === "string" && v.trim() !== "" ? v.trim() : undefined), z.enum(["worker", "http", "vercel-cron"]).optional()),
   CRON_SECRET: optional(z.string().min(16, "at least 16 characters")),
 });
 
