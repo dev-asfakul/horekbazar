@@ -10,7 +10,7 @@ Status: **planning**. No application code yet. The architecture is being decided
 
 ## Data policy
 
-The application reads only real, configured data sources. There is no mock or demo fallback. Content in `data/` (added later) is seed content for a separately configured development database, imported with an explicit seed command; replace it with your own before launch. Never copy production customer data into development.
+The application reads only real, configured data sources. There is no mock or demo fallback. `data/` holds only catalogue content the store owner supplies or explicitly approves (real prices, legitimate image rights). It is imported into a separately configured development database with an explicit seed command, and it may be empty: an empty database is a valid state. Never copy production customer data into development.
 
 ## For contributors and agents
 

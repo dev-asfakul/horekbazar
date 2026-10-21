@@ -76,7 +76,7 @@ Package manager: **npm** (already present; zero setup for buyers). pnpm optional
    - Development uses a real, separately configured development database and the owner's own development credentials. Development, staging and production configurations are separate and never share credentials.
    - With no `MONGODB_URI`, public routes render a clear, actionable **setup-required state** (what is missing, which variable, link to the setup guide). No products are invented and no in-memory database is substituted.
    - Each integration is required only by the operation that uses it (Gemini → AI drafting; Resend → email sends; VAPID → push; courier keys → booking/tracking). Public browsing never fails because an optional integration is absent.
-   - The skill's required `data/` folder is kept **only as seed input**: realistic catalogue content, typed by `data/schema.json`, imported into the development database by an explicit `npm run db:seed`. It is never read at runtime. It contains no personal customer data and no production records.
+   - The skill's required `data/` folder is kept **only as seed input**: catalogue content the owner supplies or explicitly approves (D11), typed by `data/schema.json`, imported into the development database by an explicit `npm run db:seed`. It may be empty; an empty development database is acceptable. It is never read at runtime and contains no fabricated products, reviews, stock or orders, no personal customer data and no production records.
 2. **Skill security rule sec-03 (RLS)**: MongoDB has no row-level security. Excused with the replacement control: every data access goes through a repository layer that takes the session's `userId`/role and scopes the query; direct collection access outside `lib/db/` is lint-banned.
 
 ### Alternatives considered
@@ -88,7 +88,7 @@ Package manager: **npm** (already present; zero setup for buyers). pnpm optional
 
 ## Product contract
 
-Checkpoint 2 of 6. Status: **proposed**. Detailed domain rules (roles, order lifecycle, inventory, pricing, configuration, integrations, security, acceptance criteria) are in [`docs/domain-rules.md`](docs/domain-rules.md) and are part of this contract.
+Checkpoint 2 of 6. Status: **amended with owner decisions 2026-10-21; awaiting final approval** (D11 and D12 open). Detailed domain rules (roles, order lifecycle, inventory, pricing, configuration, integrations, security, acceptance criteria) are in [`docs/domain-rules.md`](docs/domain-rules.md) and are part of this contract.
 
 | Field | Answer |
 |---|---|
@@ -250,8 +250,8 @@ Evidence (file#pattern) is filled in during the build; Notes describe intent. Ma
 | skeleton | account order list and detail | required |  |  |  |
 | skeleton | admin tables and order detail | required |  |  |  |
 | template | middleware.ts | required |  |  | auth gate, locale routing, rate limiting, security headers |
-| template | data/ with schema.json | required |  |  | seed input only (owner decision D2) |
-| template | README demo line | not required for this brief, reason: owner decision D2 (no mock data); README instead states that data/ is seed content for a development database, to be replaced before launch |  |  |  |
+| template | data/ with schema.json | required |  |  | seed input only, owner-supplied or approved content, may be empty (D2, D11) |
+| template | README demo line | not required for this brief, reason: owner decision D2 (no mock data); README instead states that data/ holds only owner-supplied or approved catalogue content for a development database and may be empty |  |  |  |
 | template | README, DESIGN, MOTION, MEDIA, SCHEMA, CRITIQUE, GATE, LICENSE, CHANGELOG, .env.example | required |  |  |  |
 | route | online payment return/callback routes | not required for this brief, reason: COD only in v1 (owner brief); interface: /checkout payment method step with provider port |  |  |  |
 | route | seller/vendor routes | not required for this brief, reason: single-store template, marketplace excluded by owner |  |  |  |
