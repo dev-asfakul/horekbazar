@@ -1,6 +1,6 @@
 # Licensing plan (provisional, for later legal review)
 
-Status: **provisional owner decision, 2026-10-21.** This is a planning note, not legal advice and not the licence text. The final `LICENSE` file must be written or reviewed by a qualified lawyer before the template is sold.
+Status: **provisional owner decision, 2026-10-21; unchanged at Checkpoint 2 apart from data and content notes.** This is a planning note, not legal advice and not the licence text. The final `LICENSE` file must be written or reviewed by a qualified lawyer before the template is sold.
 
 ## Intended model
 
@@ -26,6 +26,8 @@ Every runtime dependency must pass the Checkpoint 1 licence check (MIT, Apache-2
 - No copyleft (GPL/AGPL/MPL) code is bundled into the template. Tools used only outside the shipped code (for example k6 for load testing, AGPL) are documented but not distributed.
 - Fonts: only fonts licensed for web embedding and redistribution in a commercial template (for example SIL OFL); record each in `MEDIA.md`.
 - Images and media: every image in `data/` and `public/` has a recorded source and licence in `MEDIA.md`; assets that cannot be redistributed to buyers are excluded from the sellable package.
+- **Address/location data (D12, open):** the preferred source, OCHA COD-AB Bangladesh on HDX, is published under Creative Commons Attribution for Intergovernmental Organisations (CC BY-IGO), which requires attribution. Whatever dataset is chosen, its licence, attribution text and version are recorded here and shipped in `THIRD_PARTY_NOTICES.md`. Datasets without a licence are not used.
+- **Catalogue content (D11, open):** product text, prices and images in `data/` come only from the owner (or are explicitly approved by the owner) with legitimate image rights. HorekBazar catalogue content is not part of what buyers are licensed to reuse; the sellable package may ship with `data/` empty.
 - The Motomation Design skill (MIT) is a development tool installed per machine; it is not part of the template sold to buyers.
 - Third-party services (MongoDB Atlas, Vercel, Cloudinary, Resend, Upstash, Google Gemini, Ably, couriers) are used under each buyer's own account and terms; the template does not grant rights to them.
 

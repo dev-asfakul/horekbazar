@@ -1,6 +1,6 @@
 # HorekBazar: Design and Architecture Record
 
-Status: **Checkpoint 1 (Stack) approved 2026-10-21 with amendments. Checkpoint 2 (Product contract) PROPOSED, awaiting approval.**
+Status: **Checkpoint 1 (Stack) approved 2026-10-21 with amendments. Checkpoint 2 (Product contract) amended with owner decisions 2026-10-21; awaiting final approval.** D11 (catalogue) and D12 (location data) remain open; D5 deferred.
 No application code exists yet.
 
 Skill: `asfakulsiam-motomation-design` v3.0.2 (installed with `npx skills add`, hash in `skills-lock.json`, verified identical to upstream `main`).
@@ -34,17 +34,17 @@ Route: **full** (new brand, new product experience, commerce). Delivery mode: **
 | Styling | Tailwind CSS v4, CSS variables as theme tokens | 4.3.3 | MIT | Buyer rebranding = token file, not code edits. |
 | Accessible primitives | Radix primitives via shadcn/ui source (copied in, owned) | radix-ui 1.8.1 | MIT | Dialog, sheet, menu, combobox, tabs, toast are solved a11y problems; skill says adopt, don't rebuild. Alternative: React Aria. |
 | Validation + types | Zod (one schema → TS types, server validation, Mongo `$jsonSchema`) | 4.6.7 | MIT | Replaces an ODM; no second DB abstraction. |
-| Database | MongoDB Atlas + **official driver only** | mongodb 7.7.0 | Apache-2.0 | Brief requirement. Multi-document transactions for order + stock + ledger writes; collection validators; atomic `$inc` with guards. |
-| Auth | **Better Auth** + official Mongo adapter | better-auth 1.7.12 · @better-auth/mongo-adapter 1.7.12 | MIT | See decision D1. Email/password, Google, reset, verification, DB sessions, roles. |
+| Database | MongoDB Atlas + **official driver only**; **replica set required** in every environment (`docs/domain-rules.md` §12) | mongodb 7.7.0 | Apache-2.0 | Brief requirement. Multi-document transactions for order + stock + ledger writes; collection validators generated from Zod (§14); atomic `$inc` with guards. |
+| Auth | **Better Auth** + official Mongo adapter + two-factor plugin (`better-auth/plugins/two-factor`, verified in the 1.7.12 package) | better-auth 1.7.12 · @better-auth/mongo-adapter 1.7.12 | MIT | See D1 and D7. Email/password, Google, reset, verification, DB sessions, roles, TOTP 2FA with backup codes. |
 | Cache / rate limit | Upstash Redis (HTTP) behind a `cache` port | @upstash/redis 1.39.0 · @upstash/ratelimit 2.2.0 | MIT | Serverless-safe (no TCP pool). Port lets a buyer swap to self-hosted Redis without touching features. |
-| Background work | **Transactional outbox in MongoDB + cron drain** (no extra vendor). QStash adapter optional | @upstash/qstash 2.12.1 (optional) | MIT | Emails, push, courier sync, search reindex are retried from an `outbox` collection written in the same transaction as the order. |
+| Background work | **Transactional outbox in MongoDB**, drained by a real configurable trigger: separate worker process or authenticated HTTP drain called by an external scheduler (`docs/domain-rules.md` §13). QStash optional | @upstash/qstash 2.12.1 (optional) | MIT | Emails, push, courier sync, search reindex are retried from an `outbox` collection written in the same transaction as the order. |
 | Media | Cloudinary, signed direct uploads | cloudinary 2.11.0 (server only) | MIT | Brief requirement. Server signs; browser uploads; no file passes through functions. |
 | Email | Resend | resend 6.34.1 | MIT | Brief requirement. Plain, bilingual templates; no React Email dependency unless needed. |
 | AI assistant | Gemini, server only, per-buyer key, drafts require admin approval | @google/genai 2.30.0 | Apache-2.0 | Brief requirement. Feature hidden when key unset. |
 | Web Push | Standard Push API + VAPID; library TBD (D3) | — | — | `web-push` fails the skill's maintenance and licence checks (below). |
 | Realtime chat | `realtime` port: polling/SSE fallback by default, Ably adapter optional (D4) | ably 2.29.0 (optional) | Apache-2.0 | Works on any host; vendor only when a buyer enables live chat. |
 | i18n | next-intl, `/[locale]` segments, `bn` + `en` | 4.14.9 | MIT | Localised routes, metadata and `hreflang`. Alternative: hand-rolled dictionaries. |
-| Tests | Vitest (unit/integration), Playwright (journeys, gate), mongodb-memory-server (transaction tests) | vitest 5.0.5 · @playwright/test 1.64.1 · mongodb-memory-server 11.3.0 | MIT | Playwright is also what the skill's `gate.mjs` needs. |
+| Tests | Vitest (unit/integration), Playwright (journeys, gate), disposable test replica set via Docker or mongodb-memory-server replica-set mode (test-only, never used by the app) | vitest 5.0.5 · @playwright/test 1.64.1 · mongodb-memory-server 11.3.0 | MIT | Playwright is also what the skill's `gate.mjs` needs. |
 | Load test | Grafana k6 as an external binary (not a dependency) | — | AGPL-3.0 (tool only, not distributed) | Reproducible 50K-VU plan in Checkpoint 4. |
 | Hosting | Vercel for the HorekBazar demo; template kept host-portable (`output: "standalone"`, no Vercel-only APIs in core) | — | — | Buyers may deploy to Vercel Pro, a Node host or Docker. |
 
@@ -92,7 +92,7 @@ Checkpoint 2 of 6. Status: **proposed**. Detailed domain rules (roles, order lif
 
 | Field | Answer |
 |---|---|
-| **Product** | A reusable, self-hosted, **single-store, multi-category online shop** template, sold to independent businesses. HorekBazar is the flagship installation: a Bangladeshi everyday-goods store, cash on delivery first, Bengali and English. Exact subtype: general retail with variants (not a marketplace, not a grocery quick-commerce app, not a SaaS). |
+| **Product** | A reusable, self-hosted, **single-store, multi-category online shop** template, sold to independent businesses. HorekBazar is the flagship installation: a Bangladeshi store, cash on delivery first, Bengali and English. **Its actual catalogue and category mix are open (D11)** and come only from the owner. Exact subtype: general retail with variants (not a marketplace, not a grocery quick-commerce app, not a SaaS). |
 | **Audiences** | (1) **Shoppers**: mostly mobile, often on mid-range Android phones and unstable 3G/4G; Bengali-first, some English; return repeatedly for deals. (2) **Store staff**: owner, managers, order operators, catalogue editors, support agents, on laptop and phone. (3) **Template buyers / developers**: configure, brand, deploy and upgrade an installation. |
 | **Jobs (shopper)** | 1. Find the thing I want fast (search, categories). 2. Trust the price, stock and delivery fee before I commit. 3. Order without paying online (COD) and know the order was received. 4. Know when it will arrive and track it. 5. Cancel or return without a fight. 6. Get a fair deal (sales, coupons, rewards) without being tricked. 7. Reach a person when something goes wrong. |
 | **Jobs (staff)** | 1. Confirm or reject new COD orders quickly. 2. Pack, book the courier and track every parcel. 3. Keep stock correct through cancellations, failed deliveries and returns. 4. Add and edit products in both languages (optionally with AI drafts). 5. Run sales, coupons and homepage merchandising. 6. Answer customer messages. 7. See what is selling and what is stuck. |
@@ -103,8 +103,8 @@ Checkpoint 2 of 6. Status: **proposed**. Detailed domain rules (roles, order lif
 | **Content and density** | Storefront listing pages: **medium-high** density (2 columns at 375px, 4–5 at 1440px; price, compare-at, stock and delivery signals on cards). Product page: medium (gallery, variant pickers, price breakdown, delivery estimate by zone, description, specs, reviews, Q&A excluded). Home: configurable sections. Admin: **high** density tables with filters, bulk actions and keyboard use. Data relationships: Category ⇄ Product (many-to-many, one primary), Collection ⇄ Product, Product → Variants (SKU-level stock and price), Order → Lines (variant snapshot) → Inventory ledger. |
 | **Essential interactions and states** | Search with suggestions and zero-result recovery; faceted filters (category, price, availability, attributes, rating, offer type) with sort and pagination; variant selection updating price/stock; cart edits with live re-pricing; coupon apply/remove with reason on failure; address book with zone-based fee; COD order placement with idempotency; order timeline with courier tracking link; cancellation and return requests; review after delivery; push opt-in; support messaging. Every async surface has loading, empty, error and success states; every database-backed route has a **setup-required** state when the database is not configured; every integration-backed action has an **integration unavailable** state. |
 | **Responsive expectations** | 375px: bottom bar, filters in a sheet, sticky add-to-cart and checkout summary, one-handed reach for primary actions. 768px: 3-column grids, filters still a sheet. 1440px: persistent filter sidebar, mega-menu for categories, wider gallery. Admin: usable on a phone for order confirmation and messaging (cards instead of tables), full tables from 1024px. |
-| **Constraints** | Stack from Checkpoint 1. Real data only (no mock fallback). Bangladesh Digital Commerce Operation Guidelines 2021: terms, delivery, return/refund conditions shown clearly and **in Bangla** ([Mahbub & Co.](https://mahbub-law.com/ministry-of-commerce-issues-detailed-guidelines-on-e-commerce-business/)); delivery within 5 days same city / 10 days other city, complaints resolved within 72 hours, stock quantity and full charges disclosed ([The Daily Star](https://www.thedailystar.net/law-our-rights/news/overview-the-digital-commerce-operation-guidelines-2021-2128871)). Personal data law: Bangladesh's Personal Data Protection Ordinance 2025 was replaced by an Act enacted on 10 April 2026 ([DataGuidance](https://www.dataguidance.com/jurisdictions/bangladesh?topic)); consent, retention limits and data-subject rights must be supportable. Low bandwidth: performance budgets in `gates/rules.md` (LCP ≤ 2.5s, INP ≤ 200ms, CLS ≤ 0.1). Every buyer owns their own data and credentials. |
-| **Explicit exclusions** | Multi-vendor marketplace and seller accounts (owner brief). Multi-tenant SaaS (owner brief). Guest checkout (owner brief: account required). Native mobile apps (not requested; PWA-level install and push only). Online payment gateways in v1 (owner brief specifies COD; payment method step still ships with a provider port). Multi-currency per store and multi-warehouse stock (one currency and one stock location per installation; schema leaves room). Product Q&A, wishlists sharing, gift cards, subscriptions, POS (not requested; proposed exclusions awaiting approval). Extended/tiered licences (owner decision). |
+| **Constraints** | Stack from Checkpoint 1. MongoDB replica set in every environment (transactions). Real data only (no mock fallback; `data/` holds only owner-supplied or owner-approved catalogue content; an empty development database is acceptable). Legal points below are **interpretations from secondary sources that require qualified Bangladeshi legal review before launch** (register: `docs/domain-rules.md` §15). Bangladesh Digital Commerce Operation Guidelines 2021: terms, delivery, return/refund conditions shown clearly and **in Bangla** ([Mahbub & Co.](https://mahbub-law.com/ministry-of-commerce-issues-detailed-guidelines-on-e-commerce-business/)); delivery within 5 days same city / 10 days other city, complaints resolved within 72 hours, stock quantity and full charges disclosed ([The Daily Star](https://www.thedailystar.net/law-our-rights/news/overview-the-digital-commerce-operation-guidelines-2021-2128871)). Personal data law: Bangladesh's Personal Data Protection Ordinance 2025 was replaced by an Act enacted on 10 April 2026 ([DataGuidance](https://www.dataguidance.com/jurisdictions/bangladesh?topic)); consent, retention limits and data-subject rights must be supportable. Low bandwidth: performance budgets in `gates/rules.md` (LCP ≤ 2.5s, INP ≤ 200ms, CLS ≤ 0.1). Every buyer owns their own data and credentials. |
+| **Explicit exclusions** | Multi-vendor marketplace and seller accounts (owner brief). Multi-tenant SaaS (owner brief). Guest checkout (owner brief: account required). Native mobile apps (not requested; PWA-level install and push only). Online payments (owner, D15: COD is the only active method; the payment step ships with a provider port). SMS and phone OTP (owner, D14; `sms` port reserved). Multi-currency per store (one currency per installation). Product Q&A, gift cards, subscriptions, POS, multiple warehouses (owner, D16). Wishlist disabled unless separately approved (owner, D16). Extended/tiered licences and licence enforcement (owner, D6). Fabricated catalogue, reviews, stock or order history (owner, D11). |
 | **Success criteria** | A buyer can install, configure and brand a shop from documentation alone. A shopper can complete Home → Product → Cart → Checkout → Order confirmed on a 375px phone on a throttled connection within the performance budgets. Stock never goes negative or double-moves under concurrent orders and repeated requests (proven by tests). Every core journey passes the Motomation gate (axes X and J). 50K concurrent users is an engineering target with a load-test plan, not a claim. |
 
 ## Type research
@@ -127,7 +127,7 @@ Access: web, searched 2026-10-21. Many Bangladeshi stores render content client-
 **Site type:** single-store multi-category retail (COD-first, bilingual)
 **Admin panel:** included
 
-Evidence (file#pattern) is filled in during the build; Notes describe intent. Marks: requested = in the owner brief; required = the type or the law needs it; optional = feature-flagged, off by default unless noted. Level: the capability level the route or function ships at. Locale: Bengali at `/`, English at `/en/…` (proposal, D10).
+Evidence (file#pattern) is filled in during the build; Notes describe intent. Marks: requested = in the owner brief; required = the type or the law needs it; optional = feature-flagged, off by default unless noted. Level: the capability level the route or function ships at. Locale: Bengali at `/`, English at `/en/…` with shared stable Latin slugs (D10, approved in principle).
 
 | Kind | Item | Mark | Evidence | Level | Notes |
 |---|---|---|---|---|---|
@@ -155,7 +155,7 @@ Evidence (file#pattern) is filled in during the build; Notes describe intent. Ma
 | route | /account/orders/[orderNumber]/invoice | required |  | backend | printable invoice (VAT line when configured) |
 | route | /account/addresses | requested |  | backend | multiple delivery addresses |
 | route | /account/profile | requested |  | backend | name, phone, email, language |
-| route | /account/security | required |  | backend | password change, sessions, linked Google |
+| route | /account/security | required |  | backend | password change, sessions and revocation, linked Google |
 | route | /account/rewards | requested |  | backend | reward balance and ledger (terminology configurable) |
 | route | /account/reviews | requested |  | backend | my reviews, review prompts after delivery |
 | route | /account/messages | requested |  | backend | support conversations |
@@ -176,7 +176,8 @@ Evidence (file#pattern) is filled in during the build; Notes describe intent. Ma
 | state | /c/[...slug]: filters produce no results | required |  | backend |  |
 | state | /p/[slug]: out of stock, preorder, flash sale ended mid-view, variant unavailable | required |  | backend |  |
 | state | /cart: empty, item went out of stock, price changed, coupon invalid | required |  | backend |  |
-| state | /checkout: zone not deliverable, stock lost at placement, duplicate submit, server error | required |  | backend |  |
+| state | /checkout: zone not deliverable, stock lost at placement, duplicate submit, server error, missing or invalid phone number | required |  | backend |  |
+| state | storefront listings with an empty database (no approved catalogue yet) | required |  | backend | honest empty state, no placeholder products (D11) |
 | state | /account/orders: empty | required |  | backend |  |
 | state | integration unavailable (email, push, courier, AI, chat) | requested |  | interface |  |
 | state | 404, 500, maintenance | required |  | interface |  |
@@ -198,11 +199,11 @@ Evidence (file#pattern) is filled in during the build; Notes describe intent. Ma
 | function | /cart: change quantity, remove, live re-price | requested |  | backend |  |
 | function | /cart: apply/remove coupon with reason | requested |  | backend |  |
 | function | /checkout: redeem rewards | requested |  | backend |  |
-| function | /checkout: payment method step (COD only in v1) | requested |  | backend | provider port for later |
+| function | /checkout: payment method step (COD only in v1) | requested |  | backend | provider port for later (D15) |
 | function | push opt-in prompt after a meaningful action | requested |  | integration |  |
 | function | live chat (realtime) | optional |  | integration | polling fallback ships |
-| function | wishlist | optional |  | backend | not requested; flag off |
-| function | brands as a facet and index | optional |  | backend | flag off for HorekBazar unless D11 says otherwise |
+| function | wishlist | not required for this brief, reason: disabled in v1 unless separately approved by the owner (D16) |  |  |  |
+| function | brands as a facet and index | optional |  | backend | flag off; decided with the real catalogue (D11) |
 | edge | concurrent orders for the last unit | required |  | backend | atomic guarded decrement |
 | edge | repeated checkout submit / network retry | required |  | backend | idempotency key |
 | edge | flash sale ends between cart and placement | required |  | backend | re-price at placement, show change |
@@ -237,7 +238,9 @@ Evidence (file#pattern) is filled in during the build; Notes describe intent. Ma
 | admin | /admin/settings/delivery | requested |  | backend | zones, fees, free-delivery rules |
 | admin | /admin/settings/features | requested |  | backend | feature flags |
 | admin | /admin/settings/integrations | requested |  | integration | status and test per provider (no secret display) |
-| admin | /admin/staff | requested |  | backend | staff accounts and roles |
+| admin | /admin/staff | requested |  | backend | staff accounts and roles, 2FA status and reset (Owner), session revocation |
+| admin | /admin/security | requested |  | backend | own 2FA enrolment, backup codes, sessions (mandatory for Owner and Store Manager, D7) |
+| admin | /admin/health | required |  | backend | database topology check, job trigger, outbox lag, dead letters, integration status |
 | admin | /admin/audit | required |  | backend | audit log |
 | admin | /admin/setup | requested |  | backend | first-run checklist |
 | skeleton | product grid | required |  |  |  |
@@ -253,9 +256,31 @@ Evidence (file#pattern) is filled in during the build; Notes describe intent. Ma
 | route | online payment return/callback routes | not required for this brief, reason: COD only in v1 (owner brief); interface: /checkout payment method step with provider port |  |  |  |
 | route | seller/vendor routes | not required for this brief, reason: single-store template, marketplace excluded by owner |  |  |  |
 
+## Technical requirements added at Checkpoint 2
+
+Detailed in `docs/domain-rules.md`:
+
+- §12 MongoDB replica set required in development, test, staging and production; startup topology check.
+- §13 Transactional outbox drained by a real configurable trigger (`worker` process or authenticated HTTP drain from an external scheduler); Vercel Hobby cron is not acceptable for it; jobs are "done" only after provider acceptance.
+- §14 Zod is the source of truth; MongoDB validators are generated, committed and checked in CI against both the generator and the live test database.
+- §15 Legal basis register: every legal claim is an interpretation needing qualified local review.
+- §11 Stock concurrency proof: 100 simultaneous attempts on 10 units → exactly 10 successes, 90 `INSUFFICIENT_STOCK` rejections, never negative.
+
 ## Open decisions (Checkpoint 2)
 
-See the end of `docs/domain-rules.md` (D7–D16).
+| ID | Status |
+|---|---|
+| D5 Hosting / Vercel | deferred to the deployment checkpoint |
+| D7 Staff 2FA | approved in principle |
+| D8 Promotions | approved in principle; the **[A]** defaults in `docs/domain-rules.md` §5 are proposals |
+| D9 Rewards | approved in principle as a proposal; legal review required before enabling in a BD production store |
+| D10 Localisation | approved in principle |
+| D11 Real catalogue | **open**: owner to supply or approve; empty dev database meanwhile |
+| D12 Location data | **open**: research done, selection pending verification (`docs/domain-rules.md` §6.1) |
+| D13 Customer verification | approved in principle |
+| D14 SMS | approved in principle: excluded from v1 |
+| D15 Online payments | approved in principle: excluded from v1 |
+| D16 Exclusions | approved in principle |
 
 ---
 
@@ -265,7 +290,7 @@ See the end of `docs/domain-rules.md` (D7–D16).
 - ~~D2 Demo mode~~: **decided**: no mock fallback; real dev database; setup-required states (see Conflicts 1).
 - ~~D3 Web Push library~~: **approved approach**: choose between `@block65/webcrypto-web-push`, `@pushforge/builder` or in-house after fit checks at the push phase.
 - ~~D4 Live chat~~: **approved**: polling fallback by default, Ably adapter optional.
-- **D5 Hosting for the flagship demo (still open)**: Vercel Hobby (non-commercial demo only) vs. Vercel Pro. Also: which Vercel scope/team should own the project (current token cannot access `dev-choice`).
+- **D5 Hosting for the flagship demo (deferred to the deployment checkpoint, owner 2026-10-21)**: Vercel Hobby (non-commercial demo only) vs. Vercel Pro. Also: which Vercel scope/team should own the project (current token cannot access `dev-choice`).
 - ~~D6 Licence~~: **decided provisionally**: one basic commercial licence; no tiers, no enforcement mechanism. Notes for legal review in `docs/LICENSING.md`.
 
 ## Decision trace
@@ -278,7 +303,16 @@ See the end of `docs/domain-rules.md` (D7–D16).
 | 2026-10-21 | 1 Stack · D2 | No mock/demo fallback; real dev DB; `data/` is seed input only | **owner decision** |
 | 2026-10-21 | 1 Stack · D3 | Web Push library chosen at the push phase after fit checks (block65 / pushforge / in-house) | approved as proposed |
 | 2026-10-21 | 1 Stack · D4 | Chat behind a `realtime` port: polling fallback, Ably adapter optional | approved as proposed |
-| 2026-10-21 | 1 Stack · D5 | Vercel scope still blocked; hosting tier undecided | **open** |
+| 2026-10-21 | 1 Stack · D5 | Vercel scope still blocked; hosting tier undecided | **deferred** to the deployment checkpoint (owner) |
 | 2026-10-21 | 1 Stack · D6 | Basic commercial licence, provisional | **owner decision** |
 | 2026-10-21 | 2 Contract | Product contract and Scope below | **proposed** |
 | 2026-10-21 | Process | Push after every phase/change; summary in `docs/PROGRESS.md`; all `.md` delivered as one copy block | **owner decision** |
+| 2026-10-21 | 2 · D7 | Staff 2FA mandatory for Owner and Store Manager; recovery and session revocation | approved in principle |
+| 2026-10-21 | 2 · D8 | Promotion resolution and interactions (`docs/domain-rules.md` §5) | approved in principle |
+| 2026-10-21 | 2 · D9 | HB Credit as configurable non-cash loyalty discount, legal review before launch | approved in principle (proposal) |
+| 2026-10-21 | 2 · D10 | `/` Bengali, `/en` English, shared stable Latin slugs | approved in principle |
+| 2026-10-21 | 2 · D11 | Catalogue only from the owner; empty dev DB acceptable; categories/merchandising proposed | **open** |
+| 2026-10-21 | 2 · D12 | Location dataset researched; selection pending verification | **open** |
+| 2026-10-21 | 2 · D13 | Valid BD phone + admin confirmation; customer email verification optional; staff mandatory; no OTP | approved in principle |
+| 2026-10-21 | 2 · D14–D16 | SMS and online payments excluded; Q&A, gift cards, subscriptions, POS, multi-warehouse excluded; wishlist disabled | approved in principle |
+| 2026-10-21 | 2 · Correction | Atlas Free clusters do support backups (daily snapshot, up to 4 kept); earlier statement corrected | done |
