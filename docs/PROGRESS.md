@@ -29,6 +29,7 @@ Newest first. Each entry: date, phase, done, decided, open, next.
   - Skill gate: running on the final build at the time of this commit; the result is added in the next commit.
 - **Not run:** real devices (safe-area insets cannot be emulated; only the CSS rule and `viewport-fit` are checked), the 500 page in a browser (unit-tested markup only), Lighthouse, LCP, axe, screen readers, and any database, auth, transaction or concurrency test. None is claimed.
 - **Open:** D11, D12 (still blocks checkout that needs the location dataset), D5, D19–D23, and coupon-usage restoration on cancellation.
+- **Owner instruction (after the push):** CI passed on `01bcba4` (GitHub Actions run 39596727627, success). The owner asked to open a PR, merge to `main` and deploy the first Vercel preview. Recorded in the `DESIGN.md` Decision trace. This applies to B1 only; the skill gate had not passed at merge time.
 - **Next:** owner review of B1 on `preview/horekbazar-v1`; owner approval needed to start B2. B2 also needs D19 (a development database the owner provides).
 
 ## 2026-10-21 — Phase B0: toolchain skeleton and D17 CSP/caching spike (pushed to `preview/horekbazar-v1`)
