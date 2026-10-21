@@ -22,7 +22,7 @@ function StateBadge({ state, label }: { state: PortState; label: string }) {
   );
 }
 
-export async function HealthView({ locale, report, developmentOpen }: { locale: Locale; report: HealthReport; developmentOpen: boolean }) {
+export async function HealthView({ locale, report }: { locale: Locale; report: HealthReport }) {
   const t = await getTranslations({ locale, namespace: "admin.health" });
   const n = (value: number) => formatCount(value, numerals(locale));
   const minutes = (ms: number) => t("minutes", { count: n(Math.max(0, Math.round(ms / 60_000))) });
@@ -35,11 +35,6 @@ export async function HealthView({ locale, report, developmentOpen }: { locale: 
       <h1 className="font-display admin-title">{t("title")}</h1>
       <p className="admin-intro">{t("intro")}</p>
       <p className="admin-meta">{t("checkedAt", { time: formatTime(report.checkedAt, locale) })}</p>
-      {developmentOpen ? (
-        <p className="admin-notice" role="note">
-          {t("devNotice")}
-        </p>
-      ) : null}
 
       <section id="ports" aria-labelledby="ports-title" className="admin-section">
         <h2 id="ports-title" className="admin-section-title">
