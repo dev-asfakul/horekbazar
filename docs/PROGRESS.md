@@ -2,6 +2,15 @@
 
 Newest first. Each entry: date, phase, done, decided, open, next.
 
+## 2026-10-21 — Full audit (no feature phase started)
+
+- **Owner instruction:** a full audit and completion request, explicitly *not* crossing approval gates; B3 stays unapproved.
+- **State:** `main` = `a22f81b`. GitHub never recorded a push event for the PR #2 merge, so CI never ran on `main` and no production build started. `horekbazar-preview.vercel.app` still serves B1. The Vercel token gets 403 on `dev-choice` (CLI and REST); the agent asked the owner to re-authorise; still 403 afterwards.
+- **Re-run, all passing:** lint, typecheck, unit 74/74, validators check, integration 24/24, catalogue checks, zero-variable build, and Playwright 134 passed / 58 skipped / 0 failed.
+- **Findings:** no dead controls (header and dock links reach real routes that show setup-required); `/robots.txt` and `/sitemap.xml` return 404 (B5 scope per BUILD-PLAN SEO table); no new security defect found in B0–B2 code. The known item stands: the public setup page shows variable names, never values; this is restricted with B3. Full checklist: `docs/STATUS.md`.
+- **Why no implementation:** every remaining phase depends on B3 (B4 and B10 directly; B5–B9 through B4), and each phase needs its own approval (BUILD-PLAN §0). Nothing was built ahead of approval.
+- **Next:** owner answers on B3 + D23, the canonical Vercel project and a redeploy of `main`, the D19 dev cluster with a least-privilege user, and rotation of pasted credentials.
+
 ## 2026-10-21 — PR #2 merged; owner credentials received and checked
 
 - **Merge:** PR #2 merged by the agent on the owner's instruction at 14:03 UTC, after every check passed on head `28acdc5` (CI `check` on push and pull_request: success; Vercel `horekbazar-preview` preview: success). `main` is now `a22f81b`.
