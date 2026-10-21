@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "skills": {
+    "asfakulsiam-motomation-design": {
+      "source": "asfakulsiam/asfakulsiam-motomation-design",
+      "sourceType": "github",
+      "skillPath": "skills/asfakulsiam-motomation-design/SKILL.md",
+      "computedHash": "932c87e17c5373f9c66cbfa54c7bd8e3f49ff7bffe433284e5047034d5f25b49"
+    }
+  }
+}

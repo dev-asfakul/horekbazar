@@ -1,0 +1,50 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Next.js / build output
+.next/
+out/
+build/
+dist/
+.vercel/
+*.tsbuildinfo
+next-env.d.ts
+
+# Environment and secrets: only .env.example is committed
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+secrets/
+
+# Testing and load-test artefacts
+coverage/
+playwright-report/
+test-results/
+blob-report/
+loadtest/results/
+
+# Logs and OS noise
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.log
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+
+# Agent tooling: the Motomation Design skill is installed per machine from
+# skills-lock.json (npx skills add asfakulsiam/asfakulsiam-motomation-design),
+# never vendored into the template buyers receive.
+.agents/
+.claude/
+.motomation/
+
+# Never commit data exports or customer records
+*.bson
+dump/
+exports/
