@@ -11,11 +11,12 @@ verified), **Partial**, **Missing**, **Blocked** (by an owner decision or creden
 
 | Item | Observed |
 |---|---|
-| `main` | `a8a26a6` (merge of PR #4: B3). CI `push` run success; Vercel `horekbazar-preview` deployment completed |
-| `preview/horekbazar-v1` | level with `main` plus this docs update |
-| CI on `main` | PR #3 and PR #4 merges: `push` runs succeeded (`a8a26a6` verified). Earlier, GitHub recorded no push event for the PR #2 merge or `a7b4a64`. The WebKit 375 px focus test is intermittent (failed once on PR #3, passed on re-run) |
+| `main` | `7adc38f` (merge of PR #6). CI `push` success on `a8a26a6`, `67e5042`, `7adc38f`; Vercel `horekbazar-preview` status success on `7adc38f`. Protection: required check `check`, enforced for admins, no force pushes |
+| `preview/horekbazar-v1` | `main` plus the 2026-10-22 dock focus fix and audit docs |
+| Repository visibility | **public** (GitHub API, 2026-10-22), although AGENTS.md says private. Secret scanning and push protection are disabled. History pattern scan: no real credentials, only three test fixtures |
+| CI on `main` | `push` runs succeeded for the PR #3 to #6 merges. Earlier, GitHub recorded no push event for the PR #2 merge or `a7b4a64`. The intermittent WebKit 375 px focus failure was a real slide-in defect, fixed 2026-10-22 (PROGRESS) |
 | Canonical deployment | **Not determined.** `dev-choice` has two Git-connected projects, `horekbazar` and `horekbazar-preview`. `https://horekbazar-preview.vercel.app` now serves B3 (`/admin/health` 307 to login) with `database: not_configured`. The deployed SHA cannot be read: the agent's Vercel token gets 403 on `dev-choice` (CLI and REST API) |
-| Local re-run (B3) | lint OK; typecheck OK; unit 86/86; `db:validators --check` OK; integration 39/39 (disposable MongoDB 8.0.4 replica set); zero-variable `next build` OK; Playwright 178 passed, 58 skipped (opt-in screenshots and the WebKit maintenance check), 1 intermittent WebKit failure that passed 12/12 on repeat. Motomation gate on `/login`: **not verified** (exit 3, timeouts in this sandbox) |
+| Local re-run (2026-10-22, `7adc38f`) | `npm ci` OK; lint OK; typecheck OK; unit 86/86; `db:validators --check` OK; integration 39/39 (disposable MongoDB 8.0.4 replica set); zero-variable `next build` OK; Playwright 179 passed, 58 skipped (opt-in screenshots and the WebKit maintenance check), 0 failed. Motomation gate on `/login` (zero-variable build): **FAIL**, exit 1; page checks pass, failures are SEO metadata, header search form states and later-phase completeness (PROGRESS 2026-10-22) |
 
 ## Requirements
 

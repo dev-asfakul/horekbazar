@@ -1,6 +1,6 @@
 # Handoff for the next developer or agent
 
-Last updated 2026-10-21 (Asia/Dhaka), after Phase B3 (identity). Read this first, then
+Last updated 2026-10-22 (Asia/Dhaka), after the takeover audit that followed Phase B3 (identity). Read this first, then
 `AGENTS.md`, `DESIGN.md`, `docs/BUILD-PLAN.md` §11 (phases) and §13 (open decisions),
 `docs/STATUS.md` (verified state per requirement) and the newest entries of `docs/PROGRESS.md`.
 
@@ -9,6 +9,7 @@ Last updated 2026-10-21 (Asia/Dhaka), after Phase B3 (identity). Read this first
 | Phase | State |
 |---|---|
 | B0 toolchain, B1 shell, B2 data platform | merged to `main` (PRs #1, #2, #3) |
+| Docs and fixes after B3 | PRs #5, #6 merged; 2026-10-22 dock focus fix and audit (see PROGRESS) |
 | B3 identity | merged to `main` (PR #4, `a8a26a6`); deployed to `horekbazar-preview` without a database configured |
 | B4 catalogue admin and later | not started; each phase needs explicit owner approval (BUILD-PLAN §0) |
 
@@ -67,10 +68,14 @@ env file that was deleted after use. Vercel and normal machines resolve SRV fine
 - Backup-code regeneration; an Owner action to revoke another staff member's sessions.
 - Customer accounts have no 2FA (by design so far).
 - The storefront setup-required page shows environment variable names (never values) publicly.
-- Motomation gate failures carried from B1 (SEO rules on noindex setup pages, search-form states)
-  belong to B5. See PROGRESS for the B3 gate result on `/login` and `/admin/setup`.
-- WebKit 375 px "keyboard focus is never hidden by the dock" is intermittent (`retries: 0`);
-  investigate rather than weaken it.
+- Motomation gate on `/login` (2026-10-22): FAIL. Page-level checks pass; failing rules are SEO
+  metadata (canonical, og:image, JSON-LD), the header search form's states (native submit) and
+  completeness items owned by B5 to B11. Run it against a zero-variable build: with the sandbox
+  connected to Atlas it timed out (exit 3). `/admin/setup` and `--journey` with a signed-in staff
+  user are not gated yet.
+- The intermittent WebKit dock-focus failure was a real defect (focus during the dock's slide-in),
+  fixed with `.bottom-dock:focus-within`; a deterministic regression test guards it.
+- The repository is public although AGENTS.md says private; GitHub secret scanning is off.
 - `experimental.authInterrupts` is still a proposed decision.
 
 ## Waiting on the owner
@@ -80,7 +85,9 @@ env file that was deleted after use. Vercel and normal machines resolve SRV fine
 2. Verify a Resend domain and set `EMAIL_FROM` on it.
 3. Set `SETUP_TOKEN`, then create the first Owner at `/admin/setup`.
 4. Confirm D23 and the proposals `SETUP_TOKEN` and `secondFactorAt` (DESIGN.md Decision trace).
-5. Name the canonical Vercel project, give the agent's Vercel token access to `dev-choice`, and
+5. Decide whether the repository should be private (AGENTS.md says so; it is public) and enable
+   GitHub secret scanning with push protection.
+6. Name the canonical Vercel project, give the agent's Vercel token access to `dev-choice`, and
    add the environment variables there per environment.
-6. Approve B4 and decide D11 (catalogue source); D12/D21, D5, D20, D22 and coupon restoration
+7. Approve B4 and decide D11 (catalogue source); D12/D21, D5, D20, D22 and coupon restoration
    on cancellation remain open.
