@@ -7,7 +7,7 @@ The machine-readable schema is [`schema.json`](schema.json) (JSON Schema draft 2
 | Entity (`$defs`) | Key fields | Invariants |
 |---|---|---|
 | `Meta` | `status`, `importAllowed`, `runtimeUse`, `ownerAuthorization` | `status = draft_pending_owner_review`, `importAllowed = false`, `runtimeUse = forbidden` |
-| `Category` | `id`, `slug`, `parentId`, `code`, `name{bn,en}`, `description{bn,en}`, `seo`, `review` | depth ≤ 2; slug unique, lowercase Latin; `status = draft` |
+| `Category` | `id`, `slug`, `parentId`, `code`, `name{bn,en}`, `description{bn,en}`, `seo`, `review` | depth ≤ 3 (contract maximum; this draft uses 2 levels); slug unique, lowercase Latin; `status = draft` |
 | `Product` | `id` (`hb-<cat>-<nnn>`), `slug`, `primaryCategoryId`, `categoryIds`, `name`, `shortDescription`, `description`, `brand`, `attributes[]`, `variants[]`, `images[]`, `seo`, `regulatory`, `factChecks[]`, `review` | `status = draft`, `generated = true`, `brand = null`, primary category is a leaf, `imageStatus = missing`, no extra fields allowed |
 | `Variant` | `sku` (`HB-<CAT>-<NNN>-<VAR>`), `title`, `options`, `netQuantity`, `price`, `inventory`, `barcode`, `shippingWeightGrams` | SKU unique and matches product id; `barcode = null`; shipping weight `status = estimate` |
 | `Price` | `proposed{amountMinor, currency}`, `compareAt`, `status`, `ownerReviewRequired`, `reference`, `note` | money in **integer poisha** (BDT minor units, `docs/domain-rules.md` §5); `compareAt = null`; `ownerReviewRequired = true`; `reference_derived` requires an official `PriceReference`, `estimate_requires_owner_review` requires `reference = null` |

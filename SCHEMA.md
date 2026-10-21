@@ -2,7 +2,7 @@
 
 > The data contract, written together with `DESIGN.md` as the skill requires (`templates/SCHEMA.md`).
 >
-> **Status: draft v0, Checkpoint 3 (proposed 2026-10-21, awaiting owner approval).** This version fixes the storefront entities, the routes and their rendering, the section contract for the core journey routes and the environment variables. Not yet complete: the field-level API surface, the admin section contracts and the remaining entity fields are finished at Checkpoint 4 (build plan), before any code.
+> **Status: draft v0.1, Checkpoint 3 (proposed 2026-10-21; amended after the owner's review the same day; awaiting explicit approval).** v0.1 changes: category depth is now up to 3 levels (from the approved contract); the per-category `display` field is removed, because listings follow the contract's column counts; the bottom dock section is added. This version fixes the storefront entities, the routes and their rendering, the section contract for the core journey routes and the environment variables. Not yet complete: the field-level API surface, the admin section contracts and the remaining entity fields are finished at Checkpoint 4 (build plan), before any code.
 >
 > Business rules live in `docs/domain-rules.md` (approved at Checkpoint 2). Where this file and the rules differ, the rules win until this file is corrected.
 
@@ -45,16 +45,15 @@ A single versioned document in `settings`, edited in `/admin/settings`. It holds
 > Location codes, address pickers and area-to-zone lookup depend on **D12 (open)**. They will not be implemented until D12 is resolved (Checkpoint 2 condition 4).
 
 ### Category
-`categories` collection; tree of maximum depth 2 (§2).
+`categories` collection; a tree **up to 3 levels deep**. The source is the approved product contract (`DESIGN.md` → Product contract: "category tree up to 3 levels"). `docs/domain-rules.md` has no depth rule, so v0's citation of §2 was wrong and is withdrawn. The generated draft taxonomy uses 2 levels. The rule is enforced on save: a category whose ancestor chain would exceed 3 levels is rejected.
 
 | Field | Type | Required | Example | Appears at |
 |---|---|---|---|---|
 | `id` | string | required | ObjectId | — |
 | `slug` | slug | required, unique | `rice-and-flour` | `/c/[...slug]`, `/en/c/[...slug]` |
-| `parentId` | ref(Category) | optional | — | breadcrumb, departments sheet |
+| `parentId` | ref(Category) | optional (depth ≤ 3) | — | breadcrumb, department sheet, mega-menu |
 | `name` | LocalizedText | required | `{ bn: "চাল ও আটা", en: "Rice & Flour" }` | departments sheet, `/c` title, breadcrumbs |
 | `description` | LocalizedText | optional | — | `/c` intro |
-| `display` | enum(rows\|grid) | required | `rows` | `/c` listing mode (`DESIGN.md` → Layout) |
 | `position` | int | required | `1` | sort order |
 | `seo` | object (title, description per locale) | optional | — | `<head>` |
 | `status` | enum(draft\|published\|archived) | required | `draft` | only `published` is listed |
@@ -69,7 +68,7 @@ A single versioned document in `settings`, edited in `/admin/settings`. It holds
 | `name` | LocalizedText | required | `{ bn: "মিনিকেট চাল", en: "Miniket Rice" }` | row title, product title, cart line, order line snapshot |
 | `shortDescription` | LocalizedText | optional | — | product page under the title |
 | `description` | LocalizedText (rich text, sanitised) | optional | — | product page `#details` |
-| `primaryCategoryId` | ref(Category) | required (a leaf) | — | breadcrumb, canonical |
+| `primaryCategoryId` | ref(Category) | required (a leaf, at any depth ≤ 3) | — | breadcrumb, canonical |
 | `categoryIds` | list<ref(Category)> | required | — | listings |
 | `brandId` | ref(Brand) | optional (brands flag off) | `null` | product page |
 | `attributes` | list<{ key, label LocalizedText, value LocalizedText }> | optional | net quantity, material | product page `#specs` |
@@ -148,7 +147,7 @@ All storefront routes exist twice: `/…` (Bengali) and `/en/…` (English), wit
 | Route | Page | Reads | Rendering | Notes |
 |---|---|---|---|---|
 | `/` | Home | Settings; HomeSection (published, by position) and the products each section references | ISR, revalidated by tag on admin save | Setup-required state when the database is not configured (D2) |
-| `/c/[...slug]` | Category | Category by slug path; published Products in it, 24 per page, sorted by position then newest | ISR + client filters in the URL | 404 for an unknown slug; filtered URLs canonicalise to the category |
+| `/c/[...slug]` | Category | Category by slug path (1–3 segments; more is a 404); published Products in it, 24 per page, sorted by position then newest | ISR + client filters in the URL | 404 for an unknown slug; filtered URLs canonicalise to the category |
 | `/p/[slug]` | Product | Product by slug, its Variants, Stock.available, active promotions, delivery zones | ISR (price and stock re-read on the client and at add-to-cart) | 404 for unknown or unpublished; 301 from old slugs |
 | `/search` | Search | Products by text query (bn and en) | dynamic | noindex |
 | `/deals`, `/new`, `/preorder` | Listings | Products by active promotion, newest, preorder flag | ISR | — |
@@ -169,6 +168,12 @@ All storefront routes exist twice: `/…` (Bengali) and `/en/…` (English), wit
 
 Core journey routes. Section ids match the markup `id`. The other routes follow at Checkpoint 4.
 
+### Every storefront route (global)
+| Section id | Reads | Empty | Loading | Error | Filled |
+|---|---|---|---|---|---|
+| `#site-header` | Settings, top categories | wordmark only if Settings cannot be read | static | — | wordmark, **persistent search field with the category entry beside it** (contract), language switch; mega-menu at 1440 px |
+| `#bottom-dock` (375 px) | Cart (count, subtotal), delivery zones | the bottom bar always shows; no context strip when the cart is empty | count reserved | count hidden; the bar still works | **five-item bottom bar** (Home, Categories, Search, Cart, Account; contract), with **at most one context strip** above it, by priority: `StickyBuyStrip` on `/p/[slug]` > `CheckoutSummaryStrip` on `/checkout` > `RunningTotalBar` (cart not empty; not on `/p`, `/cart` or `/checkout`). It publishes `--dock-h`; `main` padding-bottom and `scroll-padding-bottom` = `--dock-h` + 16 px; safe-area inset applied; hidden while a text field is focused (proposed rules, `DESIGN.md` → Layout → Bottom dock) |
+
 ### `/`
 | Section id | Reads | Empty | Loading | Error | Filled |
 |---|---|---|---|---|---|
@@ -179,8 +184,8 @@ Core journey routes. Section ids match the markup `id`. The other routes follow 
 | Section id | Reads | Empty | Loading | Error | Filled |
 |---|---|---|---|---|---|
 | `#category-header` | Category | never empty: a 404 instead | static | — | title (display face), breadcrumb, product count |
-| `#filters` | facets from the products in the category | hidden when there are no products | — | filters disabled with a message | sheet on mobile, sidebar on desktop |
-| `#product-list` | Products (24 per page) | "no products in this category yet", with a link to other departments; when filters give no results, "no matches" with a clear-filters action | static KhataRow skeletons | message and retry | KhataRows or grid (per `Category.display`); "load more" button with a paginated URL |
+| `#filters` | facets from the products in the category | hidden when there are no products | — | filters disabled with a message | filter sheet at 768 px and below; persistent sidebar at 1440 px (contract) |
+| `#product-list` | Products (24 per page) | "no products in this category yet", with a link to other departments; when filters give no results, "no matches" with a clear-filters action | static KhataEntry skeletons | message and retry | KhataEntries in the ruled grid: 2 columns at 375 px, 3 at 768 px, 4–5 at 1440 px (contract); "load more" button with a paginated URL |
 
 ### `/p/[slug]`
 | Section id | Reads | Empty | Loading | Error | Filled |
@@ -204,7 +209,7 @@ Core journey routes. Section ids match the markup `id`. The other routes follow 
 | `#address` | Addresses | address form | — | field errors | saved addresses as radio cards plus "add new" |
 | `#delivery` | zone for the address | "this area is not delivered to", with contact | — | — | fee and estimate |
 | `#summary` | cart totals | redirects to `/cart` | reserved | — | collapsible khata on mobile |
-| `#place-order` | — | — | loading button (idempotency key; double-tap safe) | stock lost, duplicate submit, server error, invalid phone (Scope states) | COD line, "what happens next", place-order button |
+| `#place-order` | — | — | loading button (idempotency key; double-tap safe); shown in `CheckoutSummaryStrip` at 375 px and repeated at the end of the form in normal flow | stock lost, duplicate submit, server error, invalid phone (Scope states) | COD line, "what happens next", place-order button |
 
 ### `/checkout/success/[orderNumber]`
 | Section id | Reads | Empty | Loading | Error | Filled |
@@ -221,6 +226,7 @@ Core journey routes. Section ids match the markup `id`. The other routes follow 
 | `/cart` | empty · out of stock · price changed · invalid coupon | `#cart-lines`, `#cart-summary` |
 | `/checkout` | area not delivered to · stock lost · duplicate submit · server error · invalid phone | `#place-order`, `#delivery` |
 | Integrations (email, push, courier, AI, chat) | configured · healthy · failing · not configured | `docs/domain-rules.md` §7 |
+| Bottom dock (375 px) | empty cart · cart filled · text field focused (bars hidden) · PDP strip · checkout strip · reduced motion | `#bottom-dock` |
 | Micro-states | button, form, list, image and async-action states (`gates/rules.md`) | `DESIGN.md` → Components |
 
 ## API surface
@@ -255,4 +261,4 @@ From `.env.example`. The app starts with none set and shows setup-required state
 - **Caching and revalidation:** ISR by tag (`settings`, `category:<id>`, `product:<id>`, `home`); prices and stock are always re-resolved on the server at add-to-cart and at order placement.
 - **Auth flow, rate limits, security items:** `docs/domain-rules.md` §9 and Checkpoint 4.
 - **Open decisions affecting this file:** D12 (location dataset: address codes and zone mapping); D5 (hosting: caching specifics); D11 (no catalogue content approved).
-- **Assumptions:** the order number format `HB-YYMM-NNNNN` is a proposal **[A]**.
+- **Assumptions:** the order number format `HB-YYMM-NNNNN` is a proposal **[A]**. Dock heights (56 px bar, 56 px strip) are proposals, checked at 375 px in the build.

@@ -81,7 +81,10 @@ function validate() {
     if (catSlugs.has(c.slug)) err(`${p}: duplicate slug`); catSlugs.add(c.slug);
     if (!/^[a-z0-9]+(-[a-z0-9]+)*$/.test(c.slug)) err(`${p}: slug must be stable lowercase Latin`);
     if (c.parentId && !cats.has(c.parentId)) err(`${p}: parent ${c.parentId} not found`);
-    if (c.parentId && cats.get(c.parentId)?.parentId) err(`${p}: max depth is 2`);
+    // Maximum category depth is 3 levels (approved product contract, DESIGN.md → Product contract: "category tree up to 3 levels").
+    { let depth = 1, cur = c, seen = new Set([c.id]);
+      while (cur.parentId && cats.has(cur.parentId)) { if (seen.has(cur.parentId)) { err(`${p}: parent cycle`); break; } seen.add(cur.parentId); cur = cats.get(cur.parentId); depth++; }
+      if (depth > 3) err(`${p}: depth ${depth} exceeds the contract maximum of 3 levels`); }
     if (c.status !== 'draft') err(`${p}: status must be draft`);
     if (c.review?.status !== 'pending_owner_review' || c.review.approvedBy !== null) err(`${p}: must be pending owner review`);
     checkLT(c.name, `${p}.name`, { customerFacing: true }); checkLT(c.description, `${p}.description`, { customerFacing: true });

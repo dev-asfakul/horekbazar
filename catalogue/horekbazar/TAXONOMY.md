@@ -27,7 +27,7 @@ Figures differ between sources and measure different things (revenue, share of b
 | শিশু ও কিশোর / Baby & Kids | Baby Care · School Essentials | 6 |
 | স্টেশনারি ও অফিস / Stationery & Office | Paper & Notebooks · Writing & Office Supplies | 10 |
 
-Rules applied: maximum depth 2; products attach to leaf categories; slugs are stable lowercase Latin and shared by `/` (Bengali) and `/en` (D10); category codes (GRC, PCR, HCL, KIT, HOM, FSH, ELC, KID, STN) appear in SKUs.
+Rules applied: the approved contract allows a category tree **up to 3 levels**; this proposal uses **2 levels** (department → leaf category), leaving the third level unused until the owner needs it; products attach to leaf categories; slugs are stable lowercase Latin and shared by `/` (Bengali) and `/en` (D10); category codes (GRC, PCR, HCL, KIT, HOM, FSH, ELC, KID, STN) appear in SKUs.
 
 ## Excluded from the starter set (owner may revisit)
 

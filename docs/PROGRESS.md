@@ -2,6 +2,39 @@
 
 Newest first. Each entry: date, phase, done, decided, open, next.
 
+## 2026-10-21 — Checkpoint 3 amended after owner review ("Khata" accepted in principle; not yet approved)
+
+- **Owner decision:** the "Khata" direction is accepted in principle; **Checkpoint 3 is not approved**. Six amendments requested; the product contract is not to be changed to fit the design.
+- **Done:**
+  1. **Mobile navigation.** The contract's five-item bottom bar (Home, Categories, Search, Cart, Account) is restored in `DESIGN.md` → Layout and Components.
+     - The RunningTotalBar now sits above the bottom bar inside one `BottomDock`, which shows at most one context strip, by priority: PDP sticky add-to-cart > checkout summary strip > RunningTotalBar.
+     - The dock applies the `env(safe-area-inset-bottom)` safe area, publishes its height as `--dock-h`, and drives `main` bottom padding and `scroll-padding-bottom`, so focus is not hidden (WCAG 2.2 SC 2.4.11, technique C43 / failure F110).
+     - The dock hides while a text field is focused. The place-order button is repeated in the normal page flow.
+     - All of this is proposed; it was written to fit the contract, which is unchanged.
+  2. **Category depth.** Sources checked:
+     - The approved product contract says "category tree up to 3 levels".
+     - `docs/domain-rules.md` has **no** depth rule (not changed).
+     - The generated taxonomy uses 2 levels.
+     - `SCHEMA.md` v0, `catalogue/horekbazar/TAXONOMY.md`, `CATALOGUE-SCHEMA.md` and the catalogue checker all said "maximum 2". SCHEMA v0 also cited domain-rules §2 incorrectly.
+     - **Resolution: maximum 3 levels everywhere; source: the approved product contract.**
+     - The checker now walks the parent chain, rejects depth > 3 and detects parent cycles. The catalogue data is unchanged.
+  3. **Other contract mismatches found and fixed** (contract unchanged; the design was realigned):
+     - Listings are now 2 columns at 375 px, 3 at 768 px and 4–5 at 1440 px, as a ruled khata grid (v0 had single-column rows).
+     - Persistent header search with the category entry beside it.
+     - Mega-menu and persistent filter sidebar at 1440 px.
+     - Admin uses cards on a phone and full tables from 1024 px.
+  4. **Khata direction preserved:** ruled entries and rows, LabelTile, the Bangla type research, contrast, QuantityStepper, full-cost visibility and RunningTotalBar are all kept. No research restarted, no decoration added.
+  5. **New `DESIGN.md` → Verification status section:** results are split into **measured**, **hypotheses** and **build checks**. The build checks cover conjuncts, mixed script, fallback-font CLS, keyboard, screen readers, 375 px usability, safe area, reduced motion, performance budgets and rendered contrast. None has been run.
+  6. `SCHEMA.md` is now v0.1 (depth, removed `display` field, `#site-header` and `#bottom-dock` global sections, dock states). `DATA.md` and `README.md` updated to agree.
+- **Validation run:**
+  - Catalogue checker on the real package: 0 errors, 0 warnings.
+  - Negative test (copy with a 3rd and a 4th level added): depth 4 rejected, depth 3 accepted; exit code 1.
+  - Ajv: all 4 catalogue files valid.
+  - Search for leftover "depth 2", "no bottom tab bar" and `display` field references: none remain.
+  - Skill completeness: expected failures only (no app yet).
+- **Boundaries unchanged:** D11 catalogue unapproved; all 235 prices unapproved (39 historical TCB references, 196 estimates); images missing; compliance flags provisional; D12 open; D5 deferred. No application code, no database connection or import, no deployment.
+- **Next:** the owner approves, redirects or asks for alternatives at **Checkpoint 3**. Checkpoint 4 does not start before explicit approval.
+
 ## 2026-10-21 — Checkpoint 2 approved with conditions; Checkpoint 3 (Research and direction) proposed, awaiting approval
 
 - **Owner decision:** Checkpoint 2 (Product contract) **approved with seven conditions**:

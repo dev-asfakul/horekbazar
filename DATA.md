@@ -1,6 +1,6 @@
 # DATA.md: HorekBazar template
 
-Status: **Checkpoint 3 draft (proposed 2026-10-21).**
+Status: **Checkpoint 3 draft (proposed 2026-10-21; checked again after the owner's review, awaiting explicit approval).** The only change in this revision is the category-depth note below.
 
 The skill's default (`templates/DATA.md`) ships demo mock data in `data/`, each entry labelled demo. **That default is overridden for this product** by owner decision D2 (Checkpoint 1) and confirmed at Checkpoint 2:
 
@@ -15,7 +15,7 @@ The skill's default (`templates/DATA.md`) ships demo mock data in `data/`, each 
 
 | Entity | File | Entries now | Labelled |
 |---|---|---|---|
-| Category | `data/categories.json` | not created (0) | owner-approved only |
+| Category | `data/categories.json` | not created (0) | owner-approved only; tree up to 3 levels (approved contract) |
 | Product / Variant | `data/products.json` | not created (0) | owner-approved only |
 
 The README states what is real: nothing in `data/` is demo, because nothing is there until the owner approves it.

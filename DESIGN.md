@@ -1,6 +1,6 @@
 # HorekBazar: Design and Architecture Record
 
-Status: **Checkpoint 1 (Stack) approved 2026-10-21 with amendments. Checkpoint 2 (Product contract) approved 2026-10-21 with conditions (below). Checkpoint 3 (Research and direction) proposed, awaiting approval.** D11: Owner authorized catalogue generation; generated catalogue pending owner review and approval. D12 (location data) remains open; D5 deferred.
+Status: **Checkpoint 1 (Stack) approved 2026-10-21 with amendments. Checkpoint 2 (Product contract) approved 2026-10-21 with conditions (below). Checkpoint 3 (Research and direction) proposed; "Khata" direction accepted in principle by the owner, amended after review 2026-10-21, awaiting explicit approval.** D11: Owner authorized catalogue generation; generated catalogue pending owner review and approval. D12 (location data) remains open; D5 deferred.
 No application code exists yet.
 
 Skill: `asfakulsiam-motomation-design` v3.0.2 (installed with `npx skills add`, hash in `skills-lock.json`, verified identical to upstream `main`).
@@ -279,7 +279,14 @@ Detailed in `docs/domain-rules.md`:
 
 ## Research record
 
-Checkpoint 3 of 6. Status: **proposed 2026-10-21; awaiting owner approval.** Nothing below authorises application code, a database import or a deployment.
+Checkpoint 3 of 6. Status: **proposed 2026-10-21; "Khata" direction accepted in principle by the owner; amended after the owner's review (2026-10-21); awaiting explicit approval.** Every design choice below is **proposed** until then. Nothing below authorises application code, a database import or a deployment.
+
+**Amendments after the owner's review (2026-10-21).** The design was brought back in line with the approved product contract. The contract itself was not changed.
+1. **Mobile navigation:** restored the contract's five-item bottom bar (Home, Categories, Search, Cart, Account). The RunningTotalBar now sits above it inside one bottom dock, with safe-area and no-obscuring rules (Layout → Bottom dock).
+2. **Category depth:** the contract says "category tree up to 3 levels". `SCHEMA.md` v0 had said depth 2 and cited `docs/domain-rules.md` §2, but that section has no depth rule, so the citation was wrong. **Resolution: maximum 3 levels everywhere, with the approved contract as the source.** The generated taxonomy uses 2 levels, which is within the limit. The catalogue checker now enforces ≤ 3 instead of 2 (details in `docs/PROGRESS.md`).
+3. **Listing density:** the contract says "2 columns at 375px, 4–5 at 1440px" and "3-column grids" at 768 px. v0 had single-column rows on mobile listings. Listings now use the contract's column counts, laid out as a **ruled khata grid**: hairline rules between entries, no card boxes. Single-column ruled rows remain for the cart, checkout summary, order lines and search suggestions.
+4. **Header:** aligned with the contract: persistent search on every storefront page with the category entry beside it; mega-menu at 1440 px; persistent filter sidebar at 1440 px; filter sheet at 768 px and below; admin card lists on a phone, full tables from 1024 px.
+5. **Verification:** results are now labelled **measured**, **hypothesis** or **build check** (section "Verification status").
 
 **Access:** web (searched 2026-10-21). Font files were downloaded from the official [google/fonts](https://github.com/google/fonts) repository and measured locally with fontTools 4.67. Number formatting was checked in Node 20 (ICU). Baymard's full reports are paywalled, so only their public articles and summaries were used. Shwapno was read from a cached copy, so what it showed may since have changed.
 
@@ -304,7 +311,7 @@ Checkpoint 3 of 6. Status: **proposed 2026-10-21; awaiting owner approval.** Not
 | Node 20 `Intl.NumberFormat` (ICU), measured | measured | `bn-BD` gives `১,২৫,০০০৳` (symbol **after** the number, lakh grouping). `en-BD` gives `BDT 125,000.00` | Q1: one store-owned price formatter puts ৳ before the number, uses lakh grouping in both languages, and omits poisha when they are zero | ICU output can change between Node and browser versions; the store's own formatter avoids depending on it |
 | [Setka: product card design](https://getsetka.com/product-card-design/) | case study | "If an image is missing, preserve the card's structure and provide a calm fallback"; show a comparison price "only when valid"; test with unavailable images and long names | Q3: a label tile with the same footprint as a photo | A vendor's guide; general advice, not tested in Bangladesh |
 | [Cashod: COD order form](https://cashod.ma/en/blog/cod-landing-page-order-form) | case study (vendor blog) | Show the full price including delivery before the form; say plainly that the buyer pays the courier in cash; say what happens next (a confirmation call); disable the button on tap to prevent double orders | Q4: a COD line next to the place-order button, a "what happens next" block, and one-tap submission backed by the existing idempotency key | Vendor blog from another market; it cites Baymard rather than testing itself |
-| Skill library: `examples/sections/hero-studio-ledger.tsx`, archetype `ledger` (`structures/archetypes.md`) | library | Ruled rows, numbers aligned right, columns that collapse under 640 px. The archetype data says it fails when "imagery is the product; casual audiences who skim not scan" | Concept reference for listing and cart rows; the failure case is handled with a grid view per category | Studio example; its split-flap counter is decorative and not used |
+| Skill library: `examples/sections/hero-studio-ledger.tsx`, archetype `ledger` (`structures/archetypes.md`) | library | Ruled rows, numbers aligned right, columns that collapse under 640 px. The archetype data says it fails when "imagery is the product; casual audiences who skim not scan" | Concept reference for ruled listing entries and cart rows; the failure case is handled by the contract's multi-column grid, where each entry has a 1:1 image slot | Studio example; its split-flap counter is decorative and not used |
 | [Polaris](https://polaris.shopify.com/) (skill inspiration list, commerce) | gallery | The typography page fetched today gave no usable guidance | Not used | Nothing verifiable was retrieved |
 
 **Techniques considered:**
@@ -324,13 +331,13 @@ Checkpoint 3 of 6. Status: **proposed 2026-10-21; awaiting owner approval.** Not
 | | A **Khata** (shop ledger) | B **Shelf grid** | C **Haat stalls** |
 |---|---|---|---|
 | Idea | The store as a shopkeeper's ruled account book. Each product is a line with its pack, its unit price and its price; the cart is the running total | The familiar marketplace grid: photo-first cards, department colours, banner-led home | Each department is a stall at a weekly market, with its own illustrated sign and an editorial home |
-| Structure per route family | Storefront listings and cart: ruled rows (grid view per category when real photos exist). Product page: a spec-sheet layout. Home: six section types in the same rows. Account and admin: tables | Two-column photo grid everywhere; product page photo-led; home with banners and tiles | Home is a market map; each department has a themed landing page; listings in each stall's style |
+| Structure per route family | Storefront listings: a ruled khata grid at the contract's column counts (2 at 375 px, 3 at 768 px, 4–5 at 1440 px). Cart, checkout summary and order lines: single-column ruled rows. Product page: a spec-sheet layout. Home: six section types in the same rows. Account and admin: tables | Two-column photo grid everywhere; product page photo-led; home with banners and tiles | Home is a market map; each department has a themed landing page; listings in each stall's style |
 | Type mode and motion language | SERVICE STYLE; one HOUSE STYLE voice for titles only. MOTION 1: press, focus, stepper and sheet feedback | SERVICE STYLE, generic; MOTION 1–2 (carousel, hover zoom) | HOUSE STYLE; MOTION 2 (reveals, stall transitions) |
 | Journeys survive? | Browse/search/deal → product → cart → checkout → order received: yes; adding from the list skips the product page. Admin confirm-and-ship: yes, the same row system in tables | Yes, but every card depends on a photo that does not exist yet | Browse is slower: the market map adds a step before products. Admin is unaffected |
 | Suitability · audience · usability · distinction · motion · responsive · technical · originality | High · high (cheap phones, cash at the door) · high (dense, scannable, tabular prices) · medium-high (ledger rows, a calm serif title voice) · fits Tier 1 · strong at 375 px · light (≈146 KB fonts per locale, no images needed) · medium-high | Medium · medium · medium · low (looks like every marketplace) · fits · fine · heavy once photos land; broken without them · low | Low-medium · medium · low for repeat staple buying · high · heavier · weaker at 375 px · needs illustration assets that don't exist · high |
 
 **Chosen:** **A, with one idea each from B and C.**
-- From B: a two-column photo grid, as a per-category display setting, for departments where the photo is the product (fashion, kitchen and dining). It turns on only once real, rights-cleared images exist. This covers the ledger archetype's known failure ("imagery is the product").
+- From B: the contract's multi-column grid itself. Each entry has a 1:1 image slot that shows a real, rights-cleared photo when one exists and the LabelTile when not. This covers the ledger archetype's known failure ("imagery is the product") without a separate display mode.
 - From C: the serif title voice, the one place where HorekBazar has a character of its own. No illustrated stalls.
 
 Against the contract: A is the only direction that works with an empty or photo-less catalogue (D11, image conditions), shows the full cost before checkout (Q4), and does not lean on invented urgency (Q5).
@@ -339,8 +346,8 @@ Against the contract: A is the only direction that works with an empty or photo-
 
 | Journey | Route sequence (from the Scope table) | What A does |
 |---|---|---|
-| Browse and buy | / → /c/[...slug] → /p/[slug] → /cart → /login → /checkout → /checkout/success/[orderNumber] | Rows let a shopper add straight from the category list. The running total bar leads to the cart. The sign-in step keeps the cart (contract: device cart before sign-in) |
-| Search and buy | / → /search → /p/[slug] → /cart → /checkout → … | The search field is always visible under the header on mobile. Results use the same rows; zero results offer category links and clearing filters |
+| Browse and buy | / → /c/[...slug] → /p/[slug] → /cart → /login → /checkout → /checkout/success/[orderNumber] | Grid entries let a shopper add straight from the category list. Categories in the bottom bar opens the department sheet. The running total bar leads to the cart. The sign-in step keeps the cart (contract: device cart before sign-in) |
+| Search and buy | / → /search → /p/[slug] → /cart → /checkout → … | Search is persistent in the header on every storefront page (contract), and Search in the bottom bar moves focus to that field. Results use the same ruled grid; zero results offer category links and clearing filters |
 | Deal to order | / → /deals → /p/[slug] → /cart → … | A deal row shows the real promotion price and the end time as a plain date (never a countdown). If the deal ends mid-journey, the cart re-prices and says so |
 | Track, cancel or return | /account → /account/orders → /account/orders/[orderNumber] | The order page is a khata entry: lines, totals and a status timeline in the store's words ("waiting for the store to confirm") |
 | Admin confirms and ships | /admin → /admin/orders → /admin/orders/[orderNumber] → /admin/shipments | Same token system, denser rows, tabular figures, status chips that carry a text label as well as colour |
@@ -357,7 +364,7 @@ Against the contract: A is the only direction that works with an empty or photo-
 - **Concept sentence:** HorekBazar reads like a shopkeeper's khata: every item a ruled line with its pack, its price and the running total in plain Bangla, so a shopper who pays cash at the door knows exactly what is coming and what it costs.
 - **Structure:**
   - Overall IA comes from the approved contract.
-  - Archetype `ledger`, mutated for commerce: the row is the product unit and the cart is the running sum. It shapes storefront listings, search, cart, the checkout summary, order pages and admin tables.
+  - Archetype `ledger`, mutated for commerce: the ruled entry is the product unit and the cart is the running sum. It shapes storefront listings (as a ruled grid at the contract's column counts), search, the cart, checkout summary and order pages (as ruled rows), and admin tables (card lists on a phone, full tables from 1024 px, per the contract).
   - Archetype `catalogue` (spec sheet) shapes the product page.
   - Home is the six-section builder from the contract, set in the same system.
 - **Exploration tools used or rejected:**
@@ -365,7 +372,7 @@ Against the contract: A is the only direction that works with an empty or photo-
   - Skill palette search: considered "Saffron Market" and rejected it, because its saffron accent sits too close to the warning amber that order statuses need.
   - Collision and style recipes: not used. The concept came directly from the contract's tension.
   - Library sections: see Components.
-- **Signature move:** the **running total bar** (the khata total). Once the cart has something in it, a slim bar on mobile shows item count, merchandise subtotal and "delivery fee at checkout, from ৳…" from the real delivery zones. It updates on every stepper change (with a polite screen-reader announcement) and opens the cart. It is real data and a real control, never decoration.
+- **Signature move:** the **running total bar** (the khata total). Once the cart has something in it, a slim bar on mobile sits directly above the contract's five-item bottom bar, in the same bottom dock. It shows item count, merchandise subtotal and "delivery fee at checkout, from ৳…" from the real delivery zones. It updates on every stepper change (with a polite screen-reader announcement) and opens the cart. It is real data and a real control, never decoration.
 - **Dials:**
   - Storefront (home, listings, product, search): ENERGY 2 · RHYTHM 1 · MOTION 1.
   - Cart, checkout, account, admin: ENERGY 1 · RHYTHM 1 · MOTION 1.
@@ -386,7 +393,7 @@ Type mode: **SERVICE STYLE** (information-led) for every functional surface, bec
 | Role | Family | Weight/axes | Size token | Notes |
 |---|---|---|---|---|
 | Display | Tiro Bangla (OFL; Bengali + Latin) | 400 (static; italic not loaded) | `--step-3` to `--step-5` | Page titles, home section titles, wordmark, order-received headline. Never prices, buttons, forms or card product names. Line height 1.2 in both languages (top of the skill's heading range, because Bengali marks need the room). Swap, not preloaded |
-| Heading | Noto Sans Bengali (OFL; Bengali + Latin) | variable `wght` 400–600, width fixed at 100 | `--step-1` / `--step-2` | Product names on the product page (600), card and row titles (500, two lines maximum), sub-headings. Line height 1.3 in Bengali (above the skill's 1.05–1.2 heading range, because Bengali marks reach past Latin ascenders per r12a; confirmed in the prototype), 1.2 in English |
+| Heading | Noto Sans Bengali (OFL; Bengali + Latin) | variable `wght` 400–600, width fixed at 100 | `--step-1` / `--step-2` | Product names on the product page (600), grid-entry and row titles (500, two lines maximum), sub-headings. Line height 1.3 in Bengali (above the skill's 1.05–1.2 heading range, because Bengali marks reach past Latin ascenders per r12a; confirmed in the prototype), 1.2 in English |
 | Body | Noto Sans Bengali | 400 | `--step-0` (16 px floor) | Line height 1.6 in Bengali, 1.5 in English; measure ≤ 68ch. **The one preloaded file per locale** (the Bengali subset on `/`, the Latin subset on `/en`). Listing and product-text pages usually have text as the largest element, so the text face is preloaded instead of the display face; this is checked against measured LCP in the build |
 | Mono / labels | none (no mono). Labels and meta use Noto Sans Bengali 500 | 500 | `--step--1` (14 px) and `--step--2` (12 px floor, captions only) | Unit price, pack size, status chips, legal small print |
 | Figures | Noto Sans Bengali, `font-variant-numeric: tabular-nums` | 400 / 600 for totals | inherits | Bengali digits share one width natively; Latin digits are tabular in this face too (measured). Prices align in rows, the cart and admin tables |
@@ -437,15 +444,39 @@ Light theme only in v1. Tokens are semantic, and buyers set the brand colours (`
 
 - **Grid:** 4 columns under 640 px, 8 from 640 px, 12 from 1024 px; content max-width 1240 px.
 - **Margins / gutters:** margins 16 / 24 / 32 px; gutters 12 / 16 / 24 px; 4 px spacing base (`4 8 12 16 24 32 48 64 96`).
-- **Product row (mobile):** 64 px label tile or thumbnail · name (two lines maximum) · pack and unit price in `--muted` · price right-aligned, tabular · add button or stepper. Rows are at least 72 px tall; touch targets are at least 44 × 44 px.
-- **Grid view (optional, per category):** 2 columns on mobile, 4 on desktop; 1:1 image or label tile; same facts and action.
+- **Listing entry (ruled khata grid):** **2 columns at 375 px, 3 at 768 px, 4–5 at 1440 px** (contract).
+  - Each entry: 1:1 image slot (photo or LabelTile) · name (two lines maximum) · pack and unit price in `--muted` · price in tabular figures · AddToCart, which becomes a stepper.
+  - Entries are separated by 1 px `--line` rules (horizontal between rows, vertical between columns); no card boxes and no shadows.
+  - At 375 px with 16 px margins and a 12 px gutter, each entry is about 165 px wide (arithmetic). The stepper (44 + 48 + 44 px) fits in it; this is checked in the 375 px prototype.
+  - Touch targets are at least 44 × 44 px.
+- **Ruled row (single column):** for cart lines, checkout summary, order lines and search suggestions: 64 px image or LabelTile · name · pack and unit price · price aligned right · stepper or quantity. At least 72 px tall.
 - **Section spacing:** home sections 48 px mobile / 72 px desktop; within routes 24 / 32 px.
-- **Nav:**
-  - Compact sticky header: wordmark, language switch (`EN` / `বাংলা`, keeps the page per §10), account, cart with count.
-  - On mobile the search field sits as a full-width row under the header.
-  - "বিভাগ / Departments" opens a sheet: 9 departments, then their leaf categories.
-  - Desktop shows a department bar.
-  - No bottom tab bar. The running total bar appears only when the cart is not empty, and hides on cart and checkout.
+- **Nav (contract navigation, unchanged):**
+  - Header on every storefront page: wordmark, **persistent search field** with the **category entry beside it**, language switch (`EN` / `বাংলা`, keeps the page per §10), account and cart on desktop.
+  - At 375 px the search field is a full-width row under the wordmark, and the category button (বিভাগ) sits beside it.
+  - 375 px: **five-item bottom bar: Home (হোম), Categories (বিভাগ), Search (খুঁজুন), Cart (কার্ট, with a count), Account (অ্যাকাউন্ট)**.
+    - Categories opens the department sheet (9 departments, then their sub-categories; up to 3 levels).
+    - Search moves focus to the header search field (it scrolls into view if needed) and opens suggestions.
+    - Cart and Account go to `/cart` and `/account`.
+    - The current item has `aria-current="page"` and a text label, never an icon alone.
+  - 768 px: header navigation, filter sheet.
+  - 1440 px: **mega-menu** for categories and a persistent filter sidebar.
+- **Bottom dock (375 px; proposed rules so the two bars coexist):**
+  - **One fixed container at the bottom**, stacking from top to bottom:
+    1. at most one **context strip**, chosen by priority: PDP sticky add-to-cart (contract) > checkout sticky summary with the place-order button (contract) > RunningTotalBar;
+    2. then the five-item bottom bar.
+  - So two strips are never shown together. The RunningTotalBar does not appear on `/p/[slug]` (the add-to-cart strip shows the price and stepper there), `/cart` (the page is the total) or `/checkout` (the checkout summary strip replaces it).
+  - **Heights (proposed):** bottom bar 56 px, context strip 56 px, plus `env(safe-area-inset-bottom)` padding on the dock. The `env()` function returns the safe distance and is 0 on rectangular screens ([MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/env)). Whether iOS also needs `viewport-fit=cover` for a non-zero inset is not confirmed in MDN and is **checked in the build**.
+  - **Never obscure content:**
+    - The dock publishes its measured height as `--dock-h` (updated whenever its size changes).
+    - `main` gets `padding-bottom: calc(var(--dock-h) + 16px)`, so the last content, the footer and form actions are never under it.
+    - The page sets `scroll-padding-bottom: calc(var(--dock-h) + 16px)`, so keyboard focus and in-page jumps never land behind it. This follows WCAG 2.2 SC 2.4.11 technique C43, which names a sticky footer that hides focus as failure F110 ([W3C](https://www.w3.org/WAI/WCAG22/Understanding/focus-not-obscured-minimum.html)).
+  - **Forms and the on-screen keyboard:**
+    - While a text field is focused, the bottom bar and any context strip are removed from view and from the tab order. They return when focus leaves the field.
+    - On `/checkout` the place-order button is always reachable: it lives in the checkout summary strip, which comes back when the field loses focus, and it is repeated at the end of the form in normal page flow.
+  - **Stability:** the dock never hides on scroll. The RunningTotalBar enters with the dock's height reserved, so content does not jump (CLS). It announces changes politely and has no entry animation under reduced motion.
+  - **Toasts** (for example "removed, undo") appear above the dock, never over the bottom bar.
+- **Admin:** card lists on a phone, full tables from 1024 px (contract); the storefront bottom bar is not shown in `/admin`.
 - **Footer (sign-off):** store contact and hotline, address, complaint channel (contract: 72-hour rule), policy links (terms, privacy, delivery, returns), and the plain statement "Payment: cash on delivery. Orders are confirmed by the store before dispatch." No payment logos for methods that are not offered (D15).
 - **Checkout:** one column on mobile with the order summary as a collapsible khata at the top, two columns on desktop. The delivery fee is shown from the moment a zone is known. A COD line and a "what happens next" block sit beside the place-order button.
 
@@ -455,7 +486,7 @@ The stack is shadcn/ui on Radix primitives with Tailwind (Checkpoint 1). Choice 
 
 - **Buttons:** reuse shadcn Button. Variants: `primary` (accent), `secondary` (ink outline using `--line-strong`), `quiet` (text), `danger`. Every state: default, hover, focus (2 px accent ring, 2 px offset), active, disabled, loading (label kept, spinner beside it, `aria-busy`).
 - **Links:** accent and underlined in body text; ink in navigation, with the underline on hover and focus.
-- **Cards (only if needed):** none on listings; rows are separated by `--line` rules. Panels (cart summary, checkout summary, account blocks) use `--surface` with no shadow.
+- **Cards (only if needed):** none on listings; grid entries and rows are separated by `--line` rules. Panels (cart summary, checkout summary, account blocks) use `--surface` with no shadow.
 - **Forms:**
   - Reuse shadcn form primitives with Zod (the domain's validation).
   - Labels above fields; validation on blur and on submit; errors in `--danger` with an icon and text, linked by `aria-describedby`.
@@ -465,13 +496,17 @@ The stack is shadcn/ui on Radix primitives with Tailwind (Checkpoint 1). Choice 
   - `AddToCart`, which becomes the stepper after the first add.
   - `PriceTag`: price, optional genuine compare-at price, unit price, formatter.
   - `LabelTile`: the honest no-photo tile.
-  - `KhataRow`: the product row.
-  - `RunningTotalBar`: the signature.
+  - `KhataEntry`: a ruled listing-grid entry (2 / 3 / 4–5 columns).
+  - `KhataRow`: a ruled single-column row (cart, checkout summary, order lines, search suggestions).
+  - `BottomDock`: the fixed bottom container; measures and publishes `--dock-h`, applies the safe-area inset, picks one context strip by priority, and hides while a text field is focused.
+  - `BottomNav`: the contract's five-item bottom bar (Home, Categories, Search, Cart, Account), with text labels, `aria-current` and a cart count announced as text.
+  - `RunningTotalBar`: the signature; a context strip inside `BottomDock`.
+  - `StickyBuyStrip` (PDP) and `CheckoutSummaryStrip` (checkout): the contract's sticky add-to-cart and checkout summary, as context strips inside `BottomDock`.
   - `OrderTimeline`: status steps with text labels.
   - `DeliveryFeeLine`.
   - `SetupRequired` and `EmptyState` (contract D2 and D11 states).
-- **Reuse from Radix/shadcn (never rebuilt):** Dialog and Sheet (departments, filters, cart on desktop), Select, RadioGroup (variant chips with an out-of-stock state), Checkbox, Tabs, Accordion, DropdownMenu, Toast.
-- **Adapt from the skill library:** `loader-skeleton` without its moving shimmer; skeletons are static blocks matching the row layout, so reduced-motion users see no difference.
+- **Reuse from Radix/shadcn (never rebuilt):** Dialog and Sheet (department sheet from the bottom bar, filter sheet at 768 px and below, cart on desktop), NavigationMenu (mega-menu at 1440 px), Select, RadioGroup (variant chips with an out-of-stock state), Checkbox, Tabs, Accordion, DropdownMenu, Toast.
+- **Adapt from the skill library:** `loader-skeleton` without its moving shimmer; skeletons are static blocks matching the grid-entry or row layout, so reduced-motion users see no difference.
 - **Rejected from the skill library:**
   - `gallery-shop-carousel`: carousel.
   - `testimonial-shop-notes`: the contract allows only real, verified-purchase reviews.
@@ -495,7 +530,7 @@ The stack is shadcn/ui on Radix primitives with Tailwind (Checkpoint 1). Choice 
 
 ## Restraint Gate record
 
-- Concept survived: yes, after 1 change (Anek Bangla's width axis was dropped on file size and digit alignment; the identity now comes from rows, the serif title voice and the running total).
+- Concept survived: yes, after 2 changes (Anek Bangla's width axis was dropped on file size and digit alignment; after the owner's review the listings follow the contract's column counts as a ruled grid, and the bottom bar is restored with the RunningTotalBar above it in one dock). The identity comes from the ruled entries and rows, the serif title voice and the running total.
 - Cut: department colour coding — fails Q1 and Q2 (no hierarchy, feedback or story; the brief doesn't need it)
 - Cut: decorative marketplace badges and popularity chips — fails Q1 and Q2 (no hierarchy, feedback or story; the brief doesn't need it)
 - Kept: the 1 px row rules (`--line`) — fails Q1, passes Q2: the khata concept and scannable comparison of pack and price need them
@@ -503,6 +538,41 @@ The stack is shadcn/ui on Radix primitives with Tailwind (Checkpoint 1). Choice 
 - Rejected animation: auto-rotating home banner — fails "does it give feedback or show state?" and "does the brief need it?"
 - Rejected animation: count-up on prices, totals or stock — fails "does it give feedback or show state?" (a moving number is not a readable price)
 - Rejected animation: shimmer on skeletons — fails "does the brief need it?" (static skeletons do the job; less motion for reduced-motion users)
+
+## Verification status
+
+Three labels, so that nothing proposed reads as proven. **No item in the build-check column has been run**: nothing has been built.
+
+**Measured (2026-10-21, reproducible):**
+- Bengali digit widths in the font files: Anek Bangla 1124–1505 units with no tabular alternates for Bengali digits; Noto Sans Bengali 592 units for every digit (fontTools on the google/fonts files).
+- Bengali-subset WOFF2 sizes, made locally with fontTools: Anek Bangla, both axes ≈ 446 KB; Noto Sans Bengali, weights 400–600 ≈ 68 KB; Tiro Bangla ≈ 78 KB (Latin ≈ 29 KB).
+- `Intl.NumberFormat` output in Node 20: `bn-BD` gives `১,২৫,০০০৳`; `en-BD` gives `BDT 125,000.00`.
+- Contrast of 13 token pairs (`scripts/contrast.mjs`): text 5.03:1 to 16.26:1; control border 3.41:1; decorative line 1.40:1.
+- Catalogue checker and Ajv schema check on the draft package, including the new 3-level depth rule and its negative test.
+- Calculated, not measured: listing entry width at 375 px ≈ 165 px.
+
+**Hypotheses (proposed; reasoned from research, not yet tested):**
+- Product text, not a display title, will be the largest element on listing and product pages, so preloading the text face helps LCP more than preloading the display face.
+- Bengali headings need line height 1.3 (r12a: Bengali needs more vertical space); the exact value is not tested.
+- A ruled khata grid reads faster for staples than boxed cards (no user testing done).
+- About 146 KB of fonts on a Bengali first view is acceptable on slow mobile networks.
+- A 56 px bottom bar plus a 56 px context strip leaves enough content area at 375 × 667 px.
+- About 165 px is enough for a two-line Bengali name, pack, unit price, price and stepper.
+
+**Build checks (required later; each result is recorded in `GATE.md`/`CRITIQUE.md` before anything is claimed):**
+
+| Area | Check | Pass condition |
+|---|---|---|
+| Bengali rendering | Conjuncts and reph (for example ক্ষ, ন্ত্র, র্য, ঙ্ক, স্ট্র) at 12, 14 and 16 px in Noto Sans Bengali and Tiro Bangla, in Chrome for Android and Safari on iOS | correct shaping, no clipping or collisions |
+| Mixed script | A Latin brand name or unit inside Bengali text; Bengali and Latin digits side by side | shared baseline, no line-height jump |
+| Fallback-font layout shift | Load with fonts blocked or slow; Bengali system fallback, then web font | CLS ≤ 0.1 from font swap; fallback metrics adjusted if not |
+| Keyboard | Every core journey with keyboard only: header search, department sheet, mega-menu, filters, stepper, bottom bar, context strips, checkout | logical order, visible focus, focus never fully hidden by the dock (WCAG 2.4.11), sheets trap and return focus |
+| Screen readers | TalkBack (Android Chrome), VoiceOver (iOS Safari), NVDA (desktop) in Bengali and English | names, roles and states announced; cart count, running total and stepper changes announced politely; Bengali digits read correctly |
+| 375 px usability | Every storefront route at 375 × 667 px | no horizontal scroll; targets ≥ 44 × 44 px; the dock never covers content, form controls or checkout actions, including with the on-screen keyboard open |
+| Safe area | iPhone with a home indicator, Android with gesture navigation | bars clear the inset; the `viewport-fit=cover` need confirmed |
+| Reduced motion | `prefers-reduced-motion: reduce` | no entry or slide animations; state changes still visible |
+| Performance budgets | Mid- and low-tier Android, throttled mobile network, field data once live | LCP ≤ 2.5 s, INP ≤ 200 ms, CLS ≤ 0.1; JS within the Tier 1 budget; ≤ 1 preloaded font; served font sizes re-measured |
+| Contrast on rendered pages | Real rendered states (hover, focus, disabled, status chips, brand-colour presets) | text ≥ 4.5:1, UI components ≥ 3:1 |
 
 ## Decision status (Checkpoint 2, approved with conditions)
 
@@ -555,6 +625,7 @@ The stack is shadcn/ui on Radix primitives with Tailwind (Checkpoint 1). Choice 
 | 2026-10-21 | 2 · D13 | Valid BD phone + admin confirmation; customer email verification optional; staff mandatory; no OTP | approved in principle |
 | 2026-10-21 | 2 · D14–D16 | SMS and online payments excluded; Q&A, gift cards, subscriptions, POS, multi-warehouse excluded; wishlist disabled | approved in principle |
 | 2026-10-21 | 2 Contract | **Checkpoint 2 approved with conditions** (catalogue stays an unapproved research artifact; prices unapproved and source-distinguished; images missing; compliance flags provisional; D12 open and resolved before dependent behaviour; D5 deferred; proceed to Checkpoint 3 only) | **approved** (owner) |
+| 2026-10-21 | 3 Review | Owner accepted the "Khata" direction in principle and asked for amendments: restore the contract's five-item bottom bar, coexisting with the RunningTotalBar; reconcile category depth; label verification. Category depth resolved to **3 levels maximum**, source: the approved product contract; the generated taxonomy uses 2. Listings realigned to the contract's column counts | **proposed**, awaiting explicit approval; contract unchanged |
 | 2026-10-21 | 3 Direction | Research record, directions A/B/C, chosen synthesis "Khata" (A with B's photo grid per category and C's serif title voice), dials, type and colour written | **proposed**, awaiting owner approval |
 | 2026-10-21 | 2 · Correction | Atlas Free clusters do support backups (daily snapshot, up to 4 kept); earlier statement corrected | done |
 
@@ -569,5 +640,8 @@ The stack is shadcn/ui on Radix primitives with Tailwind (Checkpoint 1). Choice 
 | Motion language | Dials MOTION 1 / Tier 1; contract performance budget (LCP ≤ 2.5 s, INP ≤ 200 ms) on budget phones; reduced motion |
 | Signature move (or none) | Running total bar: research Q4 (the full cost is never a surprise) and Baymard's quantity-picker finding (Q2) |
 | Components: reuse / adapt / adopt / build | Stack (shadcn/Radix, Checkpoint 1); `craft/components.md`; QuantityStepper built because Radix has no number field and a second component library is not added |
+| Mobile navigation and bottom dock | Contract navigation (five-item bottom bar at 375 px, sticky add-to-cart and checkout summary); WCAG 2.2 SC 2.4.11 technique C43 and failure F110 (W3C); MDN `env()` safe-area insets; owner review 2026-10-21 |
+| Category depth (3 levels maximum) | Approved product contract ("category tree up to 3 levels"); `docs/domain-rules.md` has no depth rule; owner review 2026-10-21 |
+| Listing columns (2 / 3 / 4–5) | Approved product contract, content density row |
 | Heuristics ignored or adapted | Heading line-height above the 1.05–1.2 range for Bengali (script requirement, r12a); no other heuristic overridden |
 
