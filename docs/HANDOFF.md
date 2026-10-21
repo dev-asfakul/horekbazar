@@ -9,10 +9,10 @@ Last updated 2026-10-21 (Asia/Dhaka), after Phase B3 (identity). Read this first
 | Phase | State |
 |---|---|
 | B0 toolchain, B1 shell, B2 data platform | merged to `main` (PRs #1, #2, #3) |
-| B3 identity | built on `preview/horekbazar-v1`; PR to `main` (see PROGRESS for its number and CI result) |
+| B3 identity | merged to `main` (PR #4, `a8a26a6`); deployed to `horekbazar-preview` without a database configured |
 | B4 catalogue admin and later | not started; each phase needs explicit owner approval (BUILD-PLAN §0) |
 
-Deployment: no deployed environment has been verified for B2 or B3. Two Vercel projects exist
+Deployment: `horekbazar-preview.vercel.app` runs B3 code but reports `database: not_configured`, so it only shows setup-required. Two Vercel projects exist
 (`horekbazar`, `horekbazar-preview` in team `dev-choice`); the owner has not said which is
 canonical. Do not guess.
 
