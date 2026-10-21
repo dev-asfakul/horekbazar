@@ -8,6 +8,8 @@
 # B2: validator drift check (domain-rules §14 check 1) and the integration suite against a
 # disposable MongoDB 8.0 replica set from mongodb-memory-server (checks 2 and 3, outbox, topology).
 # The mongod binary is cached between runs; the suite never sees a real database URI.
+# B4: signed-in admin catalogue journeys in Chromium against the zero-variable build, backed by a
+# disposable in-memory replica set (playwright.db.config.ts, scripts/e2e-db-server.mjs).
 name: CI
 
 on:
@@ -55,6 +57,11 @@ jobs:
       - run: npx playwright install --with-deps chromium firefox webkit
       - name: Playwright (375 / 768 / 1440, three engines)
         run: npm run test:e2e
+      - name: Signed-in admin journeys (Chromium, disposable replica set)
+        env:
+          MONGOMS_VERSION: 8.0.4
+          MONGOMS_DOWNLOAD_DIR: /home/runner/.cache/mongodb-binaries
+        run: npm run test:e2e:db
       - name: Keep the Playwright report when a test fails
         if: failure()
         uses: actions/upload-artifact@v7

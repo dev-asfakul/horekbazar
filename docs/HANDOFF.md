@@ -78,10 +78,23 @@ Steps (each is pushed to `preview/horekbazar-v1` when done; tick here in the sam
       env file that is deleted afterwards (never committed).
 - [ ] 6. Playwright with a disposable database (sign in as a catalogue editor, create a product
       with a LabelTile, publish it); Motomation gate; docs; PR.
+      - [x] 6a. `npm run test:e2e:db` (`playwright.db.config.ts`, `scripts/e2e-db-server.mjs`,
+        `tests/e2e-db/catalogue-admin.spec.ts`): zero-variable build + in-memory replica set
+        (`e2e_admin_dev`); the fixture signs in through the auth service and hands the cookie to
+        the browser, because the login form fails closed without Upstash in production (by
+        design); 2/2 pass (category create+publish, product create with LabelTile, refused
+        publish without a variant, variant in taka→paisa with stock 0, publish, list, audit; nav
+        and 403 for /admin/inventory and /admin/settings). Added to CI. Harness note: migrate is
+        spawned asynchronously (a synchronous child deadlocks the in-memory mongod's pipe).
+      - [x] 6b. Zero-env e2e: the ten B4 admin URLs redirect to sign-in uncached; /api/media/sign
+        403 cross-origin/no origin, 401 signed out, 400 bad purpose. Full suite 215 passed, 58
+        skipped (the same 57 opt-in screenshots + 1 WebKit maintenance check as before).
+      - [ ] 6c. Motomation gate, docs (PROGRESS, STATUS, SCHEMA, README), PR, merge, post-merge.
 
 ## Rules that are easy to break
 
-- Never invent catalogue data, prices, stock, reviews, discounts or urgency (D11 is open).
+- Never invent catalogue data, prices, stock, reviews, discounts or urgency for production. The only
+  generated data is the `sample: true` development load (owner change to D11, 2026-10-22; DATA.md).
 - Authorisation happens on the server: `gateStaffPage()` for admin pages, and a principal plus
   capability check inside every admin server action (`lib/actions/admin.ts`). `proxy.ts` only
   redirects when no session cookie exists; it is not an authorisation check.
