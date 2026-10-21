@@ -2,6 +2,14 @@
 
 Newest first. Each entry: date, phase, done, decided, open, next.
 
+## 2026-10-21 — Vercel deep check (read-only)
+
+- **Network ruled out:** `api.vercel.com` resolves to the same address (76.76.21.112) via the system resolver and via Cloudflare DNS-over-HTTPS; it answers in 0.3 s; pinning the request to the Cloudflare-resolved address gives the same answer. The refusals are authentication responses, not connectivity.
+- **Agent token:** `vercel whoami` now reports "The token provided via `--token` argument is not valid". This follows the re-authorisation the agent requested at about 14:44 UTC: the old token was retired and the new one has not been issued, because the owner has not finished the reconnection. Earlier, the same token was valid for user `dev-asfakul` but had no access to `dev-choice`.
+- **Vercel's GitHub App, per commit (check-run app slugs):** `854cd70`, `28acdc5`, `41856d9`: `github-actions` + `vercel`. `a7b4a64` (pushed 14:47; GitHub logged the push event late, at 14:48:06, and Actions ran): **`github-actions` only**. `87e62d0` (14:53): nothing yet. The last Vercel reaction on GitHub was at 14:16:24 UTC. Vercel has created no GitHub Deployment records at any time.
+- **`main` (`a22f81b`):** still absent from GitHub's activity log about 50 minutes after the merge, while later pushes do appear. So two separate faults: (1) GitHub never emitted a push for the PR #2 merge; (2) since about 14:16, Vercel's integration has not reacted to pushes that GitHub did deliver.
+- **Not established:** the cause of (2). It is decided inside Vercel or the GitHub App installation, which the agent cannot read. Possibilities to check in the dashboard: the Git connection of `horekbazar-preview` (repository, production branch), the GitHub App's repository access, an ignored-build-step setting, or a change made while removing the second project `horekbazar` (it last built at 13:33).
+
 ## 2026-10-21 — Owner decision report: deployment evidence, D19/D23 guidance (no feature phase started)
 
 - **Push events (GitHub activity API, `repos/…/activity`):** the PR #1 merge appears as `pr_merge refs/heads/main 0f35772`, and a CI `push` run exists for it. The PR #2 merge (`a22f81b`, 14:03 UTC) and the push of `a7b4a64` (14:47 UTC) **do not appear at all**, although `git ls-remote` shows both refs. Neither commit has an Actions `push` run or a Vercel status. Pull-request events were delivered (PR #2 `merged`, PR #3 `opened`, and its CI ran). GitHub status: operational. Conclusion: GitHub did not process these two ref updates as push events, so no consumer (Actions, Vercel) was notified. This is not a Vercel build failure. Why GitHub dropped them is not established from the repository side.
