@@ -15,10 +15,11 @@ export type LocaleRoute =
   | { kind: "rewrite"; locale: Locale; pathname: string } // default locale: internal rewrite to /bn/...
   | { kind: "next"; locale: Locale } // already prefixed with a non-default locale
   | { kind: "redirect"; pathname: string } // explicit default prefix: redirect to the canonical unprefixed URL
-  | { kind: "bypass" }; // not a page (API routes)
+  | { kind: "bypass" }; // not locale-routed: API routes, and /admin (own root layout; language per staff preference)
 
 export function routeLocale(pathname: string): LocaleRoute {
   if (pathname === "/api" || pathname.startsWith("/api/")) return { kind: "bypass" };
+  if (pathname === "/admin" || pathname.startsWith("/admin/")) return { kind: "bypass" };
 
   const [, first = ""] = pathname.split("/");
   if (first === defaultLocale) {

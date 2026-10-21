@@ -14,7 +14,7 @@ export default getRequestConfig(async ({ locale }) => {
   let resolved = locale;
   if (!resolved) {
     const param = await rootParams.locale();
-    if (!isLocale(param)) notFound();
+    if (param === undefined || !isLocale(param)) notFound();
     resolved = param;
   }
   if (!isLocale(resolved)) notFound();

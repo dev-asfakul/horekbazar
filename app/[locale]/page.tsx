@@ -1,4 +1,4 @@
-// Home route. Until the database port exists (B2) and is connected, it shows the setup-required
+// Home route. Until the store is set up (database connected in B2, settings and Owner in B3/B4) it shows the setup-required
 // state (no fallback data, DESIGN.md §1 conflict 1).
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
@@ -17,5 +17,5 @@ export async function generateMetadata({ params }: PageProps<"/[locale]">): Prom
 export default async function HomePage({ params }: PageProps<"/[locale]">) {
   const { locale } = await params;
   if (!isLocale(locale)) return null;
-  return <SetupRequired locale={locale} status={getSetupStatus(process.env)} />;
+  return <SetupRequired locale={locale} status={await getSetupStatus(process.env)} />;
 }

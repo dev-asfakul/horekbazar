@@ -18,7 +18,7 @@ const config = [
     },
   },
   {
-    files: ["scripts/**/*.mjs"],
+    files: ["scripts/**/*.mjs", "scripts/**/*.ts"],
     rules: { "no-console": "off" },
   },
   {

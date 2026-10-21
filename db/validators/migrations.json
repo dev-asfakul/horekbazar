@@ -1,0 +1,19 @@
+{
+  "$jsonSchema": {
+    "bsonType": "object",
+    "properties": {
+      "_id": {
+        "bsonType": "string",
+        "pattern": "^[0-9]{4}-[a-z0-9-]+$"
+      },
+      "appliedAt": {
+        "bsonType": "date"
+      }
+    },
+    "required": [
+      "_id",
+      "appliedAt"
+    ],
+    "additionalProperties": false
+  }
+}

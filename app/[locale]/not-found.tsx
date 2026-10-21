@@ -8,7 +8,7 @@ import { defaultLocale, isLocale } from "@/lib/i18n/locales";
 
 export default async function NotFound() {
   const param = await rootParams.locale();
-  const locale = isLocale(param) ? param : defaultLocale;
+  const locale = param !== undefined && isLocale(param) ? param : defaultLocale;
   const t = await getTranslations({ locale, namespace: "notFound" });
   return (
     <StatePage state="not-found" title={t("title")}>

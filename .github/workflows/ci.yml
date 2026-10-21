@@ -5,6 +5,9 @@
 # B1: actions/checkout v4 -> v7 and actions/setup-node v4 -> v7 (both run on Node 24; the
 # Node 20 action runtime is deprecated). Runner pinned to ubuntu-24.04 while ubuntu-latest moves
 # to a newer image, so Playwright's --with-deps keeps a known package set.
+# B2: validator drift check (domain-rules §14 check 1) and the integration suite against a
+# disposable MongoDB 8.0 replica set from mongodb-memory-server (checks 2 and 3, outbox, topology).
+# The mongod binary is cached between runs; the suite never sees a real database URI.
 name: CI
 
 on:
@@ -32,6 +35,18 @@ jobs:
       - run: npm run lint
       - run: npm run typecheck
       - run: npm test
+      - name: Generated MongoDB validators match the committed files
+        run: npm run db:validators -- --check
+      - name: Cache the test mongod binary
+        uses: actions/cache@v6
+        with:
+          path: /home/runner/.cache/mongodb-binaries
+          key: mongodb-binaries-8.0.4-ubuntu-24.04
+      - name: Integration tests (disposable replica set)
+        env:
+          MONGOMS_VERSION: 8.0.4
+          MONGOMS_DOWNLOAD_DIR: /home/runner/.cache/mongodb-binaries
+        run: npm run test:integration
       - run: npm run catalogue:validate
       - run: npm run catalogue:schema
 

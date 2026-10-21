@@ -40,11 +40,25 @@ describe("parseServerEnv", () => {
 });
 
 describe("getSetupStatus", () => {
-  it("requires MONGODB_URI and is never ready before the database port exists", () => {
-    expect(getSetupStatus({})).toEqual({ ready: false, missing: ["MONGODB_URI"], invalid: [], database: "not_configured" });
-    const configured = getSetupStatus({ MONGODB_URI: "mongodb+srv://cluster.example.invalid/" });
-    expect(configured.ready).toBe(false);
-    expect(configured.missing).toEqual([]);
-    expect(configured.database).toBe("not_checked");
+  it("requires MONGODB_URI and never connects without it", async () => {
+    let called = 0;
+    const check = async (config: unknown) => (called++, config === null ? ("not_configured" as const) : ("connected" as const));
+    expect(await getSetupStatus({}, check)).toEqual({ ready: false, missing: ["MONGODB_URI"], invalid: [], database: "not_configured" });
+    expect(called).toBe(1);
+  });
+
+  it("reports the checked database state, and is not ready before settings and an Owner exist", async () => {
+    const configured = await getSetupStatus({ MONGODB_URI: "mongodb+srv://cluster.example.invalid/" }, async () => "connected");
+    expect(configured).toEqual({ ready: false, missing: [], invalid: [], database: "connected" });
+    const standalone = await getSetupStatus({ MONGODB_URI: "mongodb://127.0.0.1:1/" }, async () => "not_replica_set");
+    expect(standalone.database).toBe("not_replica_set");
+  });
+
+  it("does not try to connect with an invalid URI", async () => {
+    const status = await getSetupStatus({ MONGODB_URI: "postgres://nope" }, async () => {
+      throw new Error("must not be called");
+    });
+    expect(status.invalid).toContain("MONGODB_URI");
+    expect(status.database).toBe("not_configured");
   });
 });

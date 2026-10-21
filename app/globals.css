@@ -707,3 +707,167 @@ code {
 .label-tile[data-size="row"] .label-tile-category {
   font-size: var(--text-step--2);
 }
+
+/* ── Admin (B2: AdminShell and /admin/health) ─────────────────────────── */
+/* Ruled khata rows: hairline rules between entries, no card boxes (DESIGN.md → Checkpoint 3 item 3).
+   Below 1024 px each row stacks; from 1024 px the rows line up as a table (DESIGN.md → Admin). */
+.admin-header {
+  background: var(--ground);
+  border-bottom: 1px solid var(--line);
+}
+.admin-header-inner {
+  max-width: 1240px;
+  margin-inline: auto;
+  min-height: var(--wordmark-row-h);
+  padding-inline: max(16px, env(safe-area-inset-left, 0px)) max(16px, env(safe-area-inset-right, 0px));
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.admin-label {
+  color: var(--muted);
+  font-size: var(--text-step--1);
+  font-weight: 500;
+  padding-inline-start: 12px;
+  border-inline-start: 1px solid var(--line-strong);
+}
+.admin-main {
+  flex: 1;
+}
+.admin-page {
+  max-width: 1240px;
+  margin-inline: auto;
+  padding: 32px max(16px, env(safe-area-inset-left, 0px)) 48px;
+}
+.admin-title {
+  font-size: var(--text-step-4);
+}
+.admin-intro {
+  margin-top: 8px;
+  max-width: 68ch;
+}
+.admin-meta {
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: var(--text-step--1);
+}
+.admin-notice {
+  margin-top: 16px;
+  max-width: 68ch;
+  padding: 12px 16px;
+  background: var(--surface);
+  border-inline-start: 3px solid var(--warning);
+  font-size: var(--text-step--1);
+}
+.admin-section {
+  margin-top: 40px;
+}
+.admin-section-title {
+  font-size: var(--text-step-2);
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--ink);
+}
+.health-rows {
+  list-style: none;
+}
+.health-row {
+  display: grid;
+  gap: 4px 16px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--line);
+}
+.health-row-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 12px;
+}
+.health-name {
+  font-weight: 600;
+}
+.health-need {
+  color: var(--muted);
+  font-size: var(--text-step--1);
+}
+.health-state {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  font-size: var(--text-step--1);
+  color: var(--muted);
+}
+/* The marker's shape differs per state, so the state never depends on colour alone (WCAG 1.4.1). */
+.health-state-mark {
+  width: 10px;
+  height: 10px;
+  flex: none;
+  border: 2px solid currentColor;
+  border-radius: 50%;
+}
+.health-state[data-state="healthy"] {
+  color: var(--success);
+}
+.health-state[data-state="healthy"] .health-state-mark {
+  background: currentColor;
+}
+.health-state[data-state="degraded"] {
+  color: var(--warning);
+}
+.health-state[data-state="degraded"] .health-state-mark {
+  background: linear-gradient(90deg, currentColor 50%, transparent 50%);
+}
+.health-state[data-state="failing"] {
+  color: var(--danger);
+}
+.health-state[data-state="failing"] .health-state-mark {
+  border-radius: 1px;
+  background: currentColor;
+}
+.health-state[data-state="configured"] {
+  color: var(--ink);
+}
+.health-reason {
+  max-width: 68ch;
+}
+.health-subtle {
+  color: var(--muted);
+  font-size: var(--text-step--1);
+}
+.health-vars {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 8px;
+  color: var(--muted);
+  font-size: var(--text-step--1);
+}
+.ledger {
+  max-width: 640px;
+}
+.ledger-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line);
+}
+.ledger-row dd {
+  font-weight: 600;
+  text-align: end;
+  font-variant-numeric: tabular-nums;
+}
+.ledger-row[data-alert] dd {
+  color: var(--danger);
+}
+@media (width >= 1024px) {
+  .admin-page {
+    padding-top: 48px;
+  }
+  .health-row {
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) minmax(0, 4fr) minmax(0, 2fr);
+    align-items: baseline;
+  }
+  .health-vars {
+    justify-content: flex-end;
+  }
+}
