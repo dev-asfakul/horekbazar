@@ -11,14 +11,14 @@ Last updated 2026-10-22 (Asia/Dhaka), after Phase B4 (catalogue administration).
 | B0 toolchain, B1 shell, B2 data platform | merged to `main` (PRs #1, #2, #3) |
 | Docs and fixes after B3 | PRs #5, #6 merged; 2026-10-22 dock focus fix and audit (see PROGRESS) |
 | B3 identity | merged to `main` (PR #4, `a8a26a6`); deployed to `horekbazar-preview` without a database configured |
-| B4 catalogue admin | complete on `preview/horekbazar-v1`; PR to `main` (see "B4 record" below) |
+| B4 catalogue admin | merged to `main` (PR #8, merge `04158f2`); post-merge CI success; Vercel `horekbazar-preview` success on `04158f2` (serves B4: `/api/media/sign` answers 403 cross-origin), still without a database |
 | B5 storefront and later | not started; each phase needs explicit owner approval (BUILD-PLAN §0) |
 
 Deployment: `horekbazar-preview.vercel.app` runs B3 code but reports `database: not_configured`, so it only shows setup-required. Two Vercel projects exist
 (`horekbazar`, `horekbazar-preview` in team `dev-choice`); the owner has not said which is
 canonical. Do not guess.
 
-## B4 record (all steps done; resume at the PR if interrupted)
+## B4 record (complete)
 
 Owner approval 2026-10-22: B4 approved; D11 changed: "generate some catalogue source data and push
 to database, and admin will curd them for real and test". Implementation of that change: the
@@ -92,8 +92,8 @@ Steps (each is pushed to `preview/horekbazar-v1` when done; tick here in the sam
         skipped (the same 57 opt-in screenshots + 1 WebKit maintenance check as before).
       - [x] 6c. Motomation gate (FAIL as before: storefront SEO and search-form states, B5;
         details in PROGRESS), docs (PROGRESS, STATUS, SCHEMA, README, DATA). PR, merge and
-        post-merge checks: see PROGRESS and the PR description; if this line is all you see, open
-        the PR from `preview/horekbazar-v1` to `main` and continue there.
+        post-merge: PR #8 (head `013f928`, CI `check` pass incl. `test:e2e:db` 2/2) merged as
+        `04158f2`; post-merge CI `push` success; Vercel success.
 
 ## Rules that are easy to break
 

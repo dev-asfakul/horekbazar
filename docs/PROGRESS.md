@@ -5,7 +5,7 @@ Newest first. Each entry: date, phase, done, decided, open, next.
 ## 2026-10-22 — Phase B4: catalogue administration (branch `preview/horekbazar-v1`; PR to `main`)
 
 - **Owner instruction:** "OWNER APPROVAL CONFIRMED: BEGIN B4" (private repository approved; B4 approved; B5+ not approved), then the D11 change "for catelog source generate some catalogue source data and push to database, and admin will curd them for real and test", and "push latest and complete codebase after complete any step … summery for next agent".
-- **Start / commits:** start = `main` `953eb4a`. Commits: `c000e70` plan, `9afbc15` catalogue domain, `ec88091` settings and merchandising, `ebc14ce` media, `8935237` admin pages and actions, `0e9bd01` sample seed, `9fdc7e9` signed-in e2e, then this docs commit. The PR and merge SHAs are recorded in docs/HANDOFF.md once merged.
+- **Start / commits:** start = `main` `953eb4a`. Commits: `c000e70` plan, `9afbc15` catalogue domain, `ec88091` settings and merchandising, `ebc14ce` media, `8935237` admin pages and actions, `0e9bd01` sample seed, `9fdc7e9` signed-in e2e, then this docs commit. PR #8 (head `013f928`; CI `check` pass, including the new signed-in suite 2/2) merged as `04158f2`; post-merge CI `push` on `04158f2` success; Vercel `horekbazar-preview` status success on `04158f2`, and https://horekbazar-preview.vercel.app/api/media/sign answers 403 `cross_origin` (B4 code is live; database still `not_configured`, so the admin cannot be used there).
 - **Built:**
   - Catalogue domain (`lib/modules/catalogue/`): categories (depth ≤ 3, cycle check under a tree lock), products and variants (optimistic `version`, slug frozen after first publish, publish needs a published category and an active variant priced above 0, compare-at must be higher than the price), stock and an idempotent inventory ledger (receive, adjust with a reason), delete only if never published and no ledger rows. Every write is audited.
   - Settings (single document; brand accent rejected below 4.5:1; delivery zones without area mapping until D12) and merchandising (manual collections, banners, six homepage section types).
@@ -27,7 +27,7 @@ Newest first. Each entry: date, phase, done, decided, open, next.
 - **Correction:** older entries and HANDOFF said B4 waited for a D11 answer. The owner approved B4 and changed D11 on 2026-10-22 (above), so that statement is superseded.
 - **Repository visibility:** held. Secret scanning and push protection are enabled (verified). The repository stays public because on GitHub Free a private personal repository loses branch protection and secret scanning; the owner chooses (HANDOFF).
 - **Open:** D12/D21, D5, D20, D22; Cloudinary credentials (uploads show a notice until set); owner-set delivery fees; real catalogue approval (stages 2–4 in `catalogue/horekbazar/IMPORT.md`).
-- **Next:** the PR to `main`, merge when CI passes, verify post-merge CI and the preview deployment. B5 needs its own approval.
+- **Next:** owner actions in docs/HANDOFF.md; B5 needs its own approval.
 
 ## 2026-10-22 — Takeover audit after B3; dock focus defect fixed (no new phase)
 
