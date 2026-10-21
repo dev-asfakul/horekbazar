@@ -1,7 +1,7 @@
 # HorekBazar: Design and Architecture Record
 
-Status: **Motomation Checkpoint 1 of 6 (Stack): PROPOSED, awaiting approval.**
-Nothing below is locked. No application code exists yet.
+Status: **Checkpoint 1 (Stack) approved 2026-10-21 with amendments. Checkpoint 2 (Product contract) PROPOSED, awaiting approval.**
+No application code exists yet.
 
 Skill: `asfakulsiam-motomation-design` v3.0.2 (installed with `npx skills add`, hash in `skills-lock.json`, verified identical to upstream `main`).
 Rules: `gates/rules.md` and `principles/authority.md` read; designing within them.
@@ -72,7 +72,11 @@ Package manager: **npm** (already present; zero setup for buyers). pnpm optional
 
 ### Conflicts resolved by `principles/authority.md`
 
-1. **Skill "runs with `npm install && npm run dev`" with no database vs. brief "production-grade MongoDB".** Proposal: a `catalog` data source with two implementations. With no `MONGODB_URI` the storefront browses read-only demo data from `data/`, and account/checkout screens render with a visible "Demo mode: connect a database to enable orders" state (capability level stated honestly). With `MONGODB_URI` set, everything is live. No order is ever simulated as placed.
+1. **No mock-data fallback (owner decision, 2026-10-21, authority level 1).** The skill's production-template default (zero-config `npm run dev` falling back to JSON in `data/`) is overridden. The application only ever reads real configured data sources:
+   - Development uses a real, separately configured development database and the owner's own development credentials. Development, staging and production configurations are separate and never share credentials.
+   - With no `MONGODB_URI`, public routes render a clear, actionable **setup-required state** (what is missing, which variable, link to the setup guide). No products are invented and no in-memory database is substituted.
+   - Each integration is required only by the operation that uses it (Gemini → AI drafting; Resend → email sends; VAPID → push; courier keys → booking/tracking). Public browsing never fails because an optional integration is absent.
+   - The skill's required `data/` folder is kept **only as seed input**: realistic catalogue content, typed by `data/schema.json`, imported into the development database by an explicit `npm run db:seed`. It is never read at runtime. It contains no personal customer data and no production records.
 2. **Skill security rule sec-03 (RLS)**: MongoDB has no row-level security. Excused with the replacement control: every data access goes through a repository layer that takes the session's `userId`/role and scopes the query; direct collection access outside `lib/db/` is lint-banned.
 
 ### Alternatives considered
@@ -82,18 +86,198 @@ Package manager: **npm** (already present; zero setup for buyers). pnpm optional
 
 ---
 
+## Product contract
+
+Checkpoint 2 of 6. Status: **proposed**. Detailed domain rules (roles, order lifecycle, inventory, pricing, configuration, integrations, security, acceptance criteria) are in [`docs/domain-rules.md`](docs/domain-rules.md) and are part of this contract.
+
+| Field | Answer |
+|---|---|
+| **Product** | A reusable, self-hosted, **single-store, multi-category online shop** template, sold to independent businesses. HorekBazar is the flagship installation: a Bangladeshi everyday-goods store, cash on delivery first, Bengali and English. Exact subtype: general retail with variants (not a marketplace, not a grocery quick-commerce app, not a SaaS). |
+| **Audiences** | (1) **Shoppers**: mostly mobile, often on mid-range Android phones and unstable 3G/4G; Bengali-first, some English; return repeatedly for deals. (2) **Store staff**: owner, managers, order operators, catalogue editors, support agents, on laptop and phone. (3) **Template buyers / developers**: configure, brand, deploy and upgrade an installation. |
+| **Jobs (shopper)** | 1. Find the thing I want fast (search, categories). 2. Trust the price, stock and delivery fee before I commit. 3. Order without paying online (COD) and know the order was received. 4. Know when it will arrive and track it. 5. Cancel or return without a fight. 6. Get a fair deal (sales, coupons, rewards) without being tricked. 7. Reach a person when something goes wrong. |
+| **Jobs (staff)** | 1. Confirm or reject new COD orders quickly. 2. Pack, book the courier and track every parcel. 3. Keep stock correct through cancellations, failed deliveries and returns. 4. Add and edit products in both languages (optionally with AI drafts). 5. Run sales, coupons and homepage merchandising. 6. Answer customer messages. 7. See what is selling and what is stuck. |
+| **Jobs (buyer/developer)** | 1. Rebrand and configure a new shop without editing core code. 2. Connect their own services. 3. Deploy and upgrade safely. |
+| **Business model** | Shop revenue = product margin on COD orders. Demands: high trust (real stock, honest fees, real reviews), low failed-delivery rate (admin confirmation before processing), repeat purchase (rewards, push), operational speed. Template revenue = basic commercial licence sales; demands clean customisation boundaries and documentation. |
+| **Core journeys** | See the `journey` rows in Scope (route sequences). |
+| **Information architecture** | **Search-first header** (persistent search on every storefront page, category entry beside it), category tree up to 3 levels, collections as curated cross-category sets, deal surfaces (flash sale, new arrivals, preorder). Mobile: bottom bar (Home, Categories, Search, Cart, Account). Account area with side/tab navigation. Admin: separate `/admin` app with sidebar navigation by job (Orders first). |
+| **Content and density** | Storefront listing pages: **medium-high** density (2 columns at 375px, 4–5 at 1440px; price, compare-at, stock and delivery signals on cards). Product page: medium (gallery, variant pickers, price breakdown, delivery estimate by zone, description, specs, reviews, Q&A excluded). Home: configurable sections. Admin: **high** density tables with filters, bulk actions and keyboard use. Data relationships: Category ⇄ Product (many-to-many, one primary), Collection ⇄ Product, Product → Variants (SKU-level stock and price), Order → Lines (variant snapshot) → Inventory ledger. |
+| **Essential interactions and states** | Search with suggestions and zero-result recovery; faceted filters (category, price, availability, attributes, rating, offer type) with sort and pagination; variant selection updating price/stock; cart edits with live re-pricing; coupon apply/remove with reason on failure; address book with zone-based fee; COD order placement with idempotency; order timeline with courier tracking link; cancellation and return requests; review after delivery; push opt-in; support messaging. Every async surface has loading, empty, error and success states; every database-backed route has a **setup-required** state when the database is not configured; every integration-backed action has an **integration unavailable** state. |
+| **Responsive expectations** | 375px: bottom bar, filters in a sheet, sticky add-to-cart and checkout summary, one-handed reach for primary actions. 768px: 3-column grids, filters still a sheet. 1440px: persistent filter sidebar, mega-menu for categories, wider gallery. Admin: usable on a phone for order confirmation and messaging (cards instead of tables), full tables from 1024px. |
+| **Constraints** | Stack from Checkpoint 1. Real data only (no mock fallback). Bangladesh Digital Commerce Operation Guidelines 2021: terms, delivery, return/refund conditions shown clearly and **in Bangla** ([Mahbub & Co.](https://mahbub-law.com/ministry-of-commerce-issues-detailed-guidelines-on-e-commerce-business/)); delivery within 5 days same city / 10 days other city, complaints resolved within 72 hours, stock quantity and full charges disclosed ([The Daily Star](https://www.thedailystar.net/law-our-rights/news/overview-the-digital-commerce-operation-guidelines-2021-2128871)). Personal data law: Bangladesh's Personal Data Protection Ordinance 2025 was replaced by an Act enacted on 10 April 2026 ([DataGuidance](https://www.dataguidance.com/jurisdictions/bangladesh?topic)); consent, retention limits and data-subject rights must be supportable. Low bandwidth: performance budgets in `gates/rules.md` (LCP ≤ 2.5s, INP ≤ 200ms, CLS ≤ 0.1). Every buyer owns their own data and credentials. |
+| **Explicit exclusions** | Multi-vendor marketplace and seller accounts (owner brief). Multi-tenant SaaS (owner brief). Guest checkout (owner brief: account required). Native mobile apps (not requested; PWA-level install and push only). Online payment gateways in v1 (owner brief specifies COD; payment method step still ships with a provider port). Multi-currency per store and multi-warehouse stock (one currency and one stock location per installation; schema leaves room). Product Q&A, wishlists sharing, gift cards, subscriptions, POS (not requested; proposed exclusions awaiting approval). Extended/tiered licences (owner decision). |
+| **Success criteria** | A buyer can install, configure and brand a shop from documentation alone. A shopper can complete Home → Product → Cart → Checkout → Order confirmed on a 375px phone on a throttled connection within the performance budgets. Stock never goes negative or double-moves under concurrent orders and repeated requests (proven by tests). Every core journey passes the Motomation gate (axes X and J). 50K concurrent users is an engineering target with a load-test plan, not a claim. |
+
+## Type research
+
+Access: web, searched 2026-10-21. Many Bangladeshi stores render content client-side, so the fetches below saw partial pages; anything not visible is marked unverified rather than assumed.
+
+| Site | Type | Routes | Functionality | States | Admin | Legal | Notes |
+|---|---|---|---|---|---|---|---|
+| [Chaldal](https://chaldal.com/) | Single-store grocery, BD, COD | Grocery, city switch, popular categories (observed) | Pay after receiving; delivery-slot choice; fee by city and order value (Dhaka ৳59 below ৳400, ৳49 above); points membership "Egg Club"; deal of the day "limited stock"; hotline 16710 (observed) | Empty cart "0 items" (observed) | unverified | 7-day return on unopened packaged goods, 1-day for perishables, listed exclusions (observed in FAQ) | Fee thresholds and itemised exclusions show what a BD shopper expects to see before ordering. |
+| [Rokomari](https://www.rokomari.com/) | Single-store books + general goods, BD | Very wide category list in Bengali and English (observed); return-policy page blocked to automated readers (unverified) | Login; "N In Stock" counts on items; COD across Bangladesh; live chat, email, WhatsApp corporate and retailer lines (observed) | unverified | unverified | Policy links not visible in fetch (unverified) | Visible stock counts as a trust signal; bilingual category names. |
+| [Shajgoj Shop](https://shop.shajgoj.com/) | Single-store beauty, BD | Home, Brands, Categories, Cart, Chat (observed) | Home sections: deals, top brands and offers, limited-time offers, shop by category, shop by concern (observed) | Empty bag "Your Shopping Bag is Empty" + "Start shopping" (observed) | unverified | unverified | Chat in the header; merchandising expressed as section types, which matches the brief's six configurable home sections. |
+| [Pickaboo](https://www.pickaboo.com/) | Single-store electronics, BD | My Account, Cart, Payment methods (observed); rest client-rendered (unverified) | Meta description claims official warranty, EMI, nationwide delivery (observed in meta only) | unverified | unverified | unverified | Too little visible to use; listed for honesty. |
+| [Medusa Next.js starter](https://github.com/medusajs/nextjs-starter-medusa) | Open-source commerce template | Product detail, product overview, collections, cart, checkout, accounts, order details (observed in README) | Stripe checkout (observed) | unverified | Separate Medusa admin (inferred) | n/a | Template baseline: buyers expect at least this route set; HorekBazar adds COD operations, inventory ledger, BD delivery and bilingual content. |
+
+**Gaps:** checkout, account and admin screens of BD stores sit behind login (unverified). Courier dashboards not visible. Assumptions used instead are marked in `docs/domain-rules.md`.
+
+## Scope
+
+**Delivery mode:** Production template
+**Site type:** single-store multi-category retail (COD-first, bilingual)
+**Admin panel:** included
+
+Evidence (file#pattern) is filled in during the build; Notes describe intent. Marks: requested = in the owner brief; required = the type or the law needs it; optional = feature-flagged, off by default unless noted. Level: the capability level the route or function ships at. Locale: Bengali at `/`, English at `/en/…` (proposal, D10).
+
+| Kind | Item | Mark | Evidence | Level | Notes |
+|---|---|---|---|---|---|
+| route | / | requested |  | backend | configurable home sections |
+| route | /categories | requested |  | backend | category index |
+| route | /c/[...slug] | requested |  | backend | category listing, filters, sort, pagination |
+| route | /collections | requested |  | backend | collection index |
+| route | /collections/[slug] | requested |  | backend | collection listing |
+| route | /p/[slug] | requested |  | backend | product detail |
+| route | /search | requested |  | backend | search results, filters, suggestions |
+| route | /deals | requested |  | backend | flash sale and live promotions |
+| route | /new | requested |  | backend | new arrivals |
+| route | /preorder | requested |  | backend | preorder products |
+| route | /cart | requested |  | backend | server-persisted cart for signed-in users; device cart before sign-in |
+| route | /checkout | requested |  | backend | address, delivery zone and fee, payment method (COD), review |
+| route | /checkout/success/[orderNumber] | required |  | backend | order received page (noindex) |
+| route | /login | requested |  | integration | email/password + Google when configured |
+| route | /register | requested |  | backend | account creation |
+| route | /forgot-password | requested |  | integration | reset request |
+| route | /reset-password | requested |  | backend | token reset |
+| route | /verify-email | required |  | integration | email verification landing |
+| route | /account | requested |  | backend | dashboard |
+| route | /account/orders | requested |  | backend | order history |
+| route | /account/orders/[orderNumber] | requested |  | integration | timeline, courier tracking link, cancel/return actions |
+| route | /account/orders/[orderNumber]/invoice | required |  | backend | printable invoice (VAT line when configured) |
+| route | /account/addresses | requested |  | backend | multiple delivery addresses |
+| route | /account/profile | requested |  | backend | name, phone, email, language |
+| route | /account/security | required |  | backend | password change, sessions, linked Google |
+| route | /account/rewards | requested |  | backend | reward balance and ledger (terminology configurable) |
+| route | /account/reviews | requested |  | backend | my reviews, review prompts after delivery |
+| route | /account/messages | requested |  | backend | support conversations |
+| route | /account/notifications | requested |  | integration | push and email preferences |
+| route | /account/privacy | required |  | backend | data export and deletion request (data protection law) |
+| route | /about | required |  | backend | store information |
+| route | /contact | required |  | backend | phone, email, address, complaint channel (72-hour rule) |
+| route | /faq | optional |  | backend | editable FAQ |
+| route | /offline | required |  | interface | offline fallback page |
+| legal | /terms | required |  | backend | terms of sale, Bangla mandatory |
+| legal | /privacy-policy | required |  | backend | privacy notice |
+| legal | /delivery-policy | required |  | backend | zones, fees, timelines |
+| legal | /return-policy | required |  | backend | return, refund and cancellation conditions |
+| legal | /cookies | not required for this brief, reason: only strictly necessary cookies are used; disclosed in /privacy-policy |  |  |  |
+| state | every database-backed route: setup required | requested |  | interface | owner decision D2 |
+| state | every listing: loading, empty, error, filled | required |  | backend |  |
+| state | /search: zero results with recovery | required |  | backend |  |
+| state | /c/[...slug]: filters produce no results | required |  | backend |  |
+| state | /p/[slug]: out of stock, preorder, flash sale ended mid-view, variant unavailable | required |  | backend |  |
+| state | /cart: empty, item went out of stock, price changed, coupon invalid | required |  | backend |  |
+| state | /checkout: zone not deliverable, stock lost at placement, duplicate submit, server error | required |  | backend |  |
+| state | /account/orders: empty | required |  | backend |  |
+| state | integration unavailable (email, push, courier, AI, chat) | requested |  | interface |  |
+| state | 404, 500, maintenance | required |  | interface |  |
+| journey | browse and buy | requested | / → /c/[...slug] → /p/[slug] → /cart → /login → /checkout → /checkout/success/[orderNumber] | backend |  |
+| journey | search and buy | requested | / → /search → /p/[slug] → /cart → /checkout → /checkout/success/[orderNumber] | backend |  |
+| journey | deal to order | requested | / → /deals → /p/[slug] → /cart → /checkout → /checkout/success/[orderNumber] | backend |  |
+| journey | register and set up | requested | /register → /verify-email → /account/addresses → /account | integration |  |
+| journey | recover password | requested | /login → /forgot-password → /reset-password → /login | integration |  |
+| journey | track an order | requested | /account → /account/orders → /account/orders/[orderNumber] | integration |  |
+| journey | cancel or return | requested | /account/orders/[orderNumber] → /account/orders → /account/messages | backend |  |
+| journey | review a purchase | requested | /account/orders/[orderNumber] → /account/reviews → /p/[slug] | backend |  |
+| journey | get help | requested | /contact → /login → /account/messages | backend |  |
+| journey | admin confirms and ships | requested | /admin → /admin/orders → /admin/orders/[orderNumber] → /admin/shipments | integration |  |
+| journey | admin adds a product with AI draft | requested | /admin/products → /admin/products/new → /admin/products/[id] → /p/[slug] | integration |  |
+| journey | buyer configures a new shop | requested | /admin/setup → /admin/settings → /admin/settings/integrations → / | backend |  |
+| function | /p/[slug]: variant pickers update price, stock, images | requested |  | backend |  |
+| function | /p/[slug]: delivery fee and estimate by zone | requested |  | backend |  |
+| function | /p/[slug]: quantity-tier pricing table | requested |  | backend |  |
+| function | /cart: change quantity, remove, live re-price | requested |  | backend |  |
+| function | /cart: apply/remove coupon with reason | requested |  | backend |  |
+| function | /checkout: redeem rewards | requested |  | backend |  |
+| function | /checkout: payment method step (COD only in v1) | requested |  | backend | provider port for later |
+| function | push opt-in prompt after a meaningful action | requested |  | integration |  |
+| function | live chat (realtime) | optional |  | integration | polling fallback ships |
+| function | wishlist | optional |  | backend | not requested; flag off |
+| function | brands as a facet and index | optional |  | backend | flag off for HorekBazar unless D11 says otherwise |
+| edge | concurrent orders for the last unit | required |  | backend | atomic guarded decrement |
+| edge | repeated checkout submit / network retry | required |  | backend | idempotency key |
+| edge | flash sale ends between cart and placement | required |  | backend | re-price at placement, show change |
+| edge | coupon limit reached by another shopper | required |  | backend | atomic usage counter |
+| edge | courier webhook delivered twice or out of order | required |  | integration | event id dedupe, monotonic status |
+| edge | partial cancellation of one line | requested |  | backend |  |
+| edge | failed delivery and returned parcel | requested |  | backend |  |
+| edge | price or product edited after an order | required |  | backend | order lines snapshot |
+| edge | product deleted that appears in past orders | required |  | backend | archive, never hard delete |
+| edge | admin approves AI text while another admin edits | required |  | backend | version check |
+| admin | /admin | requested |  | backend | dashboard: today’s orders to confirm, revenue, low stock, failed deliveries |
+| admin | /admin/orders | requested |  | backend | queues by status, search, bulk confirm |
+| admin | /admin/orders/[orderNumber] | requested |  | integration | confirm, reject, partial cancel, dispatch, tracking link, notes, timeline |
+| admin | /admin/shipments | requested |  | integration | courier bookings and statuses |
+| admin | /admin/returns | requested |  | backend | return requests, inspection, restock or write-off |
+| admin | /admin/products | requested |  | backend | list, filters, bulk status |
+| admin | /admin/products/new | requested |  | backend | create |
+| admin | /admin/products/[id] | requested |  | integration | edit, variants, media, SEO, AI drafts |
+| admin | /admin/inventory | requested |  | backend | levels, adjustments, ledger |
+| admin | /admin/categories | requested |  | backend | tree |
+| admin | /admin/collections | requested |  | backend | manual and rule-based |
+| admin | /admin/homepage | requested |  | backend | section builder (six section types) |
+| admin | /admin/banners | requested |  | backend | banners |
+| admin | /admin/promotions | requested |  | backend | flash sales, product promotions, quantity tiers |
+| admin | /admin/coupons | requested |  | backend | coupons |
+| admin | /admin/reviews | requested |  | backend | moderation |
+| admin | /admin/customers | requested |  | backend | list, detail, rewards adjustments |
+| admin | /admin/rewards | requested |  | backend | earning and redemption rules, ledger |
+| admin | /admin/messages | requested |  | backend | support inbox |
+| admin | /admin/notifications | requested |  | integration | push campaigns, email template toggles |
+| admin | /admin/settings | requested |  | backend | store identity, branding, locale, contact, policies, footer |
+| admin | /admin/settings/delivery | requested |  | backend | zones, fees, free-delivery rules |
+| admin | /admin/settings/features | requested |  | backend | feature flags |
+| admin | /admin/settings/integrations | requested |  | integration | status and test per provider (no secret display) |
+| admin | /admin/staff | requested |  | backend | staff accounts and roles |
+| admin | /admin/audit | required |  | backend | audit log |
+| admin | /admin/setup | requested |  | backend | first-run checklist |
+| skeleton | product grid | required |  |  |  |
+| skeleton | product detail | required |  |  |  |
+| skeleton | search results | required |  |  |  |
+| skeleton | cart and checkout summary | required |  |  |  |
+| skeleton | account order list and detail | required |  |  |  |
+| skeleton | admin tables and order detail | required |  |  |  |
+| template | middleware.ts | required |  |  | auth gate, locale routing, rate limiting, security headers |
+| template | data/ with schema.json | required |  |  | seed input only (owner decision D2) |
+| template | README demo line | not required for this brief, reason: owner decision D2 (no mock data); README instead states that data/ is seed content for a development database, to be replaced before launch |  |  |  |
+| template | README, DESIGN, MOTION, MEDIA, SCHEMA, CRITIQUE, GATE, LICENSE, CHANGELOG, .env.example | required |  |  |  |
+| route | online payment return/callback routes | not required for this brief, reason: COD only in v1 (owner brief); interface: /checkout payment method step with provider port |  |  |  |
+| route | seller/vendor routes | not required for this brief, reason: single-store template, marketplace excluded by owner |  |  |  |
+
+## Open decisions (Checkpoint 2)
+
+See the end of `docs/domain-rules.md` (D7–D16).
+
+---
+
 ## Open decisions (Checkpoint 1)
 
 - **D1 Auth**: Better Auth (proposed) vs. Auth.js v5 beta.
-- **D2 Demo mode**: read-only `data/` fallback (proposed) vs. requiring MongoDB even for `npm run dev`.
+- ~~D2 Demo mode~~: **decided**: no mock fallback; real dev database; setup-required states (see Conflicts 1).
 - **D3 Web Push library**: evaluate `@block65/webcrypto-web-push` / `@pushforge/builder`, or in-house.
 - **D4 Live chat default**: polling/SSE fallback + optional Ably (proposed) vs. Vercel WebSockets (beta) vs. ship chat later.
 - **D5 Hosting for the flagship demo**: Vercel Hobby (non-commercial demo only) vs. Vercel Pro. Also: which Vercel scope/team should own the project (current token cannot access `dev-choice`).
-- **D6 Template licence model**: e.g. single-site / extended commercial licences (affects `LICENSE`, the README and what buyers may resell).
+- ~~D6 Licence~~: **decided provisionally**: one basic commercial licence; no tiers, no enforcement mechanism. Notes for legal review in `docs/LICENSING.md`.
 
 ## Decision trace
 
 | Date | Checkpoint | Decision | Status |
 |---|---|---|---|
 | 2026-10-21 | Setup | Private `dev-asfakul/horekbazar` created; skill repo inspected, not modified | done |
-| 2026-10-21 | 1 Stack | Stack above | **proposed** |
+| 2026-10-21 | 1 Stack | Stack above approved ("Approval to Proceed"); open to override | approved |
+| 2026-10-21 | 1 Stack · D1 | Better Auth + official Mongo adapter | approved as proposed |
+| 2026-10-21 | 1 Stack · D2 | No mock/demo fallback; real dev DB; `data/` is seed input only | **owner decision** |
+| 2026-10-21 | 1 Stack · D3 | Web Push library chosen at the push phase after fit checks (block65 / pushforge / in-house) | approved as proposed |
+| 2026-10-21 | 1 Stack · D4 | Chat behind a `realtime` port: polling fallback, Ably adapter optional | approved as proposed |
+| 2026-10-21 | 1 Stack · D5 | Vercel scope still blocked; hosting tier undecided | **open** |
+| 2026-10-21 | 1 Stack · D6 | Basic commercial licence, provisional | **owner decision** |
+| 2026-10-21 | 2 Contract | Product contract and Scope below | **proposed** |
