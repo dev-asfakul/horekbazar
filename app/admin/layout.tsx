@@ -7,6 +7,7 @@ import { connection } from "next/server";
 import { preload } from "react-dom";
 import { getTranslations } from "next-intl/server";
 import { AdminShell, type AdminNavItem } from "@/components/admin/AdminShell";
+import { sectionsFor } from "@/lib/admin/sections";
 import { preloadedFontByLocale } from "@/config/fonts";
 import { freshInstallDefaults } from "@/config/defaults";
 import { getAdminLocale, getPrincipal } from "@/lib/auth/server";
@@ -29,10 +30,7 @@ export default async function AdminLayout({ children }: LayoutProps<"/admin">) {
   const shell = decideStaffShell(principal).result;
   if (shell === "two_factor_enrolment" || shell === "second_factor") nav.push({ href: "/admin/security", label: t("nav.security") });
   if (principal && shell === "allowed") {
-    const caps = principal.role?.capabilities;
-    if (caps?.has("staff.manage")) nav.push({ href: "/admin/staff", label: t("nav.staff") });
-    nav.push({ href: "/admin/security", label: t("nav.security") });
-    if (caps?.has("platform.read")) nav.push({ href: "/admin/health", label: t("nav.health") });
+    for (const s of sectionsFor(principal.role?.capabilities)) nav.push({ href: s.href, label: t(`nav.${s.key}`) });
     nav.push({ href: locale === "en" ? "/en" : "/", label: t("nav.store") });
   }
   return (

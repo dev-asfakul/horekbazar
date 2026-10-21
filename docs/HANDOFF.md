@@ -50,8 +50,20 @@ Steps (each is pushed to `preview/horekbazar-v1` when done; tick here in the sam
       CSP `connect-src` adds `https://api.cloudinary.com` on /admin only; `tests/unit/media.test.ts`.
       Not done: checking with Cloudinary that an uploaded asset exists (the server accepts only
       public ids inside the purpose folder). No Cloudinary credentials yet (owner action).
-- [ ] 4. Admin pages and server actions: products (list with search, filter, pagination; editor),
-      categories, inventory, collections, homepage, banners, settings; bn/en messages.
+- [x] 4. Admin pages and server actions: products (list with search, filter, pagination; editor),
+      categories, inventory, collections, homepage, banners, settings; bn/en messages. **Done:**
+      pages under `app/admin/{products,products/new,products/[id],categories,inventory,collections,
+      homepage,banners,settings,settings/delivery}`; actions `lib/actions/{catalogue,merch}.ts`, each
+      starting with `staffContext(capability)` (server-side decideAccess, mutation, step-up);
+      helpers `lib/actions/staff-action.ts` (taka→paisa, Bengali digits, Dhaka datetime) and
+      `lib/admin/{page,forms,sections}.ts`; `adminPageFor` gives sub-pages their section's
+      capability; nav and admin index built from the caller's capabilities; ActionForm gains
+      textarea/number/checkbox/multiselect/datetime-local/url fields and grid/inline layouts;
+      `components/admin/{RecordBits,StepUpPanel,MediaUploader}.tsx`; B4 CSS block at the end of
+      `app/globals.css`; `tests/unit/admin-forms.test.ts` (13). Checks at this commit: typecheck,
+      lint (0 warnings), unit 107/107, integration 76/76, `next build` OK. Not yet exercised in a
+      browser — that is step 6. `/admin/settings/features` was folded into `/admin/settings`;
+      `/admin/settings/integrations` is deferred.
 - [ ] 5. `npm run db:seed` from `catalogue/horekbazar/` and its run on `horekbazar_dev`.
 - [ ] 6. Playwright with a disposable database (sign in as a catalogue editor, create a product
       with a LabelTile, publish it); Motomation gate; docs; PR.
