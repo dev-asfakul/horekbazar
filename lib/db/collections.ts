@@ -18,6 +18,8 @@ import {
   variantSchema,
 } from "../modules/catalogue/schema.ts";
 import { CATALOGUE_LOCKS, catalogueLockSchema } from "../modules/catalogue/locks.ts";
+import { SETTINGS, settingsSchema } from "../modules/settings/schema.ts";
+import { BANNERS, bannerSchema, COLLECTIONS, collectionSchema, HOME_SECTIONS, homeSectionSchema } from "../modules/merch/schema.ts";
 
 export interface CollectionSpec {
   name: string;
@@ -139,6 +141,37 @@ export const collections: CollectionSpec[] = [
     schema: catalogueLockSchema,
     indexes: [],
     serviceEnforced: ["incremented inside every structural category transaction (catalogue/categories.ts)"],
+  },
+  {
+    name: SETTINGS,
+    module: "settings",
+    schema: settingsSchema,
+    indexes: [],
+    serviceEnforced: ["single document; version compare-and-set; accent ≥ 4.5:1 against white and the page background (settings/settings.ts)"],
+  },
+  {
+    name: COLLECTIONS,
+    module: "merch",
+    schema: collectionSchema,
+    indexes: [
+      { key: { slug: 1 }, name: "slug_unique", unique: true },
+      { key: { productIds: 1 }, name: "productIds" },
+    ],
+    serviceEnforced: ["products exist; slug frozen while published; not unpublished or deleted while a section uses it (merch/merch.ts)"],
+  },
+  {
+    name: HOME_SECTIONS,
+    module: "merch",
+    schema: homeSectionSchema,
+    indexes: [{ key: { order: 1 }, name: "order" }],
+    serviceEnforced: ["references exist; published only when what it shows is published; visibleTo after visibleFrom (merch/merch.ts)"],
+  },
+  {
+    name: BANNERS,
+    module: "merch",
+    schema: bannerSchema,
+    indexes: [{ key: { placement: 1, status: 1 }, name: "placement_status" }],
+    serviceEnforced: ["internal href only; not hidden or deleted while a published section uses it (merch/merch.ts)"],
   },
 ];
 

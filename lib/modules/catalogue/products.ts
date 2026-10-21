@@ -226,6 +226,8 @@ export async function deleteProduct(db: Db, client: MongoClient, actor: Actor, i
     await stock(db).deleteMany({ variantId: { $in: ids } }, { session });
     await variants(db).deleteMany({ productId: _id }, { session });
     await products(db).deleteOne({ _id }, { session });
+    // Manual collections drop the reference (collections are merchandising, not order history).
+    await db.collection("collections").updateMany({ productIds: _id }, { $pull: { productIds: _id }, $inc: { version: 1 }, $set: { updatedAt: new Date() } } as never, { session });
     await recordAudit(db, { actor: actorOf(actor), action: "product.deleted", target: { type: "product", id }, before: { ...productSnapshot(before), variants: ids.length }, ip: actor.ip ?? null }, { session });
   });
 }

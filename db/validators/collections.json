@@ -1,0 +1,167 @@
+{
+  "$jsonSchema": {
+    "bsonType": "object",
+    "properties": {
+      "_id": {
+        "bsonType": "objectId"
+      },
+      "slug": {
+        "bsonType": "string",
+        "minLength": 2,
+        "maxLength": 80,
+        "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+      },
+      "name": {
+        "bsonType": "object",
+        "properties": {
+          "bn": {
+            "bsonType": "string",
+            "minLength": 1,
+            "maxLength": 80
+          },
+          "en": {
+            "bsonType": "string",
+            "minLength": 1,
+            "maxLength": 80
+          }
+        },
+        "required": [
+          "bn"
+        ],
+        "additionalProperties": false
+      },
+      "description": {
+        "bsonType": "object",
+        "properties": {
+          "bn": {
+            "bsonType": "string",
+            "minLength": 1,
+            "maxLength": 500
+          },
+          "en": {
+            "bsonType": "string",
+            "minLength": 1,
+            "maxLength": 500
+          }
+        },
+        "required": [
+          "bn"
+        ],
+        "additionalProperties": false
+      },
+      "kind": {
+        "bsonType": "string",
+        "enum": [
+          "manual",
+          "rule"
+        ]
+      },
+      "productIds": {
+        "maxItems": 200,
+        "bsonType": "array",
+        "items": {
+          "bsonType": "objectId"
+        }
+      },
+      "rule": {
+        "bsonType": "object",
+        "properties": {
+          "categoryIds": {
+            "maxItems": 20,
+            "bsonType": "array",
+            "items": {
+              "bsonType": "objectId"
+            }
+          },
+          "priceMax": {
+            "bsonType": [
+              "int",
+              "long"
+            ],
+            "minimum": 1
+          }
+        },
+        "required": [
+          "categoryIds"
+        ],
+        "additionalProperties": false
+      },
+      "status": {
+        "bsonType": "string",
+        "enum": [
+          "draft",
+          "published"
+        ]
+      },
+      "seo": {
+        "bsonType": "object",
+        "properties": {
+          "title": {
+            "bsonType": "object",
+            "properties": {
+              "bn": {
+                "bsonType": "string",
+                "minLength": 1,
+                "maxLength": 70
+              },
+              "en": {
+                "bsonType": "string",
+                "minLength": 1,
+                "maxLength": 70
+              }
+            },
+            "required": [
+              "bn"
+            ],
+            "additionalProperties": false
+          },
+          "description": {
+            "bsonType": "object",
+            "properties": {
+              "bn": {
+                "bsonType": "string",
+                "minLength": 1,
+                "maxLength": 170
+              },
+              "en": {
+                "bsonType": "string",
+                "minLength": 1,
+                "maxLength": 170
+              }
+            },
+            "required": [
+              "bn"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      },
+      "version": {
+        "bsonType": [
+          "int",
+          "long"
+        ],
+        "minimum": 1
+      },
+      "createdAt": {
+        "bsonType": "date"
+      },
+      "updatedAt": {
+        "bsonType": "date"
+      }
+    },
+    "required": [
+      "_id",
+      "slug",
+      "name",
+      "kind",
+      "productIds",
+      "status",
+      "version",
+      "createdAt",
+      "updatedAt"
+    ],
+    "additionalProperties": false
+  }
+}

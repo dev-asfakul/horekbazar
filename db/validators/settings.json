@@ -1,0 +1,312 @@
+{
+  "$jsonSchema": {
+    "bsonType": "object",
+    "properties": {
+      "_id": {
+        "bsonType": "string",
+        "enum": [
+          "settings"
+        ]
+      },
+      "store": {
+        "bsonType": "object",
+        "properties": {
+          "name": {
+            "bsonType": "object",
+            "properties": {
+              "bn": {
+                "bsonType": "string",
+                "minLength": 1,
+                "maxLength": 60
+              },
+              "en": {
+                "bsonType": "string",
+                "minLength": 1,
+                "maxLength": 60
+              }
+            },
+            "required": [
+              "bn"
+            ],
+            "additionalProperties": false
+          },
+          "contact": {
+            "bsonType": "object",
+            "properties": {
+              "phone": {
+                "bsonType": "string",
+                "pattern": "^01[3-9][0-9]{8}$"
+              },
+              "email": {
+                "bsonType": "string",
+                "maxLength": 254,
+                "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$"
+              },
+              "address": {
+                "bsonType": "object",
+                "properties": {
+                  "bn": {
+                    "bsonType": "string",
+                    "minLength": 1,
+                    "maxLength": 300
+                  },
+                  "en": {
+                    "bsonType": "string",
+                    "minLength": 1,
+                    "maxLength": 300
+                  }
+                },
+                "required": [
+                  "bn"
+                ],
+                "additionalProperties": false
+              },
+              "hours": {
+                "bsonType": "object",
+                "properties": {
+                  "bn": {
+                    "bsonType": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  },
+                  "en": {
+                    "bsonType": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  }
+                },
+                "required": [
+                  "bn"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "name",
+          "contact"
+        ],
+        "additionalProperties": false
+      },
+      "theme": {
+        "bsonType": "object",
+        "properties": {
+          "fontPreset": {
+            "bsonType": "string",
+            "enum": [
+              "khata",
+              "plain"
+            ]
+          },
+          "accent": {
+            "bsonType": "string",
+            "pattern": "^#[0-9A-Fa-f]{6}$"
+          }
+        },
+        "required": [
+          "fontPreset",
+          "accent"
+        ],
+        "additionalProperties": false
+      },
+      "locale": {
+        "bsonType": "object",
+        "properties": {
+          "default": {
+            "bsonType": "string",
+            "enum": [
+              "bn",
+              "en"
+            ]
+          },
+          "numerals": {
+            "bsonType": "string",
+            "enum": [
+              "bengali",
+              "latin"
+            ]
+          },
+          "grouping": {
+            "bsonType": "string",
+            "enum": [
+              "south_asian",
+              "western"
+            ]
+          }
+        },
+        "required": [
+          "default",
+          "numerals",
+          "grouping"
+        ],
+        "additionalProperties": false
+      },
+      "delivery": {
+        "bsonType": "object",
+        "properties": {
+          "zones": {
+            "maxItems": 20,
+            "bsonType": "array",
+            "items": {
+              "bsonType": "object",
+              "properties": {
+                "id": {
+                  "bsonType": "string",
+                  "minLength": 2,
+                  "maxLength": 40,
+                  "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+                },
+                "name": {
+                  "bsonType": "object",
+                  "properties": {
+                    "bn": {
+                      "bsonType": "string",
+                      "minLength": 1,
+                      "maxLength": 60
+                    },
+                    "en": {
+                      "bsonType": "string",
+                      "minLength": 1,
+                      "maxLength": 60
+                    }
+                  },
+                  "required": [
+                    "bn"
+                  ],
+                  "additionalProperties": false
+                },
+                "fee": {
+                  "bsonType": "object",
+                  "properties": {
+                    "amountMinor": {
+                      "bsonType": [
+                        "int",
+                        "long"
+                      ],
+                      "minimum": 0
+                    },
+                    "currency": {
+                      "bsonType": "string",
+                      "enum": [
+                        "BDT"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "amountMinor",
+                    "currency"
+                  ],
+                  "additionalProperties": false
+                },
+                "estimate": {
+                  "bsonType": "object",
+                  "properties": {
+                    "bn": {
+                      "bsonType": "string",
+                      "minLength": 1,
+                      "maxLength": 80
+                    },
+                    "en": {
+                      "bsonType": "string",
+                      "minLength": 1,
+                      "maxLength": 80
+                    }
+                  },
+                  "required": [
+                    "bn"
+                  ],
+                  "additionalProperties": false
+                },
+                "areas": {
+                  "maxItems": 0,
+                  "bsonType": "array",
+                  "items": {
+                    "bsonType": "string",
+                    "maxLength": 40
+                  }
+                },
+                "enabled": {
+                  "bsonType": "bool"
+                }
+              },
+              "required": [
+                "id",
+                "name",
+                "fee",
+                "estimate",
+                "areas",
+                "enabled"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "zones"
+        ],
+        "additionalProperties": false
+      },
+      "pricing": {
+        "bsonType": "object",
+        "properties": {
+          "roundingUnit": {
+            "bsonType": [
+              "int",
+              "long"
+            ],
+            "minimum": 1,
+            "maximum": 10000
+          }
+        },
+        "required": [
+          "roundingUnit"
+        ],
+        "additionalProperties": false
+      },
+      "features": {
+        "bsonType": "object",
+        "properties": {
+          "wishlist": {
+            "bsonType": "bool"
+          },
+          "brands": {
+            "bsonType": "bool"
+          },
+          "reviews": {
+            "bsonType": "bool"
+          }
+        },
+        "required": [
+          "wishlist",
+          "brands",
+          "reviews"
+        ],
+        "additionalProperties": false
+      },
+      "version": {
+        "bsonType": [
+          "int",
+          "long"
+        ],
+        "minimum": 1
+      },
+      "updatedAt": {
+        "bsonType": "date"
+      }
+    },
+    "required": [
+      "_id",
+      "store",
+      "theme",
+      "locale",
+      "delivery",
+      "pricing",
+      "features",
+      "version",
+      "updatedAt"
+    ],
+    "additionalProperties": false
+  }
+}

@@ -38,9 +38,12 @@ Steps (each is pushed to `preview/horekbazar-v1` when done; tick here in the sam
       audit on every write; integration tests. **Done:** `lib/modules/catalogue/` (schema, common,
       categories, products, inventory, locks), 6 validators, `tests/integration/catalogue.test.ts`
       (19 tests). ESLint draft-folder rule narrowed to exclude `lib/modules/catalogue/`.
-- [ ] 2. Settings and delivery zones (`settings` singleton with `version`; accent contrast check;
+- [x] 2. Settings and delivery zones (`settings` singleton with `version`; accent contrast check;
       zones without area mapping, D12) and merchandising (`collections` manual, `homeSections` six
-      types, `banners`); tests.
+      types, `banners`); tests. **Done:** `lib/modules/settings/`, `lib/modules/merch/`, 4 validators,
+      `tests/integration/settings-merch.test.ts` (8), `tests/unit/settings.test.ts` (2). Settings
+      start as DEFAULT_SETTINGS (version 0, nothing persisted, no zones invented); storefront use of
+      settings (accent, numerals) is B5.
 - [ ] 3. Media: `/api/media/sign` (Cloudinary signed upload, `catalogue.write`, allow-list);
       disabled with a notice when Cloudinary is not configured.
 - [ ] 4. Admin pages and server actions: products (list with search, filter, pagination; editor),
