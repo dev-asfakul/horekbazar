@@ -1,6 +1,6 @@
 # MOTION.md: HorekBazar template
 
-> How it moves. Written at **Checkpoint 4 (build plan), proposed 2026-10-21, awaiting owner approval.** Every behaviour below is a proposal; none has been built or tested in a browser.
+> How it moves. Written at **Checkpoint 4 (build plan); approved by the owner 2026-10-21 with conditions.** None of the behaviours below has been built or tested in a browser yet; each is verified in the phase that builds it.
 >
 > Sources: `DESIGN.md` → Concept (dials: storefront ENERGY 2 · RHYTHM 1 · MOTION 1; cart, checkout, account and admin 1 · 1 · 1); skill `motion/selection.md`, `motion/tokens.md` and `motion/tier-1-basic.md`.
 

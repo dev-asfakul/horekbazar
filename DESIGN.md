@@ -1,7 +1,7 @@
 # HorekBazar: Design and Architecture Record
 
-Status: **Checkpoint 1 (Stack) approved 2026-10-21 with amendments. Checkpoint 2 (Product contract) approved 2026-10-21 with conditions (below). Checkpoint 3 (Research and direction) proposed; "Khata" direction accepted in principle by the owner, amended after review 2026-10-21; the owner directed moving forward to Checkpoint 4, and explicit approval is requested together with Checkpoint 4. Checkpoint 4 (Build plan) proposed 2026-10-21 and amended after the owner's plan review the same day, awaiting owner approval (`docs/BUILD-PLAN.md`, `MOTION.md`, `SCHEMA.md` v0.2.1, `docs/domain-rules.md` §4.1 proposed).** D11: Owner authorized catalogue generation; generated catalogue pending owner review and approval. D12 (location data) remains open; D5 deferred.
-No application code exists yet.
+Status: **Checkpoint 1 (Stack) approved 2026-10-21 with amendments. Checkpoint 2 (Product contract) approved 2026-10-21 with conditions (below). Checkpoint 3 (Research and direction): the amended "Khata" direction approved by the owner 2026-10-21. Checkpoint 4 (Build plan) approved by the owner 2026-10-21 with conditions: `docs/BUILD-PLAN.md`, `MOTION.md`, `SCHEMA.md` v0.2.2 and the canonical inventory ledger-key format in `docs/domain-rules.md` §4.1 (approved as a design contract); the approval does not authorise invented catalogue data, unapproved prices, unlicensed images or location data, or silently resolving open business, security or deployment decisions. Phase B0 (toolchain) in progress; Phase B1 not started.** D11: Owner authorized catalogue generation; generated catalogue pending owner review and approval. D12 (location data) remains open; D5 deferred.
+Application code: Phases B0 and B1 on `preview/horekbazar-v1` (see `docs/PROGRESS.md`). D17 decided by the owner 2026-10-21: option (a), nonce CSP on every rendered page.
 
 Skill: `asfakulsiam-motomation-design` v3.0.2 (installed with `npx skills add`, hash in `skills-lock.json`, verified identical to upstream `main`).
 Rules: `gates/rules.md` and `principles/authority.md` read; designing within them.
@@ -30,7 +30,7 @@ Route: **full** (new brand, new product experience, commerce). Delivery mode: **
 | Layer | Choice | Version checked (npm, 2026-10-21) | Licence | Why |
 |---|---|---|---|---|
 | Framework | Next.js App Router + React | next 16.4.2 · react 19.3.1 | MIT | Routes + data + SEO + streaming; skill default; brief preference. `adapters/next.md`. |
-| Language | TypeScript, `strict` | Pin to the version Next 16 supports (TS 7.0.2 is `latest`; compatibility verified at Phase 1 install, else 5.x/6.x) | Apache-2.0 | Brief requirement. |
+| Language | TypeScript, `strict` | **typescript 6.0.3 pinned at B0** (TS 7.0.2 is `latest` but its package exposes no classic compiler API, and typescript-eslint requires `typescript >=4.8.4 <6.1.0`) | Apache-2.0 | Brief requirement. |
 | Styling | Tailwind CSS v4, CSS variables as theme tokens | 4.3.3 | MIT | Buyer rebranding = token file, not code edits. |
 | Accessible primitives | Radix primitives via shadcn/ui source (copied in, owned) | radix-ui 1.8.1 | MIT | Dialog, sheet, menu, combobox, tabs, toast are solved a11y problems; skill says adopt, don't rebuild. Alternative: React Aria. |
 | Validation + types | Zod (one schema → TS types, server validation, Mongo `$jsonSchema`) | 4.6.7 | MIT | Replaces an ODM; no second DB abstraction. |
@@ -175,13 +175,13 @@ Evidence (file#pattern) is filled in during the build; Notes describe intent. Ma
 | route | /about | required |  | backend | store information |
 | route | /contact | required |  | backend | phone, email, address, complaint channel (72-hour rule) |
 | route | /faq | optional |  | backend | editable FAQ |
-| route | /offline | required |  | interface | offline fallback page |
+| route | /offline | required | app/[locale]/offline/page.tsx#ReloadButton | interface | offline fallback page |
 | legal | /terms | required |  | backend | terms of sale, Bangla mandatory |
 | legal | /privacy-policy | required |  | backend | privacy notice |
 | legal | /delivery-policy | required |  | backend | zones, fees, timelines |
 | legal | /return-policy | required |  | backend | return, refund and cancellation conditions |
 | legal | /cookies | not required for this brief, reason: only strictly necessary cookies are used; disclosed in /privacy-policy |  |  |  |
-| state | every database-backed route: setup required | requested |  | interface | owner decision D2 |
+| state | every database-backed route: setup required | requested | components/states/SetupRequired.tsx#setup-required, app/[locale]/[...rest]/page.tsx#SetupRequired | interface | owner decision D2 |
 | state | every listing: loading, empty, error, filled | required |  | backend |  |
 | state | /search: zero results with recovery | required |  | backend |  |
 | state | /c/[...slug]: filters produce no results | required |  | backend |  |
@@ -191,7 +191,7 @@ Evidence (file#pattern) is filled in during the build; Notes describe intent. Ma
 | state | storefront listings with an empty database (no approved catalogue yet) | required |  | backend | honest empty state, no placeholder products (D11) |
 | state | /account/orders: empty | required |  | backend |  |
 | state | integration unavailable (email, push, courier, AI, chat) | requested |  | interface |  |
-| state | 404, 500, maintenance | required |  | interface |  |
+| state | 404, 500, maintenance | required | app/[locale]/not-found.tsx#notFound, app/[locale]/error.tsx#retry, app/global-error.tsx#Something went wrong, lib/maintenance.ts#503 | interface |  |
 | journey | browse and buy | requested | / → /c/[...slug] → /p/[slug] → /cart → /login → /checkout → /checkout/success/[orderNumber] | backend |  |
 | journey | search and buy | requested | / → /search → /p/[slug] → /cart → /checkout → /checkout/success/[orderNumber] | backend |  |
 | journey | deal to order | requested | / → /deals → /p/[slug] → /cart → /checkout → /checkout/success/[orderNumber] | backend |  |
@@ -260,7 +260,7 @@ Evidence (file#pattern) is filled in during the build; Notes describe intent. Ma
 | skeleton | cart and checkout summary | required |  |  |  |
 | skeleton | account order list and detail | required |  |  |  |
 | skeleton | admin tables and order detail | required |  |  |  |
-| template | middleware.ts | required |  |  | auth gate, locale routing, rate limiting, security headers. **Checkpoint 4 note:** Next.js 16 renamed `middleware` to `proxy`, so this is built as `proxy.ts`; the skill's completeness check will report `middleware.ts` missing, and that is recorded as an exception in `GATE.md` (`docs/BUILD-PLAN.md` §0, C2) |
+| template | middleware.ts | required | proxy.ts#export function proxy |  | auth gate, locale routing, rate limiting, security headers. **Checkpoint 4 note:** Next.js 16 renamed `middleware` to `proxy`, so this is built as `proxy.ts`; the skill's completeness check will report `middleware.ts` missing, and that is recorded as an exception in `GATE.md` (`docs/BUILD-PLAN.md` §0, C2) |
 | template | data/ with schema.json | required |  |  | seed input only, owner-supplied or approved content, may be empty (D2, D11); draft review package in `catalogue/horekbazar/` is separate and never read at runtime |
 | template | README demo line | not required for this brief, reason: owner decision D2 (no mock data); README instead states that data/ holds only owner-supplied or approved catalogue content for a development database and may be empty |  |  |  |
 | template | README, DESIGN, MOTION, MEDIA, SCHEMA, CRITIQUE, GATE, LICENSE, CHANGELOG, .env.example | required |  |  |  |
@@ -279,7 +279,7 @@ Detailed in `docs/domain-rules.md`:
 
 ## Research record
 
-Checkpoint 3 of 6. Status: **proposed 2026-10-21; "Khata" direction accepted in principle by the owner; amended after the owner's review (2026-10-21); awaiting explicit approval.** Every design choice below is **proposed** until then. Nothing below authorises application code, a database import or a deployment.
+Checkpoint 3 of 6. Status: **approved by the owner 2026-10-21 (the amended "Khata" direction).** Items labelled hypothesis or build check in "Verification status" remain unverified until measured in the build. Nothing below authorises application code, a database import or a deployment.
 
 **Amendments after the owner's review (2026-10-21).** The design was brought back in line with the approved product contract. The contract itself was not changed.
 1. **Mobile navigation:** restored the contract's five-item bottom bar (Home, Categories, Search, Cart, Account). The RunningTotalBar now sits above it inside one bottom dock, with safe-area and no-obscuring rules (Layout → Bottom dock).
@@ -316,7 +316,7 @@ Checkpoint 3 of 6. Status: **proposed 2026-10-21; "Khata" direction accepted in 
 
 **Techniques considered:**
 - Anek Bangla's variable width axis for dense labels (measured): **not used**. It adds about 290 KB to the Bengali subset, and its Bengali digits don't line up.
-- One self-hosted font subset preloaded per language, through the Next.js font module ([Next.js docs](https://nextjs.org/docs/app/api-reference/components/font)): **used**.
+- One self-hosted font subset preloaded per language: **used**. The Next.js font module ([Next.js docs](https://nextjs.org/docs/app/api-reference/components/font)) was tried first in B1 and **not used**: with two Noto Sans Bengali subsets it preloaded both files on both locales (measured, Link header on `/` and `/en`). B1 self-hosts the files in `public/fonts/v1/` and preloads exactly one per locale (proposed, implementation detail).
 - An add button that turns into a quantity picker, with an editable quantity ([Baymard](https://baymard.com/research-articles/grocery-add-to-cart-buttons)): **used**.
 - Unit price beside the pack price ([Shwapno](https://www.shwapno.com/)): **used**, computed from the variant's net quantity. It is hidden when the net quantity has not been verified.
 - Auto-rotating hero banner carousel: **not used**. Banners stay as the contract's static section type.
@@ -407,6 +407,8 @@ Type mode: **SERVICE STYLE** (information-led) for every functional surface, bec
 - Admin defaults to Latin digits, configurable per staff user.
 
 **Font budget (measured locally):** about 146 KB on a Bengali first view (Noto Bengali ≈ 68 KB preloaded + Tiro Bengali ≈ 78 KB swapped). The gate allows "≤ 1 preloaded file, `font-display: swap`" and this complies; the real figure is re-measured in the build.
+
+**Font budget re-measured in B1 (shipped files, bytes):** Noto Sans Bengali instanced to `wght` 400–600 from the Google Fonts v33 files: Bengali 74,068, Latin 17,300, Latin Extended 9,756. Tiro Bangla 400 (Google v8): Bengali 81,932, Latin 26,892, Latin Extended 12,980. A Bengali first view loads 74,068 B (preset `plain`) or 156,000 B (preset `khata`, Tiro swapped, not preloaded). An English first view preloads 17,300 B. `৳` (U+09F3) is in the Bengali subset, so an English page that shows a price also downloads the Bengali Noto file (not preloaded) **[M]**. Licences: `public/fonts/OFL-*.txt`.
 
 **Template presets** (`config/` font presets, `docs/domain-rules.md` §8):
 - `khata`: Tiro Bangla + Noto Sans Bengali, the HorekBazar flagship.
@@ -586,7 +588,7 @@ Three labels, so that nothing proposed reads as proven. **No item in the build-c
 
 ## Build plan (Checkpoint 4)
 
-Checkpoint 4 of 6. Status: **proposed 2026-10-21; amended after the owner's plan review (idempotency contract in domain-rules §4.1, CSP and caching plan §9.1, viewport bands in Layout); awaiting owner approval.**
+Checkpoint 4 of 6. Status: **approved by the owner 2026-10-21 with conditions** (`docs/BUILD-PLAN.md`, `MOTION.md`, `SCHEMA.md` v0.2.2, and the canonical ledger-key format in domain-rules §4.1 as a design contract). Conditions: the approval does not authorise invented catalogue data, unapproved prices, unlicensed images or location data, or silently resolving open business, security or deployment decisions. D11, D12, D5, D17–D23 and coupon-usage restoration on cancellation stay open; D12 keeps blocking checkout behaviour that needs the location dataset. Security, concurrency, transaction, accessibility and performance guarantees are unverified until their checks pass.
 - The full plan is in `docs/BUILD-PLAN.md`: route inventory, component architecture, state matrix, domain mapping, responsive plan, accessibility, SEO, performance, security, integrations, phases B0–B11, verification matrix with the k6 plan, risks and definition of done.
 - Motion is in `MOTION.md`; the data and API contract is in `SCHEMA.md` v0.2.
 - The plan adds no product scope and changes no approved rule.
@@ -648,6 +650,18 @@ Checkpoint 4 of 6. Status: **proposed 2026-10-21; amended after the owner's plan
 | 2026-10-21 | 4 Build plan | Build plan (B0–B11), MOTION.md, SCHEMA v0.2. Contradictions recorded: nonce CSP vs caching (D17), `middleware.ts` → `proxy.ts`, push workflow vs "main is the shipping truth" (D18), row-level security → repository scoping, D12 blocking checkout (D21), review content under D11 (D20), preview vs D5, first-Owner verification (D23), JS budget (D22) | **proposed**, awaiting owner approval |
 | 2026-10-21 | 4 Plan review | Owner review asked for three corrections. (1) Scoped idempotency and concurrency contract (domain-rules §4.1) replacing the single reservation key. (2) D17 rewritten: SRI is unproven (B0 spike), and the fallback keeps the approved nonce rule. (3) Viewport bands S/M/L/XL with exact edges, so 768 px is band M: no dock, 3 columns | **proposed**, awaiting owner approval |
 | 2026-10-21 | 2 · Correction | Atlas Free clusters do support backups (daily snapshot, up to 4 kept); earlier statement corrected | done |
+| 2026-10-21 | 3 Direction | **Checkpoint 3 approved**: the amended "Khata" direction | **approved** (owner) |
+| 2026-10-21 | 4 Build plan | **Checkpoint 4 approved with conditions**: `docs/BUILD-PLAN.md`, `MOTION.md`, `SCHEMA.md` v0.2.2, and the canonical ledger-key format (`order:<orderId>:<lineId>:<kind>`, `return:<returnId>:<lineId>:<kind>`, `rto:<orderId>:<lineId>:<kind>`, `stock:<adjustmentId>:<variantId>:<kind>`) as a design contract. The approval does not authorise invented catalogue data, unapproved prices, unlicensed images or location data, or silently resolving open business, security or deployment decisions. Proceed to Phase B0 only | **approved with conditions** (owner) |
+| 2026-10-21 | B0 Toolchain | Pins chosen at install: TypeScript 6.0.3 (not 7.0.2, see §1), Node.js 24 LTS (`.nvmrc`, `engines >=24 <25`; Vitest 5.0.5 needs `^22.12.0 \|\| ^24.0.0 \|\| >=26`, Node 20 is end-of-life), ESLint 9.39.5 (eslint-plugin-react 7.37.5 supports ESLint up to 9), `npm start` runs the standalone server (`next start` does not support `output: "standalone"`) | **proposed** (implementation detail within the approved stack) |
+| 2026-10-21 | B0 · D17 | CSP/caching spike run on local branch `spike/csp` (never merged). Result recorded in `docs/PROGRESS.md`: option (b) as specified fails (inline scripts blocked, no hydration) | **open**: owner decides D17 |
+| 2026-10-21 | B0 · D18 | Build code is pushed to `preview/horekbazar-v1` after every phase; handoff to `design/horekbazar-v1` after the gate; only the owner merges to `main`. The throwaway `spike/csp` branch stays local and is not pushed | **approved** (owner) |
+| 2026-10-21 | D17 | **Option (a): nonce-based CSP on every rendered page, including the public storefront.** No `'unsafe-inline'` to enable HTML caching. Server-side data caching stays where verified with the approved Next.js version and nonce rendering. Storefront HTML is rendered per request and is not claimed as cached. CSP and security-header regression tests stay in the plan. WebKit script-loading tests use HTTPS or an isolated test-only setup; production CSP is not weakened for HTTP tests. CSP hashes, CDN behaviour and `"use cache"` remain unverified unless separately tested. The B0 spike result (option (b) failed) is kept in BUILD-PLAN §9.1 | **approved** (owner), option (a) |
+| 2026-10-21 | B1 approval | Phase B1 (shell) approved by the owner. B1 approval does not approve B2 | **approved** (owner) |
+| 2026-10-21 | B1 merge | Owner instruction: when CI passes on the B1 commit, open a PR from `preview/horekbazar-v1`, merge it to `main`, and deploy the first Vercel preview. This replaces, for B1 only, the earlier rule of merging only after the gate and the `design/horekbazar-v1` handoff. The skill gate had not passed at merge time (see PROGRESS) | **approved** (owner) |
+| 2026-10-21 | B1 Fonts | Self-hosted fonts in `public/fonts/v1/` with one manual preload per locale, instead of `next/font/google` (which preloaded both subsets on both locales, measured) | **proposed** (implementation detail) |
+| 2026-10-21 | B1 Defaults | Fresh-install font preset `plain` (this record: "plain" is the template default with the lightest load); HorekBazar's own store selects `khata` in settings (B4). Numerals `bengali` on `/`, grouping `south_asian`; `/en` always Latin digits | **proposed** |
+| 2026-10-21 | B1 Shell | Dock space reserved on `<body>` (not `<main>`), so the footer also ends above the dock. Wordmark reads "নতুন স্টোর" / "New store" until a store name exists in settings. Categories links to `/categories` until the department sheet (B5). The setup-required page shows missing variable names (never values) to everyone until staff sessions exist (B3). Maintenance: `MAINTENANCE_MODE=on` makes the proxy answer every storefront page with 503 and `Retry-After` (a rewrite cannot carry 503, measured) | **proposed** |
+| 2026-10-21 | B1 CI | `actions/checkout` v4 → v7 and `actions/setup-node` v4 → v7 (Node 24 action runtime; release notes checked: no input used here changed); runner pinned to `ubuntu-24.04`; Playwright in Chromium, Firefox and WebKit, WebKit through the test-only HTTPS proxy | **proposed** |
 
 ### Design decision trace (Checkpoint 3, proposed)
 

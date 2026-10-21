@@ -1,0 +1,62 @@
+# CI for the HorekBazar template (BUILD-PLAN B0, B1): lint, typecheck, unit tests, catalogue
+# checks, a production build with zero environment variables, the Playwright suite in Chromium,
+# Firefox and WebKit (WebKit through the test-only HTTPS proxy), and a client-bundle secret scan
+# on a second build with harmless canary values.
+# B1: actions/checkout v4 -> v7 and actions/setup-node v4 -> v7 (both run on Node 24; the
+# Node 20 action runtime is deprecated). Runner pinned to ubuntu-24.04 while ubuntu-latest moves
+# to a newer image, so Playwright's --with-deps keeps a known package set.
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run catalogue:validate
+      - run: npm run catalogue:schema
+
+      - name: Build with zero environment variables
+        run: npm run build
+      - run: npx playwright install --with-deps chromium firefox webkit
+      - name: Playwright (375 / 768 / 1440, three engines)
+        run: npm run test:e2e
+      - name: Keep the Playwright report when a test fails
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: playwright-report
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 7
+
+      - name: Build with canary server-only values
+        env:
+          MONGODB_URI: mongodb://ci-canary-user:ci-canary-pass-7f3a@ci-canary.invalid/db
+          AUTH_SECRET: ci-canary-auth-secret-0123456789abcdef0123
+          UPSTASH_REDIS_REST_TOKEN: ci-canary-upstash-token-9d2e
+          CLOUDINARY_API_SECRET: ci-canary-cloudinary-secret-4b1c
+          RESEND_API_KEY: ci-canary-resend-key-8a6f
+          GEMINI_API_KEY: ci-canary-gemini-key-2c7d
+          CRON_SECRET: ci-canary-cron-secret-5e9b
+        run: npm run build && npm run check:bundle

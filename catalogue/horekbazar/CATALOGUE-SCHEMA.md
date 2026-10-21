@@ -31,20 +31,13 @@ The validator also checks these rules, beyond the schema:
 - Customer-facing copy has no unsupported marketing or health claims in Bangla or English.
 - Every image slot listed in the manifest is still missing.
 
-## Formal schema check (outside the repo, no dependency added)
+## Formal schema check
+
+Since Phase B0, Ajv 8.20.0 and ajv-formats 3.0.1 are pinned dev dependencies, and `scripts/validate-catalogue-schema.mjs` runs the same check (Ajv 2020-12, `allErrors`, `strict`) on the four files. From the repository root:
 
 ```bash
-mkdir -p /tmp/ajvt && cd /tmp/ajvt && npm init -y >/dev/null && npm install ajv@8 ajv-formats@3
-cat > run.cjs <<'JS'
-const Ajv = require('ajv/dist/2020'); const addFormats = require('ajv-formats'); const fs = require('fs');
-const dir = process.argv[2]; const ajv = new Ajv({ allErrors: true, strict: true }); addFormats(ajv);
-const v = ajv.compile(JSON.parse(fs.readFileSync(dir + '/schema.json')));
-let bad = 0;
-for (const f of ['categories.json', 'products.json', 'sources.json', 'image-manifest.json']) {
-  const ok = v(JSON.parse(fs.readFileSync(dir + '/' + f))); console.log(f, ok ? 'valid' : 'INVALID');
-  if (!ok) { bad++; console.log(v.errors.slice(0, 5)); }
-}
-process.exit(bad ? 1 : 0);
-JS
-node run.cjs /path/to/horekbazar/catalogue/horekbazar
+npm ci
+npm run catalogue:schema
 ```
+
+CI runs it on every push. It is a repository check only: application code never reads `catalogue/`, and passing it does not approve or import the catalogue.
