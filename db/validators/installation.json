@@ -1,0 +1,41 @@
+{
+  "$jsonSchema": {
+    "bsonType": "object",
+    "properties": {
+      "_id": {
+        "bsonType": "string",
+        "enum": [
+          "installation"
+        ]
+      },
+      "ownerUserId": {
+        "bsonType": "string",
+        "minLength": 1,
+        "maxLength": 64
+      },
+      "ownerClaimedAt": {
+        "bsonType": "date"
+      },
+      "verification": {
+        "bsonType": "string",
+        "enum": [
+          "email"
+        ]
+      },
+      "ownerChangeSeq": {
+        "bsonType": [
+          "int",
+          "long"
+        ],
+        "minimum": 0
+      }
+    },
+    "required": [
+      "_id",
+      "ownerUserId",
+      "ownerClaimedAt",
+      "verification"
+    ],
+    "additionalProperties": false
+  }
+}

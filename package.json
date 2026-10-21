@@ -22,11 +22,13 @@
     "test:integration": "vitest run --config vitest.integration.config.ts",
     "db:validators": "node scripts/db-validators.ts",
     "db:migrate": "node --env-file-if-exists=.env.local scripts/db-migrate.ts",
-    "worker": "node --env-file-if-exists=.env.local scripts/worker.ts"
+    "worker": "node --env-file-if-exists=.env.local scripts/worker.ts",
+    "admin:recover-owner": "node --env-file-if-exists=.env.local scripts/admin-recover-owner.ts"
   },
   "dependencies": {
     "@upstash/ratelimit": "2.2.0",
     "@upstash/redis": "1.39.0",
+    "better-auth": "1.7.12",
     "mongodb": "7.7.0",
     "next": "16.4.2",
     "next-intl": "4.14.9",

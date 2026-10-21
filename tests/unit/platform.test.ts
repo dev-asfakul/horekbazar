@@ -3,7 +3,6 @@ import { databaseConfig, isTransactionCapable } from "@/lib/adapters/db/client";
 import { isAuthorizedBearer } from "@/lib/adapters/jobs/auth";
 import { auditDiff, redact, REDACTED, truncateIp } from "@/lib/modules/platform/audit";
 import { backoffMs, outboxKey, sanitizeError } from "@/lib/modules/platform/outbox";
-import { checkStaffAccess } from "@/lib/platform/access";
 
 describe("database config and topology", () => {
   it("reads MONGODB_URI and MONGODB_DB, defaulting the database name", () => {
@@ -72,10 +71,3 @@ describe("job endpoint bearer check", () => {
   });
 });
 
-describe("staff access before identity (B3)", () => {
-  it("denies platform.read in production builds and opens it only on a development server", () => {
-    expect(checkStaffAccess("platform.read", { NODE_ENV: "production" })).toEqual({ allowed: false, capability: "platform.read" });
-    expect(checkStaffAccess("platform.read", { NODE_ENV: "test" }).allowed).toBe(false);
-    expect(checkStaffAccess("platform.read", { NODE_ENV: "development" })).toEqual({ allowed: true, via: "development_server" });
-  });
-});

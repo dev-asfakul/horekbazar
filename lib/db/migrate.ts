@@ -3,7 +3,8 @@
 //    `collMod` (validationLevel "strict", validationAction "error"), and its indexes are created;
 // 2. one-time data migrations run in order and are recorded in `migrations`, so each runs once.
 import type { Db } from "mongodb";
-import { collections as registry, type CollectionSpec } from "./collections.ts";
+import { adapterCollections, collections as registry, type AdapterCollectionSpec, type CollectionSpec } from "./collections.ts";
+import { seedBuiltInRoles } from "../modules/identity/roles.ts";
 import { validatorFor } from "./validators.ts";
 
 export interface DataMigration {
@@ -12,8 +13,8 @@ export interface DataMigration {
   up: (db: Db) => Promise<void>;
 }
 
-/** One-time data migrations. None exist yet: B2 only creates collections, validators and indexes. */
-export const dataMigrations: DataMigration[] = [];
+/** One-time data migrations, applied in id order and recorded in `migrations`. */
+export const dataMigrations: DataMigration[] = [{ id: "0001-built-in-staff-roles", up: (db) => seedBuiltInRoles(db) }];
 
 export interface MigrationReport {
   created: string[];
@@ -45,13 +46,24 @@ async function syncCollection(db: Db, spec: CollectionSpec, report: MigrationRep
   report.indexes[spec.name] = spec.indexes.length > 0 ? await db.collection(spec.name).createIndexes(spec.indexes) : [];
 }
 
+/** Library-owned collections: created without a validator if missing, then indexed. */
+async function syncAdapterCollection(db: Db, spec: AdapterCollectionSpec, report: MigrationReport) {
+  const [existing] = await db.listCollections({ name: spec.name }, { nameOnly: true }).toArray();
+  if (!existing) {
+    await db.createCollection(spec.name);
+    report.created.push(spec.name);
+  } else report.unchanged.push(spec.name);
+  report.indexes[spec.name] = await db.collection(spec.name).createIndexes(spec.indexes);
+}
+
 export async function runMigrations(
   db: Db,
-  options: { collections?: CollectionSpec[]; migrations?: DataMigration[] } = {},
+  options: { collections?: CollectionSpec[]; adapterCollections?: AdapterCollectionSpec[]; migrations?: DataMigration[] } = {},
 ): Promise<MigrationReport> {
   const report: MigrationReport = { created: [], updated: [], unchanged: [], indexes: {}, applied: [] };
   const specs = options.collections ?? registry;
   for (const spec of specs) await syncCollection(db, spec, report);
+  for (const spec of options.adapterCollections ?? adapterCollections) await syncAdapterCollection(db, spec, report);
 
   const pending = [...(options.migrations ?? dataMigrations)].sort((a, b) => a.id.localeCompare(b.id));
   const migrations = db.collection<{ _id: string; appliedAt: Date }>("migrations");

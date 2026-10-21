@@ -182,9 +182,10 @@ Shared rules for every entity:
 | `auditLog` | `actor` {id, role}, `action`, `target` {type, id}, `before`/`after` (redacted diff), `ip` (truncated), `at` | `at`; `target.type, target.id` |
 | `jobs` | `name`, `lastRunAt`, `lastResult`, `lockUntil`?, `lastSuccessAt`? **(proposed in B2: health needs the last successful drain, domain-rules §13)** | `name` unique |
 | `migrations` **(proposed in B2)** | `_id` = migration id `NNNN-name`, `appliedAt` (one-time data migrations run once; `npm run db:migrate`) | `_id` |
-| `staffRoles` | `key` (unique), `name` LT, `capabilities` string[] (from the capability list), `builtIn` bool (the six roles of domain-rules §1: owner, store_manager, marketing_manager, catalogue_editor, order_operator, support_agent; renamable), `twoFactorRequired` bool (true and locked for owner and store_manager, D7); staff users carry `staffRoleKey` | `key` unique |
+| `staffRoles` | `key` (unique), `name` LT, `capabilities` string[] (from the capability list), `builtIn` bool (the six roles of domain-rules §1: owner, store_manager, marketing_manager, catalogue_editor, order_operator, support_agent; renamable), `twoFactorRequired` bool (true and locked for owner and store_manager, D7); staff users carry `staffRoleKey`. **B3:** seeded by data migration `0001-built-in-staff-roles` (`lib/modules/identity/capabilities.ts`); validator `db/validators/staffRoles.json`. The Owner role always resolves to every capability in code, whatever the document says | `key` unique |
+| `installation` (B3) | single document `_id: "installation"`: `ownerUserId`, `ownerClaimedAt`, `verification` (`"email"`, D23 option a), `ownerChangeSeq`? (bumped in every transaction that changes an Owner's role, so concurrent demotions conflict). Written once by the first-owner claim; the unique `_id` serialises concurrent claims | `_id` |
 | `redirects` | `from` (path), `to` (path), `code` 301 | `from` unique |
-| Better Auth (`user`, `session`, `account`, `verification`, `twoFactor`) | per Better Auth's MongoDB adapter; extended fields `locale`, `phone`?, `staffRoleKey`? on `user` | per adapter |
+| Better Auth (`user`, `session`, `account`, `verification`, `twoFactor`) | per Better Auth's MongoDB adapter (no JSON-schema validator: the adapter owns the shape). Extended fields on `user`: `locale` (`bn`/`en`), `phone`? (01XXXXXXXXX), `staffRoleKey`? (**never** settable through sign-up: `input: false`, set only by `setStaffRole`). On `session`: `stepUpAt`? (last fresh code, 10-minute step-up window) and `secondFactorAt`? (this session passed a second factor; required for every 2FA user's staff access, because Better Auth checks 2FA only on email/password sign-in). Passwords: Better Auth's scrypt hash in `account.password` | `user.email` unique; `session.token` unique; `session.userId`; `session.expiresAt` TTL; `account.userId`; `verification.identifier`; `verification.expiresAt` TTL; `twoFactor.userId` unique (`lib/db/collections.ts` `adapterCollections`) |
 
 **B2 platform additions (approved by the owner 2026-10-21 with documentation and tests as the condition).**
 
@@ -376,7 +377,8 @@ From `.env.example`. The app starts with none set and shows setup-required state
 | `NEXT_PUBLIC_DEFAULT_LOCALE` | public | yes | `bn` | routing | `bn` |
 | `STORE_TIMEZONE` | server | yes | `Asia/Dhaka` | dates | `Asia/Dhaka` |
 | `MONGODB_URI`, `MONGODB_DB` | server | yes | empty | db port | setup-required state |
-| `AUTH_SECRET` | server | yes | empty | auth | sign-in disabled with a notice |
+| `AUTH_SECRET` | server | yes | empty | auth (at least 32 characters) | accounts unavailable state; `/admin/setup` lists it |
+| `SETUP_TOKEN` (B3, proposed) | server | until the first Owner exists | empty | `/admin/setup` (at least 16 characters; only the deployer has it) | first-owner setup refuses to start |
 | `AUTH_GOOGLE_CLIENT_ID`, `AUTH_GOOGLE_CLIENT_SECRET` | server | no | empty | Google sign-in | button hidden |
 | `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN` | server | yes (staging and production) | empty | rate limits, caches | dev: in-process limiter with a warning; production refuses to start |
 | `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET` | server | for uploads | empty | media port | upload disabled with a notice |

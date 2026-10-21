@@ -1,35 +1,44 @@
-// Admin in a production build (B2). Staff identity does not exist until B3, so /admin/health is a
-// designed 403 naming the capability, with private headers. The developer view is checked on a
-// `next dev` server (docs/PROGRESS.md, B2 evidence), never opened in production.
+// Admin in a production build started with zero variables (B2, updated in B3). Without a session
+// cookie every admin page except /admin/setup redirects to sign-in at the proxy; the setup page lists
+// what is missing by name, never by value. Signed-in flows are covered by tests/integration/identity.test.ts.
 import { expect, test } from "@playwright/test";
 import { watchCsp } from "./helpers";
 
-test("/admin/health answers 403 naming platform.read, private and not indexed", async ({ page }) => {
+for (const path of ["/admin", "/admin/health", "/admin/staff", "/admin/security", "/admin/orders"]) {
+  test(`${path} without a session redirects to sign-in, uncached`, async ({ request }) => {
+    const r = await request.get(path, { maxRedirects: 0 });
+    expect(r.status()).toBe(307);
+    expect(r.headers()["location"]).toBe(`/login?next=${encodeURIComponent(path)}`);
+    expect(r.headers()["cache-control"]).toBe("no-store");
+    expect(r.headers()["content-security-policy"]).toContain("frame-ancestors 'none'");
+  });
+}
+
+test("a forged session cookie still cannot open an admin page (server re-checks)", async ({ request }) => {
+  const r = await request.get("/admin/health", { maxRedirects: 0, headers: { cookie: "hb.session_token=forged.value" } });
+  expect(r.status()).toBe(307);
+  expect(r.headers()["location"]).toBe("/login?next=%2Fadmin%2Fhealth");
+});
+
+test("/admin/setup lists what is missing, private and not indexed", async ({ page }) => {
   const violations = await watchCsp(page);
-  const response = await page.goto("/admin/health");
-  expect(response?.status()).toBe(403);
-  const csp = response?.headers()["content-security-policy"] ?? "";
-  expect(csp).toContain("frame-ancestors 'none'");
-  expect(csp).toMatch(/script-src 'self' 'nonce-[A-Za-z0-9+/=]+' 'strict-dynamic'/);
-  expect(csp).not.toContain("unsafe-inline");
+  const response = await page.goto("/admin/setup");
+  expect(response?.status()).toBe(200);
+  expect(response?.headers()["content-security-policy"]).toContain("frame-ancestors 'none'");
   await expect(page.locator("html")).toHaveAttribute("lang", "bn");
-  await expect(page.getByRole("heading", { level: 1 })).toHaveText("এই পাতাটি দেখার অনুমতি আপনার নেই");
-  await expect(page.locator("main#main")).toContainText("platform.read");
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("স্টোরের মালিক ঠিক করুন");
+  const blockers = page.getByTestId("setup-blockers");
+  await expect(blockers.locator("[data-blocker='database']")).toContainText("MONGODB_URI");
+  await expect(blockers.locator("[data-blocker='auth_secret']")).toContainText("AUTH_SECRET");
+  await expect(blockers.locator("[data-blocker='site_url']")).toContainText("NEXT_PUBLIC_SITE_URL");
+  await expect(blockers.locator("[data-blocker='email']")).toContainText("RESEND_API_KEY");
+  await expect(blockers.locator("[data-blocker='setup_token']")).toContainText("SETUP_TOKEN");
+  await expect(blockers).not.toContainText("://"); // names only, never values
+  await expect(page.getByTestId("setup-form")).toHaveCount(0);
   await expect(page.locator('meta[name="robots"]').first()).toHaveAttribute("content", /noindex/);
-  // No integration detail leaks into the denied page.
-  await expect(page.locator("body")).not.toContainText("MONGODB_URI");
   await expect(page.locator(".bottom-dock")).toHaveCount(0);
   await page.waitForLoadState("networkidle");
   expect(await violations()).toEqual([]);
-});
-
-test("unbuilt admin paths are a designed 404, not Next's default", async ({ page }) => {
-  for (const path of ["/admin", "/admin/orders"]) {
-    const response = await page.goto(path);
-    expect(response?.status(), path).toBe(404);
-    await expect(page.getByRole("heading", { level: 1 })).toHaveText("পাতাটি পাওয়া যায়নি");
-    expect(response?.headers()["content-security-policy"]).toContain("frame-ancestors 'none'");
-  }
 });
 
 test("/admin is not locale-prefixed: /en/admin/health is a storefront 404", async ({ request }) => {

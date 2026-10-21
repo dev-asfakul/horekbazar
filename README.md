@@ -36,7 +36,18 @@ npm run check:bundle   # fails if a secret-shaped or server-only value is in the
 npm run catalogue:validate && npm run catalogue:schema
 ```
 
-`/api/health` reports whether the app is configured and the checked database state (`not_configured`, `connected`, `not_replica_set`, `unreachable`). It never echoes configuration values. `/admin/health` lists every integration by name and state; a production build requires the `platform.read` staff permission (staff accounts arrive in B3), and a local `npm run dev` server opens it with a notice.
+`/api/health` reports whether the app is configured and the checked database state (`not_configured`, `connected`, `not_replica_set`, `unreachable`). It never echoes configuration values. `/admin/health` lists every integration by name and state and needs a staff account with the `platform.read` permission (Owner or Store manager).
+
+### Accounts and the first Owner
+
+Accounts need `MONGODB_URI`, `AUTH_SECRET` (32+ characters, e.g. `openssl rand -base64 48`) and `NEXT_PUBLIC_SITE_URL`. Email verification and password reset need `RESEND_API_KEY` and an `EMAIL_FROM` address on a domain verified in Resend.
+
+1. Set `SETUP_TOKEN` (16+ random characters) on the server. Only the person deploying the store should know it.
+2. Run `npm run db:migrate`, start the app and open `/admin/setup`. It lists anything still missing, by name only.
+3. Enter your name, email, a password and the setup token. Open the verification email, sign in, and set up two-step verification with an authenticator app (required for the Owner). Keep the ten backup codes.
+4. Add staff at `/admin/staff`: they register a normal account and verify their email first; you then give their email a role. Every staff change asks for a fresh authenticator code (valid 10 minutes).
+
+Lost authenticator and backup codes on the last Owner account: run `npm run admin:recover-owner -- owner@example.com` with the deployment's database credentials. It clears two-step verification and signs the Owner out everywhere (audited); set it up again at the next sign-in. Use "Forgot password" for a lost password.
 
 ### Database
 

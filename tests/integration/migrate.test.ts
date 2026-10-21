@@ -2,7 +2,7 @@
 // ones, and prove each collection rejects a known-invalid document. Migrations are idempotent.
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { MongoServerError, ObjectId, type Db } from "mongodb";
-import { collections } from "@/lib/db/collections";
+import { adapterCollections, collections } from "@/lib/db/collections";
 import { runMigrations } from "@/lib/db/migrate";
 import { validatorFor } from "@/lib/db/validators";
 import { freshDb } from "./helpers";
@@ -15,6 +15,14 @@ afterAll(async () => cleanup());
 const now = new Date();
 /** One valid and one known-invalid document per collection. */
 const fixtures: Record<string, { valid: Record<string, unknown>; invalid: Record<string, unknown> }> = {
+  staffRoles: {
+    valid: { _id: new ObjectId(), key: "fixture_role", name: { bn: "পরীক্ষা", en: "Fixture" }, capabilities: ["orders.read"], builtIn: false, twoFactorRequired: false, createdAt: now, updatedAt: now },
+    invalid: { _id: new ObjectId(), key: "Fixture Role", name: { bn: "" }, capabilities: ["orders.everything"], builtIn: false, twoFactorRequired: false, createdAt: now, updatedAt: now },
+  },
+  installation: {
+    valid: { _id: "installation", ownerUserId: "pending-fixture", ownerClaimedAt: now, verification: "email" },
+    invalid: { _id: "installation-2", ownerUserId: "", ownerClaimedAt: "now", verification: "server" },
+  },
   outbox: {
     valid: { _id: new ObjectId(), type: "email.test", payload: {}, idempotencyKey: "email.test:a1:1", status: "pending", attempts: 0, availableAt: now, createdAt: now, updatedAt: now },
     invalid: { _id: new ObjectId(), type: "email.test", payload: {}, idempotencyKey: "email.test:a2:1", status: "sent", attempts: -1, availableAt: "now", createdAt: now, updatedAt: now },
@@ -36,11 +44,14 @@ const fixtures: Record<string, { valid: Record<string, unknown>; invalid: Record
 describe("db:migrate on a replica set", () => {
   it("creates every registered collection with its generated validator, then is a no-op", async () => {
     const first = await runMigrations(db);
-    expect(first.created.sort()).toEqual(collections.map((c) => c.name).sort());
+    // Validated collections plus the Better Auth adapter collections (indexes only, no validator: B3).
+    const all = [...collections.map((c) => c.name), ...adapterCollections.map((c) => c.name)].sort();
+    expect(first.created.sort()).toEqual(all);
     const second = await runMigrations(db);
     expect(second.created).toEqual([]);
     expect(second.updated).toEqual([]);
-    expect(second.unchanged.sort()).toEqual(collections.map((c) => c.name).sort());
+    expect(second.unchanged.sort()).toEqual(all);
+    expect(await db.collection("staffRoles").countDocuments({ builtIn: true })).toBe(6);
   });
 
   it("live validators equal the generated ones (strict, error)", async () => {

@@ -1,6 +1,6 @@
 # HorekBazar: verified status
 
-Audit of 2026-10-21 (Asia/Dhaka), made from a fresh `git fetch` with every check re-run in the agent
+Audit of 2026-10-21 (Asia/Dhaka), updated after Phase B3,, made from a fresh `git fetch` with every check re-run in the agent
 sandbox (Node.js 24.22.1). The approved scope is `DESIGN.md` plus `docs/BUILD-PLAN.md` §11
 (phases B0–B11). No completion percentage is given because the phases have no agreed weighting.
 
@@ -11,11 +11,11 @@ verified), **Partial**, **Missing**, **Blocked** (by an owner decision or creden
 
 | Item | Observed |
 |---|---|
-| `main` | `a22f81b` (merge of PR #2: B2). PRs #1 and #2 merged; none open before this audit |
-| `preview/horekbazar-v1` | `a22f81b` + docs commits (progress and this audit) |
+| `main` | `63474d9` (merge of PR #3, docs). B3 is on `preview/horekbazar-v1` with a PR to `main` |
+| `preview/horekbazar-v1` | `63474d9` + the B3 commits (fast-forward) |
 | CI on `main` | **none**: GitHub's activity log has no entry for the PR #2 merge (nor for the `a7b4a64` push), so no Actions run and no Vercel build started. PR #1's merge was recorded normally. CI on preview commits passed; one WebKit focus test failed once on PR #3 and passed on re-run (intermittent) |
 | Canonical deployment | **Not determined.** `dev-choice` has two Git-connected projects, `horekbazar` and `horekbazar-preview`. `https://horekbazar-preview.vercel.app` serves **B1**: `/admin/health` and `/api/jobs/drain` return 404, so it is not `a22f81b`. The deployed SHA cannot be read: the agent's Vercel token gets 403 on `dev-choice` (CLI and REST API) |
-| Local re-run | lint OK; typecheck OK; unit 74/74; `db:validators --check` OK; integration 24/24 (disposable MongoDB 8.0.4 replica set); catalogue checks OK; zero-variable `next build` OK; Playwright 134 passed, 58 skipped (opt-in screenshots and the WebKit maintenance check), 0 failed |
+| Local re-run (B3 branch) | lint OK; typecheck OK; unit 86/86; `db:validators --check` OK; integration 39/39 (disposable MongoDB 8.0.4 replica set); zero-variable `next build` OK; Playwright 178 passed, 58 skipped (opt-in screenshots and the WebKit maintenance check), 1 intermittent WebKit failure that passed 12/12 on repeat. Motomation gate on `/login`: **not verified** (exit 3, timeouts in this sandbox) |
 
 ## Requirements
 
@@ -34,16 +34,16 @@ verified), **Partial**, **Missing**, **Blocked** (by an owner decision or creden
 | Cart | Missing | B6 |
 | Checkout, COD, delivery address | Missing; Blocked | B7; addresses wait for D12 or D21 |
 | Order confirmation, history, tracking, cancellation | Missing | B7, B8 |
-| Customer accounts, authentication | Missing; Blocked | B3. The owner said "not yet"; D23 undecided |
-| First-Owner bootstrap, staff authorisation | Missing; Blocked | B3. Until then every admin capability is denied in production (`lib/platform/access.ts`; e2e 403 on `/admin/health`) |
+| Customer accounts, authentication | Verified (local; not deployed) | B3 on `feat/b3-identity`: Better Auth 1.7.12, email + password, verification, reset, optional Google, sessions page (`app/[locale]/{login,register,forgot-password,reset-password,verify-email,account}`); tests/unit/identity.test.ts, tests/integration/identity.test.ts, tests/e2e/identity.spec.ts. Email delivery needs a verified Resend domain |
+| First-Owner bootstrap, staff authorisation | Verified (local; not deployed) | `/admin/setup` (D23 option a + proposed `SETUP_TOKEN`), `/admin/staff`, `/admin/security` (TOTP, step-up, second factor); capability checks on the server in `lib/auth/server.ts` and `lib/actions/admin.ts`; built-in roles migration applied on `horekbazar_dev`. No Owner created yet (owner step) |
 | Product, category, inventory, media admin | Missing | B4 (depends on B3) |
-| Email and notifications | Missing; Blocked | B3/B9. Resend key is send-only and `EMAIL_FROM` is a gmail.com address; Resend needs a verified domain |
+| Email and notifications | Partial; Blocked for delivery | Identity emails (verify, reset, staff invite; bn/en) through the outbox with inline delivery (`lib/adapters/email/`, `lib/modules/identity/mail.ts`). Not delivered until a Resend domain is verified; order notifications are B9 |
 | Database port, topology check | Verified | `lib/adapters/db/client.ts`; standalone refused (tests/integration/topology.test.ts) |
 | Validators, migrations, indexes | Verified (platform collections) | `lib/db/*`, `db/validators/*`; tests/integration/migrate.test.ts (live compare, invalid insert, collMod, run-once). Commerce collections arrive with B3–B8 |
 | Outbox, leases, retries, observability | Verified | `lib/modules/platform/outbox.ts`; tests/integration/outbox.test.ts, drain-route.test.ts; health in `lib/platform/health.ts`. No handlers exist yet |
-| Audit log | Partial | Writer verified (tests); no staff writes exist to audit yet; `/admin/audit` is B10 |
-| Rate limiting | Partial | Port verified with unit tests; fails closed in production without Upstash; no consumer yet (B3 sign-in). Upstash adapter not tested against a live instance in CI |
-| Health checks without secrets | Verified | `/api/health` (names and states only), `/admin/health` (403 in production); tests/unit/health.test.ts "never includes a configured value" |
+| Audit log | Partial | Staff, setup, recovery and 2FA actions are audited (tests/integration/identity.test.ts); `/admin/audit` viewer is B10 |
+| Rate limiting | Verified (local) | Sign-in, registration, reset, verification resend and setup limited per IP and per email (`lib/modules/identity/limits.ts`); fails closed in production without Upstash. Upstash adapter not tested against a live instance in CI |
+| Health checks without secrets | Verified | `/api/health` (names and states only); `/admin/health` needs the `platform.health` capability in every environment (development-open mode removed); tests/unit/health.test.ts, tests/e2e/admin.spec.ts |
 | Secrets out of the client bundle | Verified | `npm run check:bundle` with canary values (CI) |
 | Setup page exposes variable names publicly | Partial (known) | Names only, never values; restricting to staff is planned with B3 (BUILD-PLAN) |
 | SEO: titles, descriptions, canonical, hreflang, JSON-LD | Missing | B5. Current pages are noindex setup states |
@@ -56,9 +56,9 @@ verified), **Partial**, **Missing**, **Blocked** (by an owner decision or creden
 
 | Item | State | What is needed |
 |---|---|---|
-| B3 approval | not approved ("not yet") | Every later phase depends on B3: B4 and B10 directly, B5–B9 through B4 |
-| D23 first-Owner verification | open | (a) require a configured email provider before `/admin/setup` completes: strongest proof of inbox control and recovery by email, but setup is blocked until Resend is verified. (b) audited `npm run owner:verify -- <email>` run by the deployer: no email dependency, but trust shifts to whoever has shell or database access, and password recovery still needs email later |
-| D19 development database | chosen: Atlas dev cluster; not supplied | A cluster separate from production, with a least-privilege user (`readWrite` on its database only). The previously supplied user has `atlasAdmin@admin` and is labelled production: not used for development, `db:migrate` not run |
+| B3 approval | approved 2026-10-21; implemented | PR from `feat/b3-identity`. B4 needs its own approval |
+| D23 first-Owner verification | default (a) implemented; owner confirmation pending | `SETUP_TOKEN` and `secondFactorAt` are proposed additions (DESIGN.md Decision trace). Original options: | (a) require a configured email provider before `/admin/setup` completes: strongest proof of inbox control and recovery by email, but setup is blocked until Resend is verified. (b) audited `npm run owner:verify -- <email>` run by the deployer: no email dependency, but trust shifts to whoever has shell or database access, and password recovery still needs email later |
+| D19 development database | in use: `horekbazar_dev`, migrated (owner approved) | The database user still has `atlasAdmin@admin`; create a least-privilege user (`readWrite` on `horekbazar_dev` only) and keep production on a separate cluster |
 | Rotate pasted credentials | required | Every value pasted into the chat on 2026-10-21 (Atlas, Upstash, Cloudinary, Resend, Gemini, Ably) is compromised and must be rotated |
 | Vercel access and canonical project | blocked | Re-authorise the agent's Vercel connection with access to `dev-choice`, and say which project (`horekbazar` or `horekbazar-preview`) is canonical |
 | `main` not deployed | owner action | Vercel → canonical project → Deployments → Redeploy `main` (`a22f81b`), or a new push to `main` |

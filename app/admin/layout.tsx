@@ -1,15 +1,16 @@
 // Admin root layout (BUILD-PLAN §2: AdminShell, no storefront dock). Not under [locale]: the admin
-// language follows the staff preference from B3, and the store default until then. Every admin page
-// is dynamic, private (frame-ancestors 'none', noindex) and capability-checked on the server.
+// language follows the signed-in staff member's preference (B3), else the store default. Every admin
+// page is dynamic, private (frame-ancestors 'none', noindex) and capability-checked on the server.
 import "../globals.css";
 import type { Metadata, Viewport } from "next";
 import { connection } from "next/server";
 import { preload } from "react-dom";
 import { getTranslations } from "next-intl/server";
-import { AdminShell } from "@/components/admin/AdminShell";
+import { AdminShell, type AdminNavItem } from "@/components/admin/AdminShell";
 import { preloadedFontByLocale } from "@/config/fonts";
 import { freshInstallDefaults } from "@/config/defaults";
-import { adminLocale } from "@/lib/i18n/admin";
+import { getAdminLocale, getPrincipal } from "@/lib/auth/server";
+import { decideStaffShell } from "@/lib/modules/identity/principal";
 
 export const viewport: Viewport = { width: "device-width", initialScale: 1, viewportFit: "cover", themeColor: "#faf7f0" };
 
@@ -20,16 +21,29 @@ export const metadata: Metadata = {
 
 export default async function AdminLayout({ children }: LayoutProps<"/admin">) {
   await connection(); // nonce CSP on every rendered page (D17 option a)
-  const locale = adminLocale();
+  const locale = await getAdminLocale();
   preload(preloadedFontByLocale[locale], { as: "font", type: "font/woff2", crossOrigin: "anonymous" });
-  const t = await getTranslations({ locale, namespace: "admin.shell" });
+  const t = await getTranslations({ locale, namespace: "admin" });
+  const principal = await getPrincipal();
+  const nav: AdminNavItem[] = [];
+  const shell = decideStaffShell(principal).result;
+  if (shell === "two_factor_enrolment" || shell === "second_factor") nav.push({ href: "/admin/security", label: t("nav.security") });
+  if (principal && shell === "allowed") {
+    const caps = principal.role?.capabilities;
+    if (caps?.has("staff.manage")) nav.push({ href: "/admin/staff", label: t("nav.staff") });
+    nav.push({ href: "/admin/security", label: t("nav.security") });
+    if (caps?.has("platform.read")) nav.push({ href: "/admin/health", label: t("nav.health") });
+    nav.push({ href: locale === "en" ? "/en" : "/", label: t("nav.store") });
+  }
   return (
     <html lang={locale} data-font-preset={freshInstallDefaults.theme.fontPreset}>
       <body>
         <a href="#main" className="skip-link">
-          {t("skipToMain")}
+          {t("shell.skipToMain")}
         </a>
-        <AdminShell label={t("label")}>{children}</AdminShell>
+        <AdminShell label={t("shell.label")} nav={nav} navLabel={t("nav.label")} signOutLabel={t("nav.signOut")} locale={locale}>
+          {children}
+        </AdminShell>
       </body>
     </html>
   );
