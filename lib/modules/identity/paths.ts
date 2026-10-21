@@ -14,11 +14,31 @@ export const ADMIN_PAGE_CAPABILITY = {
   "/admin/security": null,
   "/admin/staff": "staff.manage",
   "/admin/health": "platform.read",
+  // B4 catalogue administration. Sub-pages (/admin/products/new, /admin/products/<id>) use the
+  // capability of their section; mutations check their own capability again in the server action.
+  "/admin/products": "catalogue.write",
+  "/admin/categories": "catalogue.write",
+  "/admin/inventory": "inventory.adjust",
+  "/admin/collections": "merch.write",
+  "/admin/homepage": "merch.write",
+  "/admin/banners": "merch.write",
+  "/admin/settings": "settings.write",
+  "/admin/settings/delivery": "delivery.write",
 } as const satisfies Record<string, Capability | null>;
 export type AdminPage = keyof typeof ADMIN_PAGE_CAPABILITY;
 
+/** The table entry for a path: an exact match, else the longest section prefix (/admin/products/x → /admin/products). */
+export function adminPageFor(pathname: string | null): AdminPage | null {
+  if (!pathname) return null;
+  const path = pathname.split("?")[0]!.replace(/\/+$/, "") || "/";
+  if (path in ADMIN_PAGE_CAPABILITY) return path as AdminPage;
+  const prefix = (Object.keys(ADMIN_PAGE_CAPABILITY) as AdminPage[]).filter((p) => p !== "/admin" && path.startsWith(`${p}/`)).sort((a, b) => b.length - a.length)[0];
+  return prefix ?? null;
+}
+
 export function adminPageCapability(pathname: string | null): Capability | null {
-  return pathname && pathname in ADMIN_PAGE_CAPABILITY ? ADMIN_PAGE_CAPABILITY[pathname as AdminPage] : null;
+  const page = adminPageFor(pathname);
+  return page ? ADMIN_PAGE_CAPABILITY[page] : null;
 }
 export function localePath(locale: "bn" | "en", path: string): string {
   const clean = path.startsWith("/") ? path : `/${path}`;

@@ -1,0 +1,217 @@
+{
+  "$jsonSchema": {
+    "bsonType": "object",
+    "properties": {
+      "_id": {
+        "bsonType": "objectId"
+      },
+      "productId": {
+        "bsonType": "objectId"
+      },
+      "sku": {
+        "bsonType": "string",
+        "minLength": 2,
+        "maxLength": 64,
+        "pattern": "^[A-Z0-9]+(?:-[A-Z0-9]+)*$"
+      },
+      "title": {
+        "bsonType": "object",
+        "properties": {
+          "bn": {
+            "bsonType": "string",
+            "minLength": 1,
+            "maxLength": 60
+          },
+          "en": {
+            "bsonType": "string",
+            "minLength": 1,
+            "maxLength": 60
+          }
+        },
+        "required": [
+          "bn"
+        ],
+        "additionalProperties": false
+      },
+      "options": {
+        "maxItems": 5,
+        "bsonType": "array",
+        "items": {
+          "bsonType": "object",
+          "properties": {
+            "key": {
+              "bsonType": "string",
+              "maxLength": 30,
+              "pattern": "^[a-z][a-z0-9_]*$"
+            },
+            "value": {
+              "bsonType": "object",
+              "properties": {
+                "bn": {
+                  "bsonType": "string",
+                  "minLength": 1,
+                  "maxLength": 60
+                },
+                "en": {
+                  "bsonType": "string",
+                  "minLength": 1,
+                  "maxLength": 60
+                }
+              },
+              "required": [
+                "bn"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "key",
+            "value"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "netQuantity": {
+        "bsonType": "object",
+        "properties": {
+          "value": {
+            "bsonType": [
+              "int",
+              "long",
+              "double"
+            ],
+            "minimum": 0,
+            "exclusiveMinimum": true,
+            "maximum": 100000
+          },
+          "unit": {
+            "bsonType": "string",
+            "enum": [
+              "g",
+              "kg",
+              "ml",
+              "l",
+              "pc"
+            ]
+          },
+          "verified": {
+            "bsonType": "bool"
+          }
+        },
+        "required": [
+          "value",
+          "unit",
+          "verified"
+        ],
+        "additionalProperties": false
+      },
+      "price": {
+        "bsonType": "object",
+        "properties": {
+          "amountMinor": {
+            "bsonType": [
+              "int",
+              "long"
+            ],
+            "minimum": 0
+          },
+          "currency": {
+            "bsonType": "string",
+            "enum": [
+              "BDT"
+            ]
+          }
+        },
+        "required": [
+          "amountMinor",
+          "currency"
+        ],
+        "additionalProperties": false
+      },
+      "compareAt": {
+        "bsonType": "object",
+        "properties": {
+          "amountMinor": {
+            "bsonType": [
+              "int",
+              "long"
+            ],
+            "minimum": 0
+          },
+          "currency": {
+            "bsonType": "string",
+            "enum": [
+              "BDT"
+            ]
+          }
+        },
+        "required": [
+          "amountMinor",
+          "currency"
+        ],
+        "additionalProperties": false
+      },
+      "barcode": {
+        "bsonType": "string",
+        "maxLength": 40,
+        "pattern": "^[0-9A-Za-z-]+$"
+      },
+      "weightGrams": {
+        "bsonType": [
+          "int",
+          "long"
+        ],
+        "minimum": 1,
+        "maximum": 1000000
+      },
+      "position": {
+        "bsonType": [
+          "int",
+          "long"
+        ],
+        "minimum": 0,
+        "maximum": 1000
+      },
+      "status": {
+        "bsonType": "string",
+        "enum": [
+          "active",
+          "archived"
+        ]
+      },
+      "sample": {
+        "bsonType": "bool",
+        "enum": [
+          true
+        ]
+      },
+      "version": {
+        "bsonType": [
+          "int",
+          "long"
+        ],
+        "minimum": 1
+      },
+      "createdAt": {
+        "bsonType": "date"
+      },
+      "updatedAt": {
+        "bsonType": "date"
+      }
+    },
+    "required": [
+      "_id",
+      "productId",
+      "sku",
+      "title",
+      "options",
+      "price",
+      "position",
+      "status",
+      "version",
+      "createdAt",
+      "updatedAt"
+    ],
+    "additionalProperties": false
+  }
+}

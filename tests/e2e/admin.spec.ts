@@ -4,7 +4,9 @@
 import { expect, test } from "@playwright/test";
 import { watchCsp } from "./helpers";
 
-for (const path of ["/admin", "/admin/health", "/admin/staff", "/admin/security", "/admin/orders"]) {
+const B4_PAGES = ["/admin/products", "/admin/products/new", "/admin/products/66f0c0ffee0000000000abcd", "/admin/categories", "/admin/inventory", "/admin/collections", "/admin/homepage", "/admin/banners", "/admin/settings", "/admin/settings/delivery"];
+
+for (const path of ["/admin", "/admin/health", "/admin/staff", "/admin/security", "/admin/orders", ...B4_PAGES]) {
   test(`${path} without a session redirects to sign-in, uncached`, async ({ request }) => {
     const r = await request.get(path, { maxRedirects: 0 });
     expect(r.status()).toBe(307);
@@ -51,4 +53,20 @@ test("job drain refuses requests while CRON_SECRET is not configured", async ({ 
   expect(await r.json()).toEqual({ error: "not_configured" });
   expect(r.headers()["cache-control"]).toBe("no-store");
   expect((await request.get("/api/jobs/drain")).status()).toBe(405);
+});
+
+test("media upload signing: cross-origin is refused, signed-out is 401, never a signature", async ({ request, baseURL }) => {
+  const cross = await request.post("/api/media/sign", { data: { purpose: "product" }, headers: { origin: "https://evil.example" } });
+  expect(cross.status()).toBe(403);
+  expect(await cross.json()).toEqual({ error: "cross_origin" });
+  const noOrigin = await request.post("/api/media/sign", { data: { purpose: "product" } });
+  expect(noOrigin.status()).toBe(403);
+  const origin = new URL(baseURL!).origin;
+  const signedOut = await request.post("/api/media/sign", { data: { purpose: "product" }, headers: { origin } });
+  expect(signedOut.status()).toBe(401);
+  expect(signedOut.headers()["cache-control"]).toBe("no-store");
+  const body = await signedOut.text();
+  expect(body).not.toMatch(/signature|api_key/i);
+  const bad = await request.post("/api/media/sign", { data: { purpose: "avatar" }, headers: { origin } });
+  expect(bad.status()).toBe(400);
 });

@@ -39,6 +39,47 @@ const fixtures: Record<string, { valid: Record<string, unknown>; invalid: Record
     valid: { _id: "0001-test", appliedAt: now },
     invalid: { _id: "not a migration id", appliedAt: now },
   },
+  categories: {
+    valid: { _id: new ObjectId(), slug: "rice-and-flour", parentId: null, name: { bn: "চাল ও আটা", en: "Rice & Flour" }, position: 1, status: "draft", version: 1, createdAt: now, updatedAt: now },
+    invalid: { _id: new ObjectId(), slug: "Rice Flour", parentId: "grocery", name: { bn: "" }, position: -1, status: "live", version: 0, createdAt: now, updatedAt: now },
+  },
+  products: {
+    valid: { _id: new ObjectId(), slug: "miniket-rice", name: { bn: "মিনিকেট চাল" }, primaryCategoryId: new ObjectId(), categoryIds: [new ObjectId()], attributes: [], media: [], status: "draft", version: 1, createdAt: now, updatedAt: now },
+    invalid: { _id: new ObjectId(), slug: "miniket-rice-2", name: { bn: "মিনিকেট চাল" }, primaryCategoryId: new ObjectId(), categoryIds: [], attributes: [], media: [], status: "draft", version: 1, createdAt: now, updatedAt: now, rating: 5 },
+  },
+  variants: {
+    valid: { _id: new ObjectId(), productId: new ObjectId(), sku: "HB-GRC-001-1KG", title: { bn: "১ কেজি" }, options: [], price: { amountMinor: 8500, currency: "BDT" }, position: 0, status: "active", version: 1, createdAt: now, updatedAt: now },
+    invalid: { _id: new ObjectId(), productId: new ObjectId(), sku: "hb-lower", title: { bn: "১ কেজি" }, options: [], price: { amountMinor: 85.5, currency: "USD" }, position: 0, status: "active", version: 1, createdAt: now, updatedAt: now },
+  },
+  stock: {
+    valid: { _id: new ObjectId(), variantId: new ObjectId(), onHand: 0, reserved: 0, available: 0, lowStockThreshold: 5, version: 1, updatedAt: now },
+    invalid: { _id: new ObjectId(), variantId: new ObjectId(), onHand: 1, reserved: 2, available: -1, lowStockThreshold: 5, version: 1, updatedAt: now },
+  },
+  inventoryLedger: {
+    valid: { _id: new ObjectId(), variantId: new ObjectId(), kind: "receive", qty: 5, onHandAfter: 5, reservedAfter: 0, actor: { type: "staff", id: "u1" }, refType: "stock", refId: "adj12345", lineRef: "v1", idempotencyKey: "stock:adj12345:v1:receive", createdAt: now },
+    invalid: { _id: new ObjectId(), variantId: new ObjectId(), kind: "receive", qty: 5, onHandAfter: 5, reservedAfter: 0, actor: { type: "staff", id: "u1" }, refType: "stock", refId: "adj12345", lineRef: "v1", idempotencyKey: "adj12345:receive", createdAt: now },
+  },
+  settings: {
+    valid: { _id: "settings", store: { name: { bn: "হরেকবাজার" }, contact: {} }, theme: { fontPreset: "khata", accent: "#1E4E9C" }, locale: { default: "bn", numerals: "bengali", grouping: "south_asian" }, delivery: { zones: [] }, pricing: { roundingUnit: 100 }, features: { wishlist: false, brands: false, reviews: false }, version: 1, updatedAt: now },
+    invalid: { _id: "settings-2", store: { name: { bn: "হরেকবাজার" }, contact: {} }, theme: { fontPreset: "comic", accent: "blue" }, locale: { default: "bn", numerals: "bengali", grouping: "south_asian" }, delivery: { zones: [] }, pricing: { roundingUnit: 100 }, features: { wishlist: false, brands: false, reviews: false }, version: 1, updatedAt: now },
+  },
+  collections: {
+    valid: { _id: new ObjectId(), slug: "eid-essentials", name: { bn: "ঈদের প্রয়োজনীয়" }, kind: "manual", productIds: [], status: "draft", version: 1, createdAt: now, updatedAt: now },
+    invalid: { _id: new ObjectId(), slug: "eid-essentials-2", name: { bn: "ঈদের প্রয়োজনীয়" }, kind: "smart", productIds: ["x"], status: "draft", version: 1, createdAt: now, updatedAt: now },
+  },
+  homeSections: {
+    valid: { _id: new ObjectId(), type: "richText", order: 1, data: { body: { bn: "স্বাগতম" } }, status: "draft", version: 1, createdAt: now, updatedAt: now },
+    // A banner section carrying rich-text data: the union rejects data that does not match the type.
+    invalid: { _id: new ObjectId(), type: "banner", order: 1, data: { body: { bn: "স্বাগতম" } }, status: "draft", version: 1, createdAt: now, updatedAt: now },
+  },
+  banners: {
+    valid: { _id: new ObjectId(), image: { publicId: "horekbazar/banners/eid", rights: "Own photo, 2026" }, alt: { bn: "ঈদের অফার" }, href: "/c/grocery", placement: "home_top", status: "draft", version: 1, createdAt: now, updatedAt: now },
+    invalid: { _id: new ObjectId(), image: { publicId: "horekbazar/banners/eid", rights: "" }, alt: { bn: "ঈদের অফার" }, href: "https://evil.example", placement: "home_top", status: "draft", version: 1, createdAt: now, updatedAt: now },
+  },
+  catalogueLocks: {
+    valid: { _id: "categoryTree", seq: 1, updatedAt: now },
+    invalid: { _id: "anything", seq: 0, updatedAt: now },
+  },
 };
 
 describe("db:migrate on a replica set", () => {

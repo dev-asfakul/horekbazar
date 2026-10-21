@@ -4,6 +4,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
+import { sectionsFor } from "@/lib/admin/sections";
 import { gateStaffPage, getAdminLocale, getIdentity } from "@/lib/auth/server";
 import { ownerExists } from "@/lib/modules/identity/staff";
 
@@ -19,11 +20,7 @@ export default async function AdminHomePage() {
   const principal = await gateStaffPage("/admin");
   const t = await getTranslations({ locale, namespace: "admin" });
   const caps = principal.role!.capabilities;
-  const sections = [
-    caps.has("staff.manage") ? { href: "/admin/staff", label: t("nav.staff"), desc: t("home.staffDesc") } : null,
-    { href: "/admin/security", label: t("nav.security"), desc: t("home.securityDesc") },
-    caps.has("platform.read") ? { href: "/admin/health", label: t("nav.health"), desc: t("home.healthDesc") } : null,
-  ].filter((s) => s !== null);
+  const sections = sectionsFor(caps).map((s) => ({ href: s.href, label: t(`nav.${s.key}`), desc: t(`home.${s.key}Desc`) }));
   return (
     <div className="admin-page" data-testid="admin-home">
       <h1 className="font-display admin-title">{t("home.title")}</h1>

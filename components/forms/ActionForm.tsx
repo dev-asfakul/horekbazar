@@ -12,13 +12,20 @@ import { idle } from "@/lib/actions/form-state";
 export interface FieldSpec {
   name: string;
   label: string;
-  type?: "text" | "email" | "password" | "tel" | "select" | "otp";
+  /** `number` renders a text input with a decimal keypad (prices accept "425.50"); `multiselect` posts one value per choice. */
+  type?: "text" | "email" | "password" | "tel" | "select" | "otp" | "textarea" | "number" | "checkbox" | "multiselect" | "datetime-local" | "url";
   autoComplete?: string;
   hint?: string;
   required?: boolean;
   options?: { value: string; label: string }[];
   defaultValue?: string;
-  inputMode?: "numeric" | "tel" | "email" | "text";
+  /** Initial choices for `multiselect`; a checkbox is checked when defaultValue is "on". */
+  defaultValues?: string[];
+  inputMode?: "numeric" | "tel" | "email" | "text" | "decimal";
+  /** Span both columns of a `layout="grid"` form. */
+  wide?: boolean;
+  rows?: number;
+  maxLength?: number;
 }
 
 export interface FormMessages {
@@ -44,6 +51,10 @@ interface Props {
   renderSuccess?: (state: Extract<FormState, { status: "success" }>) => ReactNode;
   footer?: ReactNode;
   testId?: string;
+  /** `grid` puts fields in two columns from 768 px (Bengali and English side by side). */
+  layout?: "stack" | "grid" | "inline";
+  /** Content placed before the fields (for example a preview). */
+  children?: ReactNode;
 }
 
 function ErrorIcon() {
@@ -68,7 +79,7 @@ function PasswordInput(props: React.InputHTMLAttributes<HTMLInputElement> & { sh
   );
 }
 
-export function ActionForm({ action, fields, hidden, submitLabel, pendingLabel, messages, variant = "primary", hideOnSuccess, renderSuccess, footer, testId }: Props) {
+export function ActionForm({ action, fields, hidden, submitLabel, pendingLabel, messages, variant = "primary", hideOnSuccess, renderSuccess, footer, testId, layout = "stack", children }: Props) {
   const [state, formAction, pending] = useActionState(action, idle);
   const summaryRef = useRef<HTMLDivElement>(null);
   const successRef = useRef<HTMLParagraphElement>(null);
@@ -94,7 +105,7 @@ export function ActionForm({ action, fields, hidden, submitLabel, pendingLabel, 
   }
 
   return (
-    <form action={formAction} className="form" noValidate data-testid={testId}>
+    <form action={formAction} className="form" data-layout={layout} noValidate data-testid={testId}>
       {state.status === "error" ? (
         <div ref={summaryRef} tabIndex={-1} role="alert" className="form-summary">
           <p className="form-summary-title">
@@ -117,6 +128,7 @@ export function ActionForm({ action, fields, hidden, submitLabel, pendingLabel, 
         </p>
       ) : null}
       {state.status === "success" ? renderSuccess?.(state) : null}
+      {children}
       {hidden ? Object.entries(hidden).map(([name, value]) => <input key={name} type="hidden" name={name} value={value} />) : null}
       {fields.map((f) => {
         const inputId = `${id}-${f.name}`;
@@ -132,16 +144,33 @@ export function ActionForm({ action, fields, hidden, submitLabel, pendingLabel, 
           className: "field-input",
         } as const;
         return (
-          <div className="field" key={f.name} data-invalid={error ? "" : undefined}>
-            <label htmlFor={inputId} className="field-label">
-              {f.label}
-            </label>
+          <div className="field" key={f.name} data-invalid={error ? "" : undefined} data-wide={f.wide ? "" : undefined} data-type={f.type}>
+            {f.type === "checkbox" ? (
+              <label htmlFor={inputId} className="field-check">
+                <input {...common} className="field-checkbox" type="checkbox" defaultChecked={(values[f.name] ?? f.defaultValue) === "on"} />
+                <span className="field-label">{f.label}</span>
+              </label>
+            ) : (
+              <label htmlFor={inputId} className="field-label">
+                {f.label}
+              </label>
+            )}
             {f.hint ? (
               <p id={`${inputId}-hint`} className="field-hint">
                 {f.hint}
               </p>
             ) : null}
-            {f.type === "select" ? (
+            {f.type === "checkbox" ? null : f.type === "textarea" ? (
+              <textarea {...common} rows={f.rows ?? 4} maxLength={f.maxLength} defaultValue={values[f.name] ?? f.defaultValue} />
+            ) : f.type === "multiselect" ? (
+              <select {...common} multiple size={Math.min(8, Math.max(3, f.options?.length ?? 3))} defaultValue={values[f.name] !== undefined ? values[f.name]!.split(",").filter(Boolean) : f.defaultValues}>
+                {f.options?.map((o) => (
+                  <option key={o.value} value={o.value}>
+                    {o.label}
+                  </option>
+                ))}
+              </select>
+            ) : f.type === "select" ? (
               <select {...common} defaultValue={values[f.name] ?? f.defaultValue}>
                 {f.options?.map((o) => (
                   <option key={o.value} value={o.value}>
@@ -154,8 +183,9 @@ export function ActionForm({ action, fields, hidden, submitLabel, pendingLabel, 
             ) : (
               <input
                 {...common}
-                type={f.type === "otp" ? "text" : (f.type ?? "text")}
-                inputMode={f.type === "otp" ? "numeric" : f.inputMode}
+                type={f.type === "otp" || f.type === "number" ? "text" : (f.type ?? "text")}
+                inputMode={f.type === "otp" ? "numeric" : f.type === "number" ? (f.inputMode ?? "decimal") : f.inputMode}
+                maxLength={f.maxLength}
                 defaultValue={values[f.name] ?? f.defaultValue}
                 {...(f.type === "otp" ? { maxLength: 24, spellCheck: false, autoCapitalize: "off" } : {})}
                 {...(f.type === "email" ? { spellCheck: false, autoCapitalize: "off" } : {})}

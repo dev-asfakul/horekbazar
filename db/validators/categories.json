@@ -1,0 +1,158 @@
+{
+  "$jsonSchema": {
+    "bsonType": "object",
+    "properties": {
+      "_id": {
+        "bsonType": "objectId"
+      },
+      "slug": {
+        "bsonType": "string",
+        "minLength": 2,
+        "maxLength": 80,
+        "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+      },
+      "parentId": {
+        "anyOf": [
+          {
+            "bsonType": "objectId"
+          },
+          {
+            "bsonType": "null"
+          }
+        ]
+      },
+      "name": {
+        "bsonType": "object",
+        "properties": {
+          "bn": {
+            "bsonType": "string",
+            "minLength": 1,
+            "maxLength": 80
+          },
+          "en": {
+            "bsonType": "string",
+            "minLength": 1,
+            "maxLength": 80
+          }
+        },
+        "required": [
+          "bn"
+        ],
+        "additionalProperties": false
+      },
+      "description": {
+        "bsonType": "object",
+        "properties": {
+          "bn": {
+            "bsonType": "string",
+            "minLength": 1,
+            "maxLength": 500
+          },
+          "en": {
+            "bsonType": "string",
+            "minLength": 1,
+            "maxLength": 500
+          }
+        },
+        "required": [
+          "bn"
+        ],
+        "additionalProperties": false
+      },
+      "position": {
+        "bsonType": [
+          "int",
+          "long"
+        ],
+        "minimum": 0,
+        "maximum": 100000
+      },
+      "seo": {
+        "bsonType": "object",
+        "properties": {
+          "title": {
+            "bsonType": "object",
+            "properties": {
+              "bn": {
+                "bsonType": "string",
+                "minLength": 1,
+                "maxLength": 70
+              },
+              "en": {
+                "bsonType": "string",
+                "minLength": 1,
+                "maxLength": 70
+              }
+            },
+            "required": [
+              "bn"
+            ],
+            "additionalProperties": false
+          },
+          "description": {
+            "bsonType": "object",
+            "properties": {
+              "bn": {
+                "bsonType": "string",
+                "minLength": 1,
+                "maxLength": 170
+              },
+              "en": {
+                "bsonType": "string",
+                "minLength": 1,
+                "maxLength": 170
+              }
+            },
+            "required": [
+              "bn"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      },
+      "status": {
+        "bsonType": "string",
+        "enum": [
+          "draft",
+          "published",
+          "archived"
+        ]
+      },
+      "publishedAt": {
+        "bsonType": "date"
+      },
+      "sample": {
+        "bsonType": "bool",
+        "enum": [
+          true
+        ]
+      },
+      "version": {
+        "bsonType": [
+          "int",
+          "long"
+        ],
+        "minimum": 1
+      },
+      "createdAt": {
+        "bsonType": "date"
+      },
+      "updatedAt": {
+        "bsonType": "date"
+      }
+    },
+    "required": [
+      "_id",
+      "slug",
+      "parentId",
+      "name",
+      "position",
+      "status",
+      "version",
+      "createdAt",
+      "updatedAt"
+    ],
+    "additionalProperties": false
+  }
+}

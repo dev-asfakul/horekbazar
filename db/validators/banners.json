@@ -1,0 +1,114 @@
+{
+  "$jsonSchema": {
+    "bsonType": "object",
+    "properties": {
+      "_id": {
+        "bsonType": "objectId"
+      },
+      "image": {
+        "bsonType": "object",
+        "properties": {
+          "publicId": {
+            "bsonType": "string",
+            "maxLength": 200,
+            "pattern": "^[A-Za-z0-9_\\-/]+$"
+          },
+          "rights": {
+            "bsonType": "string",
+            "minLength": 1,
+            "maxLength": 300
+          },
+          "width": {
+            "bsonType": [
+              "int",
+              "long"
+            ],
+            "minimum": 1
+          },
+          "height": {
+            "bsonType": [
+              "int",
+              "long"
+            ],
+            "minimum": 1
+          }
+        },
+        "required": [
+          "publicId",
+          "rights"
+        ],
+        "additionalProperties": false
+      },
+      "alt": {
+        "bsonType": "object",
+        "properties": {
+          "bn": {
+            "bsonType": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "en": {
+            "bsonType": "string",
+            "minLength": 1,
+            "maxLength": 200
+          }
+        },
+        "required": [
+          "bn"
+        ],
+        "additionalProperties": false
+      },
+      "href": {
+        "bsonType": "string",
+        "maxLength": 300,
+        "pattern": "^\\/(?!\\/)[A-Za-z0-9\\-._~/?=&%]*$"
+      },
+      "placement": {
+        "bsonType": "string",
+        "enum": [
+          "home_top",
+          "home_mid",
+          "category_top"
+        ]
+      },
+      "status": {
+        "bsonType": "string",
+        "enum": [
+          "draft",
+          "published",
+          "archived"
+        ]
+      },
+      "visibleFrom": {
+        "bsonType": "date"
+      },
+      "visibleTo": {
+        "bsonType": "date"
+      },
+      "version": {
+        "bsonType": [
+          "int",
+          "long"
+        ],
+        "minimum": 1
+      },
+      "createdAt": {
+        "bsonType": "date"
+      },
+      "updatedAt": {
+        "bsonType": "date"
+      }
+    },
+    "required": [
+      "_id",
+      "image",
+      "alt",
+      "placement",
+      "status",
+      "version",
+      "createdAt",
+      "updatedAt"
+    ],
+    "additionalProperties": false
+  }
+}

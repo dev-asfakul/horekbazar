@@ -1,6 +1,6 @@
 # HorekBazar: verified status
 
-Audit of 2026-10-21 (Asia/Dhaka), updated after Phase B3, made from a fresh `git fetch` with every check re-run in the agent
+Audit of 2026-10-21 (Asia/Dhaka), updated after Phase B3 and Phase B4 (2026-10-22), made from a fresh `git fetch` with every check re-run in the agent
 sandbox (Node.js 24.22.1). The approved scope is `DESIGN.md` plus `docs/BUILD-PLAN.md` §11
 (phases B0–B11). No completion percentage is given because the phases have no agreed weighting.
 
@@ -13,9 +13,10 @@ verified), **Partial**, **Missing**, **Blocked** (by an owner decision or creden
 |---|---|
 | `main` | `7adc38f` (merge of PR #6). CI `push` success on `a8a26a6`, `67e5042`, `7adc38f`; Vercel `horekbazar-preview` status success on `7adc38f`. Protection: required check `check`, enforced for admins, no force pushes |
 | `preview/horekbazar-v1` | `main` plus the 2026-10-22 dock focus fix and audit docs |
-| Repository visibility | **public** (GitHub API, 2026-10-22), although AGENTS.md says private. Secret scanning and push protection are disabled. History pattern scan: no real credentials, only three test fixtures |
+| Repository visibility | **public** (GitHub API, 2026-10-22); owner approved private, held because GitHub Free would remove branch protection and secret scanning. Secret scanning and push protection **enabled** 2026-10-22. History pattern scan: no real credentials, only three test fixtures |
 | CI on `main` | `push` runs succeeded for the PR #3 to #6 merges. Earlier, GitHub recorded no push event for the PR #2 merge or `a7b4a64`. The intermittent WebKit 375 px focus failure was a real slide-in defect, fixed 2026-10-22 (PROGRESS) |
 | Canonical deployment | **Not determined.** `dev-choice` has two Git-connected projects, `horekbazar` and `horekbazar-preview`. `https://horekbazar-preview.vercel.app` now serves B3 (`/admin/health` 307 to login) with `database: not_configured`. The deployed SHA cannot be read: the agent's Vercel token gets 403 on `dev-choice` (CLI and REST API) |
+| B4 run (2026-10-22, `preview/horekbazar-v1`) | lint 0 problems; typecheck OK; unit 107/107; integration 81/81; zero-variable build OK; Playwright 215 passed, 58 skipped (same intentional skips), 0 failed; `test:e2e:db` 2/2; Motomation gate on `/` **FAIL**, exit 1 (storefront SEO, header search form states, completeness B5–B11, session back-button finding not reproduced manually; page checks pass) |
 | Local re-run (2026-10-22, `7adc38f`) | `npm ci` OK; lint OK; typecheck OK; unit 86/86; `db:validators --check` OK; integration 39/39 (disposable MongoDB 8.0.4 replica set); zero-variable `next build` OK; Playwright 179 passed, 58 skipped (opt-in screenshots and the WebKit maintenance check), 0 failed. Motomation gate on `/login` (zero-variable build): **FAIL**, exit 1; page checks pass, failures are SEO metadata, header search form states and later-phase completeness (PROGRESS 2026-10-22) |
 
 ## Requirements
@@ -30,17 +31,17 @@ verified), **Partial**, **Missing**, **Blocked** (by an owner decision or creden
 | Loading and empty states for data | Missing | No data pages exist yet (B5+) |
 | Homepage product discovery | Missing | `/` shows setup-required; phase B5 |
 | Category navigation, listings | Missing | `/categories`, `/c/*` show setup-required (real routes, no fake content); B5 |
-| Product detail (price, stock, variants, images) | Missing; Blocked for real data | B5. D11: catalogue records, prices, images and compliance are unapproved; nothing imported |
+| Product detail (price, stock, variants, images) | Missing; Blocked for real data | B5. D11: catalogue records, prices, images and compliance are unapproved for production; since 2026-10-22 they are loaded into `horekbazar_dev` as `sample: true` drafts for admin testing (DATA.md) |
 | Search, filter, sort, pagination | Missing | B5. The header search form submits to `/search`, which shows setup-required |
 | Cart | Missing | B6 |
 | Checkout, COD, delivery address | Missing; Blocked | B7; addresses wait for D12 or D21 |
 | Order confirmation, history, tracking, cancellation | Missing | B7, B8 |
 | Customer accounts, authentication | Verified (local); deployed without a database | B3 (`main` `a8a26a6`): Better Auth 1.7.12, email + password, verification, reset, optional Google, sessions page (`app/[locale]/{login,register,forgot-password,reset-password,verify-email,account}`); tests/unit/identity.test.ts, tests/integration/identity.test.ts, tests/e2e/identity.spec.ts. Email delivery needs a verified Resend domain |
 | First-Owner bootstrap, staff authorisation | Verified (local); deployed without a database | `/admin/setup` (D23 option a + proposed `SETUP_TOKEN`), `/admin/staff`, `/admin/security` (TOTP, step-up, second factor); capability checks on the server in `lib/auth/server.ts` and `lib/actions/admin.ts`; built-in roles migration applied on `horekbazar_dev`. No Owner created yet (owner step) |
-| Product, category, inventory, media admin | Missing | B4 (depends on B3) |
+| Product, category, inventory, media admin | Verified (local); not yet deployed with a database | B4 (2026-10-22): `app/admin/{products,categories,inventory,collections,banners,homepage,settings}`, `lib/actions/{catalogue,merch}.ts`, `lib/modules/{catalogue,settings,merch}/`, `/api/media/sign`; tests/integration/{catalogue,settings-merch,seed}.test.ts, tests/unit/{admin-forms,settings,media}.test.ts, tests/e2e-db/catalogue-admin.spec.ts (signed-in CRUD in Chromium), tests/e2e/admin.spec.ts. Uploads need Cloudinary credentials; integrations settings deferred |
 | Email and notifications | Partial; Blocked for delivery | Identity emails (verify, reset, staff invite; bn/en) through the outbox with inline delivery (`lib/adapters/email/`, `lib/modules/identity/mail.ts`). Not delivered until a Resend domain is verified; order notifications are B9 |
 | Database port, topology check | Verified | `lib/adapters/db/client.ts`; standalone refused (tests/integration/topology.test.ts) |
-| Validators, migrations, indexes | Verified (platform collections) | `lib/db/*`, `db/validators/*`; tests/integration/migrate.test.ts (live compare, invalid insert, collMod, run-once). Commerce collections arrive with B3–B8 |
+| Validators, migrations, indexes | Verified (platform, identity, catalogue, settings, merchandising: 16 validators; applied on `horekbazar_dev` 2026-10-22) | `lib/db/*`, `db/validators/*`; tests/integration/migrate.test.ts (live compare, invalid insert, collMod, run-once). Commerce collections arrive with B3–B8 |
 | Outbox, leases, retries, observability | Verified | `lib/modules/platform/outbox.ts`; tests/integration/outbox.test.ts, drain-route.test.ts; health in `lib/platform/health.ts`. No handlers exist yet |
 | Audit log | Partial | Staff, setup, recovery and 2FA actions are audited (tests/integration/identity.test.ts); `/admin/audit` viewer is B10 |
 | Rate limiting | Verified (local) | Sign-in, registration, reset, verification resend and setup limited per IP and per email (`lib/modules/identity/limits.ts`); fails closed in production without Upstash. Upstash adapter not tested against a live instance in CI |

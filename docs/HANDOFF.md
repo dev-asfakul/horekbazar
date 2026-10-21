@@ -1,6 +1,6 @@
 # Handoff for the next developer or agent
 
-Last updated 2026-10-22 (Asia/Dhaka), after the takeover audit that followed Phase B3 (identity). Read this first, then
+Last updated 2026-10-22 (Asia/Dhaka), after Phase B4 (catalogue administration). Read this first, then
 `AGENTS.md`, `DESIGN.md`, `docs/BUILD-PLAN.md` §11 (phases) and §13 (open decisions),
 `docs/STATUS.md` (verified state per requirement) and the newest entries of `docs/PROGRESS.md`.
 
@@ -11,15 +11,94 @@ Last updated 2026-10-22 (Asia/Dhaka), after the takeover audit that followed Pha
 | B0 toolchain, B1 shell, B2 data platform | merged to `main` (PRs #1, #2, #3) |
 | Docs and fixes after B3 | PRs #5, #6 merged; 2026-10-22 dock focus fix and audit (see PROGRESS) |
 | B3 identity | merged to `main` (PR #4, `a8a26a6`); deployed to `horekbazar-preview` without a database configured |
-| B4 catalogue admin and later | not started; each phase needs explicit owner approval (BUILD-PLAN §0) |
+| B4 catalogue admin | complete on `preview/horekbazar-v1`; PR to `main` (see "B4 record" below) |
+| B5 storefront and later | not started; each phase needs explicit owner approval (BUILD-PLAN §0) |
 
 Deployment: `horekbazar-preview.vercel.app` runs B3 code but reports `database: not_configured`, so it only shows setup-required. Two Vercel projects exist
 (`horekbazar`, `horekbazar-preview` in team `dev-choice`); the owner has not said which is
 canonical. Do not guess.
 
+## B4 record (all steps done; resume at the PR if interrupted)
+
+Owner approval 2026-10-22: B4 approved; D11 changed: "generate some catalogue source data and push
+to database, and admin will curd them for real and test". Implementation of that change: the
+existing generated package `catalogue/horekbazar/` (39 categories, 144 products) is loaded into the
+**development** database only, by `npm run db:seed` (dry run by default; `--confirm` writes; refuses
+unless the database name ends with `_dev`; idempotent by slug and SKU; never deletes; every seeded
+document carries `sample: true` and the admin shows a "Sample" badge; products stay draft, stock 0).
+Its prices are research estimates, not selling prices. Repository visibility: owner approved private,
+but on GitHub Free a private personal repository loses branch protection and secret scanning
+(docs.github.com); held for the owner's choice. Secret scanning and push protection were enabled
+2026-10-22 while public.
+
+Steps (each is pushed to `preview/horekbazar-v1` when done; tick here in the same commit):
+
+- [x] 1. Catalogue domain: schemas, validators, indexes for `categories`, `products`, `variants`,
+      `stock`, `inventoryLedger`; services (category depth 3 and cycle rules, product and variant
+      upsert with `version`, publish/archive, inventory receive/adjust with ledger idempotency);
+      audit on every write; integration tests. **Done:** `lib/modules/catalogue/` (schema, common,
+      categories, products, inventory, locks), 6 validators, `tests/integration/catalogue.test.ts`
+      (19 tests). ESLint draft-folder rule narrowed to exclude `lib/modules/catalogue/`.
+- [x] 2. Settings and delivery zones (`settings` singleton with `version`; accent contrast check;
+      zones without area mapping, D12) and merchandising (`collections` manual, `homeSections` six
+      types, `banners`); tests. **Done:** `lib/modules/settings/`, `lib/modules/merch/`, 4 validators,
+      `tests/integration/settings-merch.test.ts` (8), `tests/unit/settings.test.ts` (2). Settings
+      start as DEFAULT_SETTINGS (version 0, nothing persisted, no zones invented); storefront use of
+      settings (accent, numerals) is B5.
+- [x] 3. Media: `/api/media/sign` (Cloudinary signed upload, `catalogue.write`, allow-list);
+      disabled with a notice when Cloudinary is not configured. **Done:** `lib/adapters/media/cloudinary.ts`,
+      `app/api/media/sign/route.ts` (same-origin, capability by purpose, 503 `not_configured`), admin
+      CSP `connect-src` adds `https://api.cloudinary.com` on /admin only; `tests/unit/media.test.ts`.
+      Not done: checking with Cloudinary that an uploaded asset exists (the server accepts only
+      public ids inside the purpose folder). No Cloudinary credentials yet (owner action).
+- [x] 4. Admin pages and server actions: products (list with search, filter, pagination; editor),
+      categories, inventory, collections, homepage, banners, settings; bn/en messages. **Done:**
+      pages under `app/admin/{products,products/new,products/[id],categories,inventory,collections,
+      homepage,banners,settings,settings/delivery}`; actions `lib/actions/{catalogue,merch}.ts`, each
+      starting with `staffContext(capability)` (server-side decideAccess, mutation, step-up);
+      helpers `lib/actions/staff-action.ts` (taka→paisa, Bengali digits, Dhaka datetime) and
+      `lib/admin/{page,forms,sections}.ts`; `adminPageFor` gives sub-pages their section's
+      capability; nav and admin index built from the caller's capabilities; ActionForm gains
+      textarea/number/checkbox/multiselect/datetime-local/url fields and grid/inline layouts;
+      `components/admin/{RecordBits,StepUpPanel,MediaUploader}.tsx`; B4 CSS block at the end of
+      `app/globals.css`; `tests/unit/admin-forms.test.ts` (13). Checks at this commit: typecheck,
+      lint (0 warnings), unit 107/107, integration 76/76, `next build` OK. Not yet exercised in a
+      browser — that is step 6. `/admin/settings/features` was folded into `/admin/settings`;
+      `/admin/settings/integrations` is deferred.
+- [x] 5. `npm run db:seed` from `catalogue/horekbazar/` and its run on `horekbazar_dev`. **Done:**
+      `scripts/db-seed.ts` + `lib/db/seed-samples.ts` (through the catalogue services; audit actor
+      `system:db-seed`; `--confirm`, `--remove-samples`); `tests/integration/seed.test.ts` (5: non-dev
+      refused, dry run writes nothing, real slug skipped, re-run creates nothing, remove-samples).
+      `CatalogueError` no longer uses parameter properties (Node type stripping). **Run 2026-10-22 on
+      `horekbazar_dev`** (name verified from the script output before writing): `db:migrate` created
+      the 10 B4 collections; dry run 39/144/235 to create; `--confirm` created 39 categories, 144
+      products, 235 variants (~10 min over Atlas); independent count: all `sample: true`, 0 published,
+      235 stock rows all 0, 0 ledger rows, 418 audit rows by `system:db-seed`; a second dry run: 0 to
+      create. Docs: DATA.md, README (Database step 3), catalogue IMPORT.md/README, domain-rules §16.
+      To reach Atlas from this sandbox the SRV record is resolved via DNS-over-HTTPS into a temporary
+      env file that is deleted afterwards (never committed).
+- [x] 6. Playwright with a disposable database (sign in as a catalogue editor, create a product
+      with a LabelTile, publish it); Motomation gate; docs; PR.
+      - [x] 6a. `npm run test:e2e:db` (`playwright.db.config.ts`, `scripts/e2e-db-server.mjs`,
+        `tests/e2e-db/catalogue-admin.spec.ts`): zero-variable build + in-memory replica set
+        (`e2e_admin_dev`); the fixture signs in through the auth service and hands the cookie to
+        the browser, because the login form fails closed without Upstash in production (by
+        design); 2/2 pass (category create+publish, product create with LabelTile, refused
+        publish without a variant, variant in taka→paisa with stock 0, publish, list, audit; nav
+        and 403 for /admin/inventory and /admin/settings). Added to CI. Harness note: migrate is
+        spawned asynchronously (a synchronous child deadlocks the in-memory mongod's pipe).
+      - [x] 6b. Zero-env e2e: the ten B4 admin URLs redirect to sign-in uncached; /api/media/sign
+        403 cross-origin/no origin, 401 signed out, 400 bad purpose. Full suite 215 passed, 58
+        skipped (the same 57 opt-in screenshots + 1 WebKit maintenance check as before).
+      - [x] 6c. Motomation gate (FAIL as before: storefront SEO and search-form states, B5;
+        details in PROGRESS), docs (PROGRESS, STATUS, SCHEMA, README, DATA). PR, merge and
+        post-merge checks: see PROGRESS and the PR description; if this line is all you see, open
+        the PR from `preview/horekbazar-v1` to `main` and continue there.
+
 ## Rules that are easy to break
 
-- Never invent catalogue data, prices, stock, reviews, discounts or urgency (D11 is open).
+- Never invent catalogue data, prices, stock, reviews, discounts or urgency for production. The only
+  generated data is the `sample: true` development load (owner change to D11, 2026-10-22; DATA.md).
 - Authorisation happens on the server: `gateStaffPage()` for admin pages, and a principal plus
   capability check inside every admin server action (`lib/actions/admin.ts`). `proxy.ts` only
   redirects when no session cookie exists; it is not an authorisation check.
@@ -40,6 +119,8 @@ npm run db:validators -- --check
 MONGOMS_DISTRO=ubuntu-24.04 npm run test:integration   # disposable MongoDB 8.0.4 replica set
 npm run build && npx playwright test                    # zero-variable build is the CI baseline
 npm run db:migrate                                      # only against a database you are sure of
+npm run db:seed                                         # _dev databases only; dry run, add -- --confirm
+npm run test:e2e:db                                     # signed-in admin, disposable database (after build)
 ```
 
 Sandbox notes: the agent sandbox resolver cannot answer SRV lookups, so `mongodb+srv://` fails
@@ -68,14 +149,20 @@ env file that was deleted after use. Vercel and normal machines resolve SRV fine
 - Backup-code regeneration; an Owner action to revoke another staff member's sessions.
 - Customer accounts have no 2FA (by design so far).
 - The storefront setup-required page shows environment variable names (never values) publicly.
-- Motomation gate on `/login` (2026-10-22): FAIL. Page-level checks pass; failing rules are SEO
-  metadata (canonical, og:image, JSON-LD), the header search form's states (native submit) and
-  completeness items owned by B5 to B11. Run it against a zero-variable build: with the sandbox
-  connected to Atlas it timed out (exit 3). `/admin/setup` and `--journey` with a signed-in staff
-  user are not gated yet.
+- Motomation gate on `/` (B4, 2026-10-22): FAIL. Page-level checks pass; failing rules are SEO
+  metadata on the setup-required page, the header search form's states (native submit) and
+  completeness items owned by B5 to B11, plus a session back-button finding that a manual probe
+  does not reproduce. Run it against a zero-variable build. Signed-in admin pages are not reachable
+  by the gate; `npm run test:e2e:db` covers them in a browser.
+- B4 deferred: `/admin/settings/integrations`, AI drafts (B10), rule collections are evaluated by
+  the storefront (B5), delivery area mapping (D12). Media uploads need Cloudinary credentials.
+- In a production build, sign-in needs Upstash (limited operations fail closed by design), so
+  the signed-in e2e mints its session through the auth service.
 - The intermittent WebKit dock-focus failure was a real defect (focus during the dock's slide-in),
   fixed with `.bottom-dock:focus-within`; a deterministic regression test guards it.
-- The repository is public although AGENTS.md says private; GitHub secret scanning is off.
+- The repository is public although the owner approved private: on GitHub Free a private personal
+  repository loses branch protection and secret scanning. Secret scanning and push protection are
+  on (verified 2026-10-22). Waiting for the owner's choice.
 - `experimental.authInterrupts` is still a proposed decision.
 
 ## Waiting on the owner
@@ -85,9 +172,12 @@ env file that was deleted after use. Vercel and normal machines resolve SRV fine
 2. Verify a Resend domain and set `EMAIL_FROM` on it.
 3. Set `SETUP_TOKEN`, then create the first Owner at `/admin/setup`.
 4. Confirm D23 and the proposals `SETUP_TOKEN` and `secondFactorAt` (DESIGN.md Decision trace).
-5. Decide whether the repository should be private (AGENTS.md says so; it is public) and enable
-   GitHub secret scanning with push protection.
+5. Choose: stay public (keeps protection and secret scanning), go private on Free (loses both),
+   or upgrade the plan and then go private.
 6. Name the canonical Vercel project, give the agent's Vercel token access to `dev-choice`, and
    add the environment variables there per environment.
-7. Approve B4 and decide D11 (catalogue source); D12/D21, D5, D20, D22 and coupon restoration
-   on cancellation remain open.
+7. Approve B5 when ready. D12/D21, D5, D20, D22 and coupon restoration on cancellation remain
+   open. Set Cloudinary credentials for uploads and the real delivery fees in /admin/settings/delivery.
+8. Sample data: `horekbazar_dev` holds 39/144/235 `sample: true` records. Remove them with
+   `npm run db:seed -- --remove-samples --confirm` when no longer wanted; they cannot be published
+   outside a `_dev` database.

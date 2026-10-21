@@ -97,11 +97,11 @@ export async function requireCustomer(locale: "bn" | "en", path: string): Promis
  * Gate for an admin page. Signed out → /login; 2FA enrolment pending → /admin/security.
  * A denied decision is returned so the page renders the access-denied state (HTTP 200, noindex).
  */
-export async function gateStaffPage(path: AdminPage): Promise<Principal> {
+export async function gateStaffPage(path: AdminPage, requestedPath: string = path): Promise<Principal> {
   const capability = ADMIN_PAGE_CAPABILITY[path];
   const principal = await getPrincipal();
   const decision = capability ? decideAccess(principal, capability) : decideStaffShell(principal);
-  if (decision.result === "signed_out") redirect(`/login?next=${encodeURIComponent(path)}`);
+  if (decision.result === "signed_out") redirect(`/login?next=${encodeURIComponent(requestedPath)}`);
   // Enrolment pending, or a 2FA user whose session has not passed the code yet: only /admin/security.
   const pending = decision.result === "two_factor_enrolment" || decision.result === "second_factor";
   if (pending && path !== "/admin/security") redirect("/admin/security");

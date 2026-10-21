@@ -31,6 +31,7 @@ npm run db:validators -- --check   # generated MongoDB validators match db/valid
 npm run test:integration           # disposable MongoDB 8.0 replica set (downloads mongod once)
 npm run build          # works with zero environment variables
 npm run test:e2e       # Playwright against the standalone production build (run build first)
+npm run test:e2e:db    # signed-in admin journeys, build + disposable in-memory database (Chromium)
 npm start              # standalone production server (output: "standalone")
 npm run check:bundle   # fails if a secret-shaped or server-only value is in the client bundle
 npm run catalogue:validate && npm run catalogue:schema
@@ -47,6 +48,8 @@ Accounts need `MONGODB_URI`, `AUTH_SECRET` (32+ characters, e.g. `openssl rand -
 3. Enter your name, email, a password and the setup token. Open the verification email, sign in, and set up two-step verification with an authenticator app (required for the Owner). Keep the ten backup codes.
 4. Add staff at `/admin/staff`: they register a normal account and verify their email first; you then give their email a role. Every staff change asks for a fresh authenticator code (valid 10 minutes).
 
+5. Manage the catalogue at `/admin/products` and `/admin/categories`, stock at `/admin/inventory` (asks for a fresh code), and the homepage, collections, banners, store settings and delivery zones from the admin menu. Each staff member sees only the sections their role allows, and the server checks the permission on every save. Prices are entered in taka. A product can be published once its category is published and it has an active variant with a price. Image uploads need the Cloudinary variables.
+
 Lost authenticator and backup codes on the last Owner account: run `npm run admin:recover-owner -- owner@example.com` with the deployment's database credentials. It clears two-step verification and signs the Owner out everywhere (audited); set it up again at the next sign-in. Use "Forgot password" for a lost password.
 
 ### Database
@@ -55,7 +58,8 @@ The store needs a MongoDB **replica set**, because orders use multi-document tra
 
 1. Create `.env.local` (git-ignored) with `MONGODB_URI=` and optionally `MONGODB_DB=` (default `horekbazar`). Use a database user that can only reach this database, and a different cluster or database per environment.
 2. `npm run db:migrate` creates the collections with their validators and indexes. It is idempotent: run it after every pull or deploy.
-3. Background work goes through the outbox. Set `JOBS_TRIGGER=worker` and run `npm run worker` next to the web server, or `JOBS_TRIGGER=http` with a `CRON_SECRET` and a scheduler that calls `POST /api/jobs/drain` with `Authorization: Bearer <CRON_SECRET>` (`docs/domain-rules.md` §13).
+3. Optional, development databases only: `npm run db:seed` (dry run) and `npm run db:seed -- --confirm` load the generated sample catalogue (39 categories, 144 products, 235 variants) as drafts marked `sample: true`, so the admin can be tested with realistic data. It refuses any database whose name does not end in `_dev`. `--remove-samples --confirm` deletes only those records. Their prices are research estimates, not selling prices (`catalogue/horekbazar/IMPORT.md`).
+4. Background work goes through the outbox. Set `JOBS_TRIGGER=worker` and run `npm run worker` next to the web server, or `JOBS_TRIGGER=http` with a `CRON_SECRET` and a scheduler that calls `POST /api/jobs/drain` with `Authorization: Bearer <CRON_SECRET>` (`docs/domain-rules.md` §13).
 
 The integration tests never use `MONGODB_URI`; they start their own disposable replica set. On a Linux release that `mongodb-memory-server` does not recognise yet, set `MONGOMS_DISTRO=ubuntu-24.04`.
 

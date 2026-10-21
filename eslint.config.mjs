@@ -12,7 +12,7 @@ const config = [
     rules: {
       "no-restricted-imports": [
         "error",
-        { patterns: [{ group: ["**/catalogue/**", "catalogue/**"], message: "catalogue/ is an unapproved draft (D11) and must never be imported by application code." }] },
+        { patterns: [{ group: ["catalogue/**", "@/catalogue/**", "**/catalogue/horekbazar/**"], message: "catalogue/ is an unapproved draft (D11) and must never be imported by application code." }] },
       ],
       "no-console": ["error", { allow: ["warn", "error"] }],
     },

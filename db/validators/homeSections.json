@@ -1,0 +1,648 @@
+{
+  "$jsonSchema": {
+    "oneOf": [
+      {
+        "bsonType": "object",
+        "properties": {
+          "_id": {
+            "bsonType": "objectId"
+          },
+          "order": {
+            "bsonType": [
+              "int",
+              "long"
+            ],
+            "minimum": 0,
+            "maximum": 1000
+          },
+          "status": {
+            "bsonType": "string",
+            "enum": [
+              "draft",
+              "published"
+            ]
+          },
+          "visibleFrom": {
+            "bsonType": "date"
+          },
+          "visibleTo": {
+            "bsonType": "date"
+          },
+          "version": {
+            "bsonType": [
+              "int",
+              "long"
+            ],
+            "minimum": 1
+          },
+          "createdAt": {
+            "bsonType": "date"
+          },
+          "updatedAt": {
+            "bsonType": "date"
+          },
+          "type": {
+            "bsonType": "string",
+            "enum": [
+              "hero"
+            ]
+          },
+          "data": {
+            "bsonType": "object",
+            "properties": {
+              "title": {
+                "bsonType": "object",
+                "properties": {
+                  "bn": {
+                    "bsonType": "string",
+                    "minLength": 1,
+                    "maxLength": 80
+                  },
+                  "en": {
+                    "bsonType": "string",
+                    "minLength": 1,
+                    "maxLength": 80
+                  }
+                },
+                "required": [
+                  "bn"
+                ],
+                "additionalProperties": false
+              },
+              "subtitle": {
+                "bsonType": "object",
+                "properties": {
+                  "bn": {
+                    "bsonType": "string",
+                    "minLength": 1,
+                    "maxLength": 160
+                  },
+                  "en": {
+                    "bsonType": "string",
+                    "minLength": 1,
+                    "maxLength": 160
+                  }
+                },
+                "required": [
+                  "bn"
+                ],
+                "additionalProperties": false
+              },
+              "ctaLabel": {
+                "bsonType": "object",
+                "properties": {
+                  "bn": {
+                    "bsonType": "string",
+                    "minLength": 1,
+                    "maxLength": 30
+                  },
+                  "en": {
+                    "bsonType": "string",
+                    "minLength": 1,
+                    "maxLength": 30
+                  }
+                },
+                "required": [
+                  "bn"
+                ],
+                "additionalProperties": false
+              },
+              "href": {
+                "bsonType": "string",
+                "maxLength": 300,
+                "pattern": "^\\/(?!\\/)[A-Za-z0-9\\-._~/?=&%]*$"
+              },
+              "image": {
+                "bsonType": "object",
+                "properties": {
+                  "publicId": {
+                    "bsonType": "string",
+                    "maxLength": 200,
+                    "pattern": "^[A-Za-z0-9_\\-/]+$"
+                  },
+                  "rights": {
+                    "bsonType": "string",
+                    "minLength": 1,
+                    "maxLength": 300
+                  },
+                  "width": {
+                    "bsonType": [
+                      "int",
+                      "long"
+                    ],
+                    "minimum": 1
+                  },
+                  "height": {
+                    "bsonType": [
+                      "int",
+                      "long"
+                    ],
+                    "minimum": 1
+                  },
+                  "alt": {
+                    "bsonType": "object",
+                    "properties": {
+                      "bn": {
+                        "bsonType": "string",
+                        "minLength": 1,
+                        "maxLength": 200
+                      },
+                      "en": {
+                        "bsonType": "string",
+                        "minLength": 1,
+                        "maxLength": 200
+                      }
+                    },
+                    "required": [
+                      "bn"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "required": [
+                  "publicId",
+                  "rights",
+                  "alt"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "title"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "_id",
+          "order",
+          "status",
+          "version",
+          "createdAt",
+          "updatedAt",
+          "type",
+          "data"
+        ],
+        "additionalProperties": false
+      },
+      {
+        "bsonType": "object",
+        "properties": {
+          "_id": {
+            "bsonType": "objectId"
+          },
+          "order": {
+            "bsonType": [
+              "int",
+              "long"
+            ],
+            "minimum": 0,
+            "maximum": 1000
+          },
+          "status": {
+            "bsonType": "string",
+            "enum": [
+              "draft",
+              "published"
+            ]
+          },
+          "visibleFrom": {
+            "bsonType": "date"
+          },
+          "visibleTo": {
+            "bsonType": "date"
+          },
+          "version": {
+            "bsonType": [
+              "int",
+              "long"
+            ],
+            "minimum": 1
+          },
+          "createdAt": {
+            "bsonType": "date"
+          },
+          "updatedAt": {
+            "bsonType": "date"
+          },
+          "type": {
+            "bsonType": "string",
+            "enum": [
+              "categoryTiles"
+            ]
+          },
+          "data": {
+            "bsonType": "object",
+            "properties": {
+              "title": {
+                "bsonType": "object",
+                "properties": {
+                  "bn": {
+                    "bsonType": "string",
+                    "minLength": 1,
+                    "maxLength": 80
+                  },
+                  "en": {
+                    "bsonType": "string",
+                    "minLength": 1,
+                    "maxLength": 80
+                  }
+                },
+                "required": [
+                  "bn"
+                ],
+                "additionalProperties": false
+              },
+              "categoryIds": {
+                "minItems": 1,
+                "maxItems": 12,
+                "bsonType": "array",
+                "items": {
+                  "bsonType": "objectId"
+                }
+              }
+            },
+            "required": [
+              "categoryIds"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "_id",
+          "order",
+          "status",
+          "version",
+          "createdAt",
+          "updatedAt",
+          "type",
+          "data"
+        ],
+        "additionalProperties": false
+      },
+      {
+        "bsonType": "object",
+        "properties": {
+          "_id": {
+            "bsonType": "objectId"
+          },
+          "order": {
+            "bsonType": [
+              "int",
+              "long"
+            ],
+            "minimum": 0,
+            "maximum": 1000
+          },
+          "status": {
+            "bsonType": "string",
+            "enum": [
+              "draft",
+              "published"
+            ]
+          },
+          "visibleFrom": {
+            "bsonType": "date"
+          },
+          "visibleTo": {
+            "bsonType": "date"
+          },
+          "version": {
+            "bsonType": [
+              "int",
+              "long"
+            ],
+            "minimum": 1
+          },
+          "createdAt": {
+            "bsonType": "date"
+          },
+          "updatedAt": {
+            "bsonType": "date"
+          },
+          "type": {
+            "bsonType": "string",
+            "enum": [
+              "productRail"
+            ]
+          },
+          "data": {
+            "bsonType": "object",
+            "properties": {
+              "title": {
+                "bsonType": "object",
+                "properties": {
+                  "bn": {
+                    "bsonType": "string",
+                    "minLength": 1,
+                    "maxLength": 80
+                  },
+                  "en": {
+                    "bsonType": "string",
+                    "minLength": 1,
+                    "maxLength": 80
+                  }
+                },
+                "required": [
+                  "bn"
+                ],
+                "additionalProperties": false
+              },
+              "collectionId": {
+                "bsonType": "objectId"
+              }
+            },
+            "required": [
+              "title",
+              "collectionId"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "_id",
+          "order",
+          "status",
+          "version",
+          "createdAt",
+          "updatedAt",
+          "type",
+          "data"
+        ],
+        "additionalProperties": false
+      },
+      {
+        "bsonType": "object",
+        "properties": {
+          "_id": {
+            "bsonType": "objectId"
+          },
+          "order": {
+            "bsonType": [
+              "int",
+              "long"
+            ],
+            "minimum": 0,
+            "maximum": 1000
+          },
+          "status": {
+            "bsonType": "string",
+            "enum": [
+              "draft",
+              "published"
+            ]
+          },
+          "visibleFrom": {
+            "bsonType": "date"
+          },
+          "visibleTo": {
+            "bsonType": "date"
+          },
+          "version": {
+            "bsonType": [
+              "int",
+              "long"
+            ],
+            "minimum": 1
+          },
+          "createdAt": {
+            "bsonType": "date"
+          },
+          "updatedAt": {
+            "bsonType": "date"
+          },
+          "type": {
+            "bsonType": "string",
+            "enum": [
+              "banner"
+            ]
+          },
+          "data": {
+            "bsonType": "object",
+            "properties": {
+              "bannerId": {
+                "bsonType": "objectId"
+              }
+            },
+            "required": [
+              "bannerId"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "_id",
+          "order",
+          "status",
+          "version",
+          "createdAt",
+          "updatedAt",
+          "type",
+          "data"
+        ],
+        "additionalProperties": false
+      },
+      {
+        "bsonType": "object",
+        "properties": {
+          "_id": {
+            "bsonType": "objectId"
+          },
+          "order": {
+            "bsonType": [
+              "int",
+              "long"
+            ],
+            "minimum": 0,
+            "maximum": 1000
+          },
+          "status": {
+            "bsonType": "string",
+            "enum": [
+              "draft",
+              "published"
+            ]
+          },
+          "visibleFrom": {
+            "bsonType": "date"
+          },
+          "visibleTo": {
+            "bsonType": "date"
+          },
+          "version": {
+            "bsonType": [
+              "int",
+              "long"
+            ],
+            "minimum": 1
+          },
+          "createdAt": {
+            "bsonType": "date"
+          },
+          "updatedAt": {
+            "bsonType": "date"
+          },
+          "type": {
+            "bsonType": "string",
+            "enum": [
+              "collectionGrid"
+            ]
+          },
+          "data": {
+            "bsonType": "object",
+            "properties": {
+              "title": {
+                "bsonType": "object",
+                "properties": {
+                  "bn": {
+                    "bsonType": "string",
+                    "minLength": 1,
+                    "maxLength": 80
+                  },
+                  "en": {
+                    "bsonType": "string",
+                    "minLength": 1,
+                    "maxLength": 80
+                  }
+                },
+                "required": [
+                  "bn"
+                ],
+                "additionalProperties": false
+              },
+              "collectionIds": {
+                "minItems": 1,
+                "maxItems": 8,
+                "bsonType": "array",
+                "items": {
+                  "bsonType": "objectId"
+                }
+              }
+            },
+            "required": [
+              "collectionIds"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "_id",
+          "order",
+          "status",
+          "version",
+          "createdAt",
+          "updatedAt",
+          "type",
+          "data"
+        ],
+        "additionalProperties": false
+      },
+      {
+        "bsonType": "object",
+        "properties": {
+          "_id": {
+            "bsonType": "objectId"
+          },
+          "order": {
+            "bsonType": [
+              "int",
+              "long"
+            ],
+            "minimum": 0,
+            "maximum": 1000
+          },
+          "status": {
+            "bsonType": "string",
+            "enum": [
+              "draft",
+              "published"
+            ]
+          },
+          "visibleFrom": {
+            "bsonType": "date"
+          },
+          "visibleTo": {
+            "bsonType": "date"
+          },
+          "version": {
+            "bsonType": [
+              "int",
+              "long"
+            ],
+            "minimum": 1
+          },
+          "createdAt": {
+            "bsonType": "date"
+          },
+          "updatedAt": {
+            "bsonType": "date"
+          },
+          "type": {
+            "bsonType": "string",
+            "enum": [
+              "richText"
+            ]
+          },
+          "data": {
+            "bsonType": "object",
+            "properties": {
+              "title": {
+                "bsonType": "object",
+                "properties": {
+                  "bn": {
+                    "bsonType": "string",
+                    "minLength": 1,
+                    "maxLength": 80
+                  },
+                  "en": {
+                    "bsonType": "string",
+                    "minLength": 1,
+                    "maxLength": 80
+                  }
+                },
+                "required": [
+                  "bn"
+                ],
+                "additionalProperties": false
+              },
+              "body": {
+                "bsonType": "object",
+                "properties": {
+                  "bn": {
+                    "bsonType": "string",
+                    "minLength": 1,
+                    "maxLength": 2000
+                  },
+                  "en": {
+                    "bsonType": "string",
+                    "minLength": 1,
+                    "maxLength": 2000
+                  }
+                },
+                "required": [
+                  "bn"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "body"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "_id",
+          "order",
+          "status",
+          "version",
+          "createdAt",
+          "updatedAt",
+          "type",
+          "data"
+        ],
+        "additionalProperties": false
+      }
+    ]
+  }
+}

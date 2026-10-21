@@ -9,7 +9,7 @@ A proposed starter catalogue for the HorekBazar flagship store, generated from s
 
 - The application **never reads this folder at runtime**. No code path may import, require or fetch it.
 - It is **never published** and never shipped in the sellable template package (HorekBazar-specific content is excluded from what buyers license; see `docs/LICENSING.md`).
-- It is **never imported into any database** unless the owner explicitly approves records and follows [`IMPORT.md`](IMPORT.md).
+- It is **never imported as real catalogue content** unless the owner explicitly approves records and follows [`IMPORT.md`](IMPORT.md). Since the owner change of 2026-10-22 it may be loaded into a **development** database as `sample: true` draft data with `npm run db:seed` (see [`IMPORT.md`](IMPORT.md)).
 - An empty database is still a valid state. This package is not a fallback and must never be used to fill an empty store automatically.
 
 ## Contents

@@ -5,6 +5,21 @@ import type { IndexDescription } from "mongodb";
 import type { z } from "zod";
 import { auditLogSchema, jobsSchema, migrationsSchema, outboxSchema } from "../modules/platform/schema.ts";
 import { AUTH_COLLECTIONS, INSTALLATION, installationSchema, STAFF_ROLES, staffRoleSchema } from "../modules/identity/schema.ts";
+import {
+  CATEGORIES,
+  categorySchema,
+  INVENTORY_LEDGER,
+  inventoryLedgerSchema,
+  PRODUCTS,
+  productSchema,
+  STOCK,
+  stockSchema,
+  VARIANTS,
+  variantSchema,
+} from "../modules/catalogue/schema.ts";
+import { CATALOGUE_LOCKS, catalogueLockSchema } from "../modules/catalogue/locks.ts";
+import { SETTINGS, settingsSchema } from "../modules/settings/schema.ts";
+import { BANNERS, bannerSchema, COLLECTIONS, collectionSchema, HOME_SECTIONS, homeSectionSchema } from "../modules/merch/schema.ts";
 
 export interface CollectionSpec {
   name: string;
@@ -63,6 +78,100 @@ export const collections: CollectionSpec[] = [
     schema: installationSchema,
     indexes: [],
     serviceEnforced: ["written once by the first-owner claim; the unique _id serialises concurrent claims (identity/staff.ts)"],
+  },
+  {
+    name: CATEGORIES,
+    module: "catalogue",
+    schema: categorySchema,
+    indexes: [
+      { key: { slug: 1 }, name: "slug_unique", unique: true },
+      { key: { parentId: 1, position: 1 }, name: "parent_position" },
+      { key: { status: 1 }, name: "status" },
+    ],
+    serviceEnforced: [
+      "depth ≤ 3 on create and move, no cycles, structural changes serialised by catalogueLocks (catalogue/categories.ts)",
+      "slug frozen once published; publish needs a published parent; archive needs no live children or products",
+    ],
+  },
+  {
+    name: PRODUCTS,
+    module: "catalogue",
+    schema: productSchema,
+    indexes: [
+      { key: { slug: 1 }, name: "slug_unique", unique: true },
+      { key: { categoryIds: 1, status: 1 }, name: "categoryIds_status" },
+      { key: { primaryCategoryId: 1 }, name: "primaryCategoryId" },
+      { key: { status: 1, updatedAt: -1 }, name: "status_updatedAt" },
+    ],
+    serviceEnforced: [
+      "primary category is a leaf and in categoryIds; publish needs a published category and a priced active variant (catalogue/products.ts)",
+      "slug frozen once published; sample records publish only in a _dev database; version compare-and-set on every edit",
+    ],
+  },
+  {
+    name: VARIANTS,
+    module: "catalogue",
+    schema: variantSchema,
+    indexes: [
+      { key: { sku: 1 }, name: "sku_unique", unique: true },
+      { key: { productId: 1, position: 1 }, name: "productId_position" },
+    ],
+    serviceEnforced: ["compareAt > price; SKU frozen once stock has moved; a published product keeps one priced active variant (catalogue/products.ts)"],
+  },
+  {
+    name: STOCK,
+    module: "inventory",
+    schema: stockSchema,
+    indexes: [{ key: { variantId: 1 }, name: "variantId_unique", unique: true }],
+    serviceEnforced: ["available = onHand − reserved, written in the same update; negative moves are guarded updates (catalogue/inventory.ts)"],
+  },
+  {
+    name: INVENTORY_LEDGER,
+    module: "inventory",
+    schema: inventoryLedgerSchema,
+    indexes: [
+      { key: { idempotencyKey: 1 }, name: "idempotencyKey_unique", unique: true },
+      { key: { variantId: 1, createdAt: -1 }, name: "variantId_createdAt" },
+    ],
+    serviceEnforced: ["append-only; one row per movement with the canonical key; written in the stock transaction (catalogue/inventory.ts)"],
+  },
+  {
+    name: CATALOGUE_LOCKS,
+    module: "catalogue",
+    schema: catalogueLockSchema,
+    indexes: [],
+    serviceEnforced: ["incremented inside every structural category transaction (catalogue/categories.ts)"],
+  },
+  {
+    name: SETTINGS,
+    module: "settings",
+    schema: settingsSchema,
+    indexes: [],
+    serviceEnforced: ["single document; version compare-and-set; accent ≥ 4.5:1 against white and the page background (settings/settings.ts)"],
+  },
+  {
+    name: COLLECTIONS,
+    module: "merch",
+    schema: collectionSchema,
+    indexes: [
+      { key: { slug: 1 }, name: "slug_unique", unique: true },
+      { key: { productIds: 1 }, name: "productIds" },
+    ],
+    serviceEnforced: ["products exist; slug frozen while published; not unpublished or deleted while a section uses it (merch/merch.ts)"],
+  },
+  {
+    name: HOME_SECTIONS,
+    module: "merch",
+    schema: homeSectionSchema,
+    indexes: [{ key: { order: 1 }, name: "order" }],
+    serviceEnforced: ["references exist; published only when what it shows is published; visibleTo after visibleFrom (merch/merch.ts)"],
+  },
+  {
+    name: BANNERS,
+    module: "merch",
+    schema: bannerSchema,
+    indexes: [{ key: { placement: 1, status: 1 }, name: "placement_status" }],
+    serviceEnforced: ["internal href only; not hidden or deleted while a published section uses it (merch/merch.ts)"],
   },
 ];
 
