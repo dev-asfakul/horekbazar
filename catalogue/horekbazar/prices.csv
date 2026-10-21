@@ -1,0 +1,236 @@
+sku,product_en,product_bn,variant_en,price_status,proposed_bdt,ref_min_bdt,ref_max_bdt,ref_source,ref_observed_on,owner_review_required
+HB-GRC-001-1KG,Miniket Rice,মিনিকেট চাল,1 kg,reference_derived,85,70,85,tcb-2026-02-26,2026-02-26,true
+HB-GRC-001-5KG,Miniket Rice,মিনিকেট চাল,5 kg,reference_derived,425,350,425,tcb-2026-02-26,2026-02-26,true
+HB-GRC-001-10KG,Miniket Rice,মিনিকেট চাল,10 kg,reference_derived,850,700,850,tcb-2026-02-26,2026-02-26,true
+HB-GRC-002-1KG,Nazirshail Rice,নাজিরশাইল চাল,1 kg,reference_derived,85,70,85,tcb-2026-02-26,2026-02-26,true
+HB-GRC-002-5KG,Nazirshail Rice,নাজিরশাইল চাল,5 kg,reference_derived,425,350,425,tcb-2026-02-26,2026-02-26,true
+HB-GRC-003-5KG,Medium Rice (Paijam / BRRI-28),মাঝারি চাল (পাইজাম/ব্রি-২৮),5 kg,reference_derived,340,290,340,tcb-2026-02-26,2026-02-26,true
+HB-GRC-003-10KG,Medium Rice (Paijam / BRRI-28),মাঝারি চাল (পাইজাম/ব্রি-২৮),10 kg,reference_derived,680,580,680,tcb-2026-02-26,2026-02-26,true
+HB-GRC-004-5KG,Coarse Rice (Swarna),মোটা চাল (স্বর্ণা),5 kg,reference_derived,300,250,300,tcb-2026-02-26,2026-02-26,true
+HB-GRC-004-10KG,Coarse Rice (Swarna),মোটা চাল (স্বর্ণা),10 kg,reference_derived,600,500,600,tcb-2026-02-26,2026-02-26,true
+HB-GRC-005-1KG,Chinigura Aromatic Rice,চিনিগুঁড়া সুগন্ধি চাল,1 kg,estimate_requires_owner_review,150,,,agent-estimate,,true
+HB-GRC-005-2KG,Chinigura Aromatic Rice,চিনিগুঁড়া সুগন্ধি চাল,2 kg,estimate_requires_owner_review,295,,,agent-estimate,,true
+HB-GRC-006-1KG,Wheat Atta (Packet),প্যাকেট আটা,1 kg,reference_derived,65,55,62,tcb-2026-02-26,2026-02-26,true
+HB-GRC-006-2KG,Wheat Atta (Packet),প্যাকেট আটা,2 kg,reference_derived,125,110,124,tcb-2026-02-26,2026-02-26,true
+HB-GRC-007-1KG,Maida (Packet),প্যাকেট ময়দা,1 kg,reference_derived,75,65,75,tcb-2026-02-26,2026-02-26,true
+HB-GRC-007-2KG,Maida (Packet),প্যাকেট ময়দা,2 kg,reference_derived,150,130,150,tcb-2026-02-26,2026-02-26,true
+HB-GRC-008-500G,Suji (Semolina),সুজি,500 g,estimate_requires_owner_review,55,,,agent-estimate,,true
+HB-GRC-009-500G,Chira (Flattened Rice),চিড়া,500 g,estimate_requires_owner_review,50,,,agent-estimate,,true
+HB-GRC-009-1KG,Chira (Flattened Rice),চিড়া,1 kg,estimate_requires_owner_review,95,,,agent-estimate,,true
+HB-GRC-010-1KG,Masoor Dal (Small Grain),মসুর ডাল (ছোট দানা),1 kg,reference_derived,160,150,160,tcb-2026-02-26,2026-02-26,true
+HB-GRC-011-1KG,Masoor Dal (Medium Grain),মসুর ডাল (মাঝারি দানা),1 kg,reference_derived,120,110,120,tcb-2026-02-26,2026-02-26,true
+HB-GRC-012-1KG,Masoor Dal (Bold Grain),মসুর ডাল (বড় দানা),1 kg,reference_derived,105,85,105,tcb-2026-02-26,2026-02-26,true
+HB-GRC-013-500G,Moong Dal,মুগ ডাল,500 g,reference_derived,90,60,90,tcb-2026-02-26,2026-02-26,true
+HB-GRC-013-1KG,Moong Dal,মুগ ডাল,1 kg,reference_derived,180,120,180,tcb-2026-02-26,2026-02-26,true
+HB-GRC-014-1KG,Anchor Dal (Split Peas),অ্যাংকর ডাল,1 kg,reference_derived,75,50,75,tcb-2026-02-26,2026-02-26,true
+HB-GRC-015-500G,Chhola (Chickpeas),ছোলা,500 g,reference_derived,50,40,47.5,tcb-2026-02-26,2026-02-26,true
+HB-GRC-015-1KG,Chhola (Chickpeas),ছোলা,1 kg,reference_derived,95,80,95,tcb-2026-02-26,2026-02-26,true
+HB-GRC-016-500G,Mashkalai Dal,মাষকলাই ডাল,500 g,estimate_requires_owner_review,85,,,agent-estimate,,true
+HB-GRC-017-1L,Soybean Oil (Bottle),সয়াবিন তেল (বোতল),1 litre,reference_derived,195,190,195,tcb-2026-02-26,2026-02-26,true
+HB-GRC-017-2L,Soybean Oil (Bottle),সয়াবিন তেল (বোতল),2 litre,reference_derived,395,385,395,tcb-2026-02-26,2026-02-26,true
+HB-GRC-017-5L,Soybean Oil (Bottle),সয়াবিন তেল (বোতল),5 litre,reference_derived,955,920,955,tcb-2026-02-26,2026-02-26,true
+HB-GRC-018-1L,Rice Bran Oil (Bottle),রাইস ব্রান তেল (বোতল),1 litre,estimate_requires_owner_review,225,,,agent-estimate,,true
+HB-GRC-018-5L,Rice Bran Oil (Bottle),রাইস ব্রান তেল (বোতল),5 litre,reference_derived,1080,1030,1080,tcb-2026-02-26,2026-02-26,true
+HB-GRC-019-500ML,Mustard Oil,সরিষার তেল,500 ml,estimate_requires_owner_review,170,,,agent-estimate,,true
+HB-GRC-019-1L,Mustard Oil,সরিষার তেল,1 litre,estimate_requires_owner_review,330,,,agent-estimate,,true
+HB-GRC-020-200G,Ghee,ঘি,200 g,estimate_requires_owner_review,380,,,agent-estimate,,true
+HB-GRC-020-400G,Ghee,ঘি,400 g,estimate_requires_owner_review,740,,,agent-estimate,,true
+HB-GRC-021-200G,Turmeric Powder,হলুদ গুঁড়া,200 g,estimate_requires_owner_review,95,,,agent-estimate,,true
+HB-GRC-021-500G,Turmeric Powder,হলুদ গুঁড়া,500 g,estimate_requires_owner_review,230,,,agent-estimate,,true
+HB-GRC-022-200G,Chilli Powder,মরিচ গুঁড়া,200 g,estimate_requires_owner_review,110,,,agent-estimate,,true
+HB-GRC-022-500G,Chilli Powder,মরিচ গুঁড়া,500 g,estimate_requires_owner_review,265,,,agent-estimate,,true
+HB-GRC-023-200G,Coriander Powder,ধনিয়া গুঁড়া,200 g,estimate_requires_owner_review,70,,,agent-estimate,,true
+HB-GRC-024-100G,Cumin Seeds (Whole),জিরা (আস্ত),100 g,reference_derived,70,58,70,tcb-2026-02-26,2026-02-26,true
+HB-GRC-024-250G,Cumin Seeds (Whole),জিরা (আস্ত),250 g,reference_derived,175,145,175,tcb-2026-02-26,2026-02-26,true
+HB-GRC-025-100G,Cinnamon,দারুচিনি,100 g,reference_derived,60,48,60,tcb-2026-02-26,2026-02-26,true
+HB-GRC-026-50G,Cloves,লবঙ্গ,50 g,reference_derived,80,67.5,80,tcb-2026-02-26,2026-02-26,true
+HB-GRC-027-50G,Green Cardamom (Small),এলাচ (ছোট),50 g,reference_derived,275,225,275,tcb-2026-02-26,2026-02-26,true
+HB-GRC-028-100G,Bay Leaves,তেজপাতা,100 g,reference_derived,25,16,22,tcb-2026-02-26,2026-02-26,true
+HB-GRC-029-250G,Dried Red Chilli (Whole),শুকনা মরিচ (আস্ত),250 g,reference_derived,75,62.5,75,tcb-2026-02-26,2026-02-26,true
+HB-GRC-030-50G,Garam Masala Powder,গরম মসলা গুঁড়া,50 g,estimate_requires_owner_review,75,,,agent-estimate,,true
+HB-GRC-031-50G,Black Pepper (Whole),গোলমরিচ (আস্ত),50 g,estimate_requires_owner_review,70,,,agent-estimate,,true
+HB-GRC-032-1KG,Sugar,চিনি,1 kg,reference_derived,105,98,105,tcb-2026-02-26,2026-02-26,true
+HB-GRC-033-1KG,Iodised Salt,আয়োডিনযুক্ত লবণ,1 kg,reference_derived,45,38,42,tcb-2026-02-26,2026-02-26,true
+HB-GRC-034-500G,Date Molasses (Khejur Gur),খেজুরের গুড়,500 g,estimate_requires_owner_review,225,,,agent-estimate,,true
+HB-GRC-035-500G,Dates,খেজুর,500 g,reference_derived,250,150,250,tcb-2026-02-26,2026-02-26,true
+HB-GRC-035-1KG,Dates,খেজুর,1 kg,reference_derived,500,300,500,tcb-2026-02-26,2026-02-26,true
+HB-GRC-036-250G,Honey,মধু,250 g,estimate_requires_owner_review,300,,,agent-estimate,,true
+HB-GRC-036-500G,Honey,মধু,500 g,estimate_requires_owner_review,580,,,agent-estimate,,true
+HB-GRC-037-200G,Black Tea (Loose Leaf),চা পাতা,200 g,estimate_requires_owner_review,120,,,agent-estimate,,true
+HB-GRC-037-400G,Black Tea (Loose Leaf),চা পাতা,400 g,estimate_requires_owner_review,235,,,agent-estimate,,true
+HB-GRC-038-50G,Instant Coffee,ইনস্ট্যান্ট কফি,50 g,estimate_requires_owner_review,280,,,agent-estimate,,true
+HB-GRC-038-100G,Instant Coffee,ইনস্ট্যান্ট কফি,100 g,estimate_requires_owner_review,540,,,agent-estimate,,true
+HB-GRC-039-500G,Full Cream Milk Powder,ফুল ক্রিম গুঁড়া দুধ,500 g,reference_derived,460,360,460,tcb-2026-02-26,2026-02-26,true
+HB-GRC-039-1KG,Full Cream Milk Powder,ফুল ক্রিম গুঁড়া দুধ,1 kg,reference_derived,920,720,920,tcb-2026-02-26,2026-02-26,true
+HB-GRC-040-500G,Muri (Puffed Rice),মুড়ি,500 g,estimate_requires_owner_review,60,,,agent-estimate,,true
+HB-GRC-041-150G,Chanachur,চানাচুর,150 g,estimate_requires_owner_review,45,,,agent-estimate,,true
+HB-GRC-041-300G,Chanachur,চানাচুর,300 g,estimate_requires_owner_review,85,,,agent-estimate,,true
+HB-GRC-042-300G,Toast Biscuits,টোস্ট বিস্কুট,300 g,estimate_requires_owner_review,90,,,agent-estimate,,true
+HB-GRC-043-200G,Vermicelli (Semai),সেমাই,200 g,estimate_requires_owner_review,40,,,agent-estimate,,true
+HB-GRC-044-4PK,Instant Noodles (Pack of 4),ইনস্ট্যান্ট নুডলস (৪টির প্যাক),Pack of 4,estimate_requires_owner_review,100,,,agent-estimate,,true
+HB-GRC-045-250G,Peanuts (Roasted),চিনাবাদাম (ভাজা),250 g,estimate_requires_owner_review,75,,,agent-estimate,,true
+HB-PCR-001-100ML,Neem Face Wash,নিম ফেসওয়াশ,100 ml,estimate_requires_owner_review,220,,,agent-estimate,,true
+HB-PCR-002-200ML,Moisturising Body Lotion,ময়েশ্চারাইজিং বডি লোশন,200 ml,estimate_requires_owner_review,280,,,agent-estimate,,true
+HB-PCR-002-400ML,Moisturising Body Lotion,ময়েশ্চারাইজিং বডি লোশন,400 ml,estimate_requires_owner_review,520,,,agent-estimate,,true
+HB-PCR-003-50G,Petroleum Jelly,পেট্রোলিয়াম জেলি,50 g,estimate_requires_owner_review,90,,,agent-estimate,,true
+HB-PCR-003-100G,Petroleum Jelly,পেট্রোলিয়াম জেলি,100 g,estimate_requires_owner_review,160,,,agent-estimate,,true
+HB-PCR-004-50ML,Sunscreen Lotion,সানস্ক্রিন লোশন,50 ml,estimate_requires_owner_review,450,,,agent-estimate,,true
+HB-PCR-005-100ML,Glycerin,গ্লিসারিন,100 ml,estimate_requires_owner_review,120,,,agent-estimate,,true
+HB-PCR-006-5G,Lip Balm,লিপ বাম,5 g,estimate_requires_owner_review,150,,,agent-estimate,,true
+HB-PCR-007-200ML,Coconut Hair Oil,নারকেল তেল (চুলের),200 ml,estimate_requires_owner_review,170,,,agent-estimate,,true
+HB-PCR-007-500ML,Coconut Hair Oil,নারকেল তেল (চুলের),500 ml,estimate_requires_owner_review,400,,,agent-estimate,,true
+HB-PCR-008-180ML,Shampoo,শ্যাম্পু,180 ml,estimate_requires_owner_review,300,,,agent-estimate,,true
+HB-PCR-008-340ML,Shampoo,শ্যাম্পু,340 ml,estimate_requires_owner_review,520,,,agent-estimate,,true
+HB-PCR-009-180ML,Hair Conditioner,হেয়ার কন্ডিশনার,180 ml,estimate_requires_owner_review,320,,,agent-estimate,,true
+HB-PCR-010-1PC,Wide-Tooth Comb,মোটা দাঁতের চিরুনি,1 piece,estimate_requires_owner_review,60,,,agent-estimate,,true
+HB-PCR-011-100G,Toothpaste,টুথপেস্ট,100 g,estimate_requires_owner_review,120,,,agent-estimate,,true
+HB-PCR-011-200G,Toothpaste,টুথপেস্ট,200 g,estimate_requires_owner_review,220,,,agent-estimate,,true
+HB-PCR-012-1PC,Toothbrush (Soft),টুথব্রাশ (নরম),1 piece,estimate_requires_owner_review,50,,,agent-estimate,,true
+HB-PCR-012-3PK,Toothbrush (Soft),টুথব্রাশ (নরম),Pack of 3,estimate_requires_owner_review,140,,,agent-estimate,,true
+HB-PCR-013-100G,Bath Soap,গোসলের সাবান,100 g (single),estimate_requires_owner_review,60,,,agent-estimate,,true
+HB-PCR-013-4PK,Bath Soap,গোসলের সাবান,Pack of 4 × 100 g,estimate_requires_owner_review,230,,,agent-estimate,,true
+HB-PCR-014-200ML,Hand Wash Refill,হ্যান্ডওয়াশ রিফিল,200 ml,estimate_requires_owner_review,110,,,agent-estimate,,true
+HB-PCR-015-250ML,Body Wash,বডি ওয়াশ,250 ml,estimate_requires_owner_review,380,,,agent-estimate,,true
+HB-PCR-016-5PK,Disposable Razors (Pack of 5),ডিসপোজেবল রেজার (৫টি),Pack of 5,estimate_requires_owner_review,180,,,agent-estimate,,true
+HB-PCR-017-200ML,Shaving Foam,শেভিং ফোম,200 ml,estimate_requires_owner_review,350,,,agent-estimate,,true
+HB-PCR-018-1PC,Nail Cutter,নেইল কাটার,1 piece,estimate_requires_owner_review,70,,,agent-estimate,,true
+HB-PCR-019-8PC,Sanitary Napkins,স্যানিটারি ন্যাপকিন,8 pads,estimate_requires_owner_review,130,,,agent-estimate,,true
+HB-PCR-019-15PC,Sanitary Napkins,স্যানিটারি ন্যাপকিন,15 pads,estimate_requires_owner_review,230,,,agent-estimate,,true
+HB-HCL-001-500G,Detergent Powder,ডিটারজেন্ট পাউডার,500 g,estimate_requires_owner_review,110,,,agent-estimate,,true
+HB-HCL-001-1KG,Detergent Powder,ডিটারজেন্ট পাউডার,1 kg,estimate_requires_owner_review,210,,,agent-estimate,,true
+HB-HCL-001-2KG,Detergent Powder,ডিটারজেন্ট পাউডার,2 kg,estimate_requires_owner_review,400,,,agent-estimate,,true
+HB-HCL-002-1L,Liquid Detergent,লিকুইড ডিটারজেন্ট,1 litre,estimate_requires_owner_review,330,,,agent-estimate,,true
+HB-HCL-003-500ML,Dishwashing Liquid,ডিশওয়াশিং লিকুইড,500 ml,estimate_requires_owner_review,140,,,agent-estimate,,true
+HB-HCL-003-1L,Dishwashing Liquid,ডিশওয়াশিং লিকুইড,1 litre,estimate_requires_owner_review,260,,,agent-estimate,,true
+HB-HCL-004-300G,Dishwashing Bar,ডিশওয়াশিং বার,300 g,estimate_requires_owner_review,55,,,agent-estimate,,true
+HB-HCL-005-3PK,Kitchen Scrubber (Pack of 3),কিচেন স্ক্রাবার (৩টি),Pack of 3,estimate_requires_owner_review,60,,,agent-estimate,,true
+HB-HCL-006-1L,Floor Cleaner,ফ্লোর ক্লিনার,1 litre,estimate_requires_owner_review,220,,,agent-estimate,,true
+HB-HCL-007-500ML,Toilet Cleaner,টয়লেট ক্লিনার,500 ml,estimate_requires_owner_review,130,,,agent-estimate,,true
+HB-HCL-007-1L,Toilet Cleaner,টয়লেট ক্লিনার,1 litre,estimate_requires_owner_review,240,,,agent-estimate,,true
+HB-HCL-008-500ML,Glass Cleaner,গ্লাস ক্লিনার,500 ml,estimate_requires_owner_review,190,,,agent-estimate,,true
+HB-HCL-009-1SET,Floor Mop with Handle,হাতলসহ ফ্লোর মপ,1 set,estimate_requires_owner_review,450,,,agent-estimate,,true
+HB-HCL-010-1PC,Phool Jharu (Soft Broom),ফুলঝাড়ু,1 piece,estimate_requires_owner_review,150,,,agent-estimate,,true
+HB-HCL-011-3PK,Microfibre Cleaning Cloth (Pack of 3),মাইক্রোফাইবার কাপড় (৩টি),Pack of 3,estimate_requires_owner_review,180,,,agent-estimate,,true
+HB-HCL-012-30PC,"Garbage Bags (Medium, 30 pcs)","ময়লার ব্যাগ (মাঝারি, ৩০টি)",Roll of 30,estimate_requires_owner_review,120,,,agent-estimate,,true
+HB-KIT-001-24CM,Non-Stick Fry Pan,নন-স্টিক ফ্রাই প্যান,24 cm,estimate_requires_owner_review,950,,,agent-estimate,,true
+HB-KIT-001-26CM,Non-Stick Fry Pan,নন-স্টিক ফ্রাই প্যান,26 cm,estimate_requires_owner_review,1150,,,agent-estimate,,true
+HB-KIT-002-3L,Aluminium Cooking Pot (Dekchi),অ্যালুমিনিয়াম ডেকচি,3 litre,estimate_requires_owner_review,650,,,agent-estimate,,true
+HB-KIT-002-5L,Aluminium Cooking Pot (Dekchi),অ্যালুমিনিয়াম ডেকচি,5 litre,estimate_requires_owner_review,900,,,agent-estimate,,true
+HB-KIT-003-3L,Pressure Cooker,প্রেশার কুকার,3 litre,estimate_requires_owner_review,1800,,,agent-estimate,,true
+HB-KIT-003-5L,Pressure Cooker,প্রেশার কুকার,5 litre,estimate_requires_owner_review,2400,,,agent-estimate,,true
+HB-KIT-004-5PC,Stainless Steel Ladle Set,স্টেইনলেস স্টিল হাতা-খুন্তি সেট,5-piece set,estimate_requires_owner_review,550,,,agent-estimate,,true
+HB-KIT-005-MED,Chopping Board,কাটিং বোর্ড,Medium,estimate_requires_owner_review,350,,,agent-estimate,,true
+HB-KIT-006-STD,Kitchen Knife,রান্নাঘরের ছুরি,Standard,estimate_requires_owner_review,250,,,agent-estimate,,true
+HB-KIT-007-3PC,Airtight Food Containers (Set),বায়ুরোধী খাবারের কনটেইনার (সেট),Set of 3,estimate_requires_owner_review,450,,,agent-estimate,,true
+HB-KIT-007-5PC,Airtight Food Containers (Set),বায়ুরোধী খাবারের কনটেইনার (সেট),Set of 5,estimate_requires_owner_review,700,,,agent-estimate,,true
+HB-KIT-008-6PC,Spice Container Set,মসলার কৌটা সেট,Set of 6,estimate_requires_owner_review,550,,,agent-estimate,,true
+HB-KIT-009-750ML,Stainless Steel Water Bottle,স্টেইনলেস স্টিল পানির বোতল,750 ml,estimate_requires_owner_review,550,,,agent-estimate,,true
+HB-KIT-009-1L,Stainless Steel Water Bottle,স্টেইনলেস স্টিল পানির বোতল,1 litre,estimate_requires_owner_review,650,,,agent-estimate,,true
+HB-KIT-010-6PC,Melamine Dinner Plates (Set of 6),মেলামাইন ডিনার প্লেট (৬টি),Set of 6,estimate_requires_owner_review,900,,,agent-estimate,,true
+HB-KIT-011-6PC,Glass Tumblers (Set of 6),কাচের গ্লাস (৬টি),Set of 6,estimate_requires_owner_review,500,,,agent-estimate,,true
+HB-KIT-012-6SET,Tea Cups with Saucers (Set of 6),চায়ের কাপ-পিরিচ (৬ সেট),6 cups + 6 saucers,estimate_requires_owner_review,850,,,agent-estimate,,true
+HB-KIT-013-1500ML,Plastic Water Jug,প্লাস্টিকের পানির জগ,1.5 litre,estimate_requires_owner_review,200,,,agent-estimate,,true
+HB-KIT-014-2T,Tiffin Box (Multi-Tier),টিফিন বক্স (একাধিক তাক),2 tiers,estimate_requires_owner_review,450,,,agent-estimate,,true
+HB-KIT-014-3T,Tiffin Box (Multi-Tier),টিফিন বক্স (একাধিক তাক),3 tiers,estimate_requires_owner_review,600,,,agent-estimate,,true
+HB-HOM-001-SGL,Cotton Bed Sheet Set,সুতি বিছানার চাদর সেট,Single,estimate_requires_owner_review,900,,,agent-estimate,,true
+HB-HOM-001-DBL,Cotton Bed Sheet Set,সুতি বিছানার চাদর সেট,Double,estimate_requires_owner_review,1300,,,agent-estimate,,true
+HB-HOM-001-KNG,Cotton Bed Sheet Set,সুতি বিছানার চাদর সেট,King,estimate_requires_owner_review,1600,,,agent-estimate,,true
+HB-HOM-002-STD,Pillow Covers (Pair),বালিশের কভার (জোড়া),Standard size,estimate_requires_owner_review,350,,,agent-estimate,,true
+HB-HOM-003-BLU,Cotton Bath Towel,সুতি গোসলের তোয়ালে,Blue,estimate_requires_owner_review,450,,,agent-estimate,,true
+HB-HOM-003-WHT,Cotton Bath Towel,সুতি গোসলের তোয়ালে,White,estimate_requires_owner_review,450,,,agent-estimate,,true
+HB-HOM-003-MRN,Cotton Bath Towel,সুতি গোসলের তোয়ালে,Maroon,estimate_requires_owner_review,450,,,agent-estimate,,true
+HB-HOM-004-CHK,Cotton Gamchha,সুতি গামছা,Check pattern,estimate_requires_owner_review,180,,,agent-estimate,,true
+HB-HOM-005-SGL,Mosquito Net,মশারি,Single,estimate_requires_owner_review,650,,,agent-estimate,,true
+HB-HOM-005-DBL,Mosquito Net,মশারি,Double,estimate_requires_owner_review,900,,,agent-estimate,,true
+HB-HOM-006-STD,Doormat,পাপোশ,Standard,estimate_requires_owner_review,300,,,agent-estimate,,true
+HB-HOM-007-MED,Storage Basket,স্টোরেজ ঝুড়ি,Medium,estimate_requires_owner_review,450,,,agent-estimate,,true
+HB-HOM-007-LRG,Storage Basket,স্টোরেজ ঝুড়ি,Large,estimate_requires_owner_review,650,,,agent-estimate,,true
+HB-HOM-008-STD,Wall Clock,দেয়ালঘড়ি,Standard,estimate_requires_owner_review,650,,,agent-estimate,,true
+HB-HOM-009-12PC,Clothes Hangers (Set of 12),কাপড়ের হ্যাঙ্গার (১২টি),Set of 12,estimate_requires_owner_review,250,,,agent-estimate,,true
+HB-FSH-001-BLU,Cotton Lungi,সুতি লুঙ্গি,Blue check,estimate_requires_owner_review,550,,,agent-estimate,,true
+HB-FSH-001-GRN,Cotton Lungi,সুতি লুঙ্গি,Green check,estimate_requires_owner_review,550,,,agent-estimate,,true
+HB-FSH-001-MRN,Cotton Lungi,সুতি লুঙ্গি,Maroon check,estimate_requires_owner_review,550,,,agent-estimate,,true
+HB-FSH-002-M,Cotton Panjabi,সুতি পাঞ্জাবি,Size M,estimate_requires_owner_review,1100,,,agent-estimate,,true
+HB-FSH-002-L,Cotton Panjabi,সুতি পাঞ্জাবি,Size L,estimate_requires_owner_review,1100,,,agent-estimate,,true
+HB-FSH-002-XL,Cotton Panjabi,সুতি পাঞ্জাবি,Size XL,estimate_requires_owner_review,1100,,,agent-estimate,,true
+HB-FSH-002-XXL,Cotton Panjabi,সুতি পাঞ্জাবি,Size XXL,estimate_requires_owner_review,1100,,,agent-estimate,,true
+HB-FSH-003-M-BLK,Round-Neck Cotton T-Shirt,রাউন্ড-নেক সুতি টি-শার্ট,"Size M, black",estimate_requires_owner_review,350,,,agent-estimate,,true
+HB-FSH-003-M-WHT,Round-Neck Cotton T-Shirt,রাউন্ড-নেক সুতি টি-শার্ট,"Size M, white",estimate_requires_owner_review,350,,,agent-estimate,,true
+HB-FSH-003-L-BLK,Round-Neck Cotton T-Shirt,রাউন্ড-নেক সুতি টি-শার্ট,"Size L, black",estimate_requires_owner_review,350,,,agent-estimate,,true
+HB-FSH-003-L-WHT,Round-Neck Cotton T-Shirt,রাউন্ড-নেক সুতি টি-শার্ট,"Size L, white",estimate_requires_owner_review,350,,,agent-estimate,,true
+HB-FSH-003-XL-BLK,Round-Neck Cotton T-Shirt,রাউন্ড-নেক সুতি টি-শার্ট,"Size XL, black",estimate_requires_owner_review,350,,,agent-estimate,,true
+HB-FSH-003-XL-WHT,Round-Neck Cotton T-Shirt,রাউন্ড-নেক সুতি টি-শার্ট,"Size XL, white",estimate_requires_owner_review,350,,,agent-estimate,,true
+HB-FSH-004-M,Casual Cotton Shirt,ক্যাজুয়াল সুতি শার্ট,Size M,estimate_requires_owner_review,950,,,agent-estimate,,true
+HB-FSH-004-L,Casual Cotton Shirt,ক্যাজুয়াল সুতি শার্ট,Size L,estimate_requires_owner_review,950,,,agent-estimate,,true
+HB-FSH-004-XL,Casual Cotton Shirt,ক্যাজুয়াল সুতি শার্ট,Size XL,estimate_requires_owner_review,950,,,agent-estimate,,true
+HB-FSH-004-XXL,Casual Cotton Shirt,ক্যাজুয়াল সুতি শার্ট,Size XXL,estimate_requires_owner_review,950,,,agent-estimate,,true
+HB-FSH-005-P1,Printed Cotton Saree,প্রিন্টেড সুতি শাড়ি,Print design 1,estimate_requires_owner_review,1400,,,agent-estimate,,true
+HB-FSH-005-P2,Printed Cotton Saree,প্রিন্টেড সুতি শাড়ি,Print design 2,estimate_requires_owner_review,1400,,,agent-estimate,,true
+HB-FSH-006-D1,Unstitched Three-Piece,আনস্টিচড থ্রি-পিস,Design 1,estimate_requires_owner_review,1600,,,agent-estimate,,true
+HB-FSH-006-D2,Unstitched Three-Piece,আনস্টিচড থ্রি-পিস,Design 2,estimate_requires_owner_review,1600,,,agent-estimate,,true
+HB-FSH-007-S,Cotton Kurti,সুতি কুর্তি,Size S,estimate_requires_owner_review,950,,,agent-estimate,,true
+HB-FSH-007-M,Cotton Kurti,সুতি কুর্তি,Size M,estimate_requires_owner_review,950,,,agent-estimate,,true
+HB-FSH-007-L,Cotton Kurti,সুতি কুর্তি,Size L,estimate_requires_owner_review,950,,,agent-estimate,,true
+HB-FSH-007-XL,Cotton Kurti,সুতি কুর্তি,Size XL,estimate_requires_owner_review,950,,,agent-estimate,,true
+HB-FSH-008-C1,Cotton Orna (Dupatta),সুতি ওড়না,Colour 1,estimate_requires_owner_review,450,,,agent-estimate,,true
+HB-FSH-008-C2,Cotton Orna (Dupatta),সুতি ওড়না,Colour 2,estimate_requires_owner_review,450,,,agent-estimate,,true
+HB-FSH-009-BLK,Jersey Hijab,জার্সি হিজাব,Black,estimate_requires_owner_review,350,,,agent-estimate,,true
+HB-FSH-009-NVY,Jersey Hijab,জার্সি হিজাব,Navy,estimate_requires_owner_review,350,,,agent-estimate,,true
+HB-FSH-009-BEG,Jersey Hijab,জার্সি হিজাব,Beige,estimate_requires_owner_review,350,,,agent-estimate,,true
+HB-FSH-010-EU39,Men's Rubber Sandal,পুরুষদের রাবার স্যান্ডেল,EU 39,estimate_requires_owner_review,450,,,agent-estimate,,true
+HB-FSH-010-EU40,Men's Rubber Sandal,পুরুষদের রাবার স্যান্ডেল,EU 40,estimate_requires_owner_review,450,,,agent-estimate,,true
+HB-FSH-010-EU41,Men's Rubber Sandal,পুরুষদের রাবার স্যান্ডেল,EU 41,estimate_requires_owner_review,450,,,agent-estimate,,true
+HB-FSH-010-EU42,Men's Rubber Sandal,পুরুষদের রাবার স্যান্ডেল,EU 42,estimate_requires_owner_review,450,,,agent-estimate,,true
+HB-FSH-010-EU43,Men's Rubber Sandal,পুরুষদের রাবার স্যান্ডেল,EU 43,estimate_requires_owner_review,450,,,agent-estimate,,true
+HB-FSH-010-EU44,Men's Rubber Sandal,পুরুষদের রাবার স্যান্ডেল,EU 44,estimate_requires_owner_review,450,,,agent-estimate,,true
+HB-FSH-011-EU36,Women's Flat Sandal,নারীদের ফ্ল্যাট স্যান্ডেল,EU 36,estimate_requires_owner_review,650,,,agent-estimate,,true
+HB-FSH-011-EU37,Women's Flat Sandal,নারীদের ফ্ল্যাট স্যান্ডেল,EU 37,estimate_requires_owner_review,650,,,agent-estimate,,true
+HB-FSH-011-EU38,Women's Flat Sandal,নারীদের ফ্ল্যাট স্যান্ডেল,EU 38,estimate_requires_owner_review,650,,,agent-estimate,,true
+HB-FSH-011-EU39,Women's Flat Sandal,নারীদের ফ্ল্যাট স্যান্ডেল,EU 39,estimate_requires_owner_review,650,,,agent-estimate,,true
+HB-FSH-011-EU40,Women's Flat Sandal,নারীদের ফ্ল্যাট স্যান্ডেল,EU 40,estimate_requires_owner_review,650,,,agent-estimate,,true
+HB-FSH-011-EU41,Women's Flat Sandal,নারীদের ফ্ল্যাট স্যান্ডেল,EU 41,estimate_requires_owner_review,650,,,agent-estimate,,true
+HB-FSH-012-BLK,Folding Umbrella,ভাঁজ করা ছাতা,Black,estimate_requires_owner_review,550,,,agent-estimate,,true
+HB-FSH-012-NVY,Folding Umbrella,ভাঁজ করা ছাতা,Navy,estimate_requires_owner_review,550,,,agent-estimate,,true
+HB-FSH-013-BLK,Everyday Backpack,প্রতিদিনের ব্যাকপ্যাক,Black,estimate_requires_owner_review,1200,,,agent-estimate,,true
+HB-FSH-013-GRY,Everyday Backpack,প্রতিদিনের ব্যাকপ্যাক,Grey,estimate_requires_owner_review,1200,,,agent-estimate,,true
+HB-FSH-014-BLK,Men's Wallet,পুরুষদের মানিব্যাগ,Black,estimate_requires_owner_review,650,,,agent-estimate,,true
+HB-FSH-014-BRN,Men's Wallet,পুরুষদের মানিব্যাগ,Brown,estimate_requires_owner_review,650,,,agent-estimate,,true
+HB-ELC-001-1M,USB-C Charging Cable,ইউএসবি-সি চার্জিং ক্যাবল,1 metre,estimate_requires_owner_review,250,,,agent-estimate,,true
+HB-ELC-001-2M,USB-C Charging Cable,ইউএসবি-সি চার্জিং ক্যাবল,2 metre,estimate_requires_owner_review,350,,,agent-estimate,,true
+HB-ELC-002-1M,Micro-USB Charging Cable,মাইক্রো-ইউএসবি চার্জিং ক্যাবল,1 metre,estimate_requires_owner_review,180,,,agent-estimate,,true
+HB-ELC-003-1P,USB Wall Charger,ইউএসবি ওয়াল চার্জার,Single port,estimate_requires_owner_review,450,,,agent-estimate,,true
+HB-ELC-004-10K,Power Bank,পাওয়ার ব্যাংক,"10,000 mAh (rated)",estimate_requires_owner_review,1500,,,agent-estimate,,true
+HB-ELC-004-20K,Power Bank,পাওয়ার ব্যাংক,"20,000 mAh (rated)",estimate_requires_owner_review,2400,,,agent-estimate,,true
+HB-ELC-005-STD,Wired Earphones (3.5 mm),তারযুক্ত ইয়ারফোন (৩.৫ মিমি),Standard,estimate_requires_owner_review,300,,,agent-estimate,,true
+HB-ELC-006-BLK,Bluetooth Earbuds,ব্লুটুথ ইয়ারবাডস,Black,estimate_requires_owner_review,1800,,,agent-estimate,,true
+HB-ELC-006-WHT,Bluetooth Earbuds,ব্লুটুথ ইয়ারবাডস,White,estimate_requires_owner_review,1800,,,agent-estimate,,true
+HB-ELC-007-STD,Phone Stand,ফোন স্ট্যান্ড,Standard,estimate_requires_owner_review,350,,,agent-estimate,,true
+HB-ELC-008-12W,LED Bulb (B22),এলইডি বাল্ব (বি২২),12 W,estimate_requires_owner_review,220,,,agent-estimate,,true
+HB-ELC-008-18W,LED Bulb (B22),এলইডি বাল্ব (বি২২),18 W,estimate_requires_owner_review,320,,,agent-estimate,,true
+HB-ELC-009-STD,Rechargeable LED Emergency Light,রিচার্জেবল এলইডি ইমার্জেন্সি লাইট,Standard,estimate_requires_owner_review,900,,,agent-estimate,,true
+HB-ELC-010-4S,Extension Board (4 Sockets),এক্সটেনশন বোর্ড (৪ সকেট),4 sockets,estimate_requires_owner_review,650,,,agent-estimate,,true
+HB-ELC-011-4PK,AA Batteries (Pack of 4),এএ ব্যাটারি (৪টি),Pack of 4,estimate_requires_owner_review,120,,,agent-estimate,,true
+HB-ELC-012-1800ML,Electric Kettle (1.8 L),ইলেকট্রিক কেটলি (১.৮ লিটার),1.8 litre,estimate_requires_owner_review,1400,,,agent-estimate,,true
+HB-ELC-013-1800ML,Rice Cooker (1.8 L),রাইস কুকার (১.৮ লিটার),1.8 litre,estimate_requires_owner_review,2800,,,agent-estimate,,true
+HB-ELC-014-STD,Dry Iron,ড্রাই ইস্ত্রি,Standard,estimate_requires_owner_review,1300,,,agent-estimate,,true
+HB-ELC-015-STD,Rechargeable Table Fan,রিচার্জেবল টেবিল ফ্যান,Standard,estimate_requires_owner_review,3200,,,agent-estimate,,true
+HB-KID-001-M,Baby Diaper Pants,বেবি ডায়াপার প্যান্ট,Size M,estimate_requires_owner_review,950,,,agent-estimate,,true
+HB-KID-001-L,Baby Diaper Pants,বেবি ডায়াপার প্যান্ট,Size L,estimate_requires_owner_review,1000,,,agent-estimate,,true
+HB-KID-001-XL,Baby Diaper Pants,বেবি ডায়াপার প্যান্ট,Size XL,estimate_requires_owner_review,1050,,,agent-estimate,,true
+HB-KID-002-80PC,Baby Wipes (80 pcs),বেবি ওয়াইপস (৮০টি),Pack of 80,estimate_requires_owner_review,250,,,agent-estimate,,true
+HB-KID-003-200ML,Baby Lotion,বেবি লোশন,200 ml,estimate_requires_owner_review,350,,,agent-estimate,,true
+HB-KID-004-250ML,Baby Feeding Bottle,বেবি ফিডিং বোতল,250 ml,estimate_requires_owner_review,350,,,agent-estimate,,true
+HB-KID-005-BLU,School Bag,স্কুলব্যাগ,Blue,estimate_requires_owner_review,950,,,agent-estimate,,true
+HB-KID-005-PNK,School Bag,স্কুলব্যাগ,Pink,estimate_requires_owner_review,950,,,agent-estimate,,true
+HB-KID-006-500ML,Kids Water Bottle,বাচ্চাদের পানির বোতল,500 ml,estimate_requires_owner_review,300,,,agent-estimate,,true
+HB-STN-001-1D,White Writing Paper (1 Dista),সাদা লেখার কাগজ (১ দিস্তা),1 dista,reference_derived,40,34,40,tcb-2026-02-26,2026-02-26,true
+HB-STN-002-5PK,Exercise Khata (Pack of 5),খাতা (৫টির প্যাক),Pack of 5,estimate_requires_owner_review,250,,,agent-estimate,,true
+HB-STN-003-500SH,A4 Copy Paper (Ream),এ-ফোর কপি পেপার (রিম),500 sheets,estimate_requires_owner_review,650,,,agent-estimate,,true
+HB-STN-004-BLU10,Ballpoint Pens (Pack of 10),বলপয়েন্ট কলম (১০টি),"Blue, pack of 10",estimate_requires_owner_review,100,,,agent-estimate,,true
+HB-STN-004-BLK10,Ballpoint Pens (Pack of 10),বলপয়েন্ট কলম (১০টি),"Black, pack of 10",estimate_requires_owner_review,100,,,agent-estimate,,true
+HB-STN-005-12PK,Pencils (Pack of 12),পেনসিল (১২টি),Pack of 12,estimate_requires_owner_review,120,,,agent-estimate,,true
+HB-STN-006-SET,Eraser and Sharpener Set,ইরেজার ও শার্পনার সেট,1 set,estimate_requires_owner_review,40,,,agent-estimate,,true
+HB-STN-007-STD,Geometry Box,জ্যামিতি বক্স,Standard set,estimate_requires_owner_review,250,,,agent-estimate,,true
+HB-STN-008-STD,Stapler with Pins,পিনসহ স্ট্যাপলার,Standard,estimate_requires_owner_review,280,,,agent-estimate,,true
+HB-STN-009-12C,Colour Pencils (12 Colours),রঙ পেনসিল (১২ রং),12 colours,estimate_requires_owner_review,150,,,agent-estimate,,true
+HB-STN-010-15G,Glue Stick,গ্লু স্টিক,15 g,estimate_requires_owner_review,60,,,agent-estimate,,true

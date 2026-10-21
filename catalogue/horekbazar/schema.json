@@ -1,0 +1,862 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://horekbazar.local/catalogue/horekbazar/schema.json",
+  "title": "HorekBazar starter catalogue (draft review package)",
+  "description": "Validates review/import input files. Records are drafts pending owner review; nothing here is runtime data.",
+  "type": "object",
+  "oneOf": [
+    {
+      "required": [
+        "meta",
+        "categories"
+      ],
+      "properties": {
+        "meta": {
+          "$ref": "#/$defs/Meta"
+        },
+        "categories": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Category"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    {
+      "required": [
+        "meta",
+        "products"
+      ],
+      "properties": {
+        "meta": {
+          "$ref": "#/$defs/Meta"
+        },
+        "products": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/Product"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    {
+      "required": [
+        "meta",
+        "sources"
+      ],
+      "properties": {
+        "meta": {
+          "$ref": "#/$defs/Meta"
+        },
+        "sources": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Source"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    {
+      "required": [
+        "meta",
+        "policy",
+        "items"
+      ],
+      "properties": {
+        "meta": {
+          "$ref": "#/$defs/Meta"
+        },
+        "policy": {
+          "type": "string"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ImageManifestItem"
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  ],
+  "$defs": {
+    "LocalizedText": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "bn",
+        "en"
+      ],
+      "properties": {
+        "bn": {
+          "type": "string",
+          "minLength": 1
+        },
+        "en": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "Seo": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "bn",
+        "en"
+      ],
+      "properties": {
+        "bn": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "title",
+            "description"
+          ],
+          "properties": {
+            "title": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 60
+            },
+            "description": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 160
+            }
+          }
+        },
+        "en": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "title",
+            "description"
+          ],
+          "properties": {
+            "title": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 60
+            },
+            "description": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 160
+            }
+          }
+        }
+      }
+    },
+    "Review": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "approvedBy",
+        "approvedAt",
+        "notes"
+      ],
+      "properties": {
+        "status": {
+          "const": "pending_owner_review"
+        },
+        "approvedBy": {
+          "type": "null"
+        },
+        "approvedAt": {
+          "type": "null"
+        },
+        "notes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "Meta": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "catalogue",
+        "version",
+        "status",
+        "generated",
+        "generatedOn",
+        "generatedBy",
+        "ownerAuthorization",
+        "importAllowed",
+        "runtimeUse",
+        "notice"
+      ],
+      "properties": {
+        "catalogue": {
+          "const": "horekbazar-starter"
+        },
+        "version": {
+          "type": "string"
+        },
+        "status": {
+          "const": "draft_pending_owner_review"
+        },
+        "generated": {
+          "const": true
+        },
+        "generatedOn": {
+          "type": "string",
+          "format": "date"
+        },
+        "generatedBy": {
+          "type": "string"
+        },
+        "ownerAuthorization": {
+          "type": "string"
+        },
+        "importAllowed": {
+          "const": false
+        },
+        "runtimeUse": {
+          "const": "forbidden"
+        },
+        "notice": {
+          "type": "string"
+        }
+      }
+    },
+    "Category": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "slug",
+        "parentId",
+        "code",
+        "name",
+        "description",
+        "sortOrder",
+        "status",
+        "generated",
+        "seo",
+        "review"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+        },
+        "slug": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+        },
+        "parentId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "code": {
+          "type": "string",
+          "pattern": "^[A-Z]{3}$"
+        },
+        "name": {
+          "$ref": "#/$defs/LocalizedText"
+        },
+        "description": {
+          "$ref": "#/$defs/LocalizedText"
+        },
+        "sortOrder": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "status": {
+          "const": "draft"
+        },
+        "generated": {
+          "const": true
+        },
+        "seo": {
+          "$ref": "#/$defs/Seo"
+        },
+        "review": {
+          "$ref": "#/$defs/Review"
+        }
+      }
+    },
+    "Money": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "amountMinor",
+        "currency"
+      ],
+      "properties": {
+        "amountMinor": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "currency": {
+          "const": "BDT"
+        }
+      }
+    },
+    "PriceReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sourceId",
+        "sourceItem",
+        "unitBasis",
+        "minBdt",
+        "maxBdt",
+        "multiplier",
+        "derivedMinBdt",
+        "derivedMaxBdt",
+        "observedOn",
+        "derivation"
+      ],
+      "properties": {
+        "sourceId": {
+          "type": "string"
+        },
+        "sourceItem": {
+          "type": "string"
+        },
+        "unitBasis": {
+          "type": "string"
+        },
+        "minBdt": {
+          "type": "number",
+          "minimum": 0
+        },
+        "maxBdt": {
+          "type": "number",
+          "minimum": 0
+        },
+        "multiplier": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "derivedMinBdt": {
+          "type": "number"
+        },
+        "derivedMaxBdt": {
+          "type": "number"
+        },
+        "observedOn": {
+          "type": "string",
+          "format": "date"
+        },
+        "derivation": {
+          "type": "string"
+        }
+      }
+    },
+    "Price": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "proposed",
+        "compareAt",
+        "status",
+        "ownerReviewRequired",
+        "reference",
+        "note"
+      ],
+      "properties": {
+        "proposed": {
+          "$ref": "#/$defs/Money"
+        },
+        "compareAt": {
+          "type": "null",
+          "description": "Always null: no invented 'was' prices."
+        },
+        "status": {
+          "enum": [
+            "reference_derived",
+            "estimate_requires_owner_review"
+          ]
+        },
+        "ownerReviewRequired": {
+          "const": true
+        },
+        "reference": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/PriceReference"
+            }
+          ]
+        },
+        "note": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "if": {
+        "properties": {
+          "status": {
+            "const": "reference_derived"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "reference": {
+            "$ref": "#/$defs/PriceReference"
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "reference": {
+            "type": "null"
+          }
+        }
+      }
+    },
+    "Inventory": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "onHand",
+        "reserved",
+        "available",
+        "stockStatus",
+        "availability"
+      ],
+      "properties": {
+        "onHand": {
+          "const": 0
+        },
+        "reserved": {
+          "const": 0
+        },
+        "available": {
+          "const": 0
+        },
+        "stockStatus": {
+          "const": "unverified"
+        },
+        "availability": {
+          "const": "unavailable"
+        }
+      }
+    },
+    "Variant": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sku",
+        "title",
+        "options",
+        "netQuantity",
+        "price",
+        "inventory",
+        "barcode",
+        "shippingWeightGrams"
+      ],
+      "properties": {
+        "sku": {
+          "type": "string",
+          "pattern": "^HB-[A-Z]{3}-[0-9]{3}-[A-Z0-9-]+$"
+        },
+        "title": {
+          "$ref": "#/$defs/LocalizedText"
+        },
+        "options": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "netQuantity": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "g",
+                    "kg",
+                    "ml",
+                    "piece"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "price": {
+          "$ref": "#/$defs/Price"
+        },
+        "inventory": {
+          "$ref": "#/$defs/Inventory"
+        },
+        "barcode": {
+          "type": "null"
+        },
+        "shippingWeightGrams": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "value",
+            "status"
+          ],
+          "properties": {
+            "value": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "status": {
+              "const": "estimate"
+            }
+          }
+        }
+      }
+    },
+    "Attribute": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "key",
+        "label",
+        "value",
+        "verify"
+      ],
+      "properties": {
+        "key": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9]*$"
+        },
+        "label": {
+          "$ref": "#/$defs/LocalizedText"
+        },
+        "value": {
+          "$ref": "#/$defs/LocalizedText"
+        },
+        "verify": {
+          "const": true
+        }
+      }
+    },
+    "ImageSlot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "slot",
+        "status",
+        "assetId",
+        "sourceUrl",
+        "licence",
+        "rightsHolder",
+        "alt"
+      ],
+      "properties": {
+        "slot": {
+          "enum": [
+            "primary",
+            "gallery-1",
+            "gallery-2",
+            "label-closeup"
+          ]
+        },
+        "status": {
+          "const": "missing"
+        },
+        "assetId": {
+          "type": "null"
+        },
+        "sourceUrl": {
+          "type": "null"
+        },
+        "licence": {
+          "type": "null"
+        },
+        "rightsHolder": {
+          "type": "null"
+        },
+        "alt": {
+          "$ref": "#/$defs/LocalizedText"
+        }
+      }
+    },
+    "Regulatory": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "bstiMark",
+        "sourceIds",
+        "note",
+        "legalReviewRequired"
+      ],
+      "properties": {
+        "bstiMark": {
+          "enum": [
+            "likely",
+            "unknown",
+            "not_found"
+          ]
+        },
+        "sourceIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "note": {
+          "type": "string",
+          "minLength": 1
+        },
+        "legalReviewRequired": {
+          "const": true
+        }
+      }
+    },
+    "Product": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "slug",
+        "status",
+        "generated",
+        "primaryCategoryId",
+        "categoryIds",
+        "name",
+        "shortDescription",
+        "description",
+        "brand",
+        "brandStatus",
+        "attributes",
+        "variants",
+        "images",
+        "imageStatus",
+        "tags",
+        "seo",
+        "regulatory",
+        "factChecks",
+        "review"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^hb-[a-z]{3}-[0-9]{3}$"
+        },
+        "slug": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+          "maxLength": 80
+        },
+        "status": {
+          "const": "draft"
+        },
+        "generated": {
+          "const": true
+        },
+        "primaryCategoryId": {
+          "type": "string"
+        },
+        "categoryIds": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string"
+          }
+        },
+        "name": {
+          "$ref": "#/$defs/LocalizedText"
+        },
+        "shortDescription": {
+          "$ref": "#/$defs/LocalizedText"
+        },
+        "description": {
+          "$ref": "#/$defs/LocalizedText"
+        },
+        "brand": {
+          "type": "null"
+        },
+        "brandStatus": {
+          "const": "to_be_confirmed_by_owner"
+        },
+        "attributes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Attribute"
+          }
+        },
+        "variants": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/Variant"
+          }
+        },
+        "images": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ImageSlot"
+          }
+        },
+        "imageStatus": {
+          "const": "missing"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z0-9-]+$"
+          }
+        },
+        "seo": {
+          "$ref": "#/$defs/Seo"
+        },
+        "regulatory": {
+          "$ref": "#/$defs/Regulatory"
+        },
+        "factChecks": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          }
+        },
+        "review": {
+          "$ref": "#/$defs/Review"
+        }
+      }
+    },
+    "Source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "type",
+        "publisher",
+        "title",
+        "urls",
+        "observedOn",
+        "accessedOn",
+        "note"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "type": {
+          "enum": [
+            "official",
+            "official_reported",
+            "secondary",
+            "agent_estimate"
+          ]
+        },
+        "publisher": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "urls": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uri"
+          }
+        },
+        "observedOn": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "accessedOn": {
+          "type": "string",
+          "format": "date"
+        },
+        "note": {
+          "type": "string"
+        }
+      }
+    },
+    "ImageManifestItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "productId",
+        "slug",
+        "name",
+        "slots"
+      ],
+      "properties": {
+        "productId": {
+          "type": "string"
+        },
+        "slug": {
+          "type": "string"
+        },
+        "name": {
+          "$ref": "#/$defs/LocalizedText"
+        },
+        "slots": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "slot",
+              "status",
+              "required",
+              "licence",
+              "sourceUrl",
+              "rightsHolder",
+              "evidence"
+            ],
+            "properties": {
+              "slot": {
+                "type": "string"
+              },
+              "status": {
+                "const": "missing"
+              },
+              "required": {
+                "type": "boolean"
+              },
+              "licence": {
+                "type": "null"
+              },
+              "sourceUrl": {
+                "type": "null"
+              },
+              "rightsHolder": {
+                "type": "null"
+              },
+              "evidence": {
+                "type": "null"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

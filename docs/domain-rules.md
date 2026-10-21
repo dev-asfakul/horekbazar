@@ -237,8 +237,8 @@ Three layers, so buyers customise without editing core code:
 | `config/` (code, typed, small) | allowed font presets (fonts are bundled at build), section-type registry, default values for a fresh install | developer (rare) |
 
 - First run with an empty database opens `/admin/setup`: create Owner, store identity, delivery zones, then optional integrations. An **empty development database is a valid state**; storefront listings then show honest empty states.
-- **Catalogue content (D11, open):** `data/` contains only catalogue content the owner supplies or explicitly approves, with legitimate image rights and accurate prices. `npm run db:seed` imports only that content and does nothing if `data/` is empty. No fabricated products, reviews, stock levels or order history are ever generated. Category structure and merchandising for HorekBazar stay **proposed** until the owner approves the real catalogue; the agent asks the owner for it when it becomes necessary.
-- HorekBazar-specific content (copy, categories, owner-approved catalogue, logo) lives in `data/` and `public/brand/` only; core code contains no HorekBazar strings.
+- **Catalogue content (D11: Owner authorized catalogue generation; generated catalogue pending owner review and approval.):** `data/` contains only catalogue content the owner supplies or explicitly approves, with legitimate image rights and accurate prices. `npm run db:seed` imports only that content and does nothing if `data/` is empty. The generated starter catalogue is a **draft review package** in `catalogue/horekbazar/`, outside `data/`; records move to `data/` only after record-level owner approval (§16). No fabricated reviews, ratings, sales figures, stock levels, supplier relationships, certifications or order history are ever generated. Category structure and merchandising stay **proposed** until the owner approves them.
+- HorekBazar-specific content (copy, categories, draft and approved catalogue, logo) lives in `catalogue/horekbazar/`, `data/` and `public/brand/` only; core code contains no HorekBazar strings and never reads `catalogue/`.
 - Settings changes invalidate cached pages by tag.
 - Template upgrades: versioned database migrations (`migrations/NNNN_*.ts`) run by `npm run db:migrate`, recorded in a `migrations` collection; `CHANGELOG.md` with upgrade notes; core files vs. buyer-owned files documented.
 
@@ -349,6 +349,24 @@ Every legal statement in these documents is an **interpretation from secondary s
 | VAT on invoices | news reporting on the guideline draft | National Board of Revenue rules | needs review |
 | Consumer rights remedies | news reporting | Consumer Rights Protection Act 2009 | needs review |
 
+## 16. Catalogue workflow (D11)
+
+The owner had no catalogue and authorized the agent (2026-10-21) to generate a **proposed** starter catalogue. The workflow keeps that content separate from the reusable template and out of every database until approved.
+
+| Stage | Where | Who | Rules |
+|---|---|---|---|
+| 1. Generated draft | `catalogue/horekbazar/` | agent | `status: draft`, `review.status: pending_owner_review`; stock 0, `unavailable`, `unverified`; `brand: null`; images `missing`; every price `ownerReviewRequired`; `meta.importAllowed: false`; validated by `tools/catalogue.mjs validate` and `schema.json` |
+| 2. Owner review | same | owner | per record, using `REVIEW-CHECKLIST.md`: brand, attributes, real prices, BSTI mark and other **[L]** checks, images with recorded rights |
+| 3. Approval | conversation or issue | owner | explicit approval naming product ids or categories; approval of the package is not approval of every record |
+| 4. Move to `data/` | `data/` | agent or developer | only approved records; draft-only fields removed; `approvedBy`/`approvedAt` recorded; validated by the application's Zod schemas (§14) |
+| 5. Seed | development database only | developer | `npm run db:seed -- --env development --confirm` (to be built in an approved build phase): refuses non-dev targets, dry-run diff first, idempotent by SKU/slug, never deletes; products created unpublished with zero stock |
+| 6. Stock and publish | admin | staff | stock enters only via `receive` ledger movements after a physical count (§4); publishing is a separate per-product action |
+
+- The application never reads `catalogue/` at runtime, never falls back to it when the database is empty, and the folder is excluded from the sellable template package.
+- Prices are integer poisha (§5). `reference_derived` prices cite an official source (TCB) and are indicative market references, not selling prices; `estimate_requires_owner_review` prices are unsourced placeholders.
+- Forbidden in catalogue records at every stage: ratings, reviews, sales counts, popularity, bestseller labels, urgency or countdowns, invented compare-at prices, supplier relationships, unverified certifications, and health, purity or origin claims without evidence.
+- Competitor descriptions and images are never copied.
+
 ## Decisions (Checkpoint 2)
 
 | ID | Decision | Status |
@@ -358,7 +376,7 @@ Every legal statement in these documents is an **interpretation from secondary s
 | D8 | Single best automatic promotion; tiers only without a flash sale; one coupon; rewards last; interactions as in §5 | **approved in principle** (the **[A]** defaults inside §5 are proposals) |
 | D9 | HB Credit as a non-cash loyalty discount, fully configurable, no cash/wallet claims, disabled for BD production until legal review | **approved in principle, proposed pending legal review** |
 | D10 | Bengali at `/`, English at `/en`, shared stable Latin slugs, rules in §10 | **approved in principle** |
-| D11 | Real catalogue: owner supplies or approves content; empty dev database is acceptable meanwhile; category structure and merchandising stay proposed | **open** |
+| D11 | Catalogue: the owner authorized generation of a proposed starter catalogue (`catalogue/horekbazar/`, workflow §16); records are drafts with zero stock, no images and owner-review prices; empty dev database remains valid | **Owner authorized catalogue generation; generated catalogue pending owner review and approval.** |
 | D12 | Location dataset: research done (§6.1); COD-AB backbone + licensed Bengali names proposed; licence, attribution, completeness and version still to verify | **open** (proposed approach) |
 | D13 | Valid BD phone required + admin confirmation before COD processing; customer email verification optional; staff email verification mandatory; no phone OTP | **approved in principle** |
 | D14 | SMS excluded from v1; `sms` port reserved | **approved in principle** |

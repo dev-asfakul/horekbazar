@@ -1,0 +1,1303 @@
+{
+  "meta": {
+    "catalogue": "horekbazar-starter",
+    "version": "0.1.0-draft",
+    "status": "draft_pending_owner_review",
+    "generated": true,
+    "generatedOn": "2026-10-21",
+    "generatedBy": "AI agent under owner decision D11 (2026-10-21)",
+    "ownerAuthorization": "D11: owner authorized catalogue generation; generated catalogue pending owner review and approval.",
+    "importAllowed": false,
+    "runtimeUse": "forbidden",
+    "notice": "Review/import input only. Never loaded at runtime, never published, never imported without explicit owner approval."
+  },
+  "categories": [
+    {
+      "id": "grocery",
+      "slug": "grocery",
+      "parentId": null,
+      "code": "GRC",
+      "name": {
+        "bn": "মুদি ও নিত্যপণ্য",
+        "en": "Grocery & Staples"
+      },
+      "description": {
+        "bn": "রান্নার নিত্যপ্রয়োজনীয় পণ্য, মসলা ও ভাঁড়ারের জিনিস।",
+        "en": "Everyday cooking staples, spices and pantry items."
+      },
+      "sortOrder": 10,
+      "status": "draft",
+      "generated": true,
+      "seo": {
+        "bn": {
+          "title": "মুদি ও নিত্যপণ্য | হরেকবাজার",
+          "description": "রান্নার নিত্যপ্রয়োজনীয় পণ্য, মসলা ও ভাঁড়ারের জিনিস।"
+        },
+        "en": {
+          "title": "Grocery & Staples | HorekBazar",
+          "description": "Everyday cooking staples, spices and pantry items."
+        }
+      },
+      "review": {
+        "status": "pending_owner_review",
+        "approvedBy": null,
+        "approvedAt": null,
+        "notes": []
+      }
+    },
+    {
+      "id": "rice-and-flour",
+      "slug": "rice-and-flour",
+      "parentId": "grocery",
+      "code": "GRC",
+      "name": {
+        "bn": "চাল ও আটা",
+        "en": "Rice & Flour"
+      },
+      "description": {
+        "bn": "বিভিন্ন জাতের চাল, আটা, ময়দা, সুজি ও চিড়া।",
+        "en": "Rice varieties, atta, maida, suji and chira."
+      },
+      "sortOrder": 20,
+      "status": "draft",
+      "generated": true,
+      "seo": {
+        "bn": {
+          "title": "চাল ও আটা | হরেকবাজার",
+          "description": "বিভিন্ন জাতের চাল, আটা, ময়দা, সুজি ও চিড়া।"
+        },
+        "en": {
+          "title": "Rice & Flour | HorekBazar",
+          "description": "Rice varieties, atta, maida, suji and chira."
+        }
+      },
+      "review": {
+        "status": "pending_owner_review",
+        "approvedBy": null,
+        "approvedAt": null,
+        "notes": []
+      }
+    },
+    {
+      "id": "lentils-and-pulses",
+      "slug": "lentils-and-pulses",
+      "parentId": "grocery",
+      "code": "GRC",
+      "name": {
+        "bn": "ডাল ও ছোলা",
+        "en": "Lentils & Pulses"
+      },
+      "description": {
+        "bn": "মসুর, মুগ, অ্যাংকর ও অন্যান্য ডাল।",
+        "en": "Masoor, moong, anchor and other pulses."
+      },
+      "sortOrder": 30,
+      "status": "draft",
+      "generated": true,
+      "seo": {
+        "bn": {
+          "title": "ডাল ও ছোলা | হরেকবাজার",
+          "description": "মসুর, মুগ, অ্যাংকর ও অন্যান্য ডাল।"
+        },
+        "en": {
+          "title": "Lentils & Pulses | HorekBazar",
+          "description": "Masoor, moong, anchor and other pulses."
+        }
+      },
+      "review": {
+        "status": "pending_owner_review",
+        "approvedBy": null,
+        "approvedAt": null,
+        "notes": []
+      }
+    },
+    {
+      "id": "oil-and-ghee",
+      "slug": "oil-and-ghee",
+      "parentId": "grocery",
+      "code": "GRC",
+      "name": {
+        "bn": "তেল ও ঘি",
+        "en": "Oil & Ghee"
+      },
+      "description": {
+        "bn": "রান্নার তেল ও ঘি।",
+        "en": "Cooking oils and ghee."
+      },
+      "sortOrder": 40,
+      "status": "draft",
+      "generated": true,
+      "seo": {
+        "bn": {
+          "title": "তেল ও ঘি | হরেকবাজার",
+          "description": "রান্নার তেল ও ঘি।"
+        },
+        "en": {
+          "title": "Oil & Ghee | HorekBazar",
+          "description": "Cooking oils and ghee."
+        }
+      },
+      "review": {
+        "status": "pending_owner_review",
+        "approvedBy": null,
+        "approvedAt": null,
+        "notes": []
+      }
+    },
+    {
+      "id": "spices",
+      "slug": "spices",
+      "parentId": "grocery",
+      "code": "GRC",
+      "name": {
+        "bn": "মসলা",
+        "en": "Spices"
+      },
+      "description": {
+        "bn": "প্রতিদিনের রান্নার আস্ত ও গুঁড়া মসলা।",
+        "en": "Whole and ground spices for everyday cooking."
+      },
+      "sortOrder": 50,
+      "status": "draft",
+      "generated": true,
+      "seo": {
+        "bn": {
+          "title": "মসলা | হরেকবাজার",
+          "description": "প্রতিদিনের রান্নার আস্ত ও গুঁড়া মসলা।"
+        },
+        "en": {
+          "title": "Spices | HorekBazar",
+          "description": "Whole and ground spices for everyday cooking."
+        }
+      },
+      "review": {
+        "status": "pending_owner_review",
+        "approvedBy": null,
+        "approvedAt": null,
+        "notes": []
+      }
+    },
+    {
+      "id": "sugar-salt-sweeteners",
+      "slug": "sugar-salt-sweeteners",
+      "parentId": "grocery",
+      "code": "GRC",
+      "name": {
+        "bn": "চিনি, লবণ ও মিষ্টি",
+        "en": "Sugar, Salt & Sweeteners"
+      },
+      "description": {
+        "bn": "চিনি, লবণ, গুড়, খেজুর ও মধু।",
+        "en": "Sugar, salt, molasses, dates and honey."
+      },
+      "sortOrder": 60,
+      "status": "draft",
+      "generated": true,
+      "seo": {
+        "bn": {
+          "title": "চিনি, লবণ ও মিষ্টি | হরেকবাজার",
+          "description": "চিনি, লবণ, গুড়, খেজুর ও মধু।"
+        },
+        "en": {
+          "title": "Sugar, Salt & Sweeteners | HorekBazar",
+          "description": "Sugar, salt, molasses, dates and honey."
+        }
+      },
+      "review": {
+        "status": "pending_owner_review",
+        "approvedBy": null,
+        "approvedAt": null,
+        "notes": []
+      }
+    },
+    {
+      "id": "tea-coffee-milk",
+      "slug": "tea-coffee-milk",
+      "parentId": "grocery",
+      "code": "GRC",
+      "name": {
+        "bn": "চা, কফি ও দুধ",
+        "en": "Tea, Coffee & Milk"
+      },
+      "description": {
+        "bn": "চা পাতা, কফি ও গুঁড়া দুধ।",
+        "en": "Tea leaves, coffee and powdered milk."
+      },
+      "sortOrder": 70,
+      "status": "draft",
+      "generated": true,
+      "seo": {
+        "bn": {
+          "title": "চা, কফি ও দুধ | হরেকবাজার",
+          "description": "চা পাতা, কফি ও গুঁড়া দুধ।"
+        },
+        "en": {
+          "title": "Tea, Coffee & Milk | HorekBazar",
+          "description": "Tea leaves, coffee and powdered milk."
+        }
+      },
+      "review": {
+        "status": "pending_owner_review",
+        "approvedBy": null,
+        "approvedAt": null,
+        "notes": []
+      }
+    },
+    {
+      "id": "snacks-and-noodles",
+      "slug": "snacks-and-noodles",
+      "parentId": "grocery",
+      "code": "GRC",
+      "name": {
+        "bn": "নাস্তা ও নুডলস",
+        "en": "Snacks & Noodles"
+      },
+      "description": {
+        "bn": "মুড়ি, চানাচুর, বিস্কুট, সেমাই ও নুডলস।",
+        "en": "Muri, chanachur, biscuits, vermicelli and noodles."
+      },
+      "sortOrder": 80,
+      "status": "draft",
+      "generated": true,
+      "seo": {
+        "bn": {
+          "title": "নাস্তা ও নুডলস | হরেকবাজার",
+          "description": "মুড়ি, চানাচুর, বিস্কুট, সেমাই ও নুডলস।"
+        },
+        "en": {
+          "title": "Snacks & Noodles | HorekBazar",
+          "description": "Muri, chanachur, biscuits, vermicelli and noodles."
+        }
+      },
+      "review": {
+        "status": "pending_owner_review",
+        "approvedBy": null,
+        "approvedAt": null,
+        "notes": []
+      }
+    },
+    {
+      "id": "personal-care",
+      "slug": "personal-care",
+      "parentId": null,
+      "code": "PCR",
+      "name": {
+        "bn": "ব্যক্তিগত যত্ন",
+        "en": "Personal Care"
+      },
+      "description": {
+        "bn": "ত্বক, চুল, দাঁত ও গোসলের যত্ন।",
+        "en": "Skin, hair, oral and bath care."
+      },
+      "sortOrder": 90,
+      "status": "draft",
+      "generated": true,
+      "seo": {
+        "bn": {
+          "title": "ব্যক্তিগত যত্ন | হরেকবাজার",
+          "description": "ত্বক, চুল, দাঁত ও গোসলের যত্ন।"
+        },
+        "en": {
+          "title": "Personal Care | HorekBazar",
+          "description": "Skin, hair, oral and bath care."
+        }
+      },
+      "review": {
+        "status": "pending_owner_review",
+        "approvedBy": null,
+        "approvedAt": null,
+        "notes": []
+      }
+    },
+    {
+      "id": "skin-care",
+      "slug": "skin-care",
+      "parentId": "personal-care",
+      "code": "PCR",
+      "name": {
+        "bn": "ত্বকের যত্ন",
+        "en": "Skin Care"
+      },
+      "description": {
+        "bn": "ফেসওয়াশ, লোশন ও প্রতিদিনের ত্বকের যত্ন।",
+        "en": "Face wash, lotion and everyday skin care."
+      },
+      "sortOrder": 100,
+      "status": "draft",
+      "generated": true,
+      "seo": {
+        "bn": {
+          "title": "ত্বকের যত্ন | হরেকবাজার",
+          "description": "ফেসওয়াশ, লোশন ও প্রতিদিনের ত্বকের যত্ন।"
+        },
+        "en": {
+          "title": "Skin Care | HorekBazar",
+          "description": "Face wash, lotion and everyday skin care."
+        }
+      },
+      "review": {
+        "status": "pending_owner_review",
+        "approvedBy": null,
+        "approvedAt": null,
+        "notes": []
+      }
+    },
+    {
+      "id": "hair-care",
+      "slug": "hair-care",
+      "parentId": "personal-care",
+      "code": "PCR",
+      "name": {
+        "bn": "চুলের যত্ন",
+        "en": "Hair Care"
+      },
+      "description": {
+        "bn": "চুলের তেল, শ্যাম্পু, কন্ডিশনার ও চিরুনি।",
+        "en": "Hair oil, shampoo, conditioner and combs."
+      },
+      "sortOrder": 110,
+      "status": "draft",
+      "generated": true,
+      "seo": {
+        "bn": {
+          "title": "চুলের যত্ন | হরেকবাজার",
+          "description": "চুলের তেল, শ্যাম্পু, কন্ডিশনার ও চিরুনি।"
+        },
+        "en": {
+          "title": "Hair Care | HorekBazar",
+          "description": "Hair oil, shampoo, conditioner and combs."
+        }
+      },
+      "review": {
+        "status": "pending_owner_review",
+        "approvedBy": null,
+        "approvedAt": null,
+        "notes": []
+      }
+    },
+    {
+      "id": "oral-and-bath",
+      "slug": "oral-and-bath",
+      "parentId": "personal-care",
+      "code": "PCR",
+      "name": {
+        "bn": "দাঁত ও গোসল",
+        "en": "Oral & Bath"
+      },
+      "description": {
+        "bn": "টুথপেস্ট, টুথব্রাশ, সাবান ও হ্যান্ডওয়াশ।",
+        "en": "Toothpaste, toothbrushes, soap and hand wash."
+      },
+      "sortOrder": 120,
+      "status": "draft",
+      "generated": true,
+      "seo": {
+        "bn": {
+          "title": "দাঁত ও গোসল | হরেকবাজার",
+          "description": "টুথপেস্ট, টুথব্রাশ, সাবান ও হ্যান্ডওয়াশ।"
+        },
+        "en": {
+          "title": "Oral & Bath | HorekBazar",
+          "description": "Toothpaste, toothbrushes, soap and hand wash."
+        }
+      },
+      "review": {
+        "status": "pending_owner_review",
+        "approvedBy": null,
+        "approvedAt": null,
+        "notes": []
+      }
+    },
+    {
+      "id": "grooming-and-hygiene",
+      "slug": "grooming-and-hygiene",
+      "parentId": "personal-care",
+      "code": "PCR",
+      "name": {
+        "bn": "গ্রুমিং ও স্বাস্থ্যবিধি",
+        "en": "Grooming & Hygiene"
+      },
+      "description": {
+        "bn": "শেভিং, নখের যত্ন ও স্যানিটারি পণ্য।",
+        "en": "Shaving, nail care and sanitary products."
+      },
+      "sortOrder": 130,
+      "status": "draft",
+      "generated": true,
+      "seo": {
+        "bn": {
+          "title": "গ্রুমিং ও স্বাস্থ্যবিধি | হরেকবাজার",
+          "description": "শেভিং, নখের যত্ন ও স্যানিটারি পণ্য।"
+        },
+        "en": {
+          "title": "Grooming & Hygiene | HorekBazar",
+          "description": "Shaving, nail care and sanitary products."
+        }
+      },
+      "review": {
+        "status": "pending_owner_review",
+        "approvedBy": null,
+        "approvedAt": null,
+        "notes": []
+      }
+    },
+    {
+      "id": "home-cleaning",
+      "slug": "home-cleaning",
+      "parentId": null,
+      "code": "HCL",
+      "name": {
+        "bn": "ঘর পরিষ্কার",
+        "en": "Home Cleaning"
+      },
+      "description": {
+        "bn": "কাপড় কাচা, থালাবাসন ধোয়া ও ঘর পরিষ্কারের পণ্য।",
+        "en": "Laundry, dishwashing and household cleaning."
+      },
+      "sortOrder": 140,
+      "status": "draft",
+      "generated": true,
+      "seo": {
+        "bn": {
+          "title": "ঘর পরিষ্কার | হরেকবাজার",
+          "description": "কাপড় কাচা, থালাবাসন ধোয়া ও ঘর পরিষ্কারের পণ্য।"
+        },
+        "en": {
+          "title": "Home Cleaning | HorekBazar",
+          "description": "Laundry, dishwashing and household cleaning."
+        }
+      },
+      "review": {
+        "status": "pending_owner_review",
+        "approvedBy": null,
+        "approvedAt": null,
+        "notes": []
+      }
+    },
+    {
+      "id": "laundry",
+      "slug": "laundry",
+      "parentId": "home-cleaning",
+      "code": "HCL",
+      "name": {
+        "bn": "কাপড় কাচা",
+        "en": "Laundry"
+      },
+      "description": {
+        "bn": "ডিটারজেন্ট পাউডার ও লিকুইড ডিটারজেন্ট।",
+        "en": "Detergent powder and liquid detergent."
+      },
+      "sortOrder": 150,
+      "status": "draft",
+      "generated": true,
+      "seo": {
+        "bn": {
+          "title": "কাপড় কাচা | হরেকবাজার",
+          "description": "ডিটারজেন্ট পাউডার ও লিকুইড ডিটারজেন্ট।"
+        },
+        "en": {
+          "title": "Laundry | HorekBazar",
+          "description": "Detergent powder and liquid detergent."
+        }
+      },
+      "review": {
+        "status": "pending_owner_review",
+        "approvedBy": null,
+        "approvedAt": null,
+        "notes": []
+      }
+    },
+    {
+      "id": "dishwashing",
+      "slug": "dishwashing",
+      "parentId": "home-cleaning",
+      "code": "HCL",
+      "name": {
+        "bn": "থালাবাসন ধোয়া",
+        "en": "Dishwashing"
+      },
+      "description": {
+        "bn": "ডিশওয়াশিং লিকুইড, বার ও স্ক্রাবার।",
+        "en": "Dishwashing liquid, bars and scrubbers."
+      },
+      "sortOrder": 160,
+      "status": "draft",
+      "generated": true,
+      "seo": {
+        "bn": {
+          "title": "থালাবাসন ধোয়া | হরেকবাজার",
+          "description": "ডিশওয়াশিং লিকুইড, বার ও স্ক্রাবার।"
+        },
+        "en": {
+          "title": "Dishwashing | HorekBazar",
+          "description": "Dishwashing liquid, bars and scrubbers."
+        }
+      },
+      "review": {
+        "status": "pending_owner_review",
+        "approvedBy": null,
+        "approvedAt": null,
+        "notes": []
+      }
+    },
+    {
+      "id": "surface-and-toilet",
+      "slug": "surface-and-toilet",
+      "parentId": "home-cleaning",
+      "code": "HCL",
+      "name": {
+        "bn": "মেঝে, সারফেস ও টয়লেট",
+        "en": "Floor, Surface & Toilet"
+      },
+      "description": {
+        "bn": "মেঝে, কাচ ও টয়লেট পরিষ্কারের পণ্য।",
+        "en": "Floor, glass and toilet cleaners."
+      },
+      "sortOrder": 170,
+      "status": "draft",
+      "generated": true,
+      "seo": {
+        "bn": {
+          "title": "মেঝে, সারফেস ও টয়লেট | হরেকবাজার",
+          "description": "মেঝে, কাচ ও টয়লেট পরিষ্কারের পণ্য।"
+        },
+        "en": {
+          "title": "Floor, Surface & Toilet | HorekBazar",
+          "description": "Floor, glass and toilet cleaners."
+        }
+      },
+      "review": {
+        "status": "pending_owner_review",
+        "approvedBy": null,
+        "approvedAt": null,
+        "notes": []
+      }
+    },
+    {
+      "id": "cleaning-tools",
+      "slug": "cleaning-tools",
+      "parentId": "home-cleaning",
+      "code": "HCL",
+      "name": {
+        "bn": "পরিষ্কারের সরঞ্জাম",
+        "en": "Cleaning Tools"
+      },
+      "description": {
+        "bn": "মপ, ঝাড়ু, কাপড় ও ময়লার ব্যাগ।",
+        "en": "Mops, brooms, cloths and garbage bags."
+      },
+      "sortOrder": 180,
+      "status": "draft",
+      "generated": true,
+      "seo": {
+        "bn": {
+          "title": "পরিষ্কারের সরঞ্জাম | হরেকবাজার",
+          "description": "মপ, ঝাড়ু, কাপড় ও ময়লার ব্যাগ।"
+        },
+        "en": {
+          "title": "Cleaning Tools | HorekBazar",
+          "description": "Mops, brooms, cloths and garbage bags."
+        }
+      },
+      "review": {
+        "status": "pending_owner_review",
+        "approvedBy": null,
+        "approvedAt": null,
+        "notes": []
+      }
+    },
+    {
+      "id": "kitchen-dining",
+      "slug": "kitchen-dining",
+      "parentId": null,
+      "code": "KIT",
+      "name": {
+        "bn": "রান্নাঘর ও ডাইনিং",
+        "en": "Kitchen & Dining"
+      },
+      "description": {
+        "bn": "রান্নার পাত্র, সংরক্ষণ পাত্র ও খাবার পরিবেশনের জিনিস।",
+        "en": "Cookware, storage and tableware."
+      },
+      "sortOrder": 190,
+      "status": "draft",
+      "generated": true,
+      "seo": {
+        "bn": {
+          "title": "রান্নাঘর ও ডাইনিং | হরেকবাজার",
+          "description": "রান্নার পাত্র, সংরক্ষণ পাত্র ও খাবার পরিবেশনের জিনিস।"
+        },
+        "en": {
+          "title": "Kitchen & Dining | HorekBazar",
+          "description": "Cookware, storage and tableware."
+        }
+      },
+      "review": {
+        "status": "pending_owner_review",
+        "approvedBy": null,
+        "approvedAt": null,
+        "notes": []
+      }
+    },
+    {
+      "id": "cookware",
+      "slug": "cookware",
+      "parentId": "kitchen-dining",
+      "code": "KIT",
+      "name": {
+        "bn": "রান্নার পাত্র",
+        "en": "Cookware"
+      },
+      "description": {
+        "bn": "প্যান, হাঁড়ি ও প্রেশার কুকার।",
+        "en": "Pans, pots and pressure cookers."
+      },
+      "sortOrder": 200,
+      "status": "draft",
+      "generated": true,
+      "seo": {
+        "bn": {
+          "title": "রান্নার পাত্র | হরেকবাজার",
+          "description": "প্যান, হাঁড়ি ও প্রেশার কুকার।"
+        },
+        "en": {
+          "title": "Cookware | HorekBazar",
+          "description": "Pans, pots and pressure cookers."
+        }
+      },
+      "review": {
+        "status": "pending_owner_review",
+        "approvedBy": null,
+        "approvedAt": null,
+        "notes": []
+      }
+    },
+    {
+      "id": "kitchen-tools-storage",
+      "slug": "kitchen-tools-storage",
+      "parentId": "kitchen-dining",
+      "code": "KIT",
+      "name": {
+        "bn": "রান্নাঘরের সরঞ্জাম ও সংরক্ষণ",
+        "en": "Kitchen Tools & Storage"
+      },
+      "description": {
+        "bn": "হাতা-খুন্তি, কাটিং বোর্ড, ছুরি ও কনটেইনার।",
+        "en": "Utensils, boards, knives and containers."
+      },
+      "sortOrder": 210,
+      "status": "draft",
+      "generated": true,
+      "seo": {
+        "bn": {
+          "title": "রান্নাঘরের সরঞ্জাম ও সংরক্ষণ | হরেকবাজার",
+          "description": "হাতা-খুন্তি, কাটিং বোর্ড, ছুরি ও কনটেইনার।"
+        },
+        "en": {
+          "title": "Kitchen Tools & Storage | HorekBazar",
+          "description": "Utensils, boards, knives and containers."
+        }
+      },
+      "review": {
+        "status": "pending_owner_review",
+        "approvedBy": null,
+        "approvedAt": null,
+        "notes": []
+      }
+    },
+    {
+      "id": "tableware",
+      "slug": "tableware",
+      "parentId": "kitchen-dining",
+      "code": "KIT",
+      "name": {
+        "bn": "টেবিলওয়্যার ও পানপাত্র",
+        "en": "Tableware & Drinkware"
+      },
+      "description": {
+        "bn": "প্লেট, গ্লাস, কাপ, জগ, বোতল ও টিফিন বক্স।",
+        "en": "Plates, glasses, cups, jugs, bottles and tiffin boxes."
+      },
+      "sortOrder": 220,
+      "status": "draft",
+      "generated": true,
+      "seo": {
+        "bn": {
+          "title": "টেবিলওয়্যার ও পানপাত্র | হরেকবাজার",
+          "description": "প্লেট, গ্লাস, কাপ, জগ, বোতল ও টিফিন বক্স।"
+        },
+        "en": {
+          "title": "Tableware & Drinkware | HorekBazar",
+          "description": "Plates, glasses, cups, jugs, bottles and tiffin boxes."
+        }
+      },
+      "review": {
+        "status": "pending_owner_review",
+        "approvedBy": null,
+        "approvedAt": null,
+        "notes": []
+      }
+    },
+    {
+      "id": "home-living",
+      "slug": "home-living",
+      "parentId": null,
+      "code": "HOM",
+      "name": {
+        "bn": "ঘর ও জীবনযাপন",
+        "en": "Home & Living"
+      },
+      "description": {
+        "bn": "বিছানার চাদর, তোয়ালে ও ঘরের প্রয়োজনীয় জিনিস।",
+        "en": "Bedding, bath linen and home essentials."
+      },
+      "sortOrder": 230,
+      "status": "draft",
+      "generated": true,
+      "seo": {
+        "bn": {
+          "title": "ঘর ও জীবনযাপন | হরেকবাজার",
+          "description": "বিছানার চাদর, তোয়ালে ও ঘরের প্রয়োজনীয় জিনিস।"
+        },
+        "en": {
+          "title": "Home & Living | HorekBazar",
+          "description": "Bedding, bath linen and home essentials."
+        }
+      },
+      "review": {
+        "status": "pending_owner_review",
+        "approvedBy": null,
+        "approvedAt": null,
+        "notes": []
+      }
+    },
+    {
+      "id": "bedding-and-bath",
+      "slug": "bedding-and-bath",
+      "parentId": "home-living",
+      "code": "HOM",
+      "name": {
+        "bn": "বিছানা ও তোয়ালে",
+        "en": "Bedding & Bath Linen"
+      },
+      "description": {
+        "bn": "বিছানার চাদর, বালিশের কভার, তোয়ালে ও গামছা।",
+        "en": "Bed sheets, pillow covers, towels and gamchha."
+      },
+      "sortOrder": 240,
+      "status": "draft",
+      "generated": true,
+      "seo": {
+        "bn": {
+          "title": "বিছানা ও তোয়ালে | হরেকবাজার",
+          "description": "বিছানার চাদর, বালিশের কভার, তোয়ালে ও গামছা।"
+        },
+        "en": {
+          "title": "Bedding & Bath Linen | HorekBazar",
+          "description": "Bed sheets, pillow covers, towels and gamchha."
+        }
+      },
+      "review": {
+        "status": "pending_owner_review",
+        "approvedBy": null,
+        "approvedAt": null,
+        "notes": []
+      }
+    },
+    {
+      "id": "home-essentials",
+      "slug": "home-essentials",
+      "parentId": "home-living",
+      "code": "HOM",
+      "name": {
+        "bn": "ঘরের প্রয়োজনীয় জিনিস",
+        "en": "Home Essentials"
+      },
+      "description": {
+        "bn": "মশারি, পাপোশ, ঝুড়ি ও দেয়ালঘড়ি।",
+        "en": "Mosquito nets, doormats, storage and clocks."
+      },
+      "sortOrder": 250,
+      "status": "draft",
+      "generated": true,
+      "seo": {
+        "bn": {
+          "title": "ঘরের প্রয়োজনীয় জিনিস | হরেকবাজার",
+          "description": "মশারি, পাপোশ, ঝুড়ি ও দেয়ালঘড়ি।"
+        },
+        "en": {
+          "title": "Home Essentials | HorekBazar",
+          "description": "Mosquito nets, doormats, storage and clocks."
+        }
+      },
+      "review": {
+        "status": "pending_owner_review",
+        "approvedBy": null,
+        "approvedAt": null,
+        "notes": []
+      }
+    },
+    {
+      "id": "fashion",
+      "slug": "fashion",
+      "parentId": null,
+      "code": "FSH",
+      "name": {
+        "bn": "ফ্যাশন",
+        "en": "Fashion"
+      },
+      "description": {
+        "bn": "প্রতিদিনের পোশাক, জুতা ও এক্সেসরিজ।",
+        "en": "Everyday clothing, footwear and accessories."
+      },
+      "sortOrder": 260,
+      "status": "draft",
+      "generated": true,
+      "seo": {
+        "bn": {
+          "title": "ফ্যাশন | হরেকবাজার",
+          "description": "প্রতিদিনের পোশাক, জুতা ও এক্সেসরিজ।"
+        },
+        "en": {
+          "title": "Fashion | HorekBazar",
+          "description": "Everyday clothing, footwear and accessories."
+        }
+      },
+      "review": {
+        "status": "pending_owner_review",
+        "approvedBy": null,
+        "approvedAt": null,
+        "notes": []
+      }
+    },
+    {
+      "id": "mens-clothing",
+      "slug": "mens-clothing",
+      "parentId": "fashion",
+      "code": "FSH",
+      "name": {
+        "bn": "পুরুষদের পোশাক",
+        "en": "Men's Clothing"
+      },
+      "description": {
+        "bn": "লুঙ্গি, পাঞ্জাবি, টি-শার্ট ও শার্ট।",
+        "en": "Lungi, panjabi, T-shirts and shirts."
+      },
+      "sortOrder": 270,
+      "status": "draft",
+      "generated": true,
+      "seo": {
+        "bn": {
+          "title": "পুরুষদের পোশাক | হরেকবাজার",
+          "description": "লুঙ্গি, পাঞ্জাবি, টি-শার্ট ও শার্ট।"
+        },
+        "en": {
+          "title": "Men's Clothing | HorekBazar",
+          "description": "Lungi, panjabi, T-shirts and shirts."
+        }
+      },
+      "review": {
+        "status": "pending_owner_review",
+        "approvedBy": null,
+        "approvedAt": null,
+        "notes": []
+      }
+    },
+    {
+      "id": "womens-clothing",
+      "slug": "womens-clothing",
+      "parentId": "fashion",
+      "code": "FSH",
+      "name": {
+        "bn": "নারীদের পোশাক",
+        "en": "Women's Clothing"
+      },
+      "description": {
+        "bn": "শাড়ি, থ্রি-পিস, কুর্তি, ওড়না ও হিজাব।",
+        "en": "Saree, three-piece, kurti, orna and hijab."
+      },
+      "sortOrder": 280,
+      "status": "draft",
+      "generated": true,
+      "seo": {
+        "bn": {
+          "title": "নারীদের পোশাক | হরেকবাজার",
+          "description": "শাড়ি, থ্রি-পিস, কুর্তি, ওড়না ও হিজাব।"
+        },
+        "en": {
+          "title": "Women's Clothing | HorekBazar",
+          "description": "Saree, three-piece, kurti, orna and hijab."
+        }
+      },
+      "review": {
+        "status": "pending_owner_review",
+        "approvedBy": null,
+        "approvedAt": null,
+        "notes": []
+      }
+    },
+    {
+      "id": "footwear-and-accessories",
+      "slug": "footwear-and-accessories",
+      "parentId": "fashion",
+      "code": "FSH",
+      "name": {
+        "bn": "জুতা ও এক্সেসরিজ",
+        "en": "Footwear & Accessories"
+      },
+      "description": {
+        "bn": "স্যান্ডেল, ছাতা, ব্যাগ ও মানিব্যাগ।",
+        "en": "Sandals, umbrellas, bags and wallets."
+      },
+      "sortOrder": 290,
+      "status": "draft",
+      "generated": true,
+      "seo": {
+        "bn": {
+          "title": "জুতা ও এক্সেসরিজ | হরেকবাজার",
+          "description": "স্যান্ডেল, ছাতা, ব্যাগ ও মানিব্যাগ।"
+        },
+        "en": {
+          "title": "Footwear & Accessories | HorekBazar",
+          "description": "Sandals, umbrellas, bags and wallets."
+        }
+      },
+      "review": {
+        "status": "pending_owner_review",
+        "approvedBy": null,
+        "approvedAt": null,
+        "notes": []
+      }
+    },
+    {
+      "id": "electronics",
+      "slug": "electronics",
+      "parentId": null,
+      "code": "ELC",
+      "name": {
+        "bn": "ইলেকট্রনিক্স ও এক্সেসরিজ",
+        "en": "Electronics & Accessories"
+      },
+      "description": {
+        "bn": "মোবাইল এক্সেসরিজ, বাতি ও ছোট গৃহস্থালি যন্ত্র।",
+        "en": "Mobile accessories, lighting and small appliances."
+      },
+      "sortOrder": 300,
+      "status": "draft",
+      "generated": true,
+      "seo": {
+        "bn": {
+          "title": "ইলেকট্রনিক্স ও এক্সেসরিজ | হরেকবাজার",
+          "description": "মোবাইল এক্সেসরিজ, বাতি ও ছোট গৃহস্থালি যন্ত্র।"
+        },
+        "en": {
+          "title": "Electronics & Accessories | HorekBazar",
+          "description": "Mobile accessories, lighting and small appliances."
+        }
+      },
+      "review": {
+        "status": "pending_owner_review",
+        "approvedBy": null,
+        "approvedAt": null,
+        "notes": []
+      }
+    },
+    {
+      "id": "mobile-accessories",
+      "slug": "mobile-accessories",
+      "parentId": "electronics",
+      "code": "ELC",
+      "name": {
+        "bn": "মোবাইল এক্সেসরিজ",
+        "en": "Mobile Accessories"
+      },
+      "description": {
+        "bn": "ক্যাবল, চার্জার, পাওয়ার ব্যাংক ও ইয়ারফোন।",
+        "en": "Cables, chargers, power banks and earphones."
+      },
+      "sortOrder": 310,
+      "status": "draft",
+      "generated": true,
+      "seo": {
+        "bn": {
+          "title": "মোবাইল এক্সেসরিজ | হরেকবাজার",
+          "description": "ক্যাবল, চার্জার, পাওয়ার ব্যাংক ও ইয়ারফোন।"
+        },
+        "en": {
+          "title": "Mobile Accessories | HorekBazar",
+          "description": "Cables, chargers, power banks and earphones."
+        }
+      },
+      "review": {
+        "status": "pending_owner_review",
+        "approvedBy": null,
+        "approvedAt": null,
+        "notes": []
+      }
+    },
+    {
+      "id": "lighting-and-power",
+      "slug": "lighting-and-power",
+      "parentId": "electronics",
+      "code": "ELC",
+      "name": {
+        "bn": "বাতি ও বিদ্যুৎ",
+        "en": "Lighting & Power"
+      },
+      "description": {
+        "bn": "এলইডি বাল্ব, ইমার্জেন্সি লাইট, এক্সটেনশন বোর্ড ও ব্যাটারি।",
+        "en": "LED bulbs, emergency lights, extension boards and batteries."
+      },
+      "sortOrder": 320,
+      "status": "draft",
+      "generated": true,
+      "seo": {
+        "bn": {
+          "title": "বাতি ও বিদ্যুৎ | হরেকবাজার",
+          "description": "এলইডি বাল্ব, ইমার্জেন্সি লাইট, এক্সটেনশন বোর্ড ও ব্যাটারি।"
+        },
+        "en": {
+          "title": "Lighting & Power | HorekBazar",
+          "description": "LED bulbs, emergency lights, extension boards and batteries."
+        }
+      },
+      "review": {
+        "status": "pending_owner_review",
+        "approvedBy": null,
+        "approvedAt": null,
+        "notes": []
+      }
+    },
+    {
+      "id": "small-appliances",
+      "slug": "small-appliances",
+      "parentId": "electronics",
+      "code": "ELC",
+      "name": {
+        "bn": "ছোট গৃহস্থালি যন্ত্র",
+        "en": "Small Appliances"
+      },
+      "description": {
+        "bn": "কেটলি, রাইস কুকার, ইস্ত্রি ও ফ্যান।",
+        "en": "Kettles, rice cookers, irons and fans."
+      },
+      "sortOrder": 330,
+      "status": "draft",
+      "generated": true,
+      "seo": {
+        "bn": {
+          "title": "ছোট গৃহস্থালি যন্ত্র | হরেকবাজার",
+          "description": "কেটলি, রাইস কুকার, ইস্ত্রি ও ফ্যান।"
+        },
+        "en": {
+          "title": "Small Appliances | HorekBazar",
+          "description": "Kettles, rice cookers, irons and fans."
+        }
+      },
+      "review": {
+        "status": "pending_owner_review",
+        "approvedBy": null,
+        "approvedAt": null,
+        "notes": []
+      }
+    },
+    {
+      "id": "baby-and-kids",
+      "slug": "baby-and-kids",
+      "parentId": null,
+      "code": "KID",
+      "name": {
+        "bn": "শিশু ও কিশোর",
+        "en": "Baby & Kids"
+      },
+      "description": {
+        "bn": "শিশুর যত্ন ও স্কুলের প্রয়োজনীয় জিনিস।",
+        "en": "Baby care and school essentials."
+      },
+      "sortOrder": 340,
+      "status": "draft",
+      "generated": true,
+      "seo": {
+        "bn": {
+          "title": "শিশু ও কিশোর | হরেকবাজার",
+          "description": "শিশুর যত্ন ও স্কুলের প্রয়োজনীয় জিনিস।"
+        },
+        "en": {
+          "title": "Baby & Kids | HorekBazar",
+          "description": "Baby care and school essentials."
+        }
+      },
+      "review": {
+        "status": "pending_owner_review",
+        "approvedBy": null,
+        "approvedAt": null,
+        "notes": []
+      }
+    },
+    {
+      "id": "baby-care",
+      "slug": "baby-care",
+      "parentId": "baby-and-kids",
+      "code": "KID",
+      "name": {
+        "bn": "শিশুর যত্ন",
+        "en": "Baby Care"
+      },
+      "description": {
+        "bn": "ডায়াপার, ওয়াইপস, লোশন ও ফিডার।",
+        "en": "Diapers, wipes, lotion and feeding bottles."
+      },
+      "sortOrder": 350,
+      "status": "draft",
+      "generated": true,
+      "seo": {
+        "bn": {
+          "title": "শিশুর যত্ন | হরেকবাজার",
+          "description": "ডায়াপার, ওয়াইপস, লোশন ও ফিডার।"
+        },
+        "en": {
+          "title": "Baby Care | HorekBazar",
+          "description": "Diapers, wipes, lotion and feeding bottles."
+        }
+      },
+      "review": {
+        "status": "pending_owner_review",
+        "approvedBy": null,
+        "approvedAt": null,
+        "notes": []
+      }
+    },
+    {
+      "id": "school-essentials",
+      "slug": "school-essentials",
+      "parentId": "baby-and-kids",
+      "code": "KID",
+      "name": {
+        "bn": "স্কুলের জিনিস",
+        "en": "School Essentials"
+      },
+      "description": {
+        "bn": "স্কুলব্যাগ ও পানির বোতল।",
+        "en": "School bags and water bottles."
+      },
+      "sortOrder": 360,
+      "status": "draft",
+      "generated": true,
+      "seo": {
+        "bn": {
+          "title": "স্কুলের জিনিস | হরেকবাজার",
+          "description": "স্কুলব্যাগ ও পানির বোতল।"
+        },
+        "en": {
+          "title": "School Essentials | HorekBazar",
+          "description": "School bags and water bottles."
+        }
+      },
+      "review": {
+        "status": "pending_owner_review",
+        "approvedBy": null,
+        "approvedAt": null,
+        "notes": []
+      }
+    },
+    {
+      "id": "stationery",
+      "slug": "stationery",
+      "parentId": null,
+      "code": "STN",
+      "name": {
+        "bn": "স্টেশনারি ও অফিস",
+        "en": "Stationery & Office"
+      },
+      "description": {
+        "bn": "কাগজ, খাতা, কলম ও অফিসের জিনিস।",
+        "en": "Paper, notebooks, pens and office supplies."
+      },
+      "sortOrder": 370,
+      "status": "draft",
+      "generated": true,
+      "seo": {
+        "bn": {
+          "title": "স্টেশনারি ও অফিস | হরেকবাজার",
+          "description": "কাগজ, খাতা, কলম ও অফিসের জিনিস।"
+        },
+        "en": {
+          "title": "Stationery & Office | HorekBazar",
+          "description": "Paper, notebooks, pens and office supplies."
+        }
+      },
+      "review": {
+        "status": "pending_owner_review",
+        "approvedBy": null,
+        "approvedAt": null,
+        "notes": []
+      }
+    },
+    {
+      "id": "paper-and-notebooks",
+      "slug": "paper-and-notebooks",
+      "parentId": "stationery",
+      "code": "STN",
+      "name": {
+        "bn": "কাগজ ও খাতা",
+        "en": "Paper & Notebooks"
+      },
+      "description": {
+        "bn": "লেখার কাগজ, খাতা ও এ-ফোর কাগজ।",
+        "en": "Writing paper, exercise books and A4 paper."
+      },
+      "sortOrder": 380,
+      "status": "draft",
+      "generated": true,
+      "seo": {
+        "bn": {
+          "title": "কাগজ ও খাতা | হরেকবাজার",
+          "description": "লেখার কাগজ, খাতা ও এ-ফোর কাগজ।"
+        },
+        "en": {
+          "title": "Paper & Notebooks | HorekBazar",
+          "description": "Writing paper, exercise books and A4 paper."
+        }
+      },
+      "review": {
+        "status": "pending_owner_review",
+        "approvedBy": null,
+        "approvedAt": null,
+        "notes": []
+      }
+    },
+    {
+      "id": "writing-and-office",
+      "slug": "writing-and-office",
+      "parentId": "stationery",
+      "code": "STN",
+      "name": {
+        "bn": "লেখার ও অফিসের সরঞ্জাম",
+        "en": "Writing & Office Supplies"
+      },
+      "description": {
+        "bn": "কলম, পেনসিল, জ্যামিতি বক্স ও স্ট্যাপলার।",
+        "en": "Pens, pencils, geometry boxes and staplers."
+      },
+      "sortOrder": 390,
+      "status": "draft",
+      "generated": true,
+      "seo": {
+        "bn": {
+          "title": "লেখার ও অফিসের সরঞ্জাম | হরেকবাজার",
+          "description": "কলম, পেনসিল, জ্যামিতি বক্স ও স্ট্যাপলার।"
+        },
+        "en": {
+          "title": "Writing & Office Supplies | HorekBazar",
+          "description": "Pens, pencils, geometry boxes and staplers."
+        }
+      },
+      "review": {
+        "status": "pending_owner_review",
+        "approvedBy": null,
+        "approvedAt": null,
+        "notes": []
+      }
+    }
+  ]
+}

@@ -10,7 +10,9 @@ Status: **planning**. No application code yet. The architecture is being decided
 
 ## Data policy
 
-The application reads only real, configured data sources. There is no mock or demo fallback. `data/` holds only catalogue content the store owner supplies or explicitly approves (real prices, legitimate image rights). It is imported into a separately configured development database with an explicit seed command, and it may be empty: an empty database is a valid state. Never copy production customer data into development.
+The application reads only real, configured data sources. There is no mock or demo fallback. `data/` holds only catalogue content the store owner supplies or explicitly approves (real prices, legitimate image rights). It is imported into a separately configured development database with an explicit seed command, and it may be empty: an empty database is a valid state.
+
+`catalogue/horekbazar/` holds a **generated draft starter catalogue pending owner review** (decision D11). It is a review/import input only: never read at runtime, never published, never imported without explicit owner approval, and excluded from the sellable template. See [`catalogue/horekbazar/README.md`](./catalogue/horekbazar/README.md). Never copy production customer data into development.
 
 ## For contributors and agents
 

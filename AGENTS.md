@@ -22,6 +22,7 @@ Read this first, then `docs/PROGRESS.md`, then `DESIGN.md`.
 
 ## Hard rules
 
+- `catalogue/horekbazar/` is a draft review package (D11). Never read it from application code, never import it into any database, never mark it approved. Only owner-approved records move to `data/` (`docs/domain-rules.md` §16).
 - No mock or fabricated data, no simulated success. Real configured services only; clear setup-required states otherwise.
 - Never commit secrets, `.env` files, or customer data. `.env.example` has placeholders only.
 - Separate dev, staging and production credentials.

@@ -1,0 +1,5345 @@
+{
+  "meta": {
+    "catalogue": "horekbazar-starter",
+    "version": "0.1.0-draft",
+    "status": "draft_pending_owner_review",
+    "generated": true,
+    "generatedOn": "2026-10-21",
+    "generatedBy": "AI agent under owner decision D11 (2026-10-21)",
+    "ownerAuthorization": "D11: owner authorized catalogue generation; generated catalogue pending owner review and approval.",
+    "importAllowed": false,
+    "runtimeUse": "forbidden",
+    "notice": "Review/import input only. Never loaded at runtime, never published, never imported without explicit owner approval."
+  },
+  "policy": "No image is sourced. Every slot stays 'missing' until an asset with verified origin and commercial redistribution rights is recorded with evidence.",
+  "items": [
+    {
+      "productId": "hb-grc-001",
+      "slug": "miniket-rice",
+      "name": {
+        "bn": "মিনিকেট চাল",
+        "en": "Miniket Rice"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-grc-002",
+      "slug": "nazirshail-rice",
+      "name": {
+        "bn": "নাজিরশাইল চাল",
+        "en": "Nazirshail Rice"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-grc-003",
+      "slug": "medium-rice-paijam-brri-28",
+      "name": {
+        "bn": "মাঝারি চাল (পাইজাম/ব্রি-২৮)",
+        "en": "Medium Rice (Paijam / BRRI-28)"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-grc-004",
+      "slug": "coarse-rice-swarna",
+      "name": {
+        "bn": "মোটা চাল (স্বর্ণা)",
+        "en": "Coarse Rice (Swarna)"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-grc-005",
+      "slug": "chinigura-aromatic-rice",
+      "name": {
+        "bn": "চিনিগুঁড়া সুগন্ধি চাল",
+        "en": "Chinigura Aromatic Rice"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-grc-006",
+      "slug": "wheat-atta-packet",
+      "name": {
+        "bn": "প্যাকেট আটা",
+        "en": "Wheat Atta (Packet)"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-grc-007",
+      "slug": "maida-packet",
+      "name": {
+        "bn": "প্যাকেট ময়দা",
+        "en": "Maida (Packet)"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-grc-008",
+      "slug": "suji-semolina",
+      "name": {
+        "bn": "সুজি",
+        "en": "Suji (Semolina)"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-grc-009",
+      "slug": "chira-flattened-rice",
+      "name": {
+        "bn": "চিড়া",
+        "en": "Chira (Flattened Rice)"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-grc-010",
+      "slug": "masoor-dal-small-grain",
+      "name": {
+        "bn": "মসুর ডাল (ছোট দানা)",
+        "en": "Masoor Dal (Small Grain)"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-grc-011",
+      "slug": "masoor-dal-medium-grain",
+      "name": {
+        "bn": "মসুর ডাল (মাঝারি দানা)",
+        "en": "Masoor Dal (Medium Grain)"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-grc-012",
+      "slug": "masoor-dal-bold-grain",
+      "name": {
+        "bn": "মসুর ডাল (বড় দানা)",
+        "en": "Masoor Dal (Bold Grain)"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-grc-013",
+      "slug": "moong-dal",
+      "name": {
+        "bn": "মুগ ডাল",
+        "en": "Moong Dal"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-grc-014",
+      "slug": "anchor-dal-split-peas",
+      "name": {
+        "bn": "অ্যাংকর ডাল",
+        "en": "Anchor Dal (Split Peas)"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-grc-015",
+      "slug": "chhola-chickpeas",
+      "name": {
+        "bn": "ছোলা",
+        "en": "Chhola (Chickpeas)"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-grc-016",
+      "slug": "mashkalai-dal",
+      "name": {
+        "bn": "মাষকলাই ডাল",
+        "en": "Mashkalai Dal"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-grc-017",
+      "slug": "soybean-oil-bottle",
+      "name": {
+        "bn": "সয়াবিন তেল (বোতল)",
+        "en": "Soybean Oil (Bottle)"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-grc-018",
+      "slug": "rice-bran-oil-bottle",
+      "name": {
+        "bn": "রাইস ব্রান তেল (বোতল)",
+        "en": "Rice Bran Oil (Bottle)"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-grc-019",
+      "slug": "mustard-oil",
+      "name": {
+        "bn": "সরিষার তেল",
+        "en": "Mustard Oil"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-grc-020",
+      "slug": "ghee",
+      "name": {
+        "bn": "ঘি",
+        "en": "Ghee"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-grc-021",
+      "slug": "turmeric-powder",
+      "name": {
+        "bn": "হলুদ গুঁড়া",
+        "en": "Turmeric Powder"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-grc-022",
+      "slug": "chilli-powder",
+      "name": {
+        "bn": "মরিচ গুঁড়া",
+        "en": "Chilli Powder"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-grc-023",
+      "slug": "coriander-powder",
+      "name": {
+        "bn": "ধনিয়া গুঁড়া",
+        "en": "Coriander Powder"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-grc-024",
+      "slug": "cumin-seeds-whole",
+      "name": {
+        "bn": "জিরা (আস্ত)",
+        "en": "Cumin Seeds (Whole)"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-grc-025",
+      "slug": "cinnamon",
+      "name": {
+        "bn": "দারুচিনি",
+        "en": "Cinnamon"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-grc-026",
+      "slug": "cloves",
+      "name": {
+        "bn": "লবঙ্গ",
+        "en": "Cloves"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-grc-027",
+      "slug": "green-cardamom-small",
+      "name": {
+        "bn": "এলাচ (ছোট)",
+        "en": "Green Cardamom (Small)"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-grc-028",
+      "slug": "bay-leaves",
+      "name": {
+        "bn": "তেজপাতা",
+        "en": "Bay Leaves"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-grc-029",
+      "slug": "dried-red-chilli-whole",
+      "name": {
+        "bn": "শুকনা মরিচ (আস্ত)",
+        "en": "Dried Red Chilli (Whole)"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-grc-030",
+      "slug": "garam-masala-powder",
+      "name": {
+        "bn": "গরম মসলা গুঁড়া",
+        "en": "Garam Masala Powder"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-grc-031",
+      "slug": "black-pepper-whole",
+      "name": {
+        "bn": "গোলমরিচ (আস্ত)",
+        "en": "Black Pepper (Whole)"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-grc-032",
+      "slug": "sugar",
+      "name": {
+        "bn": "চিনি",
+        "en": "Sugar"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-grc-033",
+      "slug": "iodised-salt",
+      "name": {
+        "bn": "আয়োডিনযুক্ত লবণ",
+        "en": "Iodised Salt"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-grc-034",
+      "slug": "date-molasses-khejur-gur",
+      "name": {
+        "bn": "খেজুরের গুড়",
+        "en": "Date Molasses (Khejur Gur)"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-grc-035",
+      "slug": "dates",
+      "name": {
+        "bn": "খেজুর",
+        "en": "Dates"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-grc-036",
+      "slug": "honey",
+      "name": {
+        "bn": "মধু",
+        "en": "Honey"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-grc-037",
+      "slug": "black-tea-loose-leaf",
+      "name": {
+        "bn": "চা পাতা",
+        "en": "Black Tea (Loose Leaf)"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-grc-038",
+      "slug": "instant-coffee",
+      "name": {
+        "bn": "ইনস্ট্যান্ট কফি",
+        "en": "Instant Coffee"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-grc-039",
+      "slug": "full-cream-milk-powder",
+      "name": {
+        "bn": "ফুল ক্রিম গুঁড়া দুধ",
+        "en": "Full Cream Milk Powder"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-grc-040",
+      "slug": "muri-puffed-rice",
+      "name": {
+        "bn": "মুড়ি",
+        "en": "Muri (Puffed Rice)"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-grc-041",
+      "slug": "chanachur",
+      "name": {
+        "bn": "চানাচুর",
+        "en": "Chanachur"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-grc-042",
+      "slug": "toast-biscuits",
+      "name": {
+        "bn": "টোস্ট বিস্কুট",
+        "en": "Toast Biscuits"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-grc-043",
+      "slug": "vermicelli-semai",
+      "name": {
+        "bn": "সেমাই",
+        "en": "Vermicelli (Semai)"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-grc-044",
+      "slug": "instant-noodles-pack-of-4",
+      "name": {
+        "bn": "ইনস্ট্যান্ট নুডলস (৪টির প্যাক)",
+        "en": "Instant Noodles (Pack of 4)"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-grc-045",
+      "slug": "peanuts-roasted",
+      "name": {
+        "bn": "চিনাবাদাম (ভাজা)",
+        "en": "Peanuts (Roasted)"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-pcr-001",
+      "slug": "neem-face-wash",
+      "name": {
+        "bn": "নিম ফেসওয়াশ",
+        "en": "Neem Face Wash"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-pcr-002",
+      "slug": "moisturising-body-lotion",
+      "name": {
+        "bn": "ময়েশ্চারাইজিং বডি লোশন",
+        "en": "Moisturising Body Lotion"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-pcr-003",
+      "slug": "petroleum-jelly",
+      "name": {
+        "bn": "পেট্রোলিয়াম জেলি",
+        "en": "Petroleum Jelly"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-pcr-004",
+      "slug": "sunscreen-lotion",
+      "name": {
+        "bn": "সানস্ক্রিন লোশন",
+        "en": "Sunscreen Lotion"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-pcr-005",
+      "slug": "glycerin",
+      "name": {
+        "bn": "গ্লিসারিন",
+        "en": "Glycerin"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-pcr-006",
+      "slug": "lip-balm",
+      "name": {
+        "bn": "লিপ বাম",
+        "en": "Lip Balm"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-pcr-007",
+      "slug": "coconut-hair-oil",
+      "name": {
+        "bn": "নারকেল তেল (চুলের)",
+        "en": "Coconut Hair Oil"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-pcr-008",
+      "slug": "shampoo",
+      "name": {
+        "bn": "শ্যাম্পু",
+        "en": "Shampoo"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-pcr-009",
+      "slug": "hair-conditioner",
+      "name": {
+        "bn": "হেয়ার কন্ডিশনার",
+        "en": "Hair Conditioner"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-pcr-010",
+      "slug": "wide-tooth-comb",
+      "name": {
+        "bn": "মোটা দাঁতের চিরুনি",
+        "en": "Wide-Tooth Comb"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-pcr-011",
+      "slug": "toothpaste",
+      "name": {
+        "bn": "টুথপেস্ট",
+        "en": "Toothpaste"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-pcr-012",
+      "slug": "toothbrush-soft",
+      "name": {
+        "bn": "টুথব্রাশ (নরম)",
+        "en": "Toothbrush (Soft)"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-pcr-013",
+      "slug": "bath-soap",
+      "name": {
+        "bn": "গোসলের সাবান",
+        "en": "Bath Soap"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-pcr-014",
+      "slug": "hand-wash-refill",
+      "name": {
+        "bn": "হ্যান্ডওয়াশ রিফিল",
+        "en": "Hand Wash Refill"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-pcr-015",
+      "slug": "body-wash",
+      "name": {
+        "bn": "বডি ওয়াশ",
+        "en": "Body Wash"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-pcr-016",
+      "slug": "disposable-razors-pack-of-5",
+      "name": {
+        "bn": "ডিসপোজেবল রেজার (৫টি)",
+        "en": "Disposable Razors (Pack of 5)"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-pcr-017",
+      "slug": "shaving-foam",
+      "name": {
+        "bn": "শেভিং ফোম",
+        "en": "Shaving Foam"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-pcr-018",
+      "slug": "nail-cutter",
+      "name": {
+        "bn": "নেইল কাটার",
+        "en": "Nail Cutter"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-pcr-019",
+      "slug": "sanitary-napkins",
+      "name": {
+        "bn": "স্যানিটারি ন্যাপকিন",
+        "en": "Sanitary Napkins"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-hcl-001",
+      "slug": "detergent-powder",
+      "name": {
+        "bn": "ডিটারজেন্ট পাউডার",
+        "en": "Detergent Powder"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-hcl-002",
+      "slug": "liquid-detergent",
+      "name": {
+        "bn": "লিকুইড ডিটারজেন্ট",
+        "en": "Liquid Detergent"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-hcl-003",
+      "slug": "dishwashing-liquid",
+      "name": {
+        "bn": "ডিশওয়াশিং লিকুইড",
+        "en": "Dishwashing Liquid"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-hcl-004",
+      "slug": "dishwashing-bar",
+      "name": {
+        "bn": "ডিশওয়াশিং বার",
+        "en": "Dishwashing Bar"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-hcl-005",
+      "slug": "kitchen-scrubber-pack-of-3",
+      "name": {
+        "bn": "কিচেন স্ক্রাবার (৩টি)",
+        "en": "Kitchen Scrubber (Pack of 3)"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-hcl-006",
+      "slug": "floor-cleaner",
+      "name": {
+        "bn": "ফ্লোর ক্লিনার",
+        "en": "Floor Cleaner"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-hcl-007",
+      "slug": "toilet-cleaner",
+      "name": {
+        "bn": "টয়লেট ক্লিনার",
+        "en": "Toilet Cleaner"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-hcl-008",
+      "slug": "glass-cleaner",
+      "name": {
+        "bn": "গ্লাস ক্লিনার",
+        "en": "Glass Cleaner"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-hcl-009",
+      "slug": "floor-mop-with-handle",
+      "name": {
+        "bn": "হাতলসহ ফ্লোর মপ",
+        "en": "Floor Mop with Handle"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-hcl-010",
+      "slug": "phool-jharu-soft-broom",
+      "name": {
+        "bn": "ফুলঝাড়ু",
+        "en": "Phool Jharu (Soft Broom)"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-hcl-011",
+      "slug": "microfibre-cleaning-cloth-pack-of-3",
+      "name": {
+        "bn": "মাইক্রোফাইবার কাপড় (৩টি)",
+        "en": "Microfibre Cleaning Cloth (Pack of 3)"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-hcl-012",
+      "slug": "garbage-bags-medium-30-pcs",
+      "name": {
+        "bn": "ময়লার ব্যাগ (মাঝারি, ৩০টি)",
+        "en": "Garbage Bags (Medium, 30 pcs)"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-kit-001",
+      "slug": "non-stick-fry-pan",
+      "name": {
+        "bn": "নন-স্টিক ফ্রাই প্যান",
+        "en": "Non-Stick Fry Pan"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-kit-002",
+      "slug": "aluminium-cooking-pot-dekchi",
+      "name": {
+        "bn": "অ্যালুমিনিয়াম ডেকচি",
+        "en": "Aluminium Cooking Pot (Dekchi)"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-kit-003",
+      "slug": "pressure-cooker",
+      "name": {
+        "bn": "প্রেশার কুকার",
+        "en": "Pressure Cooker"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-kit-004",
+      "slug": "stainless-steel-ladle-set",
+      "name": {
+        "bn": "স্টেইনলেস স্টিল হাতা-খুন্তি সেট",
+        "en": "Stainless Steel Ladle Set"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-kit-005",
+      "slug": "chopping-board",
+      "name": {
+        "bn": "কাটিং বোর্ড",
+        "en": "Chopping Board"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-kit-006",
+      "slug": "kitchen-knife",
+      "name": {
+        "bn": "রান্নাঘরের ছুরি",
+        "en": "Kitchen Knife"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-kit-007",
+      "slug": "airtight-food-containers-set",
+      "name": {
+        "bn": "বায়ুরোধী খাবারের কনটেইনার (সেট)",
+        "en": "Airtight Food Containers (Set)"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-kit-008",
+      "slug": "spice-container-set",
+      "name": {
+        "bn": "মসলার কৌটা সেট",
+        "en": "Spice Container Set"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-kit-009",
+      "slug": "stainless-steel-water-bottle",
+      "name": {
+        "bn": "স্টেইনলেস স্টিল পানির বোতল",
+        "en": "Stainless Steel Water Bottle"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-kit-010",
+      "slug": "melamine-dinner-plates-set-of-6",
+      "name": {
+        "bn": "মেলামাইন ডিনার প্লেট (৬টি)",
+        "en": "Melamine Dinner Plates (Set of 6)"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-kit-011",
+      "slug": "glass-tumblers-set-of-6",
+      "name": {
+        "bn": "কাচের গ্লাস (৬টি)",
+        "en": "Glass Tumblers (Set of 6)"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-kit-012",
+      "slug": "tea-cups-with-saucers-set-of-6",
+      "name": {
+        "bn": "চায়ের কাপ-পিরিচ (৬ সেট)",
+        "en": "Tea Cups with Saucers (Set of 6)"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-kit-013",
+      "slug": "plastic-water-jug",
+      "name": {
+        "bn": "প্লাস্টিকের পানির জগ",
+        "en": "Plastic Water Jug"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-kit-014",
+      "slug": "tiffin-box-multi-tier",
+      "name": {
+        "bn": "টিফিন বক্স (একাধিক তাক)",
+        "en": "Tiffin Box (Multi-Tier)"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-hom-001",
+      "slug": "cotton-bed-sheet-set",
+      "name": {
+        "bn": "সুতি বিছানার চাদর সেট",
+        "en": "Cotton Bed Sheet Set"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-hom-002",
+      "slug": "pillow-covers-pair",
+      "name": {
+        "bn": "বালিশের কভার (জোড়া)",
+        "en": "Pillow Covers (Pair)"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-hom-003",
+      "slug": "cotton-bath-towel",
+      "name": {
+        "bn": "সুতি গোসলের তোয়ালে",
+        "en": "Cotton Bath Towel"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-hom-004",
+      "slug": "cotton-gamchha",
+      "name": {
+        "bn": "সুতি গামছা",
+        "en": "Cotton Gamchha"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-hom-005",
+      "slug": "mosquito-net",
+      "name": {
+        "bn": "মশারি",
+        "en": "Mosquito Net"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-hom-006",
+      "slug": "doormat",
+      "name": {
+        "bn": "পাপোশ",
+        "en": "Doormat"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-hom-007",
+      "slug": "storage-basket",
+      "name": {
+        "bn": "স্টোরেজ ঝুড়ি",
+        "en": "Storage Basket"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-hom-008",
+      "slug": "wall-clock",
+      "name": {
+        "bn": "দেয়ালঘড়ি",
+        "en": "Wall Clock"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-hom-009",
+      "slug": "clothes-hangers-set-of-12",
+      "name": {
+        "bn": "কাপড়ের হ্যাঙ্গার (১২টি)",
+        "en": "Clothes Hangers (Set of 12)"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-fsh-001",
+      "slug": "cotton-lungi",
+      "name": {
+        "bn": "সুতি লুঙ্গি",
+        "en": "Cotton Lungi"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-fsh-002",
+      "slug": "cotton-panjabi",
+      "name": {
+        "bn": "সুতি পাঞ্জাবি",
+        "en": "Cotton Panjabi"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-fsh-003",
+      "slug": "round-neck-cotton-t-shirt",
+      "name": {
+        "bn": "রাউন্ড-নেক সুতি টি-শার্ট",
+        "en": "Round-Neck Cotton T-Shirt"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-fsh-004",
+      "slug": "casual-cotton-shirt",
+      "name": {
+        "bn": "ক্যাজুয়াল সুতি শার্ট",
+        "en": "Casual Cotton Shirt"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-fsh-005",
+      "slug": "printed-cotton-saree",
+      "name": {
+        "bn": "প্রিন্টেড সুতি শাড়ি",
+        "en": "Printed Cotton Saree"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-fsh-006",
+      "slug": "unstitched-three-piece",
+      "name": {
+        "bn": "আনস্টিচড থ্রি-পিস",
+        "en": "Unstitched Three-Piece"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-fsh-007",
+      "slug": "cotton-kurti",
+      "name": {
+        "bn": "সুতি কুর্তি",
+        "en": "Cotton Kurti"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-fsh-008",
+      "slug": "cotton-orna-dupatta",
+      "name": {
+        "bn": "সুতি ওড়না",
+        "en": "Cotton Orna (Dupatta)"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-fsh-009",
+      "slug": "jersey-hijab",
+      "name": {
+        "bn": "জার্সি হিজাব",
+        "en": "Jersey Hijab"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-fsh-010",
+      "slug": "mens-rubber-sandal",
+      "name": {
+        "bn": "পুরুষদের রাবার স্যান্ডেল",
+        "en": "Men's Rubber Sandal"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-fsh-011",
+      "slug": "womens-flat-sandal",
+      "name": {
+        "bn": "নারীদের ফ্ল্যাট স্যান্ডেল",
+        "en": "Women's Flat Sandal"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-fsh-012",
+      "slug": "folding-umbrella",
+      "name": {
+        "bn": "ভাঁজ করা ছাতা",
+        "en": "Folding Umbrella"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-fsh-013",
+      "slug": "everyday-backpack",
+      "name": {
+        "bn": "প্রতিদিনের ব্যাকপ্যাক",
+        "en": "Everyday Backpack"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-fsh-014",
+      "slug": "mens-wallet",
+      "name": {
+        "bn": "পুরুষদের মানিব্যাগ",
+        "en": "Men's Wallet"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-elc-001",
+      "slug": "usb-c-charging-cable",
+      "name": {
+        "bn": "ইউএসবি-সি চার্জিং ক্যাবল",
+        "en": "USB-C Charging Cable"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-elc-002",
+      "slug": "micro-usb-charging-cable",
+      "name": {
+        "bn": "মাইক্রো-ইউএসবি চার্জিং ক্যাবল",
+        "en": "Micro-USB Charging Cable"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-elc-003",
+      "slug": "usb-wall-charger",
+      "name": {
+        "bn": "ইউএসবি ওয়াল চার্জার",
+        "en": "USB Wall Charger"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-elc-004",
+      "slug": "power-bank",
+      "name": {
+        "bn": "পাওয়ার ব্যাংক",
+        "en": "Power Bank"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-elc-005",
+      "slug": "wired-earphones-3-5-mm",
+      "name": {
+        "bn": "তারযুক্ত ইয়ারফোন (৩.৫ মিমি)",
+        "en": "Wired Earphones (3.5 mm)"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-elc-006",
+      "slug": "bluetooth-earbuds",
+      "name": {
+        "bn": "ব্লুটুথ ইয়ারবাডস",
+        "en": "Bluetooth Earbuds"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-elc-007",
+      "slug": "phone-stand",
+      "name": {
+        "bn": "ফোন স্ট্যান্ড",
+        "en": "Phone Stand"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-elc-008",
+      "slug": "led-bulb-b22",
+      "name": {
+        "bn": "এলইডি বাল্ব (বি২২)",
+        "en": "LED Bulb (B22)"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-elc-009",
+      "slug": "rechargeable-led-emergency-light",
+      "name": {
+        "bn": "রিচার্জেবল এলইডি ইমার্জেন্সি লাইট",
+        "en": "Rechargeable LED Emergency Light"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-elc-010",
+      "slug": "extension-board-4-sockets",
+      "name": {
+        "bn": "এক্সটেনশন বোর্ড (৪ সকেট)",
+        "en": "Extension Board (4 Sockets)"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-elc-011",
+      "slug": "aa-batteries-pack-of-4",
+      "name": {
+        "bn": "এএ ব্যাটারি (৪টি)",
+        "en": "AA Batteries (Pack of 4)"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-elc-012",
+      "slug": "electric-kettle-1-8-l",
+      "name": {
+        "bn": "ইলেকট্রিক কেটলি (১.৮ লিটার)",
+        "en": "Electric Kettle (1.8 L)"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-elc-013",
+      "slug": "rice-cooker-1-8-l",
+      "name": {
+        "bn": "রাইস কুকার (১.৮ লিটার)",
+        "en": "Rice Cooker (1.8 L)"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-elc-014",
+      "slug": "dry-iron",
+      "name": {
+        "bn": "ড্রাই ইস্ত্রি",
+        "en": "Dry Iron"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-elc-015",
+      "slug": "rechargeable-table-fan",
+      "name": {
+        "bn": "রিচার্জেবল টেবিল ফ্যান",
+        "en": "Rechargeable Table Fan"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-kid-001",
+      "slug": "baby-diaper-pants",
+      "name": {
+        "bn": "বেবি ডায়াপার প্যান্ট",
+        "en": "Baby Diaper Pants"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-kid-002",
+      "slug": "baby-wipes-80-pcs",
+      "name": {
+        "bn": "বেবি ওয়াইপস (৮০টি)",
+        "en": "Baby Wipes (80 pcs)"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-kid-003",
+      "slug": "baby-lotion",
+      "name": {
+        "bn": "বেবি লোশন",
+        "en": "Baby Lotion"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-kid-004",
+      "slug": "baby-feeding-bottle",
+      "name": {
+        "bn": "বেবি ফিডিং বোতল",
+        "en": "Baby Feeding Bottle"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-kid-005",
+      "slug": "school-bag",
+      "name": {
+        "bn": "স্কুলব্যাগ",
+        "en": "School Bag"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-kid-006",
+      "slug": "kids-water-bottle",
+      "name": {
+        "bn": "বাচ্চাদের পানির বোতল",
+        "en": "Kids Water Bottle"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-stn-001",
+      "slug": "white-writing-paper-1-dista",
+      "name": {
+        "bn": "সাদা লেখার কাগজ (১ দিস্তা)",
+        "en": "White Writing Paper (1 Dista)"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-stn-002",
+      "slug": "exercise-khata-pack-of-5",
+      "name": {
+        "bn": "খাতা (৫টির প্যাক)",
+        "en": "Exercise Khata (Pack of 5)"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-stn-003",
+      "slug": "a4-copy-paper-ream",
+      "name": {
+        "bn": "এ-ফোর কপি পেপার (রিম)",
+        "en": "A4 Copy Paper (Ream)"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-stn-004",
+      "slug": "ballpoint-pens-pack-of-10",
+      "name": {
+        "bn": "বলপয়েন্ট কলম (১০টি)",
+        "en": "Ballpoint Pens (Pack of 10)"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-stn-005",
+      "slug": "pencils-pack-of-12",
+      "name": {
+        "bn": "পেনসিল (১২টি)",
+        "en": "Pencils (Pack of 12)"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-stn-006",
+      "slug": "eraser-and-sharpener-set",
+      "name": {
+        "bn": "ইরেজার ও শার্পনার সেট",
+        "en": "Eraser and Sharpener Set"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-stn-007",
+      "slug": "geometry-box",
+      "name": {
+        "bn": "জ্যামিতি বক্স",
+        "en": "Geometry Box"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-stn-008",
+      "slug": "stapler-with-pins",
+      "name": {
+        "bn": "পিনসহ স্ট্যাপলার",
+        "en": "Stapler with Pins"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-stn-009",
+      "slug": "colour-pencils-12-colours",
+      "name": {
+        "bn": "রঙ পেনসিল (১২ রং)",
+        "en": "Colour Pencils (12 Colours)"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "productId": "hb-stn-010",
+      "slug": "glue-stick",
+      "name": {
+        "bn": "গ্লু স্টিক",
+        "en": "Glue Stick"
+      },
+      "slots": [
+        {
+          "slot": "primary",
+          "status": "missing",
+          "required": true,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "gallery-1",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        },
+        {
+          "slot": "label-closeup",
+          "status": "missing",
+          "required": false,
+          "licence": null,
+          "sourceUrl": null,
+          "rightsHolder": null,
+          "evidence": null
+        }
+      ]
+    }
+  ]
+}

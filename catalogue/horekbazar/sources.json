@@ -1,0 +1,164 @@
+{
+  "meta": {
+    "catalogue": "horekbazar-starter",
+    "version": "0.1.0-draft",
+    "status": "draft_pending_owner_review",
+    "generated": true,
+    "generatedOn": "2026-10-21",
+    "generatedBy": "AI agent under owner decision D11 (2026-10-21)",
+    "ownerAuthorization": "D11: owner authorized catalogue generation; generated catalogue pending owner review and approval.",
+    "importAllowed": false,
+    "runtimeUse": "forbidden",
+    "notice": "Review/import input only. Never loaded at runtime, never published, never imported without explicit owner approval."
+  },
+  "sources": [
+    {
+      "id": "tcb-2026-02-26",
+      "type": "official",
+      "publisher": "Trading Corporation of Bangladesh (TCB)",
+      "title": "Daily retail market prices of essential commodities, Dhaka city, serial 053, 26 February 2026 (XLSX)",
+      "urls": [
+        "https://objectstorage.ap-dcc-gazipur-1.oraclecloud15.com/n/axvjbnqprylg/b/V2Ministry/o/office-tcb/2026/2/7293ed5e-e6f0-4363-a008-6c10ac973876.xlsx"
+      ],
+      "observedOn": "2026-02-26",
+      "accessedOn": "2026-10-21",
+      "note": "Markets surveyed: Karwan Bazar, Mirpur-6, Mohammadpur Town Hall, New Market, Mohakhali. Ranges are loose/market retail prices, not online selling prices. About 8 months old at generation time."
+    },
+    {
+      "id": "tcb-daily-page",
+      "type": "official",
+      "publisher": "TCB",
+      "title": "Daily retail market price page",
+      "urls": [
+        "https://tcb.gov.bd/pages/daily-rmps",
+        "https://tcb.gov.bd/pages/last30-rmps"
+      ],
+      "observedOn": null,
+      "accessedOn": "2026-10-21",
+      "note": "Returned HTTP 502 on 2026-10-21; the latest daily file could not be retrieved. Owner must re-check current prices before approval."
+    },
+    {
+      "id": "bdnews24-2026-10-21",
+      "type": "secondary",
+      "publisher": "bdnews24.com",
+      "title": "Rice market report citing TCB ranges (Bangla)",
+      "urls": [
+        "https://bangla.bdnews24.com/business/8cvkcviywm"
+      ],
+      "observedOn": "2026-10-21",
+      "accessedOn": "2026-10-21",
+      "note": "Reports fine rice (nazirshail/miniket) Tk 72-85/kg and branded 5 kg packs Tk 480-525. Corroborates the February TCB rice range; not used for calculation."
+    },
+    {
+      "id": "bdtoday-2026-10-20",
+      "type": "secondary",
+      "publisher": "bdtoday.net",
+      "title": "Market report citing TCB rice ranges (Bangla)",
+      "urls": [
+        "https://bdtoday.net/news/national/144676"
+      ],
+      "observedOn": "2026-10-20",
+      "accessedOn": "2026-10-21",
+      "note": "Coarse rice Tk 50-55/kg; medium Tk 58-65/kg. Not used for calculation."
+    },
+    {
+      "id": "bsti-list-181",
+      "type": "official",
+      "publisher": "Bangladesh Standards and Testing Institution (BSTI)",
+      "title": "List of 181 products brought under the mandatory certification marks scheme",
+      "urls": [
+        "https://objectstorage.ap-dcc-gazipur-1.oraclecloud15.com/n/axvjbnqprylg/b/V2Ministry/o/office-bsti/2024/12/a5d2957d5e704a829eba0ae999f0fc8e.pdf"
+      ],
+      "observedOn": null,
+      "accessedOn": "2026-10-21",
+      "note": "Older consolidated list; later notifications added products. Use only as a starting point."
+    },
+    {
+      "id": "bsti-chemical-78",
+      "type": "official",
+      "publisher": "BSTI",
+      "title": "List of chemical products brought under the mandatory certification marks scheme (78 products)",
+      "urls": [
+        "https://objectstorage.ap-dcc-gazipur-1.oraclecloud15.com/n/axvjbnqprylg/b/V2Ministry/o/office-bsti/2026/6/4c8782fa-5408-4e4b-a0d9-748f1ee9b575.pdf"
+      ],
+      "observedOn": null,
+      "accessedOn": "2026-10-21",
+      "note": "Includes laundry soap, toilet soap, coconut oil and footwear entries among others."
+    },
+    {
+      "id": "bsti-additions-secondary",
+      "type": "secondary",
+      "publisher": "The Daily Star; The Financial Express; Prothom Alo; TBS; UL",
+      "title": "Reports of products added to BSTI mandatory certification",
+      "urls": [
+        "https://www.thedailystar.net/business/economy/news/bsti-mark-mandatory-36-more-products-3439276",
+        "https://thefinancialexpress.com.bd/home/bsti-certification-made-mandatory-for-10-more-products-1670847811",
+        "https://today.thefinancialexpress.com.bd/print/bsti-restricts-sale-of-28-products-1531331230",
+        "https://en.prothomalo.com/business/local/gold-flavoured-milk-nail-polish-among-43-products-need-mandatory-bsti-certificate",
+        "https://www.ul.com/news/global-market-access-regulatory-newsletter-q3-2024",
+        "https://www.ul.com/news/global-market-access-regulatory-newsletter-q3-2025"
+      ],
+      "observedOn": null,
+      "accessedOn": "2026-10-21",
+      "note": "News and compliance-newsletter summaries of SRO notifications; the official SROs must be checked before relying on them."
+    },
+    {
+      "id": "market-dhl-ecdb",
+      "type": "secondary",
+      "publisher": "DHL (citing ECDB)",
+      "title": "E-commerce trends in Bangladesh 2025",
+      "urls": [
+        "https://www.dhl.com/discover/en-bd/e-commerce-advice/e-commerce-trends/what-is-e-commerce-2025-blangladeshi-trends"
+      ],
+      "observedOn": null,
+      "accessedOn": "2026-10-21",
+      "note": "Revenue shares: electronics 23.9%, hobby & leisure 20.4%, fashion 18.9%, furniture & homeware 12.1%, care products 9.0%, DIY 7.5%."
+    },
+    {
+      "id": "market-bbs-ict-2024-25",
+      "type": "official_reported",
+      "publisher": "BSS (reporting BBS ICT Access and Use survey 2024-25)",
+      "title": "Online shopping categories, BBS survey",
+      "urls": [
+        "https://www.bssnews.net/special-stories/391786"
+      ],
+      "observedOn": null,
+      "accessedOn": "2026-10-21",
+      "note": "14.4% of individuals bought online; clothing/footwear/sporting goods 70.3%, food/groceries 34.6%, medicine 21.0%, cosmetics 17.9%, household goods 10.9%, IT/electronics 8.7%."
+    },
+    {
+      "id": "market-dcif-bbs",
+      "type": "secondary",
+      "publisher": "DCIF",
+      "title": "E-commerce update data 2026 (summary of BBS 2024-25)",
+      "urls": [
+        "https://dcif.bd/ecommerce-update-data-2026-published-by-dcif-bbs2024-2025/"
+      ],
+      "observedOn": null,
+      "accessedOn": "2026-10-21",
+      "note": "Reports different shares from BSS (clothing 77.6%, cosmetics 26.4%, books 17.1%, food 17.1%, household 11.8%). Discrepancy unresolved; treat both as indicative."
+    },
+    {
+      "id": "market-shoprank",
+      "type": "secondary",
+      "publisher": "ShopRank",
+      "title": "Bangladesh store counts by category",
+      "urls": [
+        "https://shoprank.com/countries/bangladesh"
+      ],
+      "observedOn": null,
+      "accessedOn": "2026-10-21",
+      "note": "Share of online stores: clothing 23.5%, health & beauty 16.3%, electronics 13.1%, food & beverages 12.5%, home & garden 4.8%. Store counts, not sales."
+    },
+    {
+      "id": "agent-estimate",
+      "type": "agent_estimate",
+      "publisher": "Generated by the AI agent",
+      "title": "Unsourced placeholder estimate",
+      "urls": [],
+      "observedOn": null,
+      "accessedOn": "2026-10-21",
+      "note": "No reliable source was used. Owner must set the real price from supplier cost and margin."
+    }
+  ]
+}
