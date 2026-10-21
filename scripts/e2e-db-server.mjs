@@ -14,9 +14,11 @@ const infoFile = "test-results/e2e-db.json";
 
 const replSet = await MongoMemoryReplSet.create({ binary: { version: process.env.MONGOMS_VERSION ?? "8.0.4" }, replSet: { count: 1, storageEngine: "wiredTiger" } });
 const uri = replSet.getUri();
+// Only the process basics are inherited, so no developer variable (.env.local is not read) reaches
+// the server: it is the zero-variable build plus the disposable database.
+const inherited = Object.fromEntries(["PATH", "HOME"].map((k) => [k, process.env[k] ?? ""]));
 const env = {
-  PATH: process.env.PATH ?? "",
-  HOME: process.env.HOME ?? "",
+  ...inherited,
   PORT: port,
   HOSTNAME: "127.0.0.1",
   MONGODB_URI: uri,

@@ -379,6 +379,8 @@ Every admin list works with **RecordCards below 1024 px and DataTable from 1024 
 | `/admin/settings/**` | `#identity`, `#theme` (preset, colour with a live contrast check), `#delivery`, `#features`, `#integrations` (configured / healthy / failing) | save |
 | `/admin/health` | `#ports`, `#outbox`, `#jobs` | retry dead letters |
 
+**B4 implementation (2026-10-22).** Built: `/admin/products` (filters q, status, category, sample; 25 per page), `/admin/products/new`, `/admin/products/[id]` (preview, status, details incl. SEO, variants, images, delete), `/admin/categories`, `/admin/inventory`, `/admin/collections`, `/admin/banners`, `/admin/homepage`, `/admin/settings` (identity, theme, feature flags: `/admin/settings/features` is folded in here) and `/admin/settings/delivery`. Deferred: `/admin/settings/integrations` (needs `settings.integrations.write` + step-up; later phase) and `#ai-drafts` (B10). Every page calls `gateStaffPage` with its section capability (`adminPageFor`: a sub-page inherits its section, longest prefix); every action in `lib/actions/{catalogue,merch}.ts` re-checks the capability through `staffContext` (mutation, step-up for `inventory.adjust`). Lists render a table from 1024 px and cards below it from the same data. The loading state is the server render (no client fetch); errors use the shared admin error boundary.
+
 ## Environment variables
 
 From `.env.example`. The app starts with none set and shows setup-required states. It never substitutes fake data.

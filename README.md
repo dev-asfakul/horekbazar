@@ -31,6 +31,7 @@ npm run db:validators -- --check   # generated MongoDB validators match db/valid
 npm run test:integration           # disposable MongoDB 8.0 replica set (downloads mongod once)
 npm run build          # works with zero environment variables
 npm run test:e2e       # Playwright against the standalone production build (run build first)
+npm run test:e2e:db    # signed-in admin journeys, build + disposable in-memory database (Chromium)
 npm start              # standalone production server (output: "standalone")
 npm run check:bundle   # fails if a secret-shaped or server-only value is in the client bundle
 npm run catalogue:validate && npm run catalogue:schema
@@ -46,6 +47,8 @@ Accounts need `MONGODB_URI`, `AUTH_SECRET` (32+ characters, e.g. `openssl rand -
 2. Run `npm run db:migrate`, start the app and open `/admin/setup`. It lists anything still missing, by name only.
 3. Enter your name, email, a password and the setup token. Open the verification email, sign in, and set up two-step verification with an authenticator app (required for the Owner). Keep the ten backup codes.
 4. Add staff at `/admin/staff`: they register a normal account and verify their email first; you then give their email a role. Every staff change asks for a fresh authenticator code (valid 10 minutes).
+
+5. Manage the catalogue at `/admin/products` and `/admin/categories`, stock at `/admin/inventory` (asks for a fresh code), and the homepage, collections, banners, store settings and delivery zones from the admin menu. Each staff member sees only the sections their role allows, and the server checks the permission on every save. Prices are entered in taka. A product can be published once its category is published and it has an active variant with a price. Image uploads need the Cloudinary variables.
 
 Lost authenticator and backup codes on the last Owner account: run `npm run admin:recover-owner -- owner@example.com` with the deployment's database credentials. It clears two-step verification and signs the Owner out everywhere (audited); set it up again at the next sign-in. Use "Forgot password" for a lost password.
 

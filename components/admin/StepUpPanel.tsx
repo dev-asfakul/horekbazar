@@ -1,5 +1,6 @@
 // Tier: build. Use-when: an admin page whose actions need a STEP_UP capability (inventory.adjust,
-// staff.manage). Shows when the confirmation lasts, or the code form. The server action re-checks.
+// staff.manage). Avoid-when: the capability needs no step-up; do not use it as the only check.
+// Shows when the confirmation lasts, or the code form. The server action re-checks.
 // Reduced-motion: static. Touch: 44 px fields and buttons (ActionForm).
 import { getTranslations } from "next-intl/server";
 import { ActionForm, type FormMessages } from "@/components/forms/ActionForm";
