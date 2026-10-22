@@ -1,0 +1,46 @@
+{
+  "note": "Showcase merchandising for the development database, used by scripts/showcase.ts (step 5). Collections group existing catalogue products by everyday use; they make no sales, popularity, discount or stock claims. A collection is created only if its slug is absent (an existing collection is never modified), and the home sections are created only while the store has no home sections at all, so admin edits are never overwritten. Every entry is editable or removable in /admin/merch.",
+  "collections": [
+    {
+      "slug": "kitchen-staples",
+      "name": { "bn": "রান্নাঘরের নিত্য বাজার", "en": "Kitchen staples" },
+      "description": { "bn": "চাল, ডাল, তেল, মসলা, লবণ আর চিনি — প্রতিদিনের রান্নার মূল জিনিস এক জায়গায়।", "en": "Rice, lentils, oil, spices, salt and sugar: the basics of everyday cooking in one place." },
+      "products": ["miniket-rice", "nazirshail-rice", "wheat-atta-packet", "masoor-dal-small-grain", "moong-dal", "soybean-oil-bottle", "mustard-oil", "turmeric-powder", "chilli-powder", "cumin-seeds-whole", "iodised-salt", "sugar"]
+    },
+    {
+      "slug": "home-cleaning",
+      "name": { "bn": "ঘর পরিষ্কারের দরকারি জিনিস", "en": "Home cleaning essentials" },
+      "description": { "bn": "কাপড় কাচা, থালাবাসন ধোয়া আর মেঝে-বাথরুম পরিষ্কারের জিনিস।", "en": "For laundry, washing up, floors and bathrooms." },
+      "products": ["detergent-powder", "liquid-detergent", "dishwashing-liquid", "dishwashing-bar", "kitchen-scrubber-pack-of-3", "floor-cleaner", "toilet-cleaner", "glass-cleaner", "floor-mop-with-handle", "phool-jharu-soft-broom", "microfibre-cleaning-cloth-pack-of-3", "garbage-bags-medium-30-pcs"]
+    },
+    {
+      "slug": "school-ready",
+      "name": { "bn": "স্কুলের প্রস্তুতি", "en": "Ready for school" },
+      "description": { "bn": "ব্যাগ, পানির বোতল, খাতা, কলম, পেন্সিল আর জ্যামিতি বক্স।", "en": "Bags, water bottles, notebooks, pens, pencils and geometry boxes." },
+      "products": ["school-bag", "kids-water-bottle", "exercise-khata-pack-of-5", "white-writing-paper-1-dista", "ballpoint-pens-pack-of-10", "pencils-pack-of-12", "colour-pencils-12-colours", "eraser-and-sharpener-set", "geometry-box", "glue-stick"]
+    },
+    {
+      "slug": "phone-and-power",
+      "name": { "bn": "মোবাইল, চার্জ ও আলো", "en": "Phone, power and light" },
+      "description": { "bn": "চার্জিং কেবল, চার্জার, পাওয়ার ব্যাংক, ইয়ারফোন আর লোডশেডিংয়ের আলো।", "en": "Charging cables, chargers, power banks, earphones and lights for power cuts." },
+      "products": ["usb-c-charging-cable", "micro-usb-charging-cable", "usb-wall-charger", "power-bank", "wired-earphones-3-5-mm", "bluetooth-earbuds", "rechargeable-led-emergency-light", "led-bulb-b22", "extension-board-4-sockets", "aa-batteries-pack-of-4"]
+    },
+    {
+      "slug": "everyday-cotton-wear",
+      "name": { "bn": "প্রতিদিনের সুতি পোশাক", "en": "Everyday cotton wear" },
+      "description": { "bn": "লুঙ্গি, পাঞ্জাবি, টি-শার্ট, শাড়ি, কুর্তি আর গামছা।", "en": "Lungis, panjabis, t-shirts, sarees, kurtis and gamchhas." },
+      "products": ["cotton-lungi", "cotton-panjabi", "round-neck-cotton-t-shirt", "casual-cotton-shirt", "printed-cotton-saree", "unstitched-three-piece", "cotton-kurti", "cotton-orna-dupatta", "cotton-gamchha"]
+    }
+  ],
+  "home": {
+    "hero": {
+      "title": { "bn": "প্রতিদিনের দরকারি জিনিস, এক জায়গায়", "en": "Everyday essentials, in one place" },
+      "subtitle": { "bn": "মুদি, ঘর গোছানো, পোশাক, মোবাইল এক্সেসরিজ আর স্কুলের জিনিস — দাম ও স্টক দেখে বেছে নিন।", "en": "Groceries, home, clothing, phone accessories and school supplies, with prices and stock shown." },
+      "ctaLabel": { "bn": "নতুন প্রোডাক্ট দেখুন", "en": "See new products" },
+      "href": "/new"
+    },
+    "categoryTilesTitle": { "bn": "ক্যাটাগরি", "en": "Categories" },
+    "rails": ["kitchen-staples", "home-cleaning", "phone-and-power", "everyday-cotton-wear", "school-ready"],
+    "collectionGridTitle": { "bn": "সংগ্রহ", "en": "Collections" }
+  }
+}

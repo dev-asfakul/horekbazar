@@ -2,6 +2,16 @@
 
 Newest first. Each entry: date, phase, done, decided, open, next.
 
+## 2026-10-22 — Development shop population (images, collections, homepage)
+
+- **Owner:** make HorekBazar "look and behave like a properly stocked, believable Bangladeshi online marketplace, using persistent database records rather than hardcoded demo content"; no fabricated customer activity; gated features stay off.
+- **Audit (`horekbazar_dev`, by query):** 144 products and 39 categories published, 235 variants, 235 stock rows (8,720 on hand; 21 variants at 0 by design) matching 214 ledger receipts, 51 products with an image, 0 collections, 0 home sections, 0 orders/reviews/rewards, 1 Owner (`emailVerified: false`). Storefront code: no hardcoded products or fallback prices; `/` already used home sections with an honest fallback.
+- **Done:** 40 more reviewed CC0/public-domain photos (Wikimedia Commons, WordPress Photo Directory; each checked at full size, 4 rejected for visible brand marks) uploaded and linked: 91/144. `npm run showcase` gained a merchandising step (`showcase-merch.json`): 5 collections, 8 home sections, created only when absent. The dry-run stock line now counts variants already received.
+- **Decided:** no new products (each subcategory has 2–11); the script creates no banners (need images); store contact left empty for the owner; Owner verification not bypassed.
+- **Verified:** reruns write nothing; integrity query clean; 91/91 media ids in Cloudinary and served by the CDN; local production build shows images, prices and stock on `/`, `/new`, `/c/grocery`, `/collections/*`, `/search`, `/p/*`; admin edit persisted and appeared on the storefront, then reverted.
+- **Later the same day:** the Owner signed in through the normal password-reset and verification flow, enabled two-step verification and published one banner (audit log; no bootstrap or manual change).
+- **Open:** 53 products without a photo; store contact; banner not yet placed on `/` (`/admin/homepage`); B10–B11.
+
 ## 2026-10-22 — PR #27 review corrections (B9 part 1)
 
 - **Owner:** "Use the purchase-specific domain rule as the default: one review per eligible order line." "Do not merge PR #27."

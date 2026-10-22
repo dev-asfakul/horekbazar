@@ -1,5 +1,5 @@
 {
-  "note": "Reviewed public-domain / CC0 photos used as illustrations of generic, unbranded catalogue items on the showcase database. Source: Wikimedia Commons and Openverse searches, chosen by eye on 2026-10-22. Used by scripts/showcase-images.ts. Wikimedia files are fetched at the standard 960 px width.",
+  "note": "Reviewed public-domain / CC0 photos used as illustrations of generic, unbranded catalogue items on the showcase database. Source: Wikimedia Commons and Openverse searches, chosen by eye on 2026-10-22 (51 photos) and on a second review pass the same day (40 more, Wikimedia Commons and the WordPress Photo Directory API, each checked at full size for visible brand marks). Used by scripts/showcase-images.ts. Wikimedia files are fetched at the standard 960 px width.",
   "images": [
     {
       "slug": "miniket-rice",
@@ -510,6 +510,406 @@
       "landingUrl": "https://commons.wikimedia.org/wiki/File:Colored_pencils_lined_up_on_pink_surface.jpg",
       "provider": "Wikimedia Commons",
       "licenseName": "CC0"
+    },
+    {
+      "slug": "medium-rice-paijam-brri-28",
+      "sourceUrl": "https://pd.w.org/2026/02/68469889ddc39b286.34619282-1536x2048.jpg",
+      "title": "An open bag filled with uncooked short-grain rice, showing pale grains against a white interior.",
+      "creator": "Tawhid Sadman",
+      "license": "cc0",
+      "landingUrl": "https://wordpress.org/photos/photo/68469889dd/",
+      "provider": "wordpress",
+      "licenseName": "CC0 1.0"
+    },
+    {
+      "slug": "coarse-rice-swarna",
+      "sourceUrl": "https://pd.w.org/2026/01/868696b43ae5827a2.79713851-2048x1536.jpg",
+      "title": "A close-up of golden-brown rice grains forming natural wavy patterns.",
+      "creator": "appealdahal",
+      "license": "cc0",
+      "landingUrl": "https://wordpress.org/photos/photo/868696b43a/",
+      "provider": "wordpress",
+      "licenseName": "CC0 1.0"
+    },
+    {
+      "slug": "chinigura-aromatic-rice",
+      "sourceUrl": "https://pd.w.org/2025/06/50268490fed87b802.70457115-1536x2048.jpg",
+      "title": "A person’s hand holding a pile of double-boiled Kuruva rice, a type of rice known for its nutritional value and non-sticky texture after cooking. The rice grains are small, round, and have a light gol",
+      "creator": "Bigul Malayi",
+      "license": "cc0",
+      "landingUrl": "https://wordpress.org/photos/photo/50268490fe/",
+      "provider": "wordpress",
+      "licenseName": "CC0 1.0"
+    },
+    {
+      "slug": "anchor-dal-split-peas",
+      "sourceUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/90/Goya_yellow_split_peas.jpg/960px-Goya_yellow_split_peas.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "title": "Goya yellow split peas",
+      "creator": "Mx. Granger",
+      "license": "cc0",
+      "landingUrl": "https://commons.wikimedia.org/wiki/File:Goya_yellow_split_peas.jpg",
+      "provider": "Wikimedia Commons",
+      "licenseName": "CC0"
+    },
+    {
+      "slug": "masoor-dal-bold-grain",
+      "sourceUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/2a/Red_lentils_%281%29.jpg/960px-Red_lentils_%281%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "title": "Red lentils (1)",
+      "creator": "Fumikas Sagisavas",
+      "license": "cc0",
+      "landingUrl": "https://commons.wikimedia.org/wiki/File:Red_lentils_(1).jpg",
+      "provider": "Wikimedia Commons",
+      "licenseName": "CC0"
+    },
+    {
+      "slug": "green-cardamom-small",
+      "sourceUrl": "https://pd.w.org/2025/11/8669274741e0c540.49865717-2048x2048.jpeg",
+      "title": "Fresh green cardamom pods are displayed in bulk at a hypermarket in Kozhikode. The neat pile of aromatic pods shows their natural green tones and the rich spice culture of Kerala.",
+      "creator": "Bigul Malayi",
+      "license": "cc0",
+      "landingUrl": "https://wordpress.org/photos/photo/8669274741/",
+      "provider": "wordpress",
+      "licenseName": "CC0 1.0"
+    },
+    {
+      "slug": "black-tea-loose-leaf",
+      "sourceUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/54/Loose_leaf_darjeeling_tea_twinings.jpg/960px-Loose_leaf_darjeeling_tea_twinings.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "title": "Loose leaf darjeeling tea twinings",
+      "creator": "Mike1024",
+      "license": "pdm",
+      "landingUrl": "https://commons.wikimedia.org/wiki/File:Loose_leaf_darjeeling_tea_twinings.jpg",
+      "provider": "Wikimedia Commons",
+      "licenseName": "Public domain"
+    },
+    {
+      "slug": "peanuts-roasted",
+      "sourceUrl": "https://pd.w.org/2026/06/3726a27dde74e4d99.59781006-1536x2048.jpg",
+      "title": "A white ceramic bowl filled with roasted, salted peanuts with their reddish-brown skins partially attached, resting on a dark wooden surface.",
+      "creator": "Mohammed Kateregga",
+      "license": "cc0",
+      "landingUrl": "https://wordpress.org/photos/photo/3726a27dde/",
+      "provider": "wordpress",
+      "licenseName": "CC0 1.0"
+    },
+    {
+      "slug": "moisturising-body-lotion",
+      "sourceUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/aa/Aftersun_lotion_bottle.webp/960px-Aftersun_lotion_bottle.webp?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "title": "Aftersun lotion bottle",
+      "creator": "Craiyon (DALL-E mini)",
+      "license": "pdm",
+      "landingUrl": "https://commons.wikimedia.org/wiki/File:Aftersun_lotion_bottle.webp",
+      "provider": "Wikimedia Commons",
+      "licenseName": "Public domain"
+    },
+    {
+      "slug": "disposable-razors-pack-of-5",
+      "sourceUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/23/Bic_razor.jpg/960px-Bic_razor.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "title": "Bic razor",
+      "creator": "Mx. Granger",
+      "license": "cc0",
+      "landingUrl": "https://commons.wikimedia.org/wiki/File:Bic_razor.jpg",
+      "provider": "Wikimedia Commons",
+      "licenseName": "CC0"
+    },
+    {
+      "slug": "detergent-powder",
+      "sourceUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/2a/Pralni_pra%C5%A1ek.JPG/960px-Pralni_pra%C5%A1ek.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "title": "Pralni prašek",
+      "creator": "Uncy at Slovenian Wikipedia",
+      "license": "pdm",
+      "landingUrl": "https://commons.wikimedia.org/wiki/File:Pralni_pra%C5%A1ek.JPG",
+      "provider": "Wikimedia Commons",
+      "licenseName": "Public domain"
+    },
+    {
+      "slug": "tea-cups-with-saucers-set-of-6",
+      "sourceUrl": "https://pd.w.org/2026/05/966a181338252ba0.84849146-1536x2048.jpeg",
+      "title": "A close-up, high-angle view of a hot milky drink in a patterned teacup on a white floral saucer, placed on a dark wooden desk. Sunlight falls across the scene, with a black printer in the shadowed bac",
+      "creator": "Tilak Bahadur Karki",
+      "license": "cc0",
+      "landingUrl": "https://wordpress.org/photos/photo/966a181338/",
+      "provider": "wordpress",
+      "licenseName": "CC0 1.0"
+    },
+    {
+      "slug": "cotton-bed-sheet-set",
+      "sourceUrl": "https://pd.w.org/2025/08/5568af87675e9697.13706324-2048x1536.jpeg",
+      "title": "A hotel room, featuring a bed with a wooden headboard and white bedding, including a comforter and pillows.",
+      "creator": "Bigul Malayi",
+      "license": "cc0",
+      "landingUrl": "https://wordpress.org/photos/photo/5568af8767/",
+      "provider": "wordpress",
+      "licenseName": "CC0 1.0"
+    },
+    {
+      "slug": "cotton-gamchha",
+      "sourceUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/99/Gamucha.jpeg/960px-Gamucha.jpeg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "title": "Gamucha",
+      "creator": "Abha S Pradhan",
+      "license": "pdm",
+      "landingUrl": "https://commons.wikimedia.org/wiki/File:Gamucha.jpeg",
+      "provider": "Wikimedia Commons",
+      "licenseName": "Public domain"
+    },
+    {
+      "slug": "casual-cotton-shirt",
+      "sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/1/13/Premium_Pure_Cotton_Shirts_and_Trousers_for_Men.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+      "title": "Premium Pure Cotton Shirts and Trousers for Men",
+      "creator": "Prashasya07",
+      "license": "cc0",
+      "landingUrl": "https://commons.wikimedia.org/wiki/File:Premium_Pure_Cotton_Shirts_and_Trousers_for_Men.jpg",
+      "provider": "Wikimedia Commons",
+      "licenseName": "CC0"
+    },
+    {
+      "slug": "printed-cotton-saree",
+      "sourceUrl": "https://pd.w.org/2025/09/97868d3cca75c5aa4.83276029-1536x2048.jpeg",
+      "title": "Two female wearing red sarees and red slippers, flaunting their feet, standing on the dried grass ground. One of them is wearing a silver anklet.",
+      "creator": "Sumi Subedi",
+      "license": "cc0",
+      "landingUrl": "https://wordpress.org/photos/photo/97868d3cca/",
+      "provider": "wordpress",
+      "licenseName": "CC0 1.0"
+    },
+    {
+      "slug": "cotton-orna-dupatta",
+      "sourceUrl": "https://pd.w.org/2026/07/3196a46b9879476c8.51509682-1536x2048.jpeg",
+      "title": "Stacks of brightly colored, rolled-up scarves (commonly known as dupattas or shawls) are neatly displayed at a roadside market, creating a beautiful mix of vibrant colors, patterns, and textures. Capt",
+      "creator": "Bigul Malayi",
+      "license": "cc0",
+      "landingUrl": "https://wordpress.org/photos/photo/3196a46b98/",
+      "provider": "wordpress",
+      "licenseName": "CC0 1.0"
+    },
+    {
+      "slug": "mens-rubber-sandal",
+      "sourceUrl": "https://pd.w.org/2026/07/6516a6817af633504.96230428-1536x2048.jpeg",
+      "title": "A sandy beach scene featuring two pairs of flip-flops—one white and one dark blue—scattered on the soft sand.",
+      "creator": "stevenchacon06",
+      "license": "cc0",
+      "landingUrl": "https://wordpress.org/photos/photo/6516a6817a/",
+      "provider": "wordpress",
+      "licenseName": "CC0 1.0"
+    },
+    {
+      "slug": "womens-flat-sandal",
+      "sourceUrl": "https://pd.w.org/2026/10/3416abf6225277511.17045039-1536x2048.jpg",
+      "title": "Top-down view of someone wearing a yellow-and-white striped dress and black floral flat sandals, standing on a tiled floor. #wcsylhet2026",
+      "creator": "Alina Kakshapati",
+      "license": "cc0",
+      "landingUrl": "https://wordpress.org/photos/photo/3416abf622/",
+      "provider": "wordpress",
+      "licenseName": "CC0 1.0"
+    },
+    {
+      "slug": "everyday-backpack",
+      "sourceUrl": "https://pd.w.org/2026/08/6206a7322231434b0.21203802-1542x2048.jpg",
+      "title": "A black backpack is placed on green grass. It has a sleek, modern design, with a front pocket that appears slightly unzipped.",
+      "creator": "Iyundhu Kennedy",
+      "license": "cc0",
+      "landingUrl": "https://wordpress.org/photos/photo/6206a73222/",
+      "provider": "wordpress",
+      "licenseName": "CC0 1.0"
+    },
+    {
+      "slug": "mens-wallet",
+      "sourceUrl": "https://pd.w.org/2026/06/2036a1d3e54bbbc40.82155933-2048x1536.jpg",
+      "title": "A black leather wallet is placed on a light-colored surface.",
+      "creator": "Rashed Hossain",
+      "license": "cc0",
+      "landingUrl": "https://wordpress.org/photos/photo/2036a1d3e5/",
+      "provider": "wordpress",
+      "licenseName": "CC0 1.0"
+    },
+    {
+      "slug": "usb-c-charging-cable",
+      "sourceUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c3/USB-C_cable_2017_A.jpg/960px-USB-C_cable_2017_A.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "title": "USB-C cable 2017 A",
+      "creator": "Fructibus",
+      "license": "cc0",
+      "landingUrl": "https://commons.wikimedia.org/wiki/File:USB-C_cable_2017_A.jpg",
+      "provider": "Wikimedia Commons",
+      "licenseName": "CC0"
+    },
+    {
+      "slug": "micro-usb-charging-cable",
+      "sourceUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d6/Usb_connectors.JPG/960px-Usb_connectors.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "title": "Usb connectors",
+      "creator": "Viljo Viitanen",
+      "license": "pdm",
+      "landingUrl": "https://commons.wikimedia.org/wiki/File:Usb_connectors.JPG",
+      "provider": "Wikimedia Commons",
+      "licenseName": "Public domain"
+    },
+    {
+      "slug": "school-bag",
+      "sourceUrl": "https://pd.w.org/2023/07/20764bce5219efe70.91601074-2048x1538.jpg",
+      "title": "School Bags",
+      "creator": "Saurabh Mention",
+      "license": "cc0",
+      "landingUrl": "https://wordpress.org/photos/photo/20764bce52/",
+      "provider": "wordpress",
+      "licenseName": "CC0 1.0"
+    },
+    {
+      "slug": "kids-water-bottle",
+      "sourceUrl": "https://pd.w.org/2026/06/9276a1d3e07b45479.45035761-1536x2048.jpg",
+      "title": "A purple water bottle on a white desk, near a computer monitor, notebooks, a small plant, and a face mask.",
+      "creator": "Rashed Hossain",
+      "license": "cc0",
+      "landingUrl": "https://wordpress.org/photos/photo/9276a1d3e0/",
+      "provider": "wordpress",
+      "licenseName": "CC0 1.0"
+    },
+    {
+      "slug": "pencils-pack-of-12",
+      "sourceUrl": "https://pd.w.org/2026/03/28769c130d3b7d7b2.95343123-2048x1536.jpg",
+      "title": "A top-down view of sharpened colored pencils in a radial bundle, forming a bright starburst on a clean white background.",
+      "creator": "Orianna Radomile",
+      "license": "cc0",
+      "landingUrl": "https://wordpress.org/photos/photo/28769c130d/",
+      "provider": "wordpress",
+      "licenseName": "CC0 1.0"
+    },
+    {
+      "slug": "eraser-and-sharpener-set",
+      "sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/4/44/Eraser_shreddings.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+      "title": "Eraser shreddings",
+      "creator": "Pixabay",
+      "license": "cc0",
+      "landingUrl": "https://commons.wikimedia.org/wiki/File:Eraser_shreddings.jpg",
+      "provider": "Wikimedia Commons",
+      "licenseName": "CC0"
+    },
+    {
+      "slug": "wired-earphones-3-5-mm",
+      "sourceUrl": "https://pd.w.org/2025/10/72768e7a1e8462698.55530594-1536x2048.jpg",
+      "title": "A high-angle close-up of a pair of tangled black wired earphones lying on a closed, silver-gray lid of a laptop. The laptop is resting on a wooden table.",
+      "creator": "Enaan Farhan",
+      "license": "cc0",
+      "landingUrl": "https://wordpress.org/photos/photo/72768e7a1e/",
+      "provider": "wordpress",
+      "licenseName": "CC0 1.0"
+    },
+    {
+      "slug": "date-molasses-khejur-gur",
+      "sourceUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/8e/Nolen_gur%2C_known_as_new_jaggery_or_Palm_sugar%2C_from_Kakdwip%2C_West_Bengal%2C_India.jpg/960px-Nolen_gur%2C_known_as_new_jaggery_or_Palm_sugar%2C_from_Kakdwip%2C_West_Bengal%2C_India.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "title": "Nolen gur, known as new jaggery or Palm sugar, from Kakdwip, West Bengal, India",
+      "creator": "Billjones94",
+      "license": "cc0",
+      "landingUrl": "https://commons.wikimedia.org/wiki/File:Nolen_gur,_known_as_new_jaggery_or_Palm_sugar,_from_Kakdwip,_West_Bengal,_India.jpg",
+      "provider": "Wikimedia Commons",
+      "licenseName": "CC0"
+    },
+    {
+      "slug": "lip-balm",
+      "sourceUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/93/EOS_lip_balm_6.jpg/960px-EOS_lip_balm_6.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "title": "EOS lip balm 6",
+      "creator": "W.carter",
+      "license": "cc0",
+      "landingUrl": "https://commons.wikimedia.org/wiki/File:EOS_lip_balm_6.jpg",
+      "provider": "Wikimedia Commons",
+      "licenseName": "CC0"
+    },
+    {
+      "slug": "coconut-hair-oil",
+      "sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/5/51/ROGANE-NARGIL.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+      "title": "ROGANE-NARGIL",
+      "creator": "Dana Tentis",
+      "license": "cc0",
+      "landingUrl": "https://commons.wikimedia.org/wiki/File:ROGANE-NARGIL.jpg",
+      "provider": "Wikimedia Commons",
+      "licenseName": "CC0"
+    },
+    {
+      "slug": "hand-wash-refill",
+      "sourceUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/35/Blue_liquid_soap_in_a_plastic_dispenser_1.jpg/960px-Blue_liquid_soap_in_a_plastic_dispenser_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "title": "Blue liquid soap in a plastic dispenser 1",
+      "creator": "Ser Amantio di Nicolao",
+      "license": "cc0",
+      "landingUrl": "https://commons.wikimedia.org/wiki/File:Blue_liquid_soap_in_a_plastic_dispenser_1.jpg",
+      "provider": "Wikimedia Commons",
+      "licenseName": "CC0"
+    },
+    {
+      "slug": "non-stick-fry-pan",
+      "sourceUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/ea/Sarten_teflon.JPG/960px-Sarten_teflon.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "title": "Sarten teflon",
+      "creator": "MdeVicente",
+      "license": "cc0",
+      "landingUrl": "https://commons.wikimedia.org/wiki/File:Sarten_teflon.JPG",
+      "provider": "Wikimedia Commons",
+      "licenseName": "CC0"
+    },
+    {
+      "slug": "pressure-cooker",
+      "sourceUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/dd/Pressure_cooker2.JPG/960px-Pressure_cooker2.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "title": "Pressure cooker2",
+      "creator": "Ashish Bhatnagar",
+      "license": "pdm",
+      "landingUrl": "https://commons.wikimedia.org/wiki/File:Pressure_cooker2.JPG",
+      "provider": "Wikimedia Commons",
+      "licenseName": "Public domain"
+    },
+    {
+      "slug": "round-neck-cotton-t-shirt",
+      "sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/9/9c/Young_North_Indian_man_with_beard_in_white_t-shirt.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+      "title": "Young North Indian man with beard in white t-shirt",
+      "creator": "Singhjayreena",
+      "license": "cc0",
+      "landingUrl": "https://commons.wikimedia.org/wiki/File:Young_North_Indian_man_with_beard_in_white_t-shirt.jpg",
+      "provider": "Wikimedia Commons",
+      "licenseName": "CC0"
+    },
+    {
+      "slug": "folding-umbrella",
+      "sourceUrl": "https://pd.w.org/2025/09/42568ca7f8d980957.45371159-1536x2048.jpg",
+      "title": "A hand holding a black umbrella from underneath, showing the interior structure with ribs and fabric.",
+      "creator": "Faisal Ahammad",
+      "license": "cc0",
+      "landingUrl": "https://wordpress.org/photos/photo/42568ca7f8/",
+      "provider": "wordpress",
+      "licenseName": "CC0 1.0"
+    },
+    {
+      "slug": "led-bulb-b22",
+      "sourceUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/1c/Led_light_bulb.jpg/960px-Led_light_bulb.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "title": "Led light bulb",
+      "creator": "Beendy234",
+      "license": "cc0",
+      "landingUrl": "https://commons.wikimedia.org/wiki/File:Led_light_bulb.jpg",
+      "provider": "Wikimedia Commons",
+      "licenseName": "CC0"
+    },
+    {
+      "slug": "extension-board-4-sockets",
+      "sourceUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c3/MultiWay_side.jpg/960px-MultiWay_side.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "title": "MultiWay side",
+      "creator": "Deucharman at en.wikipedia",
+      "license": "pdm",
+      "landingUrl": "https://commons.wikimedia.org/wiki/File:MultiWay_side.jpg",
+      "provider": "Wikimedia Commons",
+      "licenseName": "Public domain"
+    },
+    {
+      "slug": "baby-diaper-pants",
+      "sourceUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d8/Disposablediaper.JPG/960px-Disposablediaper.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "title": "Disposablediaper",
+      "creator": "Coop41",
+      "license": "pdm",
+      "landingUrl": "https://commons.wikimedia.org/wiki/File:Disposablediaper.JPG",
+      "provider": "Wikimedia Commons",
+      "licenseName": "Public domain"
+    },
+    {
+      "slug": "ballpoint-pens-pack-of-10",
+      "sourceUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/2b/Typical_ball_point_pen.jpg/960px-Typical_ball_point_pen.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "title": "Typical ball point pen",
+      "creator": "Ronggy",
+      "license": "pdm",
+      "landingUrl": "https://commons.wikimedia.org/wiki/File:Typical_ball_point_pen.jpg",
+      "provider": "Wikimedia Commons",
+      "licenseName": "Public domain"
     }
   ]
 }

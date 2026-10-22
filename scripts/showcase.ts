@@ -3,18 +3,32 @@
 // Every write goes through the same services as the admin (versions, publish rules, inventory ledger,
 // audit log) with the store Owner as the actor; nothing is written around them.
 //
-// Idempotent: settings are saved only if missing, a zone only if its id is absent, only drafts are
-// published, and each variant's opening stock uses a fixed adjustment id (a rerun is a ledger replay,
-// never a second receipt). Dry run by default. Prints counts and the database name, never the URI.
+// Idempotent: settings are saved only if missing, a zone only if its id is absent, only drafts that were
+// never published are published (a record the admin unpublished stays a draft), each variant's opening
+// stock uses a fixed adjustment id (a rerun is a ledger replay, never a second receipt), a showcase
+// collection is created only if its slug is absent, and the home sections only while the store has none.
+// Existing records are never modified. Dry run by default. Prints counts and the database name, never
+// the URI.
 //
-// Showcase values (the owner adjusts them in /admin): zone fees and estimates, and stock quantities.
+// Showcase values (the owner adjusts them in /admin): zone fees and estimates, stock quantities, and the
+// collections and home sections in catalogue/horekbazar/showcase-merch.json.
 import { createHash } from "node:crypto";
+import { readFile } from "node:fs/promises";
 import { closeDatabase, databaseConfig, getClient, getDatabase } from "../lib/adapters/db/client.ts";
 import { setCategoryStatus } from "../lib/modules/catalogue/categories.ts";
 import { moveStock } from "../lib/modules/catalogue/inventory.ts";
 import { setProductStatus } from "../lib/modules/catalogue/products.ts";
 import { CATEGORIES, PRODUCTS, STOCK, VARIANTS } from "../lib/modules/catalogue/schema.ts";
+import { ObjectId } from "mongodb";
+import { createCollection, createHomeSection, setCollectionStatus, setHomeSectionStatus, type HomeSectionInput } from "../lib/modules/merch/merch.ts";
+import { COLLECTIONS, HOME_SECTIONS } from "../lib/modules/merch/schema.ts";
 import { getSettings, updateGeneralSettings, upsertDeliveryZone } from "../lib/modules/settings/settings.ts";
+
+type LT = { bn: string; en?: string };
+interface MerchFile {
+  collections: { slug: string; name: LT; description?: LT; products: string[] }[];
+  home: { hero: { title: LT; subtitle?: LT; ctaLabel?: LT; href?: string }; categoryTilesTitle?: LT; rails: string[]; collectionGridTitle?: LT };
+}
 
 const args = new Set(process.argv.slice(2));
 const unknown = [...args].filter((a) => a !== "--confirm");
@@ -67,7 +81,7 @@ try {
   }
 
   // 2. Categories: parents before children (a child needs a published parent).
-  const categories = await db.collection(CATEGORIES).find({}, { projection: { parentId: 1, status: 1, version: 1, slug: 1 } }).toArray();
+  const categories = await db.collection(CATEGORIES).find({}, { projection: { parentId: 1, status: 1, version: 1, slug: 1, publishedAt: 1, position: 1 } }).toArray();
   const depth = (c: (typeof categories)[number]): number => {
     let d = 0;
     let p = c.parentId;
@@ -77,7 +91,7 @@ try {
     }
     return d;
   };
-  const drafts = categories.filter((c) => c.status === "draft").sort((a, b) => depth(a) - depth(b));
+  const drafts = categories.filter((c) => c.status === "draft" && !c.publishedAt).sort((a, b) => depth(a) - depth(b));
   let catDone = 0;
   for (const c of drafts) {
     if (confirm) await setCategoryStatus(db, client, actor, String(c._id), c.version as number, "published");
@@ -86,7 +100,7 @@ try {
   console.log(`categories: ${categories.length} total, ${confirm ? "published" : "would publish"} ${catDone}`);
 
   // 3. Products (drafts only; the publish rules decide, failures are listed).
-  const products = await db.collection(PRODUCTS).find({ status: "draft" }, { projection: { slug: 1, version: 1 } }).toArray();
+  const products = await db.collection(PRODUCTS).find({ status: "draft", publishedAt: { $exists: false } }, { projection: { slug: 1, version: 1 } }).toArray();
   let prodDone = 0;
   const prodFailed: string[] = [];
   for (const p of products) {
@@ -118,6 +132,7 @@ try {
     }
     if (!confirm) {
       if ((stock.get(String(v._id)) ?? 0) === 0) received++;
+      else replayed++;
       continue;
     }
     const r = await moveStock(db, client, actor, { adjustmentId: `showcase-open-${String(v._id)}`, kind: "receive", lines: [{ variantId: String(v._id), qty }] });
@@ -125,6 +140,50 @@ try {
     else received++;
   }
   console.log(`stock: ${variants.length} active variants; ${confirm ? "received" : "would receive"} ${received}, already received ${replayed}, left at 0 (out of stock) ${zero}`);
+
+  // 5. Merchandising: showcase collections (missing slugs only) and home sections (only while none exist).
+  const merch = JSON.parse(await readFile(new URL("../catalogue/horekbazar/showcase-merch.json", import.meta.url), "utf8")) as MerchFile;
+  const bySlug = new Map((await db.collection(PRODUCTS).find({ status: "published" }, { projection: { slug: 1 } }).toArray()).map((p) => [p.slug as string, String(p._id)]));
+  const collectionIds = new Map<string, string>();
+  for (const c of merch.collections) {
+    const existing = await db.collection(COLLECTIONS).findOne({ slug: c.slug }, { projection: { _id: 1 } });
+    if (existing) {
+      collectionIds.set(c.slug, String(existing._id));
+      console.log(`collection ${c.slug}: present (left as is)`);
+      continue;
+    }
+    const ids = c.products.map((slug) => bySlug.get(slug)).filter((id): id is string => Boolean(id));
+    const missing = c.products.length - ids.length;
+    console.log(`collection ${c.slug}: ${confirm ? "creating" : "would create"} with ${ids.length} published products${missing ? ` (${missing} not published, left out)` : ""}`);
+    if (!confirm || ids.length === 0) continue;
+    const id = String(await createCollection(db, actor, { slug: c.slug, name: c.name, ...(c.description ? { description: c.description } : {}), productIds: ids }));
+    await setCollectionStatus(db, actor, id, 1, "published");
+    collectionIds.set(c.slug, id);
+  }
+  const sectionCount = await db.collection(HOME_SECTIONS).countDocuments({});
+  if (sectionCount > 0) {
+    console.log(`home sections: ${sectionCount} present (left as is)`);
+  } else {
+    const roots = categories.filter((c) => !c.parentId).sort((a, b) => ((a.position as number) ?? 0) - ((b.position as number) ?? 0));
+    const sections: HomeSectionInput[] = [
+      { type: "hero", order: 0, data: merch.home.hero },
+      { type: "categoryTiles", order: 10, data: { ...(merch.home.categoryTilesTitle ? { title: merch.home.categoryTilesTitle } : {}), categoryIds: roots.slice(0, 12).map((c) => c._id) } },
+      ...merch.home.rails.flatMap((slug, i): HomeSectionInput[] => {
+        const id = collectionIds.get(slug);
+        const c = merch.collections.find((x) => x.slug === slug);
+        return id && c ? [{ type: "productRail", order: 20 + i * 10, data: { title: c.name, collectionId: new ObjectId(id) } }] : [];
+      }),
+    ];
+    const gridIds = [...collectionIds.values()].slice(0, 8).map((id) => new ObjectId(id));
+    if (gridIds.length) sections.push({ type: "collectionGrid", order: 900, data: { ...(merch.home.collectionGridTitle ? { title: merch.home.collectionGridTitle } : {}), collectionIds: gridIds } });
+    console.log(`home sections: none yet; ${confirm ? "creating" : "would create"} ${sections.length}${confirm ? "" : " (rails need the collections, so a dry run on an empty store lists fewer)"}`);
+    if (confirm) {
+      for (const section of sections) {
+        const id = String(await createHomeSection(db, actor, section));
+        await setHomeSectionStatus(db, actor, id, 1, "published");
+      }
+    }
+  }
 } catch (error) {
   console.error((error as Error).message);
   process.exitCode = 1;
