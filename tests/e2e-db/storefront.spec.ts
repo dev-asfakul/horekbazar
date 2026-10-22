@@ -99,7 +99,7 @@ for (const [width, cols] of [
     await expect(page.locator(".pdp-info .price-tag-compare")).toHaveText("৳৪৫০");
     await expect(page.getByTestId("stock")).toHaveText("এই অপশনটি এখন স্টকে নেই");
     await expect(page.getByTestId("delivery-zones")).toContainText("ঢাকার ভেতরে");
-    await expect(page.getByRole("note")).toContainText("অনলাইন অর্ডার এখনো চালু হয়নি");
+    await expect(page.getByRole("note")).toContainText("অনলাইন অর্ডার চালু হলে চেকআউট করা যাবে");
     // Link prefetching keeps the network busy, so "networkidle" never settles here; wait for load.
     await page.waitForLoadState("load");
     await page.waitForTimeout(500);
