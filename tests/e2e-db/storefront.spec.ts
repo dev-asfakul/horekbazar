@@ -73,6 +73,8 @@ for (const [width, cols] of [
     await page.goto("/");
     await expect(page.locator("html")).toHaveAttribute("lang", "bn");
     await expect(page.getByTestId("category-tiles")).toContainText("খাবার");
+    // The header carries the saved store name, not the not-set-up placeholder.
+    await expect(page.locator("header").first()).not.toContainText("নতুন স্টোর");
     await expect(page.getByTestId("home-new-grid")).toBeVisible();
 
     await page.getByTestId("category-tiles").getByRole("link", { name: "খাবার" }).click();

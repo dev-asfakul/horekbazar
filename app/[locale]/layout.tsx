@@ -14,6 +14,7 @@ import { SiteHeader } from "@/components/shell/SiteHeader";
 import { freshInstallDefaults } from "@/config/defaults";
 import { preloadedFontByLocale } from "@/config/fonts";
 import { htmlLang, isLocale } from "@/lib/i18n/locales";
+import { loadStore, shown } from "@/lib/storefront/context";
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -34,6 +35,9 @@ export default async function LocaleLayout({ children, params }: LayoutProps<"/[
   const { locale } = await params;
   if (!isLocale(locale)) notFound();
   setRequestLocale(locale);
+  // The saved store name once the store is set up (cached per request; pages reuse it).
+  const store = await loadStore();
+  const storeName = store.ready ? shown(store.settings.store.name, locale) || null : null;
 
   // Exactly one preloaded font file per locale: the Noto Sans Bengali subset for the page's script.
   preload(preloadedFontByLocale[locale], { as: "font", type: "font/woff2", crossOrigin: "anonymous" });
@@ -50,7 +54,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps<"/[
         <a href="#main" className="skip-link">
           {t("skipToMain")}
         </a>
-        <SiteHeader locale={locale} storeName={null} />
+        <SiteHeader locale={locale} storeName={storeName} />
         <main id="main" tabIndex={-1}>
           <NextIntlClientProvider locale={locale} messages={clientMessages} timeZone="Asia/Dhaka">
             {children}

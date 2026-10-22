@@ -1,0 +1,515 @@
+{
+  "note": "Reviewed public-domain / CC0 photos used as illustrations of generic, unbranded catalogue items on the showcase database. Source: Wikimedia Commons and Openverse searches, chosen by eye on 2026-10-22. Used by scripts/showcase-images.ts. Wikimedia files are fetched at the standard 960 px width.",
+  "images": [
+    {
+      "slug": "miniket-rice",
+      "sourceUrl": "https://pd.w.org/2025/11/37069274da72871b8.33737129-2048x1536.jpeg",
+      "title": "Short white rice grains are displayed in bulk at a hypermarket in Kozhikode. The smooth, polished grains are a common rice variety used in Kerala homes for breakfasts like dosa and idli.",
+      "creator": "Bigul Malayi",
+      "license": "cc0",
+      "landingUrl": "https://wordpress.org/photos/photo/37069274da/",
+      "provider": "wordpress",
+      "licenseName": "CC0 1.0"
+    },
+    {
+      "slug": "nazirshail-rice",
+      "sourceUrl": "https://images.rawpixel.com/editor_1024/cHJpdmF0ZS9zdGF0aWMvaW1hZ2Uvd2Vic2l0ZS8yMDIyLTA0L2xyL3B4MTYwMzUyNy1pbWFnZS1rd3Z4cWI0ay5qcGc.jpg",
+      "title": "Free uncooked rice grain mat",
+      "creator": null,
+      "license": "cc0",
+      "landingUrl": "https://www.rawpixel.com/image/5922922/photo-image-public-domain-food-free",
+      "provider": "rawpixel",
+      "licenseName": "CC0 1.0"
+    },
+    {
+      "slug": "wheat-atta-packet",
+      "sourceUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/2c/Anjeunbaengi_wheat_flour_3.jpg/500px-Anjeunbaengi_wheat_flour_3.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "title": "Anjeunbaengi wheat flour 3",
+      "creator": "Ajumeoni",
+      "license": "cc0",
+      "landingUrl": "https://commons.wikimedia.org/wiki/File:Anjeunbaengi_wheat_flour_3.jpg",
+      "provider": "Wikimedia Commons",
+      "licenseName": "CC0"
+    },
+    {
+      "slug": "maida-packet",
+      "sourceUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/1c/HK_food_%E9%BA%B5%E7%B2%89_Wheat_flour_powder_%E5%8A%A0%E5%85%A5%E9%9B%9E%E8%9B%8B_with_egg_October_2025_N13P_01.jpg/500px-HK_food_%E9%BA%B5%E7%B2%89_Wheat_flour_powder_%E5%8A%A0%E5%85%A5%E9%9B%9E%E8%9B%8B_with_egg_October_2025_N13P_01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "title": "HK food 麵粉 Wheat flour powder 加入雞蛋 with egg October 2025 N13P 01",
+      "creator": "SZE XAIMMOOA HONGMIN",
+      "license": "cc0",
+      "landingUrl": "https://commons.wikimedia.org/wiki/File:HK_food_%E9%BA%B5%E7%B2%89_Wheat_flour_powder_%E5%8A%A0%E5%85%A5%E9%9B%9E%E8%9B%8B_with_egg_October_2025_N13P_01.jpg",
+      "provider": "Wikimedia Commons",
+      "licenseName": "CC0"
+    },
+    {
+      "slug": "masoor-dal-small-grain",
+      "sourceUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/2a/Red_lentils_%281%29.jpg/500px-Red_lentils_%281%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "title": "Red lentils (1)",
+      "creator": "Fumikas Sagisavas",
+      "license": "cc0",
+      "landingUrl": "https://commons.wikimedia.org/wiki/File:Red_lentils_(1).jpg",
+      "provider": "Wikimedia Commons",
+      "licenseName": "CC0"
+    },
+    {
+      "slug": "masoor-dal-medium-grain",
+      "sourceUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/2a/Red_lentils_%281%29.jpg/500px-Red_lentils_%281%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "title": "Red lentils (1)",
+      "creator": "Fumikas Sagisavas",
+      "license": "cc0",
+      "landingUrl": "https://commons.wikimedia.org/wiki/File:Red_lentils_(1).jpg",
+      "provider": "Wikimedia Commons",
+      "licenseName": "CC0"
+    },
+    {
+      "slug": "moong-dal",
+      "sourceUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/08/Young_mung_bean_sprouts.jpg/500px-Young_mung_bean_sprouts.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "title": "Young mung bean sprouts",
+      "creator": "pics_pd",
+      "license": "cc0",
+      "landingUrl": "https://commons.wikimedia.org/wiki/File:Young_mung_bean_sprouts.jpg",
+      "provider": "Wikimedia Commons",
+      "licenseName": "CC0"
+    },
+    {
+      "slug": "chhola-chickpeas",
+      "sourceUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/1a/Chickpeas%F0%9F%AB%98.jpg/500px-Chickpeas%F0%9F%AB%98.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "title": "Chickpeas🫘",
+      "creator": "Fumikas Sagisavas",
+      "license": "cc0",
+      "landingUrl": "https://commons.wikimedia.org/wiki/File:Chickpeas%F0%9F%AB%98.jpg",
+      "provider": "Wikimedia Commons",
+      "licenseName": "CC0"
+    },
+    {
+      "slug": "mashkalai-dal",
+      "sourceUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/12/Peeled_urad_beans.jpg/500px-Peeled_urad_beans.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "title": "Peeled urad beans",
+      "creator": "BaluBFA12",
+      "license": "cc0",
+      "landingUrl": "https://commons.wikimedia.org/wiki/File:Peeled_urad_beans.jpg",
+      "provider": "Wikimedia Commons",
+      "licenseName": "CC0"
+    },
+    {
+      "slug": "soybean-oil-bottle",
+      "sourceUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5e/Butter_and_Oil_-_NCI_Visuals_Online.jpg/500px-Butter_and_Oil_-_NCI_Visuals_Online.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "title": "Butter and Oil - NCI Visuals Online",
+      "creator": "Bill Branson (photographer)",
+      "license": "pdm",
+      "landingUrl": "https://commons.wikimedia.org/wiki/File:Butter_and_Oil_-_NCI_Visuals_Online.jpg",
+      "provider": "Wikimedia Commons",
+      "licenseName": "Public domain"
+    },
+    {
+      "slug": "rice-bran-oil-bottle",
+      "sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/3/32/Olew_r%C3%AAp_Blodyn_Aur.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "title": "Olew rêp Blodyn Aur",
+      "creator": "Stefanik",
+      "license": "cc0",
+      "landingUrl": "https://commons.wikimedia.org/wiki/File:Olew_r%C3%AAp_Blodyn_Aur.jpg",
+      "provider": "Wikimedia Commons",
+      "licenseName": "CC0"
+    },
+    {
+      "slug": "turmeric-powder",
+      "sourceUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5e/Lakadong_Turmeric_Powder_final_product.jpg/500px-Lakadong_Turmeric_Powder_final_product.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "title": "Lakadong Turmeric Powder final product",
+      "creator": "Trinity Saioo",
+      "license": "cc0",
+      "landingUrl": "https://commons.wikimedia.org/wiki/File:Lakadong_Turmeric_Powder_final_product.jpg",
+      "provider": "Wikimedia Commons",
+      "licenseName": "CC0"
+    },
+    {
+      "slug": "cumin-seeds-whole",
+      "sourceUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/cb/Dried_cumin_seeds.jpg/500px-Dried_cumin_seeds.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "title": "Dried cumin seeds",
+      "creator": "Fumikas Sagisavas",
+      "license": "cc0",
+      "landingUrl": "https://commons.wikimedia.org/wiki/File:Dried_cumin_seeds.jpg",
+      "provider": "Wikimedia Commons",
+      "licenseName": "CC0"
+    },
+    {
+      "slug": "cinnamon",
+      "sourceUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c4/Cinnamon_sticks_%281%29.jpg/500px-Cinnamon_sticks_%281%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "title": "Cinnamon sticks (1)",
+      "creator": "Fumikas Sagisavas",
+      "license": "cc0",
+      "landingUrl": "https://commons.wikimedia.org/wiki/File:Cinnamon_sticks_(1).jpg",
+      "provider": "Wikimedia Commons",
+      "licenseName": "CC0"
+    },
+    {
+      "slug": "cloves",
+      "sourceUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/33/Cloves.JPG/500px-Cloves.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "title": "Cloves",
+      "creator": "Jorge Barrios",
+      "license": "pdm",
+      "landingUrl": "https://commons.wikimedia.org/wiki/File:Cloves.JPG",
+      "provider": "Wikimedia Commons",
+      "licenseName": "Public domain"
+    },
+    {
+      "slug": "bay-leaves",
+      "sourceUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c2/Whole_Bay_Leaves.jpg/500px-Whole_Bay_Leaves.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "title": "Whole Bay Leaves",
+      "creator": "Misterneedlemouse",
+      "license": "cc0",
+      "landingUrl": "https://commons.wikimedia.org/wiki/File:Whole_Bay_Leaves.jpg",
+      "provider": "Wikimedia Commons",
+      "licenseName": "CC0"
+    },
+    {
+      "slug": "dried-red-chilli-whole",
+      "sourceUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/82/Dried_Korean_red_chillies.jpg/500px-Dried_Korean_red_chillies.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "title": "Dried Korean red chillies",
+      "creator": "ally j",
+      "license": "cc0",
+      "landingUrl": "https://commons.wikimedia.org/wiki/File:Dried_Korean_red_chillies.jpg",
+      "provider": "Wikimedia Commons",
+      "licenseName": "CC0"
+    },
+    {
+      "slug": "black-pepper-whole",
+      "sourceUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/81/Tellicherry_Black_Peppercorns.jpg/500px-Tellicherry_Black_Peppercorns.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "title": "Tellicherry Black Peppercorns",
+      "creator": "Misterneedlemouse",
+      "license": "cc0",
+      "landingUrl": "https://commons.wikimedia.org/wiki/File:Tellicherry_Black_Peppercorns.jpg",
+      "provider": "Wikimedia Commons",
+      "licenseName": "CC0"
+    },
+    {
+      "slug": "dates",
+      "sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/d/d5/DriedDates.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "title": "DriedDates",
+      "creator": "Vicki Nunn",
+      "license": "pdm",
+      "landingUrl": "https://commons.wikimedia.org/wiki/File:DriedDates.JPG",
+      "provider": "Wikimedia Commons",
+      "licenseName": "Public domain"
+    },
+    {
+      "slug": "honey",
+      "sourceUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/ef/Antiguan_honey_products_at_an_exhibition_in_Saint_Lucia.jpg/500px-Antiguan_honey_products_at_an_exhibition_in_Saint_Lucia.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "title": "Antiguan honey products at an exhibition in Saint Lucia",
+      "creator": "Government of Antigua and Barbuda",
+      "license": "pdm",
+      "landingUrl": "https://commons.wikimedia.org/wiki/File:Antiguan_honey_products_at_an_exhibition_in_Saint_Lucia.jpg",
+      "provider": "Wikimedia Commons",
+      "licenseName": "Public domain"
+    },
+    {
+      "slug": "chanachur",
+      "sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/c/c6/Bombaymix.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "title": "Bombaymix",
+      "creator": "No machine-readable author provided. J.P.Lon~commonswiki assumed (based on copyr",
+      "license": "pdm",
+      "landingUrl": "https://commons.wikimedia.org/wiki/File:Bombaymix.jpg",
+      "provider": "Wikimedia Commons",
+      "licenseName": "Public domain"
+    },
+    {
+      "slug": "toast-biscuits",
+      "sourceUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/63/Choipaku_Rusk_variants.jpg/500px-Choipaku_Rusk_variants.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "title": "Choipaku Rusk variants",
+      "creator": "毒島みるく",
+      "license": "cc0",
+      "landingUrl": "https://commons.wikimedia.org/wiki/File:Choipaku_Rusk_variants.jpg",
+      "provider": "Wikimedia Commons",
+      "licenseName": "CC0"
+    },
+    {
+      "slug": "vermicelli-semai",
+      "sourceUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d4/Longkou_Vermicelli_%E9%BE%8D%E5%8F%A3%E7%B2%89%E7%B5%B2.jpg/500px-Longkou_Vermicelli_%E9%BE%8D%E5%8F%A3%E7%B2%89%E7%B5%B2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "title": "Longkou Vermicelli 龍口粉絲",
+      "creator": "Fumikas Sagisavas",
+      "license": "cc0",
+      "landingUrl": "https://commons.wikimedia.org/wiki/File:Longkou_Vermicelli_%E9%BE%8D%E5%8F%A3%E7%B2%89%E7%B5%B2.jpg",
+      "provider": "Wikimedia Commons",
+      "licenseName": "CC0"
+    },
+    {
+      "slug": "instant-noodles-pack-of-4",
+      "sourceUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d4/Buckwheat_instant_noodles_%281%29.jpg/500px-Buckwheat_instant_noodles_%281%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "title": "Buckwheat instant noodles (1)",
+      "creator": "Fumikas Sagisavas",
+      "license": "cc0",
+      "landingUrl": "https://commons.wikimedia.org/wiki/File:Buckwheat_instant_noodles_(1).jpg",
+      "provider": "Wikimedia Commons",
+      "licenseName": "CC0"
+    },
+    {
+      "slug": "wide-tooth-comb",
+      "sourceUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/ab/Olive_harvest_combs._Anthidona._Greece.jpg/500px-Olive_harvest_combs._Anthidona._Greece.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "title": "Olive harvest combs. Anthidona. Greece",
+      "creator": "Jebulon",
+      "license": "cc0",
+      "landingUrl": "https://commons.wikimedia.org/wiki/File:Olive_harvest_combs._Anthidona._Greece.jpg",
+      "provider": "Wikimedia Commons",
+      "licenseName": "CC0"
+    },
+    {
+      "slug": "toothpaste",
+      "sourceUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b9/Toothbrush%2C_Toothpaste%2C_Dental_Care_%28571741%29.jpg/500px-Toothbrush%2C_Toothpaste%2C_Dental_Care_%28571741%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "title": "Toothbrush, Toothpaste, Dental Care (571741)",
+      "creator": "Steve Buissinne, South Africa",
+      "license": "cc0",
+      "landingUrl": "https://commons.wikimedia.org/wiki/File:Toothbrush,_Toothpaste,_Dental_Care_(571741).jpg",
+      "provider": "Wikimedia Commons",
+      "licenseName": "CC0"
+    },
+    {
+      "slug": "toothbrush-soft",
+      "sourceUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/66/Toothbrush_x3_20050716_002.jpg/500px-Toothbrush_x3_20050716_002.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "title": "Toothbrush x3 20050716 002",
+      "creator": "Jonas Bergsten",
+      "license": "pdm",
+      "landingUrl": "https://commons.wikimedia.org/wiki/File:Toothbrush_x3_20050716_002.jpg",
+      "provider": "Wikimedia Commons",
+      "licenseName": "Public domain"
+    },
+    {
+      "slug": "bath-soap",
+      "sourceUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/53/A_bar_of_soap.jpg/500px-A_bar_of_soap.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "title": "A bar of soap",
+      "creator": "No machine-readable author provided. Lacrimosus assumed (based on copyright clai",
+      "license": "pdm",
+      "landingUrl": "https://commons.wikimedia.org/wiki/File:A_bar_of_soap.jpg",
+      "provider": "Wikimedia Commons",
+      "licenseName": "Public domain"
+    },
+    {
+      "slug": "nail-cutter",
+      "sourceUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/95/Nail_clippers_silver.JPG/500px-Nail_clippers_silver.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "title": "Nail clippers silver",
+      "creator": "BarberJP",
+      "license": "pdm",
+      "landingUrl": "https://commons.wikimedia.org/wiki/File:Nail_clippers_silver.JPG",
+      "provider": "Wikimedia Commons",
+      "licenseName": "Public domain"
+    },
+    {
+      "slug": "floor-mop-with-handle",
+      "sourceUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4c/Mop%2C_three_different_mop_handles.jpg/500px-Mop%2C_three_different_mop_handles.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "title": "Mop, three different mop handles",
+      "creator": "Bjornwireen",
+      "license": "pdm",
+      "landingUrl": "https://commons.wikimedia.org/wiki/File:Mop,_three_different_mop_handles.jpg",
+      "provider": "Wikimedia Commons",
+      "licenseName": "Public domain"
+    },
+    {
+      "slug": "phool-jharu-soft-broom",
+      "sourceUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5a/Broom%2C_vegetable_fibers_-_Museo_Egizio%2C_Turin_S_7669_p01.jpg/500px-Broom%2C_vegetable_fibers_-_Museo_Egizio%2C_Turin_S_7669_p01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "title": "Broom, vegetable fibers - Museo Egizio, Turin S 7669 p01",
+      "creator": null,
+      "license": "cc0",
+      "landingUrl": "https://commons.wikimedia.org/wiki/File:Broom,_vegetable_fibers_-_Museo_Egizio,_Turin_S_7669_p01.jpg",
+      "provider": "Wikimedia Commons",
+      "licenseName": "CC0"
+    },
+    {
+      "slug": "microfibre-cleaning-cloth-pack-of-3",
+      "sourceUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/87/Microfibre_cloth.jpg/500px-Microfibre_cloth.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "title": "Microfibre cloth",
+      "creator": "Polyesterchen",
+      "license": "pdm",
+      "landingUrl": "https://commons.wikimedia.org/wiki/File:Microfibre_cloth.jpg",
+      "provider": "Wikimedia Commons",
+      "licenseName": "Public domain"
+    },
+    {
+      "slug": "garbage-bags-medium-30-pcs",
+      "sourceUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/2d/Black_garbage_bag.jpg/500px-Black_garbage_bag.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "title": "Black garbage bag",
+      "creator": "Wiki Farazi",
+      "license": "pdm",
+      "landingUrl": "https://commons.wikimedia.org/wiki/File:Black_garbage_bag.jpg",
+      "provider": "Wikimedia Commons",
+      "licenseName": "Public domain"
+    },
+    {
+      "slug": "aluminium-cooking-pot-dekchi",
+      "sourceUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c9/Cooking_Pot_March.jpg/500px-Cooking_Pot_March.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "title": "Cooking Pot March",
+      "creator": "Peculiar grace",
+      "license": "cc0",
+      "landingUrl": "https://commons.wikimedia.org/wiki/File:Cooking_Pot_March.jpg",
+      "provider": "Wikimedia Commons",
+      "licenseName": "CC0"
+    },
+    {
+      "slug": "stainless-steel-ladle-set",
+      "sourceUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a6/Ladle_MET_136401.jpg/500px-Ladle_MET_136401.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "title": "Ladle MET 136401",
+      "creator": null,
+      "license": "cc0",
+      "landingUrl": "https://commons.wikimedia.org/wiki/File:Ladle_MET_136401.jpg",
+      "provider": "Wikimedia Commons",
+      "licenseName": "CC0"
+    },
+    {
+      "slug": "chopping-board",
+      "sourceUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/eb/11._place_vegetables_on_cutting_board.jpg/500px-11._place_vegetables_on_cutting_board.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "title": "11. place vegetables on cutting board",
+      "creator": "Datariumrex",
+      "license": "cc0",
+      "landingUrl": "https://commons.wikimedia.org/wiki/File:11._place_vegetables_on_cutting_board.jpg",
+      "provider": "Wikimedia Commons",
+      "licenseName": "CC0"
+    },
+    {
+      "slug": "kitchen-knife",
+      "sourceUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e3/Butcher_knife.JPG/500px-Butcher_knife.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "title": "Butcher knife",
+      "creator": "Jpogi at en.wikipedia",
+      "license": "pdm",
+      "landingUrl": "https://commons.wikimedia.org/wiki/File:Butcher_knife.JPG",
+      "provider": "Wikimedia Commons",
+      "licenseName": "Public domain"
+    },
+    {
+      "slug": "spice-container-set",
+      "sourceUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/25/Spice_box_with_original_contents%2C_undated_-_Bennington_Museum_-_Bennington%2C_VT_-_DSC08661.JPG/500px-Spice_box_with_original_contents%2C_undated_-_Bennington_Museum_-_Bennington%2C_VT_-_DSC08661.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "title": "Spice box with original contents, undated - Bennington Museum - Bennington, VT - DSC08661",
+      "creator": "Daderot",
+      "license": "pdm",
+      "landingUrl": "https://commons.wikimedia.org/wiki/File:Spice_box_with_original_contents,_undated_-_Bennington_Museum_-_Bennington,_VT_-_DSC08661.JPG",
+      "provider": "Wikimedia Commons",
+      "licenseName": "Public domain"
+    },
+    {
+      "slug": "stainless-steel-water-bottle",
+      "sourceUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/45/Metal_Water_Bottles.jpeg/500px-Metal_Water_Bottles.jpeg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "title": "Metal Water Bottles",
+      "creator": "Amraepowell",
+      "license": "cc0",
+      "landingUrl": "https://commons.wikimedia.org/wiki/File:Metal_Water_Bottles.jpeg",
+      "provider": "Wikimedia Commons",
+      "licenseName": "CC0"
+    },
+    {
+      "slug": "glass-tumblers-set-of-6",
+      "sourceUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7b/Drinking_glasses_001.JPG/500px-Drinking_glasses_001.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "title": "Drinking glasses 001",
+      "creator": "Albertyanks - Albert Jankowski",
+      "license": "pdm",
+      "landingUrl": "https://commons.wikimedia.org/wiki/File:Drinking_glasses_001.JPG",
+      "provider": "Wikimedia Commons",
+      "licenseName": "Public domain"
+    },
+    {
+      "slug": "plastic-water-jug",
+      "sourceUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a9/Water_jug.JPG/500px-Water_jug.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "title": "Water jug",
+      "creator": "Antonio Borrillo",
+      "license": "pdm",
+      "landingUrl": "https://commons.wikimedia.org/wiki/File:Water_jug.JPG",
+      "provider": "Wikimedia Commons",
+      "licenseName": "Public domain"
+    },
+    {
+      "slug": "cotton-bath-towel",
+      "sourceUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/11/Towel_blue_decorativepattern_closeup.jpg/500px-Towel_blue_decorativepattern_closeup.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "title": "Towel blue decorativepattern closeup",
+      "creator": "User Mike1024 on en.wikipedia",
+      "license": "pdm",
+      "landingUrl": "https://commons.wikimedia.org/wiki/File:Towel_blue_decorativepattern_closeup.jpg",
+      "provider": "Wikimedia Commons",
+      "licenseName": "Public domain"
+    },
+    {
+      "slug": "storage-basket",
+      "sourceUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e1/Large_Oval_Storage_Basket_MET_36.3.57a-b_EGDP011891.jpg/500px-Large_Oval_Storage_Basket_MET_36.3.57a-b_EGDP011891.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "title": "Large Oval Storage Basket MET 36.3.57a-b EGDP011891",
+      "creator": null,
+      "license": "cc0",
+      "landingUrl": "https://commons.wikimedia.org/wiki/File:Large_Oval_Storage_Basket_MET_36.3.57a-b_EGDP011891.jpg",
+      "provider": "Wikimedia Commons",
+      "licenseName": "CC0"
+    },
+    {
+      "slug": "wall-clock",
+      "sourceUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/68/Antique_wall_clock.jpg/500px-Antique_wall_clock.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "title": "Antique wall clock",
+      "creator": "Amitbalani",
+      "license": "cc0",
+      "landingUrl": "https://commons.wikimedia.org/wiki/File:Antique_wall_clock.jpg",
+      "provider": "Wikimedia Commons",
+      "licenseName": "CC0"
+    },
+    {
+      "slug": "clothes-hangers-set-of-12",
+      "sourceUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4d/Clothes_hangers_on_railing_%28Unsplash%29.jpg/500px-Clothes_hangers_on_railing_%28Unsplash%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "title": "Clothes hangers on railing (Unsplash)",
+      "creator": "Christian Fregnan christianfregnan",
+      "license": "cc0",
+      "landingUrl": "https://commons.wikimedia.org/wiki/File:Clothes_hangers_on_railing_(Unsplash).jpg",
+      "provider": "Wikimedia Commons",
+      "licenseName": "CC0"
+    },
+    {
+      "slug": "rechargeable-table-fan",
+      "sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/d/d9/Electric_Fan_240x355.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "title": "Electric Fan 240x355",
+      "creator": "Rfc1394(talk)",
+      "license": "pdm",
+      "landingUrl": "https://commons.wikimedia.org/wiki/File:Electric_Fan_240x355.jpg",
+      "provider": "Wikimedia Commons",
+      "licenseName": "Public domain"
+    },
+    {
+      "slug": "baby-feeding-bottle",
+      "sourceUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5a/Calf_feeding_bottle_%28Components_Side-by-Side%29.jpg/500px-Calf_feeding_bottle_%28Components_Side-by-Side%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "title": "Calf feeding bottle (Components Side-by-Side)",
+      "creator": "ELTORO.VET",
+      "license": "cc0",
+      "landingUrl": "https://commons.wikimedia.org/wiki/File:Calf_feeding_bottle_(Components_Side-by-Side).jpg",
+      "provider": "Wikimedia Commons",
+      "licenseName": "CC0"
+    },
+    {
+      "slug": "white-writing-paper-1-dista",
+      "sourceUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/2a/Scattered_white_paper_%28Unsplash%29.jpg/500px-Scattered_white_paper_%28Unsplash%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "title": "Scattered white paper (Unsplash)",
+      "creator": "Brandi Redd brandi1",
+      "license": "cc0",
+      "landingUrl": "https://commons.wikimedia.org/wiki/File:Scattered_white_paper_(Unsplash).jpg",
+      "provider": "Wikimedia Commons",
+      "licenseName": "CC0"
+    },
+    {
+      "slug": "exercise-khata-pack-of-5",
+      "sourceUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e9/Small_blue_notepad_-_8_x_11_cm_-_D.jpg/500px-Small_blue_notepad_-_8_x_11_cm_-_D.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "title": "Small blue notepad - 8 x 11 cm - D",
+      "creator": "Fructibus",
+      "license": "cc0",
+      "landingUrl": "https://commons.wikimedia.org/wiki/File:Small_blue_notepad_-_8_x_11_cm_-_D.jpg",
+      "provider": "Wikimedia Commons",
+      "licenseName": "CC0"
+    },
+    {
+      "slug": "stapler-with-pins",
+      "sourceUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c0/Black_Stapler_2024.jpg/500px-Black_Stapler_2024.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "title": "Black Stapler 2024",
+      "creator": "DifrancoBarnes",
+      "license": "cc0",
+      "landingUrl": "https://commons.wikimedia.org/wiki/File:Black_Stapler_2024.jpg",
+      "provider": "Wikimedia Commons",
+      "licenseName": "CC0"
+    },
+    {
+      "slug": "colour-pencils-12-colours",
+      "sourceUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a5/Colored_pencils_lined_up_on_pink_surface.jpg/500px-Colored_pencils_lined_up_on_pink_surface.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "title": "Colored pencils lined up on pink surface",
+      "creator": "Artsy Crafty",
+      "license": "cc0",
+      "landingUrl": "https://commons.wikimedia.org/wiki/File:Colored_pencils_lined_up_on_pink_surface.jpg",
+      "provider": "Wikimedia Commons",
+      "licenseName": "CC0"
+    }
+  ]
+}
