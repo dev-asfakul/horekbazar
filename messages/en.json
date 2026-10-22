@@ -342,7 +342,11 @@
         "rights": "Image rights",
         "rightsHint": "Where the right to use this image comes from, e.g. \"Photographed by store staff, 2026\".",
         "visibleFrom": "Show from (Dhaka time)",
-        "visibleTo": "Show until (Dhaka time)"
+        "visibleTo": "Show until (Dhaka time)",
+        "freeDelivery": "Free delivery",
+        "freeDeliveryHint": "An order with this product pays no delivery charge.",
+        "tiers": "Quantity prices",
+        "tiersHint": "One per line: \"5 = 80\" means from 5 items, ৳80 each. More items, lower price, below the selling price. Up to 5."
       },
       "upload": {
         "file": "Image file",
@@ -610,7 +614,9 @@
       "estimateHint": "e.g. ১–২ দিন.",
       "enabled": "Offer this zone at checkout",
       "addTitle": "Add a zone",
-      "addSubmit": "Add zone"
+      "addSubmit": "Add zone",
+      "freeThreshold": "Free delivery from (৳)",
+      "freeThresholdHint": "Orders at or above this amount in this zone pay no delivery charge. Empty means never."
     },
     "promotions": {
       "title": "Promotions",
@@ -787,7 +793,8 @@
       "commerce_coupon_not_eligible": "This coupon does not apply to the products in your cart.",
       "commerce_coupon_zone_not_covered": "This coupon does not cover your delivery area.",
       "commerce_coupon_not_needed": "Delivery is already free; no coupon needed.",
-      "commerce_coupon_min_not_met": "The order is below this coupon's minimum."
+      "commerce_coupon_min_not_met": "The order is below this coupon's minimum.",
+      "catalogue_tiers_invalid": "Each quantity price needs more items and a lower price than the one before, all below the selling price."
     },
     "fieldErrors": {
       "email_invalid": "Enter an email address like name@example.com",
@@ -824,7 +831,8 @@
       "password_mismatch": "The two passwords do not match",
       "percent_range": "Enter a whole percentage from 1 to 100.",
       "flash_only": "Only a flash sale can have a quantity cap.",
-      "coupon_code": "Use 3–30 capital letters, digits, - or _ (for example EID10)."
+      "coupon_code": "Use 3–30 capital letters, digits, - or _ (for example EID10).",
+      "tier_line": "Write each line as quantity = price, for example 5 = 80."
     },
     "success": {
       "check_inbox": "Check your inbox. If this address can receive email, a verification link is on its way; it can take a few minutes. Open it to activate your account.",

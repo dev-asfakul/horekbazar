@@ -153,7 +153,8 @@
       "commerce_coupon_not_eligible": "কার্টের প্রোডাক্টে এই কুপন খাটে না।",
       "commerce_coupon_zone_not_covered": "আপনার ডেলিভারি এলাকায় এই কুপন খাটে না।",
       "commerce_coupon_not_needed": "ডেলিভারি এমনিতেই ফ্রি, কুপন লাগবে না।",
-      "commerce_coupon_min_not_met": "কুপনের ন্যূনতম অর্ডার পূরণ হয়নি।"
+      "commerce_coupon_min_not_met": "কুপনের ন্যূনতম অর্ডার পূরণ হয়নি।",
+      "catalogue_tiers_invalid": "Each quantity price needs more items and a lower price than the one before, all below the selling price."
     },
     "fieldErrors": {
       "email_invalid": "name@example.com-এর মতো ইমেইল অ্যাড্রেস দিন",
@@ -190,7 +191,8 @@
       "password_mismatch": "দুটি পাসওয়ার্ড মেলেনি",
       "percent_range": "Enter a whole percentage from 1 to 100.",
       "flash_only": "Only a flash sale can have a quantity cap.",
-      "coupon_code": "Use 3–30 capital letters, digits, - or _ (for example EID10)."
+      "coupon_code": "Use 3–30 capital letters, digits, - or _ (for example EID10).",
+      "tier_line": "Write each line as quantity = price, for example 5 = 80."
     },
     "success": {
       "check_inbox": "ইনবক্স চেক করুন। এই অ্যাড্রেসে ইমেইল গেলে একটি ভেরিফিকেশন লিংক আসছে; কখনো কয়েক মিনিট লাগে। অ্যাকাউন্ট চালু করতে লিংকটি খুলুন।",

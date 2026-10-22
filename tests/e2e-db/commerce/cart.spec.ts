@@ -11,7 +11,7 @@ import type { Actor } from "@/lib/modules/catalogue/common";
 import { moveStock } from "@/lib/modules/catalogue/inventory";
 import { createProduct, createVariant, getProduct, setProductStatus } from "@/lib/modules/catalogue/products";
 import { getSettings, upsertDeliveryZone } from "@/lib/modules/settings/settings";
-import { watchCsp } from "../e2e/helpers";
+import { watchCsp } from "../../e2e/helpers";
 
 let client: MongoClient;
 let db: Db;

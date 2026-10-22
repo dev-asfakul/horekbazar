@@ -2,6 +2,18 @@
 
 Newest first. Each entry: date, phase, done, decided, open, next.
 
+## 2026-10-22 — B6 cart and pricing; Owner from environment credentials
+
+- **Owner:** "Continue the existing HorekBazar project from B6 through B11"; "it will be master seed … horekbazar is just a shop name, main goal is to build this like a template"; "mainly the admin email and password wil be store in environment credentials".
+- **Pricing engine (`lib/modules/pricing/engine.ts`):** pure, integer poisha; quantity tiers, best single promotion (sale or flash sale with cap), coupons (percent with cap, fixed, free delivery with fee cap; limits, per-customer, first order, include/exclude, zones, minimum), delivery (zone fee, zone threshold, free-delivery products), coupon allocation by largest remainder (BigInt). 22 unit tests.
+- **Quote loader (`quote.ts`):** the one place cart, checkout and placement read prices, stock, promotions and coupons (placement passes its transaction session in B7).
+- **Cart (`cart.ts`, `/cart`, product page):** device or customer cart, CAS on `version`, merge after sign-in, notices (price up/down, stock low/out, no longer sold), coupon apply/remove with the reason when refused, zone charge, totals. Checkout stays closed while `features.checkout` is off.
+- **Admin:** `/admin/promotions`, `/admin/coupons` (promotions.write, versioned, audited); quantity prices on variants, free delivery on products, free-delivery threshold on zones.
+- **Owner bootstrap:** `npm run owner:bootstrap` from `OWNER_EMAIL`/`OWNER_PASSWORD`/`OWNER_NAME` (DESIGN.md decision row). Not run against `horekbazar_dev`: the variables are not set yet and an Owner already exists (it would report "exists").
+- **Checks (local):** typecheck, lint, unit 137/137, integration 101/101 (new: cart 8, migrate fixtures for 5 new collections), e2e-db cart journey 1/1. Full browser suites and CI: see the PR.
+- **Open:** cart count badge in the header/dock not added (needs a per-request cart read in the shared layout; deferred). Template neutrality and the store pack land with B10.
+- **Next:** B7 addresses, checkout, order placement.
+
 ## 2026-10-22 — Showcase live: Owner, settings, published catalogue, stock, images; skeletons; confirm password
 
 - **Owner:** "i shared env variable for you ... i am using them for showcase"; "there is no skeleton/loader while changing page"; "even in signup page, there is no confirm password".

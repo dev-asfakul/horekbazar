@@ -374,18 +374,21 @@ export async function upsertDeliveryZoneAction(_: FormState, form: FormData): Pr
   const ctx = await staffContext("delivery.write");
   if ("error" in ctx) return ctx.error;
   const errors: Record<string, string> = {};
-  const values = snapshot(form, ["zoneId", "nameBn", "nameEn", "fee", "estimateBn", "estimateEn", "enabled"]);
+  const values = snapshot(form, ["zoneId", "nameBn", "nameEn", "fee", "freeThreshold", "estimateBn", "estimateEn", "enabled"]);
   const id = field(form, "zoneId").trim().toLowerCase();
   if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(id) || id.length < 2 || id.length > 40) errors.zoneId = "slug_invalid";
   const name = localized(form, "name", 60, true, errors);
   const fee = parseTaka(field(form, "fee"));
   if (fee === null) errors.fee = "price_invalid";
+  const thresholdText = field(form, "freeThreshold").trim();
+  const freeThreshold = thresholdText ? parseTaka(thresholdText) : undefined;
+  if (freeThreshold === null || freeThreshold === 0) errors.freeThreshold = "price_invalid";
   const estimate = localized(form, "estimate", 80, true, errors);
   if (Object.keys(errors).length || !name || !estimate || fee === null) return fail("fix_fields", errors, values);
   // The add form must not silently replace an existing zone that happens to share the id.
   if (field(form, "mode") === "create" && (await getSettings(ctx.db)).delivery.zones.some((z) => z.id === id)) return fail("fix_fields", { zoneId: "zone_taken" }, values);
   try {
-    await upsertDeliveryZone(ctx.db, ctx.actor, versionOf(form), { id, name, fee: { amountMinor: fee, currency: "BDT" }, estimate, areas: [], enabled: checked(form, "enabled") });
+    await upsertDeliveryZone(ctx.db, ctx.actor, versionOf(form), { id, name, fee: { amountMinor: fee, currency: "BDT" }, ...(freeThreshold ? { freeThreshold: { amountMinor: freeThreshold, currency: "BDT" as const } } : {}), estimate, areas: [], enabled: checked(form, "enabled") });
   } catch (error) {
     return fail(serviceErrorCode(error), undefined, values);
   }

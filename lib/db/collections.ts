@@ -20,6 +20,18 @@ import {
 import { CATALOGUE_LOCKS, catalogueLockSchema } from "../modules/catalogue/locks.ts";
 import { SETTINGS, settingsSchema } from "../modules/settings/schema.ts";
 import {
+  ADDRESSES,
+  addressSchema,
+  IDEMPOTENCY_KEYS,
+  idempotencyKeySchema,
+  ORDER_EVENTS,
+  orderEventSchema,
+  ORDERS,
+  orderSchema,
+  RESERVATIONS,
+  reservationSchema,
+} from "../modules/orders/schema.ts";
+import {
   CARTS,
   cartSchema,
   COUPON_CUSTOMER_USAGE,
@@ -237,6 +249,53 @@ export const collections: CollectionSpec[] = [
       { key: { updatedAt: 1 }, name: "device_cart_ttl", expireAfterSeconds: 60 * 24 * 3600, partialFilterExpression: { deviceId: { $exists: true } } },
     ],
     serviceEnforced: ["exactly one of userId/deviceId; every change is a compare-and-set on version (pricing/cart.ts)"],
+  },
+  // B7 addresses, orders and placement (domain-rules §3, §4.1).
+  {
+    name: ADDRESSES,
+    module: "orders",
+    schema: addressSchema,
+    indexes: [{ key: { userId: 1, isDefault: -1, updatedAt: -1 }, name: "userId_default" }],
+    serviceEnforced: ["at most 10 per customer, exactly one default; zoneId is an enabled store zone (orders/addresses.ts)"],
+  },
+  {
+    name: ORDERS,
+    module: "orders",
+    schema: orderSchema,
+    indexes: [
+      { key: { orderNumber: 1 }, name: "orderNumber_unique", unique: true },
+      { key: { userId: 1, checkoutKey: 1 }, name: "userId_checkoutKey_unique", unique: true },
+      { key: { userId: 1, placedAt: -1 }, name: "userId_placedAt" },
+      { key: { status: 1, placedAt: -1 }, name: "status_placedAt" },
+    ],
+    serviceEnforced: ["status changes only through transitionOrder (compare-and-set on version, §3 table); totals equal the server quote at placement (orders/checkout.ts)"],
+  },
+  {
+    name: RESERVATIONS,
+    module: "orders",
+    schema: reservationSchema,
+    indexes: [
+      { key: { orderId: 1, lineId: 1 }, name: "orderId_lineId_unique", unique: true },
+      { key: { variantId: 1, status: 1 }, name: "variantId_status" },
+    ],
+    serviceEnforced: ["active → committed | released by compare-and-set only (orders/transitions.ts)"],
+  },
+  {
+    name: ORDER_EVENTS,
+    module: "orders",
+    schema: orderEventSchema,
+    indexes: [{ key: { orderId: 1, seq: 1 }, name: "orderId_seq_unique", unique: true }],
+    serviceEnforced: ["seq = the order's new version, written in the transition's transaction"],
+  },
+  {
+    name: IDEMPOTENCY_KEYS,
+    module: "orders",
+    schema: idempotencyKeySchema,
+    indexes: [
+      { key: { scope: 1, principalId: 1, key: 1 }, name: "scope_principal_key_unique", unique: true },
+      { key: { expiresAt: 1 }, name: "expiresAt_ttl", expireAfterSeconds: 0 },
+    ],
+    serviceEnforced: ["the same key with a different request fingerprint is refused (IDEMPOTENCY_KEY_REUSED)"],
   },
 ];
 

@@ -70,6 +70,8 @@ export const settingsSchema = z
         returnWindowDays: zInt().min(0).max(90),
         /** Flag pending orders older than this to operators (default 48 h). */
         pendingAlertHours: zInt().min(1).max(720),
+        /** Order number prefix, 2–6 capital letters or digits (template default "ORD"). */
+        numberPrefix: z.string().regex(/^[A-Z0-9]{2,6}$/).optional(),
       })
       .strict()
       .optional(),

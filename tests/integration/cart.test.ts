@@ -8,7 +8,9 @@ import { runMigrations } from "@/lib/db/migrate";
 import { createCategory, getCategory, setCategoryStatus } from "@/lib/modules/catalogue/categories";
 import type { Actor } from "@/lib/modules/catalogue/common";
 import { moveStock } from "@/lib/modules/catalogue/inventory";
-import { createProduct, createVariant, getProduct, setProductStatus } from "@/lib/modules/catalogue/products";
+import { createProduct, createVariant, getProduct, setProductStatus, updateVariant } from "@/lib/modules/catalogue/products";
+import { quoteLines } from "@/lib/modules/pricing/quote";
+import { getSettings, upsertDeliveryZone } from "@/lib/modules/settings/settings";
 import { bootstrapOwner } from "@/lib/modules/identity/bootstrap";
 import { AUTH_COLLECTIONS } from "@/lib/modules/identity/schema";
 import { activeCart, addToCart, applyCoupon, CommerceError, mergeDeviceCart, removeCoupon, setCartQuantity, viewCart } from "@/lib/modules/pricing/cart";
@@ -146,6 +148,28 @@ describe("coupons and quotes", () => {
     const view = await viewCart(db, owner);
     expect(view.quote!.lines).toHaveLength(0);
     expect(view.quote!.unavailable[0]!.notices).toEqual(["unavailable"]);
+  });
+});
+
+describe("tiers, free-delivery products and zone thresholds", () => {
+  it("rejects tiers that do not fall with quantity, and prices with them; free delivery by product or threshold", async () => {
+    const p = await product("tiered", 10000, 50);
+    const v = (await db.collection<import("@/lib/modules/catalogue/schema").VariantDoc>("variants").findOne({ _id: new ObjectId(p.variant) }))!;
+    const base = { sku: v.sku, title: v.title, options: [], price: v.price, position: 0 };
+    await expect(updateVariant(db, client, actor, p.variant, v.version, { ...base, tiers: [{ minQty: 5, unitPrice: { amountMinor: 10000, currency: "BDT" } }] })).rejects.toMatchObject({ code: "tiers_invalid" });
+    await expect(updateVariant(db, client, actor, p.variant, v.version, { ...base, tiers: [{ minQty: 5, unitPrice: { amountMinor: 9000, currency: "BDT" } }, { minQty: 3, unitPrice: { amountMinor: 8000, currency: "BDT" } }] })).rejects.toMatchObject({ code: "tiers_invalid" });
+    await updateVariant(db, client, actor, p.variant, v.version, { ...base, tiers: [{ minQty: 5, unitPrice: { amountMinor: 9000, currency: "BDT" } }, { minQty: 10, unitPrice: { amountMinor: 8500, currency: "BDT" } }] });
+    const settings = await getSettings(db);
+    await upsertDeliveryZone(db, actor, settings.version, { id: "zone-t", name: { bn: "জোন" }, fee: { amountMinor: 6000, currency: "BDT" }, freeThreshold: { amountMinor: 100000, currency: "BDT" }, estimate: { bn: "১ দিন" }, areas: [], enabled: true });
+    const q4 = await quoteLines(db, [{ variantId: new ObjectId(p.variant), quantity: 4 }], { zoneId: "zone-t" });
+    expect(q4.priced.lines[0]).toMatchObject({ unitPrice: 10000, lineTotal: 40000 });
+    expect(q4.priced.delivery).toMatchObject({ fee: 6000, missingForFree: 60000 });
+    const q10 = await quoteLines(db, [{ variantId: new ObjectId(p.variant), quantity: 12 }], { zoneId: "zone-t" });
+    expect(q10.priced.lines[0]).toMatchObject({ unitPrice: 8500, tierMinQty: 10, lineTotal: 102000 });
+    expect(q10.priced.delivery).toMatchObject({ fee: 0, free: "threshold" });
+    await db.collection("products").updateOne({ _id: new ObjectId(p.product) }, { $set: { freeDelivery: true } });
+    const qFree = await quoteLines(db, [{ variantId: new ObjectId(p.variant), quantity: 1 }], { zoneId: "zone-t" });
+    expect(qFree.priced.delivery).toMatchObject({ fee: 0, free: "products" });
   });
 });
 
