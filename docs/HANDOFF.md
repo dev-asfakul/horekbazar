@@ -1,6 +1,6 @@
 # Handoff for the next developer or agent
 
-Last updated 2026-10-22 (Asia/Dhaka), after B9 part 1 (reviews, rewards ledger, messaging) and its review corrections. The B9 section below is
+Last updated 2026-10-23 (Asia/Dhaka), after B9 part 2a (browser notifications, campaigns, order e-mail log). The "B9 part 2a record" below is
 the newest; older sections describe B4–B5 and are kept for their detail. Read this first, then `AGENTS.md`, `DESIGN.md` (Decision trace), `docs/BUILD-PLAN.md`
 §11 (phases), `docs/STATUS.md` and the newest entries of `docs/PROGRESS.md`.
 
@@ -17,7 +17,9 @@ the newest; older sections describe B4–B5 and are kept for their detail. Read 
 | B8 fulfilment and returns | PR #24 (`feat/b8-fulfilment`) into `preview/horekbazar-v1`; see "B8 record" below |
 | B8 on `main` | yes: PR #25 (`e91afe2`); CI timeout fixed in PR #26 (`f3701cd`, push run success) |
 | B9 engagement (part 1) | branch `feat/b9-engagement`, PR into `main`, **not merged** (owner review); see "B9 record" |
-| B9 remainder → B11 hardening | not started |
+| B9 part 1 | merged to `main` (PR #27 `d47d451`); showcase population PR #29 (`4a0ef5b`) |
+| B9 part 2a notifications | branch `feat/b9-notifications`, PR into `main`, **not merged** (owner review); see "B9 part 2a record" |
+| B9 part 2b AI drafts → B11 hardening | not started |
 
 Branch flow: feature branch → PR into `preview/horekbazar-v1` → merge after CI is green → PR into `main`,
 merged by the agent after the required check passes (owner authorisation 2026-10-22, DESIGN.md Decision trace). `main` is protected (required check `check`).
@@ -105,6 +107,28 @@ Gate: FAIL (zero-variable `/` is the setup page; header search states; B6–B11 
    the schema), Banglish synonyms in search ("chal" does not find "Rice"). The SEO and 404 e2e tests
    take ~20 s each (request-context connection delay in the sandbox, not investigated).
 6. **B6 cart and pricing → B11 hardening**, per BUILD-PLAN §11, each with its checkpoint.
+
+## B9 part 2a record (2026-10-23)
+
+### What exists
+
+- **Collections:** `pushSubscriptions` (one per endpoint, at most 10 per account, offers consent time kept only while offers are on), `campaigns` (draft → sent once, version-checked), `emailLog` (masked address + `AUTH_SECRET`-keyed hash, attempts; no TTL until **[L]**). Validators 37; migrated on `horekbazar_dev`.
+- **Push:** `lib/adapters/push/webpush.ts` wraps `@block65/webcrypto-web-push` (D3) and does the HTTP request itself (time-bounded; 404/410 = gone → subscription deleted). Outbox job `push.send`; payloads carry the subscription id, never the endpoint.
+- **Order updates:** `transitionOrder` queues one push per orders-topic browser for the same statuses that send e-mails, inside the transaction, only when VAPID is configured.
+- **Customer:** `/account/notifications`. Permission is asked only after the button is pressed; "Offers and news" is separate and unticked. `public/sw.js` handles push and click only (same-site links, no caching; offline is B10).
+- **Admin:** `/admin/notifications` (`campaigns.send`: Owner, Store manager, Marketing manager). The e-mail log section also needs `customers.read`, so a Marketing manager does not see it.
+
+### Not done, and why
+
+- **AI drafts** (B9 part 2b, next PR). **Scheduled campaigns** (`scheduled` status reserved, no scheduler). **Prompt after a meaningful action** (opt-in lives on the account page only).
+- Real delivery through a browser push service was not tested (no browser push service in the sandbox); the encryption and VAPID signature are verified independently in unit tests.
+- VAPID variables in Vercel: not checked (no Vercel access). Locally they are set and the right shape.
+
+### Easy to break
+
+- Replacing the VAPID key pair silently stops every subscription; changing `AUTH_SECRET` makes old e-mail log entries unsearchable by address.
+- `public/sw.js` is outside the proxy (matcher) and has its own CSP in `next.config.ts`; keep `worker-src 'self'` in `lib/security/headers.ts`.
+- Campaign URLs must stay site paths (`zInternalPath`); the service worker re-checks them.
 
 ## B9 record (2026-10-22)
 

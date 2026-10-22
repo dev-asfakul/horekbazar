@@ -68,6 +68,6 @@ export const config = {
   matcher: [
     // Prefetch requests must pass too: without the "/" -> "/bn" rewrite a prefetch of a storefront
     // link 404s, and the router briefly shows Next's built-in error page on navigation.
-    "/((?!_next/static|_next/image|fonts/|favicon.ico|robots.txt|sitemap.xml).*)",
+    "/((?!_next/static|_next/image|fonts/|favicon.ico|robots.txt|sitemap.xml|sw.js).*)",
   ],
 };

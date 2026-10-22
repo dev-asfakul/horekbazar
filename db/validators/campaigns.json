@@ -1,0 +1,107 @@
+{
+  "$jsonSchema": {
+    "bsonType": "object",
+    "properties": {
+      "_id": {
+        "bsonType": "objectId"
+      },
+      "title": {
+        "bsonType": "object",
+        "properties": {
+          "bn": {
+            "bsonType": "string",
+            "minLength": 1,
+            "maxLength": 60
+          },
+          "en": {
+            "bsonType": "string",
+            "minLength": 1,
+            "maxLength": 60
+          }
+        },
+        "required": [
+          "bn"
+        ],
+        "additionalProperties": false
+      },
+      "body": {
+        "bsonType": "object",
+        "properties": {
+          "bn": {
+            "bsonType": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "en": {
+            "bsonType": "string",
+            "minLength": 1,
+            "maxLength": 160
+          }
+        },
+        "required": [
+          "bn"
+        ],
+        "additionalProperties": false
+      },
+      "url": {
+        "bsonType": "string",
+        "maxLength": 300,
+        "pattern": "^\\/(?!\\/)[A-Za-z0-9\\-._~/?=&%]*$"
+      },
+      "audience": {
+        "bsonType": "string",
+        "enum": [
+          "marketing_opt_in"
+        ]
+      },
+      "status": {
+        "bsonType": "string",
+        "enum": [
+          "draft",
+          "scheduled",
+          "sent",
+          "failed"
+        ]
+      },
+      "recipients": {
+        "bsonType": [
+          "int",
+          "long"
+        ],
+        "minimum": 0
+      },
+      "sentAt": {
+        "bsonType": "date"
+      },
+      "sentBy": {
+        "bsonType": "string",
+        "maxLength": 100
+      },
+      "version": {
+        "bsonType": [
+          "int",
+          "long"
+        ],
+        "minimum": 1
+      },
+      "createdAt": {
+        "bsonType": "date"
+      },
+      "updatedAt": {
+        "bsonType": "date"
+      }
+    },
+    "required": [
+      "_id",
+      "title",
+      "body",
+      "url",
+      "audience",
+      "status",
+      "version",
+      "createdAt",
+      "updatedAt"
+    ],
+    "additionalProperties": false
+  }
+}

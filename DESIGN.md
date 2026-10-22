@@ -41,7 +41,7 @@ Route: **full** (new brand, new product experience, commerce). Delivery mode: **
 | Media | Cloudinary, signed direct uploads | cloudinary 2.11.0 (server only) | MIT | Brief requirement. Server signs; browser uploads; no file passes through functions. |
 | Email | Resend | resend 6.34.1 | MIT | Brief requirement. Plain, bilingual templates; no React Email dependency unless needed. |
 | AI assistant | Gemini, server only, per-buyer key, drafts require admin approval | @google/genai 2.30.0 | Apache-2.0 | Brief requirement. Feature hidden when key unset. |
-| Web Push | Standard Push API + VAPID; library TBD (D3) | — | — | `web-push` fails the skill's maintenance and licence checks (below). |
+| Web Push | Standard Push API + VAPID; `@block65/webcrypto-web-push` (D3, chosen at B9 part 2 after the fit check) | @block65/webcrypto-web-push 2.0.0 (server only, exact pin) | MIT | Encrypts (RFC 8291) and signs VAPID (RFC 8292) with WebCrypto; the HTTP send stays in our adapter. `web-push` fails the skill's maintenance and licence checks (below). |
 | Realtime chat | `realtime` port: polling/SSE fallback by default, Ably adapter optional (D4) | ably 2.29.0 (optional) | Apache-2.0 | Works on any host; vendor only when a buyer enables live chat. |
 | i18n | next-intl, `/[locale]` segments, `bn` + `en` | 4.14.9 | MIT | Localised routes, metadata and `hreflang`. Alternative: hand-rolled dictionaries. |
 | Tests | Vitest (unit/integration), Playwright (journeys, gate), disposable test replica set via Docker or mongodb-memory-server replica-set mode (test-only, never used by the app) | vitest 5.0.5 · @playwright/test 1.64.1 · mongodb-memory-server 11.3.0 | MIT | Playwright is also what the skill's `gate.mjs` needs. |
@@ -616,7 +616,7 @@ Checkpoint 4 of 6. Status: **approved by the owner 2026-10-21 with conditions** 
 
 - ~~D1 Auth~~: **approved**: Better Auth + official Mongo adapter.
 - ~~D2 Demo mode~~: **decided**: no mock fallback; real dev database; setup-required states (see Conflicts 1).
-- ~~D3 Web Push library~~: **approved approach**: choose between `@block65/webcrypto-web-push`, `@pushforge/builder` or in-house after fit checks at the push phase.
+- ~~D3 Web Push library~~: **approved approach**: choose between `@block65/webcrypto-web-push`, `@pushforge/builder` or in-house after fit checks at the push phase. **Chosen at B9 part 2: `@block65/webcrypto-web-push` 2.0.0** (fit check in the decision trace).
 - ~~D4 Live chat~~: **approved**: polling fallback by default, Ably adapter optional.
 - **D5 Hosting for the flagship demo (deferred to the deployment checkpoint, owner 2026-10-21)**: Vercel Hobby (non-commercial demo only) vs. Vercel Pro. Also: which Vercel scope/team should own the project (current token cannot access `dev-choice`).
 - ~~D6 Licence~~: **decided provisionally**: one basic commercial licence; no tiers, no enforcement mechanism. Notes for legal review in `docs/LICENSING.md`.
@@ -630,6 +630,7 @@ Checkpoint 4 of 6. Status: **approved by the owner 2026-10-21 with conditions** 
 | 2026-10-21 | 1 Stack · D1 | Better Auth + official Mongo adapter | approved as proposed |
 | 2026-10-21 | 1 Stack · D2 | No mock/demo fallback; real dev DB; `data/` is seed input only | **owner decision** |
 | 2026-10-21 | 1 Stack · D3 | Web Push library chosen at the push phase after fit checks (block65 / pushforge / in-house) | approved as proposed |
+| 2026-10-23 | B9 part 2 · D3 | Fit check (npm registry and tarballs, 2026-10-23). **`@block65/webcrypto-web-push` 2.0.0, chosen**: MIT; published 2026-09-03; about 73k downloads/week; one maintainer; one dependency (`uint8array-extras`, MIT); 17 KB unpacked, about 230 lines of JS; Node >= 22; RFC 8291 aes128gcm + RFC 8292 VAPID on WebCrypto, https endpoints enforced, leaves the HTTP request to the caller (our adapter bounds the time and handles 404/410); `npm audit` 0 vulnerabilities. **`@pushforge/builder` 2.0.5**: MIT; published 2026-04-23; zero dependencies; 62 KB, about 680 lines; one maintainer; workable but larger with no extra need. **In-house**: rejected, hand-written crypto with no benefit over a 230-line audited-by-test library. **`web-push`**: rejected earlier (MPL-2.0, stale). Correctness is checked independently in `tests/unit/notifications.test.ts`: the message is decrypted with `node:crypto` per RFC 8291 and the VAPID ES256 signature verified. Risk: single maintainer; the adapter (`lib/adapters/push/webpush.ts`) is the only import, so a swap is one file | **decided** (within the approved D3 approach) |
 | 2026-10-21 | 1 Stack · D4 | Chat behind a `realtime` port: polling fallback, Ably adapter optional | approved as proposed |
 | 2026-10-21 | 1 Stack · D5 | Vercel scope still blocked; hosting tier undecided | **deferred** to the deployment checkpoint (owner) |
 | 2026-10-21 | 1 Stack · D6 | Basic commercial licence, provisional | **owner decision** |

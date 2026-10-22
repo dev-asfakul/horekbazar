@@ -1,0 +1,88 @@
+{
+  "$jsonSchema": {
+    "bsonType": "object",
+    "properties": {
+      "_id": {
+        "bsonType": "objectId"
+      },
+      "userId": {
+        "bsonType": "string",
+        "minLength": 1,
+        "maxLength": 100
+      },
+      "endpoint": {
+        "bsonType": "string",
+        "maxLength": 1000,
+        "pattern": "^https:\\/\\/"
+      },
+      "keys": {
+        "bsonType": "object",
+        "properties": {
+          "p256dh": {
+            "bsonType": "string",
+            "maxLength": 200,
+            "pattern": "^[A-Za-z0-9_-]+={0,2}$"
+          },
+          "auth": {
+            "bsonType": "string",
+            "maxLength": 50,
+            "pattern": "^[A-Za-z0-9_-]+={0,2}$"
+          }
+        },
+        "required": [
+          "p256dh",
+          "auth"
+        ],
+        "additionalProperties": false
+      },
+      "topics": {
+        "bsonType": "object",
+        "properties": {
+          "orders": {
+            "bsonType": "bool"
+          },
+          "marketing": {
+            "bsonType": "bool"
+          }
+        },
+        "required": [
+          "orders",
+          "marketing"
+        ],
+        "additionalProperties": false
+      },
+      "consentAt": {
+        "bsonType": "date"
+      },
+      "consentSource": {
+        "bsonType": "string",
+        "enum": [
+          "account"
+        ]
+      },
+      "locale": {
+        "bsonType": "string",
+        "enum": [
+          "bn",
+          "en"
+        ]
+      },
+      "createdAt": {
+        "bsonType": "date"
+      },
+      "updatedAt": {
+        "bsonType": "date"
+      }
+    },
+    "required": [
+      "_id",
+      "endpoint",
+      "keys",
+      "topics",
+      "locale",
+      "createdAt",
+      "updatedAt"
+    ],
+    "additionalProperties": false
+  }
+}

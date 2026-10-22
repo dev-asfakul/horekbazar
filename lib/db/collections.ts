@@ -48,6 +48,7 @@ import { BANNERS, bannerSchema, COLLECTIONS, collectionSchema, HOME_SECTIONS, ho
 import { REVIEWS, reviewSchema } from "../modules/reviews/schema.ts";
 import { REWARD_LEDGER, REWARD_LOCKS, rewardEntrySchema, rewardLockSchema } from "../modules/rewards/schema.ts";
 import { CONVERSATIONS, conversationSchema, MESSAGES, messageSchema } from "../modules/messaging/schema.ts";
+import { CAMPAIGNS, campaignSchema, EMAIL_LOG, emailLogSchema, PUSH_SUBSCRIPTIONS, pushSubscriptionSchema } from "../modules/notifications/schema.ts";
 
 export interface CollectionSpec {
   name: string;
@@ -390,6 +391,36 @@ export const collections: CollectionSpec[] = [
       { key: { expiresAt: 1 }, name: "expiresAt_ttl", expireAfterSeconds: 0 },
     ],
     serviceEnforced: ["the same key with a different request fingerprint is refused (IDEMPOTENCY_KEY_REUSED)"],
+  },
+  {
+    name: PUSH_SUBSCRIPTIONS,
+    module: "notifications",
+    schema: pushSubscriptionSchema,
+    indexes: [
+      { key: { endpoint: 1 }, name: "endpoint_unique", unique: true },
+      { key: { userId: 1, updatedAt: -1 }, name: "userId_updatedAt" },
+      { key: { "topics.marketing": 1 }, name: "topics_marketing" },
+    ],
+    serviceEnforced: ["offers topic off unless ticked, consent time recorded; at most 10 per customer; removed when the push service answers 404/410 (notifications/notifications.ts)"],
+  },
+  {
+    name: CAMPAIGNS,
+    module: "notifications",
+    schema: campaignSchema,
+    indexes: [{ key: { status: 1, createdAt: -1 }, name: "status_createdAt" }],
+    serviceEnforced: ["sent once (draft → sent with a version check) only to subscriptions with the offers topic on (notifications/notifications.ts)"],
+  },
+  {
+    name: EMAIL_LOG,
+    module: "notifications",
+    schema: emailLogSchema,
+    // Retention is an owner/legal decision (SCHEMA.md [L]); no TTL until it is made.
+    indexes: [
+      { key: { outboxKey: 1 }, name: "outboxKey_unique", unique: true },
+      { key: { toHash: 1, updatedAt: -1 }, name: "toHash_updatedAt" },
+      { key: { updatedAt: -1 }, name: "updatedAt_desc" },
+    ],
+    serviceEnforced: ["address stored only masked and as a keyed hash; provider errors have addresses removed (notifications/notifications.ts)"],
   },
 ];
 

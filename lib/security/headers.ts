@@ -39,6 +39,8 @@ export function buildCsp(nonce: string, options: { pathname: string; isDev: bool
     "font-src 'self'",
     // Admin pages upload images straight to Cloudinary with a server-signed request (B4 media).
     `connect-src 'self'${stripLocale(pathname) === "/admin" || stripLocale(pathname).startsWith("/admin/") ? ` ${CLOUDINARY_UPLOAD}` : ""}`,
+    // B9: the push service worker (public/sw.js); 'strict-dynamic' in script-src would not cover it.
+    "worker-src 'self'",
     "object-src 'none'",
     "base-uri 'self'",
     "form-action 'self'",

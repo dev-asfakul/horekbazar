@@ -56,6 +56,9 @@ const ORDER_STATUS_TEXT: Record<string, { bn: string; en: string }> = {
   delivery_failed: { bn: "ডেলিভারি করা যায়নি", en: "Delivery attempt failed" },
 };
 
+/** An order status in the customer's language (also used by order-update push messages). */
+export const orderStatusText = (status: string, locale: "bn" | "en") => ORDER_STATUS_TEXT[status]?.[locale] ?? status;
+
 export function renderEmail(payload: EmailPayload): EmailMessage {
   const c = copy[payload.template][payload.locale];
   const store = payload.storeName ?? (payload.locale === "bn" ? "স্টোর" : "Store");

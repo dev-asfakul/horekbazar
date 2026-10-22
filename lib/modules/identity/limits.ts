@@ -24,6 +24,8 @@ export const LIMITS = {
   // B9: reviews 5 per hour, messages 30 per 10 minutes, per customer.
   reviewSubmit: { name: "review-submit", limit: 5, windowSeconds: 3600 },
   messagePost: { name: "message-post", limit: 20, windowSeconds: 3600 },
+  // B9 part 2: turning browser notifications on/off or changing their topics.
+  pushChange: { name: "push-change", limit: 30, windowSeconds: 600 },
 } satisfies Record<string, LimitRule>;
 
 export type LimitOutcome = "ok" | "limited" | "unavailable";

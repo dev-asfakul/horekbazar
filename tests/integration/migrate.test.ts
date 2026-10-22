@@ -152,6 +152,18 @@ const fixtures: Record<string, { valid: Record<string, unknown>; invalid: Record
     valid: { _id: new ObjectId(), conversationId: new ObjectId(), from: "customer", authorId: "u1", body: "কবে আসবে?", clientKey: "0123456789abcdef", createdAt: now },
     invalid: { _id: new ObjectId(), conversationId: new ObjectId(), from: "customer", authorId: "u1", body: "কবে আসবে?", clientKey: "short", createdAt: now },
   },
+  pushSubscriptions: {
+    valid: { _id: new ObjectId(), userId: "u1", endpoint: "https://push.example.test/abc", keys: { p256dh: "BAbc", auth: "xyz" }, topics: { orders: true, marketing: true }, consentAt: now, consentSource: "account", locale: "bn", createdAt: now, updatedAt: now },
+    invalid: { _id: new ObjectId(), userId: "u1", endpoint: "http://push.example.test/abc", keys: { p256dh: "BAbc", auth: "xyz" }, topics: { orders: true, marketing: "yes" }, locale: "fr", createdAt: now, updatedAt: now },
+  },
+  campaigns: {
+    valid: { _id: new ObjectId(), title: { bn: "অফার", en: "Offer" }, body: { bn: "চাল ১০% কম" }, url: "/c/rice", audience: "marketing_opt_in", status: "sent", recipients: 2, sentAt: now, sentBy: "staff-1", version: 2, createdAt: now, updatedAt: now },
+    invalid: { _id: new ObjectId(), title: { bn: "অ".repeat(61) }, body: { bn: "বার্তা" }, url: "https://evil.test", audience: "everyone", status: "draft", version: 0, createdAt: now, updatedAt: now },
+  },
+  emailLog: {
+    valid: { _id: new ObjectId(), outboxKey: "email.send:order-1:1", toHash: "a".repeat(64), toMasked: "k***@example.com", template: "order-placed", status: "sent", providerId: "re_1", attempts: 1, createdAt: now, updatedAt: now },
+    invalid: { _id: new ObjectId(), outboxKey: "email.send:order-1:1", to: "karim@example.com", toHash: "short", toMasked: "k***@example.com", template: "order-placed", status: "bounced", attempts: -1, createdAt: now, updatedAt: now },
+  },
 };
 
 describe("db:migrate on a replica set", () => {

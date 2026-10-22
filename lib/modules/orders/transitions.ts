@@ -8,6 +8,7 @@ import { INVENTORY_LEDGER, STOCK, type InventoryLedgerDoc, type StockDoc } from 
 import { inTransaction } from "../catalogue/common.ts";
 import type { Capability } from "../identity/capabilities.ts";
 import { enqueueOutbox } from "../platform/outbox.ts";
+import { enqueueOrderPush } from "../notifications/notifications.ts";
 import { recordAudit } from "../platform/audit.ts";
 import { CommerceError } from "../pricing/cart.ts";
 import { COUPON_CUSTOMER_USAGE, COUPON_REDEMPTIONS, COUPONS, PROMOTIONS } from "../pricing/schema.ts";
@@ -152,6 +153,8 @@ export async function applyOrderTransition(db: Db, session: ClientSession, input
       const settings = await loadSettingsFor(db, session);
       await enqueueOutbox(db, { type: EMAIL_JOB, aggregateId: `order-${String(order._id)}`, seq: version, payload: { template: "order-status", to: order.customer.email, locale: order.locale, name: order.customer.name, orderNumber: order.orderNumber, status: input.to, ...(reason ? { reason } : {}), ...orderEmailExtras(settings, order.locale, order.orderNumber) } }, { session, now });
     }
+    // B9: the same update as a browser notification, to the customer's browsers with order updates on.
+    if (NOTIFY.includes(input.to)) await enqueueOrderPush(db, session, order, input.to, version, now);
     if (input.actor.type === "staff") {
       await recordAudit(db, { actor: { id: input.actor.id, role: input.actor.role }, action: "order.transition", target: { type: "order", id: order.orderNumber }, before: { status: order.status }, after: { status: input.to, ...(reason ? { reason } : {}) }, ip: input.actor.ip ?? null }, { session, now });
     }
