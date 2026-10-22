@@ -2304,3 +2304,14 @@ select[multiple].field-input {
 .courier-states li { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: baseline; }
 .order-tracking { display: grid; gap: 0.75rem; }
 .record-warn { color: var(--warning); font-weight: 600; }
+/* B9 engagement: review text, the product rating line, and a message thread. */
+.review-title { margin: 0.5rem 0 0; font-weight: 600; }
+.review-body { margin: 0.25rem 0 0.5rem; max-width: 68ch; white-space: pre-line; overflow-wrap: anywhere; }
+.review-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 1rem; }
+.review-item { padding-block-end: 1rem; border-block-end: 1px solid var(--line); }
+.review-reply { margin: 0.5rem 0 0; padding: 8px 12px; background: var(--surface); border-inline-start: 3px solid var(--line); font-size: var(--text-step--1); white-space: pre-line; }
+.rating-line { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: baseline; }
+.thread { list-style: none; margin: 0 0 1rem; padding: 0; display: grid; gap: 0.75rem; max-width: 48rem; }
+.thread-msg { padding: 10px 14px; background: var(--surface); border-inline-start: 3px solid var(--line); }
+.thread-msg[data-from="staff"] { border-inline-start-color: var(--accent); }
+.thread-msg p { margin: 0.25rem 0 0; white-space: pre-line; overflow-wrap: anywhere; }

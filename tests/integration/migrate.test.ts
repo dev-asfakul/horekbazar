@@ -132,6 +132,22 @@ const fixtures: Record<string, { valid: Record<string, unknown>; invalid: Record
     valid: { _id: new ObjectId(), userId: "u1", lines: [{ variantId: new ObjectId(), quantity: 2, addedAt: now }], status: "active", version: 1, createdAt: now, updatedAt: now },
     invalid: { _id: new ObjectId(), userId: "u1", lines: [{ variantId: new ObjectId(), quantity: 0, addedAt: now }], status: "active", version: 1, createdAt: now, updatedAt: now },
   },
+  reviews: {
+    valid: { _id: new ObjectId(), userId: "u1", productId: new ObjectId(), orderId: new ObjectId(), lineId: "a".repeat(24), rating: 5, body: "ভালো চাল", authorName: "রহিম", status: "pending", version: 1, createdAt: now, updatedAt: now },
+    invalid: { _id: new ObjectId(), userId: "u1", productId: new ObjectId(), orderId: new ObjectId(), lineId: "line-1", rating: 6, body: "", authorName: "রহিম", status: "approved", version: 1, createdAt: now, updatedAt: now },
+  },
+  rewardLedger: {
+    valid: { _id: new ObjectId(), userId: "u1", kind: "accrue", points: 12, orderId: new ObjectId(), basisMinor: 120000, expiresAt: now, actor: { type: "system", id: "orders" }, idempotencyKey: "reward:accrue:o1", createdAt: now },
+    invalid: { _id: new ObjectId(), userId: "u1", kind: "gift", points: 1.5, actor: { type: "customer", id: "u1" }, idempotencyKey: "", createdAt: now },
+  },
+  conversations: {
+    valid: { _id: new ObjectId(), userId: "u1", customerName: "রহিম", subject: "ডেলিভারি", status: "open", lastMessageAt: now, lastFrom: "customer", unreadByStaff: 1, unreadByCustomer: 0, messageCount: 1, version: 1, createdAt: now, updatedAt: now },
+    invalid: { _id: new ObjectId(), userId: "u1", customerName: "রহিম", subject: "ডেলিভারি", status: "pending", lastMessageAt: now, lastFrom: "bot", unreadByStaff: -1, unreadByCustomer: 0, messageCount: 501, version: 1, createdAt: now, updatedAt: now },
+  },
+  messages: {
+    valid: { _id: new ObjectId(), conversationId: new ObjectId(), from: "customer", authorId: "u1", body: "কবে আসবে?", clientKey: "0123456789abcdef", createdAt: now },
+    invalid: { _id: new ObjectId(), conversationId: new ObjectId(), from: "customer", authorId: "u1", body: "কবে আসবে?", clientKey: "short", createdAt: now },
+  },
 };
 
 describe("db:migrate on a replica set", () => {

@@ -76,6 +76,11 @@ export default async function OrderPage({ params }: PageProps<"/[locale]/account
           {t("reason")}: {order.statusReason}
         </p>
       ) : null}
+      <p className="field-hint">
+        <Link href={localeHref(locale, `/account/messages?order=${encodeURIComponent(order.orderNumber)}`)} data-testid="order-message-link">
+          {t("messageStore")}
+        </Link>
+      </p>
       <section className="account-section" aria-labelledby="order-timeline">
         <h2 id="order-timeline" className="account-section-title">
           {t("timeline")}

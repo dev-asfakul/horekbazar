@@ -27,6 +27,10 @@ export const ADMIN_PAGE_CAPABILITY = {
   // B8 fulfilment. Shipment steps need fulfilment.write; inspection, restock and refunds returns.process.
   "/admin/shipments": "fulfilment.write",
   "/admin/returns": "returns.process",
+  // B9 engagement: moderation, the support inbox, and loyalty points.
+  "/admin/reviews": "reviews.moderate",
+  "/admin/messages": "messages.reply",
+  "/admin/rewards": "rewards.write",
   // B6 pricing.
   "/admin/promotions": "promotions.write",
   "/admin/coupons": "promotions.write",
