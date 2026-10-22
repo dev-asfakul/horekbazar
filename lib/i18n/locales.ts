@@ -6,6 +6,12 @@ export const locales = ["bn", "en"] as const;
 export type Locale = (typeof locales)[number];
 export const defaultLocale: Locale = "bn";
 
+/**
+ * BCP 47 tag for `lang` and `hreflang`: the "bn" storefront is Bangla written in Latin script
+ * (Banglish, owner decision 2026-10-22), so it is "bn-Latn"; the route segment stays "bn".
+ */
+export const htmlLang: Record<Locale, string> = { bn: "bn-Latn", en: "en" };
+
 export function isLocale(value: string): value is Locale {
   return (locales as readonly string[]).includes(value);
 }

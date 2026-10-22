@@ -13,7 +13,7 @@ const boom = Object.assign(new Error("database password is hunter2"), { digest: 
 describe("error boundaries", () => {
   it("[locale]/error shows the localised message and the digest, never the error text", () => {
     for (const [locale, messages, title] of [
-      ["bn", bn, "কিছু একটা সমস্যা হয়েছে"],
+      ["bn", bn, "Kichu ekta shomossha hoyeche"],
       ["en", en, "Something went wrong"],
     ] as const) {
       const html = renderToStaticMarkup(
@@ -30,7 +30,7 @@ describe("error boundaries", () => {
 
   it("global-error is bilingual and never shows the error text", () => {
     const html = renderToStaticMarkup(<GlobalError error={boom} retry={() => {}} />);
-    expect(html).toContain("কিছু একটা সমস্যা হয়েছে");
+    expect(html).toContain("Kichu ekta shomossha hoyeche");
     expect(html).toContain("Something went wrong");
     expect(html).not.toContain("hunter2");
     expect(html).not.toMatch(/\sstyle=/);

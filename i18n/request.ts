@@ -8,7 +8,8 @@ import { isLocale } from "@/lib/i18n/locales";
 import bn from "@/messages/bn.json";
 import en from "@/messages/en.json";
 
-const messages = { bn, en } as const;
+// The admin is English only (owner decision 2026-10-22), so "bn" borrows the English admin namespace.
+const messages = { bn: { ...bn, admin: en.admin }, en } as const;
 
 export default getRequestConfig(async ({ locale }) => {
   let resolved = locale;

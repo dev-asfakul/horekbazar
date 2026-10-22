@@ -1,19 +1,19 @@
 "use client";
 // Last-resort 500 when the locale layout itself fails. It replaces the whole document, so it cannot
-// rely on the layout, messages or fonts; it is bilingual and uses the global stylesheet only.
+// rely on the layout, messages or fonts; it is bilingual (Banglish and English) and uses the global stylesheet only.
 import "./globals.css";
 
 export default function GlobalError({ error, retry }: { error: Error & { digest?: string }; retry: () => void }) {
   return (
-    <html lang="bn">
+    <html lang="bn-Latn">
       <body>
         <main id="main">
           <section className="state-page" data-state="error" aria-labelledby="state-title">
-            <title>কিছু একটা সমস্যা হয়েছে | Something went wrong</title>
+            <title>Kichu ekta shomossha hoyeche | Something went wrong</title>
             <h1 id="state-title" className="state-title">
-              কিছু একটা সমস্যা হয়েছে
+              Kichu ekta shomossha hoyeche
             </h1>
-            <p className="state-body">পাতাটি এখন দেখানো যাচ্ছে না। একটু পরে আবার চেষ্টা করুন।</p>
+            <p className="state-body">Ei page-ti ekhon dekhano jacche na. Ektu por abar try korun.</p>
             <p className="state-body" lang="en">
               Something went wrong. This page can&apos;t be shown right now. Please try again in a moment.
             </p>
@@ -24,7 +24,7 @@ export default function GlobalError({ error, retry }: { error: Error & { digest?
             ) : null}
             <p className="state-actions">
               <button type="button" className="btn btn-primary" onClick={() => retry()}>
-                আবার চেষ্টা করুন / Try again
+                Abar try korun / Try again
               </button>
             </p>
           </section>
