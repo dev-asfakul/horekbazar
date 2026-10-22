@@ -2,6 +2,16 @@
 
 Newest first. Each entry: date, phase, done, decided, open, next.
 
+## 2026-10-22 — Banglish storefront, B4 bulk status, B5 storefront catalogue
+
+- **Owner input:** build all remaining stages; storefront in natural Latin-script Banglish, `/en` English, admin English only, no Bengali-script third option; preserve catalogue data; then: populate a realistic catalogue with Cloudinary images, verify the admin on persisted data, continue the phases, push with proper commits and write a handoff.
+- **Banglish (PR #11, merged into `preview/horekbazar-v1`, `cbf8471`):** see HANDOFF "Session 2026-10-22". Supersedes `e517154`. Decision row in DESIGN.md.
+- **B4 gap (PR #12):** bulk product status on `/admin/products` (contract item that was missing).
+- **B5 (branch `feat/b5-storefront`):** readiness check, storefront read model, nine storefront routes, SEO, sitemap, robots, text index; integration and browser tests. Deviation (proposed): native `<details>` filters and the `/categories` page instead of Radix FilterSheet/MegaMenu (no UI library in the project).
+- **Checks:** lint, typecheck, unit 112/112, integration 88/88, build, Playwright 215/58 skipped/0 failed, `test:e2e:db` 10/10.
+- **Not done:** catalogue images and enrichment (policy conflict recorded in HANDOFF), `db:migrate` on `horekbazar_dev`, Owner setup (owner action), B6–B11.
+- **Next:** merge #12 and the B5 PR after CI; owner creates the Owner and publishes; images per HANDOFF item 3; B6.
+
 ## 2026-10-22 — Owner-supplied environment, Owner setup verification, Banglish audit (no application code changed)
 
 - **Owner input:** environment values for the showcase deployment ("horekbazar"), to be used locally too; "use seed data and push to database directly"; customer copy to be "Banglish-first"; Owner setup and password-security requirements. Values were pasted in chat, so they count as exposed: rotate before any production use.

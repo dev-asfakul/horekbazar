@@ -1,24 +1,74 @@
 # Handoff for the next developer or agent
 
-Last updated 2026-10-22 (Asia/Dhaka), after Phase B4 (catalogue administration) and the takeover audit. Read this first, then
-`AGENTS.md`, `DESIGN.md`, `docs/BUILD-PLAN.md` §11 (phases) and §13 (open decisions),
-`docs/STATUS.md` (verified state per requirement) and the newest entries of `docs/PROGRESS.md`.
+Last updated 2026-10-22 (Asia/Dhaka), after the Banglish change, the B4 bulk-status fix and B5
+(storefront catalogue). Read this first, then `AGENTS.md`, `DESIGN.md` (Decision trace), `docs/BUILD-PLAN.md`
+§11 (phases), `docs/STATUS.md` and the newest entries of `docs/PROGRESS.md`.
 
 ## Where the project is
 
 | Phase | State |
 |---|---|
-| B0 toolchain, B1 shell, B2 data platform | merged to `main` (PRs #1, #2, #3) |
-| Docs and fixes after B3 | PRs #5, #6 merged; 2026-10-22 dock focus fix and audit (see PROGRESS) |
-| B3 identity | merged to `main` (PR #4, `a8a26a6`); deployed to `horekbazar-preview` without a database configured |
-| B4 catalogue admin | merged to `main` (PR #8, merge `04158f2`); post-merge CI success; Vercel `horekbazar-preview` success on `04158f2` (serves B4: `/api/media/sign` answers 403 cross-origin), still without a database |
-| B5 storefront and later | not started; each phase needs explicit owner approval (BUILD-PLAN §0) |
+| B0–B4 | merged to `main` (PRs #1–#9). B4 had one contract gap (bulk status), fixed in PR #12 |
+| Banglish storefront copy, English-only admin | PR #11 merged into `preview/horekbazar-v1` (merge `cbf8471`), CI green |
+| B4 bulk product status | PR #12 into `preview/horekbazar-v1` (open when written; merge after CI) |
+| B5 storefront catalogue | branch `feat/b5-storefront`, PR into `preview/horekbazar-v1` (see PROGRESS for the number and checks) |
+| Takeover audit docs | PR #10 (into `main`, open); its commits are also merged into `feat/b5-storefront` |
+| B6 cart → B11 hardening | not started |
 
-Deployment (takeover audit, 2026-10-22): `horekbazar-preview.vercel.app` serves `main` and reports
-`database: connected`, `setupRequired: true`; the Owner setup form is live. Which database it uses is
-not known. Commit statuses come from `dev-choice/horekbazar-preview`; `horekbazar.vercel.app` is 404.
-The owner has not said which project is canonical. Do not guess. `preview/horekbazar-v1` carries one
-unmerged commit, `e517154` (Bangla copy rewrite), with no PR; ask the owner before merging or dropping it.
+Branch flow (D18): feature branch → PR into `preview/horekbazar-v1` → merge after CI is green. Only the
+owner merges `preview/horekbazar-v1` into `main`. `main` is protected (required check `check`).
+
+## Session 2026-10-22: what was done, how, and what is left
+
+### Done
+
+1. **Banglish-first storefront (owner decision).** `messages/bn.json` is Latin-script Banglish (202
+   customer strings); admin-only form messages carry the English text; the admin namespace is served
+   from `en` for every locale (`i18n/request.ts`, `lib/i18n/admin.ts` always returns `en`). `lang="bn-Latn"`,
+   Latin digits and the Latin font preload by default, Banglish e-mails, maintenance and global error pages.
+   Guard test `tests/unit/banglish.test.ts` fails on any Bengali-script UI string. Product and category
+   data are **not** rewritten: the storefront shows the stored English name (fallback Bengali) through
+   `shown()` in `lib/storefront/context.ts`; approved Banglish display names would slot in there.
+2. **Bulk product status** (`bulkProductStatusAction`, `components/admin/BulkStatusForm.tsx`): checkbox per
+   row, up to 25, every product through `setProductStatus` (publish rules, sample guard, audit).
+3. **Real readiness.** `getSetupStatus().ready` is true only with a connected database, an Owner
+   (installation record or Owner user) and a saved settings document (`lib/setup/status.ts`).
+4. **B5 storefront.** Read model `lib/modules/storefront/catalogue.ts` (one aggregation: lowest active price,
+   genuine compare-at, stored availability, filters, sort, 24/page); pages `/`, `/categories`,
+   `/c/[...slug]`, `/p/[slug]`, `/search`, `/collections`, `/collections/[slug]`, `/deals`, `/new`;
+   components in `components/store/`; canonical + hreflang (`bn-Latn`, `en`, `x-default`), JSON-LD
+   (Product/Offer, BreadcrumbList, Organization, WebSite), `sitemap.xml`, `robots.txt`. New text index
+   `storefront_text` (language `none`) in `lib/db/collections.ts`. `SITE_INDEXING=on` is the only way to
+   allow crawling (off: showcase, not a launch).
+
+### How it was verified (local, Node 24.22.1)
+
+lint OK · typecheck OK · unit 112/112 · integration 88/88 (7 new storefront tests on a replica set) ·
+zero-variable build OK · Playwright 215 passed / 58 skipped / 0 failed · `test:e2e:db` 10/10 (3 admin,
+7 storefront at 375/768/1440 px with data created through the B4 services). Gate: see PROGRESS.
+
+### Left, in order
+
+1. **Owner actions on the showcase** (nothing on the storefront shows until these exist): create the
+   Owner at `/admin/setup` (`docs/OWNER-SETUP.md`), save `/admin/settings` once, add delivery zones with
+   real fees, publish the 9 top-level then 30 child categories, then bulk-publish products in
+   `/admin/products`, receive stock in `/admin/inventory`. All 144 catalogue records are drafts with 0 stock.
+2. **Run `npm run db:migrate` against `horekbazar_dev`** after B5 is merged, to create the
+   `storefront_text` and `status_publishedAt` indexes (index-only; verify the target database first;
+   from this sandbox the Atlas SRV name does not resolve, so a standard seed-list URI is needed).
+3. **Catalogue images.** Requested by the owner (2026-10-22): upload images to Cloudinary and link
+   them. Conflicts with the approved `catalogue/horekbazar/IMAGE-ACQUISITION.md` (no generic photo as a
+   product photo; rights recorded). Smallest compliant path: images with a real licence (own photos,
+   supplier permission, or openly licensed photos marked as illustrative), uploaded through the existing
+   signed upload (`/api/media/sign`, `addProductMediaAction`) or a script that calls
+   `addProductMedia` so the `rights` field and audit are filled; record each in `MEDIA.md`. Not started.
+4. **Catalogue enrichment** (brands, more attributes, Banglish display names): needs the owner's review
+   of representative names first (`docs/BANGLISH-PROPOSAL.md`), then a schema field for display names.
+5. **B5 leftovers:** header search suggestions (prefix API), mega-menu ≥1280 px (the `/categories` page
+   and `<details>` filters are used instead, no Radix in the project), `/preorder` (no pre-order field in
+   the schema), Banglish synonyms in search ("chal" does not find "Rice"). The SEO and 404 e2e tests
+   take ~20 s each (request-context connection delay in the sandbox, not investigated).
+6. **B6 cart and pricing → B11 hardening**, per BUILD-PLAN §11, each with its checkpoint.
 
 ## B4 record (complete)
 
