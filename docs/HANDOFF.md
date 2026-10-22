@@ -1,7 +1,7 @@
 # Handoff for the next developer or agent
 
-Last updated 2026-10-22 (Asia/Dhaka), after the Banglish change, the B4 bulk-status fix and B5
-(storefront catalogue). Read this first, then `AGENTS.md`, `DESIGN.md` (Decision trace), `docs/BUILD-PLAN.md`
+Last updated 2026-10-22 (Asia/Dhaka), after B8 (fulfilment and returns). The B8 section below is
+the newest; older sections describe B4–B5 and are kept for their detail. Read this first, then `AGENTS.md`, `DESIGN.md` (Decision trace), `docs/BUILD-PLAN.md`
 §11 (phases), `docs/STATUS.md` and the newest entries of `docs/PROGRESS.md`.
 
 ## Where the project is
@@ -13,7 +13,9 @@ Last updated 2026-10-22 (Asia/Dhaka), after the Banglish change, the B4 bulk-sta
 | B4 bulk product status | PR #12 merged into `preview/horekbazar-v1` (`1468fb3`) |
 | B5 storefront catalogue | PR #13 merged into `preview/horekbazar-v1`; on `main` through PR #14 (merge `376decc`, owner-authorised), post-merge CI success, live on horekbazar-preview.vercel.app (shows the setup page until the Owner exists) |
 | Takeover audit docs | PR #10 (into `main`, open); its commits are also merged into `feat/b5-storefront` |
-| B6 cart → B11 hardening | not started |
+| B6 cart and pricing, B7 checkout and orders | PR #22 into `preview/horekbazar-v1` (`77eb016`); on `main` through PR #23 (`4480140`) after `check` passed |
+| B8 fulfilment and returns | PR #24 (`feat/b8-fulfilment`) into `preview/horekbazar-v1`; see "B8 record" below |
+| B9 engagement → B11 hardening | not started; B9 needs the owner's approval of B8 |
 
 Branch flow: feature branch → PR into `preview/horekbazar-v1` → merge after CI is green → PR into `main`,
 merged by the agent after the required check passes (owner authorisation 2026-10-22, DESIGN.md Decision trace). `main` is protected (required check `check`).
@@ -86,6 +88,47 @@ Gate: FAIL (zero-variable `/` is the setup page; header search states; B6–B11 
    the schema), Banglish synonyms in search ("chal" does not find "Rice"). The SEO and 404 e2e tests
    take ~20 s each (request-context connection delay in the sandbox, not investigated).
 6. **B6 cart and pricing → B11 hardening**, per BUILD-PLAN §11, each with its checkpoint.
+
+## B8 record (2026-10-22)
+
+### What exists
+
+- **Order ↔ shipment.** The order steps `shipped`, `delivered`, `delivery_failed`, `returned_to_origin`
+  happen only through a shipment (`lib/modules/fulfilment/shipments.ts` → `applyOrderTransition(…,
+  viaShipment: true)`); `transitionOrder` refuses them with `shipment_required`. The admin order page
+  hides those buttons and shows the shipment panel (`components/admin/ShipmentPanel.tsx`).
+- **Stock.** Reserved stock is committed in the hand-over transaction (once; ledger key per order).
+  A returned parcel is inspected per line (`inspectReturnedLine`), then `moveReturnedStock` restocks
+  or writes off. Customer returns: `inspectReturn` then `settleReturn`. Neither a courier "returned"
+  status nor a return request moves stock.
+- **Courier port.** `lib/adapters/courier/index.ts` `courierAvailability(env)`: manual always
+  available; Steadfast available with both keys; Pathao blocked (D12); RedX unsupported. Steadfast
+  client `lib/adapters/courier/steadfast.ts` (official API document, base `https://portal.packzy.com/api/v1`).
+  Jobs `courier.book`, `courier.sync` (`lib/modules/fulfilment/courier-jobs.ts`) run from the outbox drain.
+- **Webhook.** `app/api/webhooks/courier/[provider]/route.ts` → `lib/modules/fulfilment/webhooks.ts`.
+  Authentication is the Bearer secret only (Steadfast has no signature); every applied status is
+  re-read from the Steadfast API, so a forged body cannot move a shipment.
+- **Returns.** `lib/modules/fulfilment/returns.ts`, `/admin/returns`, `/admin/returns/[id]`; customer form
+  on `/account/orders/[n]` (server action `requestReturnAction`, rate limit `returnRequest`).
+- **Capabilities.** `fulfilment.write` (shipments), `returns.process` (returns); order operator has
+  both, support agent neither (paths.ts, sections.ts; each action checks again on the server).
+
+### Not done, and why
+
+- **Migrations:** not run anywhere real. `horekbazar_dev` lacks `shipments`, `courierEvents`, `returns`
+  until the owner runs `npm run db:migrate` with `MONGODB_URI` **and** `MONGODB_DB`.
+- **Real couriers:** no credentials were available; Steadfast is tested only against a stubbed `fetch`
+  (request shape, accepted, refused 4xx, 200-without-consignment, 5xx). The first live booking should
+  be a single test parcel with the owner watching.
+- **Pathao** waits for D12; **RedX** has no official public API document; **refunds to store rewards**
+  wait for B9; **partial delivery** is shown to staff but does not split lines.
+- **Gate:** FAIL as in B4/B7 (SEO on the setup page, header search states, B9–B11 completeness).
+
+### Easy to break
+
+- Do not call `applyOrderTransition` with `viaShipment: true` outside `shipments.ts`.
+- Courier statuses only move forward (`courierStatusAdvances`); keep final statuses final.
+- Never set `consignmentId` from anything but the courier's accepted answer or staff input.
 
 ## B4 record (complete)
 
@@ -246,7 +289,10 @@ env file that was deleted after use. Vercel and normal machines resolve SRV fine
    repository), or move to an organisation on Team with Secret Protection (keeps both, paid).
 6. Name the canonical Vercel project, give the agent's Vercel token access to `dev-choice`, and
    add the environment variables there per environment.
-7. Approve B5 when ready. D12/D21, D5, D20, D22 and coupon restoration on cancellation remain
+7. Approve B8 (PR #24) and then B9. For Steadfast: set `STEADFAST_API_KEY`, `STEADFAST_SECRET_KEY`,
+   `COURIER_WEBHOOK_SECRET`, put `https://<site>/api/webhooks/courier/steadfast` with that secret as
+   Bearer token in the Steadfast portal, and run `db:migrate` on the target database.
+   Approve B5 when ready. D12/D21, D5, D20, D22 and coupon restoration on cancellation remain
    open. Set Cloudinary credentials for uploads and the real delivery fees in /admin/settings/delivery.
 8. Sample data: `horekbazar_dev` holds 39/144/235 `sample: true` records. Remove them with
    `npm run db:seed -- --remove-samples --confirm` when no longer wanted; they cannot be published
