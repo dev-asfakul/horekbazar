@@ -126,7 +126,7 @@
       "catalogue_bulk_none": "Select at least one product.",
       "catalogue_bulk_limit": "Select at most 25 products at a time.",
       "commerce_not_found": "এই আইটেমটি আর নেই। পেজটি রিলোড করুন।",
-      "commerce_version_conflict": "Someone else changed this while you were editing. Reload the page to see the latest version, then try again.",
+      "commerce_version_conflict": "এর মধ্যে এটি বদলে গেছে। পেজটি রিলোড করুন।",
       "commerce_scope_not_found": "One of the chosen categories or products no longer exists. Reload and choose again.",
       "commerce_scope_empty": "Choose at least one category or product, or apply it to every product.",
       "commerce_invalid_value": "That amount is not allowed for this kind of discount.",
@@ -154,7 +154,23 @@
       "commerce_coupon_zone_not_covered": "আপনার ডেলিভারি এলাকায় এই কুপন খাটে না।",
       "commerce_coupon_not_needed": "ডেলিভারি এমনিতেই ফ্রি, কুপন লাগবে না।",
       "commerce_coupon_min_not_met": "কুপনের ন্যূনতম অর্ডার পূরণ হয়নি।",
-      "catalogue_tiers_invalid": "Each quantity price needs more items and a lower price than the one before, all below the selling price."
+      "catalogue_tiers_invalid": "Each quantity price needs more items and a lower price than the one before, all below the selling price.",
+      "commerce_phone_invalid": "সঠিক বাংলাদেশি মোবাইল নম্বর দিন।",
+      "commerce_zone_unavailable": "এই ডেলিভারি এলাকায় এখন ডেলিভারি হচ্ছে না। অন্য এলাকা বেছে নিন।",
+      "commerce_address_limit": "সর্বোচ্চ ১০টি অ্যাড্রেস রাখা যায়। পুরনো একটি মুছে দিন।",
+      "commerce_address_required": "একটি ডেলিভারি অ্যাড্রেস বেছে নিন।",
+      "commerce_cart_empty": "কার্ট খালি।",
+      "commerce_cart_changed": "অর্ডার দেওয়ার সময় কার্ট বদলে গেছে। আবার দেখে নিন।",
+      "commerce_lines_unavailable": "কার্টের কিছু প্রোডাক্ট এখন আর পাওয়া যাচ্ছে না। কার্ট ঠিক করুন।",
+      "commerce_sample_not_for_sale": "কার্টে এমন প্রোডাক্ট আছে যা এখন বিক্রির জন্য নয়।",
+      "commerce_price_changed": "দাম বা চার্জ বদলেছে। নতুন মোট দেখে আবার অর্ডার দিন।",
+      "commerce_checkout_disabled": "অনলাইন অর্ডার এখনো চালু হয়নি।",
+      "commerce_checkout_busy": "এই মুহূর্তে অনেক অর্ডার আসছে। কয়েক সেকেন্ড পরে আবার চেষ্টা করুন।",
+      "commerce_idempotency_key_reused": "পেজটি রিলোড করে আবার অর্ডার দিন।",
+      "commerce_idempotency_key_invalid": "পেজটি রিলোড করে আবার অর্ডার দিন।",
+      "commerce_transition_not_allowed": "এই অর্ডার এখন এই ধাপে নেওয়া যায় না।",
+      "commerce_reason_required": "একটি কারণ লিখুন।",
+      "commerce_stock_inconsistent": "স্টকের হিসাব মিলছে না। ইনভেন্টরি দেখে আবার চেষ্টা করুন।"
     },
     "fieldErrors": {
       "email_invalid": "name@example.com-এর মতো ইমেইল অ্যাড্রেস দিন",
@@ -192,7 +208,8 @@
       "percent_range": "Enter a whole percentage from 1 to 100.",
       "flash_only": "Only a flash sale can have a quantity cap.",
       "coupon_code": "Use 3–30 capital letters, digits, - or _ (for example EID10).",
-      "tier_line": "Write each line as quantity = price, for example 5 = 80."
+      "tier_line": "Write each line as quantity = price, for example 5 = 80.",
+      "order_prefix": "Use 2–6 capital letters or digits."
     },
     "success": {
       "check_inbox": "ইনবক্স চেক করুন। এই অ্যাড্রেসে ইমেইল গেলে একটি ভেরিফিকেশন লিংক আসছে; কখনো কয়েক মিনিট লাগে। অ্যাকাউন্ট চালু করতে লিংকটি খুলুন।",
@@ -235,7 +252,11 @@
       "cart_updated": "কার্ট আপডেট হয়েছে।",
       "cart_removed": "কার্ট থেকে সরানো হয়েছে।",
       "coupon_applied": "কুপন প্রয়োগ হয়েছে।",
-      "coupon_removed": "কুপন সরানো হয়েছে।"
+      "coupon_removed": "কুপন সরানো হয়েছে।",
+      "address_saved": "অ্যাড্রেস সেভ হয়েছে।",
+      "address_deleted": "অ্যাড্রেস মুছে ফেলা হয়েছে।",
+      "order_cancelled": "অর্ডার বাতিল হয়েছে।",
+      "order_updated": "অর্ডার আপডেট হয়েছে।"
     }
   },
   "auth": {
@@ -319,14 +340,16 @@
       "overview": "ওভারভিউ",
       "profile": "প্রোফাইল",
       "security": "সিকিউরিটি",
-      "admin": "স্টোর অ্যাডমিন"
+      "admin": "স্টোর অ্যাডমিন",
+      "addresses": "অ্যাড্রেস",
+      "orders": "অর্ডার"
     },
     "signedInAs": "{email} হিসেবে লগইন করা",
     "signOut": "লগআউট",
     "ordersTitle": "আমার অর্ডার",
-    "ordersBody": "স্টোর অর্ডার নেওয়া শুরু করলে আপনার সব অর্ডার এখানে দেখাবে।",
+    "ordersBody": "আপনার সব অর্ডার আর প্রতিটির অবস্থা।",
     "addressesTitle": "অ্যাড্রেস",
-    "addressesBody": "চেকআউট চালু হলে ডেলিভারি অ্যাড্রেস সেভ করতে পারবেন।",
+    "addressesBody": "ডেলিভারির অ্যাড্রেস সেভ করুন, বদলান।",
     "profile": {
       "title": "প্রোফাইল",
       "name": "নাম",
@@ -373,7 +396,82 @@
       "disablePending": "বন্ধ হচ্ছে…",
       "disablePassword": "পাসওয়ার্ড",
       "newPasswordConfirm": "নতুন পাসওয়ার্ড আবার দিন"
-    }
+    },
+    "addresses": {
+      "title": "অ্যাড্রেস",
+      "intro": "অর্ডারের সময় এখান থেকে অ্যাড্রেস বেছে নিতে পারবেন। সর্বোচ্চ ১০টি।",
+      "empty": "এখনো কোনো অ্যাড্রেস নেই।",
+      "add": "নতুন অ্যাড্রেস",
+      "edit": "বদলান",
+      "save": "অ্যাড্রেস সেভ করুন",
+      "saving": "সেভ হচ্ছে…",
+      "delete": "মুছুন",
+      "makeDefault": "ডিফল্ট করুন",
+      "default": "ডিফল্ট",
+      "label": "ধরন",
+      "labels": {
+        "home": "বাসা",
+        "office": "অফিস",
+        "other": "অন্যান্য"
+      },
+      "name": "যিনি নেবেন তাঁর নাম",
+      "phone": "মোবাইল নম্বর",
+      "phoneHint": "যেমন 01712-345678। অর্ডার কনফার্ম করতে স্টোর এই নম্বরে যোগাযোগ করবে।",
+      "zone": "ডেলিভারি এলাকা",
+      "district": "জেলা",
+      "area": "থানা / এলাকা",
+      "line": "বাসা, রোড, ব্লক",
+      "landmark": "কাছের চিহ্ন (অপশনাল)",
+      "isDefault": "এটাকে ডিফল্ট অ্যাড্রেস করুন",
+      "locationNote": "ডেলিভারি এলাকা স্টোরের সেট করা এলাকা থেকে বেছে নিন; জেলা আর থানা নিজে লিখুন।"
+    },
+    "orders": {
+      "title": "অর্ডার",
+      "intro": "আপনার সব অর্ডার, নতুনটি আগে।",
+      "empty": "এখনো কোনো অর্ডার নেই।",
+      "number": "অর্ডার নম্বর",
+      "placed": "অর্ডারের সময়",
+      "status": "অবস্থা",
+      "total": "মোট",
+      "view": "দেখুন",
+      "items": "{count}টি আইটেম",
+      "detailTitle": "অর্ডার {number}",
+      "timeline": "অর্ডারের ধাপ",
+      "address": "ডেলিভারি অ্যাড্রেস",
+      "payment": "পেমেন্ট",
+      "cod": "ক্যাশ অন ডেলিভারি",
+      "note": "আপনার নোট",
+      "reason": "কারণ",
+      "cancel": "অর্ডার বাতিল করুন",
+      "cancelling": "বাতিল হচ্ছে…",
+      "cancelReason": "কারণ (অপশনাল)",
+      "cancelHint": "প্যাকিং শুরুর আগে পর্যন্ত বাতিল করা যায়।",
+      "cancelLater": "প্যাকিং শুরু হয়ে গেছে। বাতিল করতে স্টোরের সাথে যোগাযোগ করুন।",
+      "statuses": {
+        "pending_confirmation": "কনফার্মেশনের অপেক্ষায়",
+        "confirmed": "কনফার্ম হয়েছে",
+        "processing": "প্যাক হচ্ছে",
+        "ready_to_ship": "পাঠানোর জন্য রেডি",
+        "shipped": "পাঠানো হয়েছে",
+        "delivered": "ডেলিভারি হয়েছে",
+        "delivery_failed": "ডেলিভারি করা যায়নি",
+        "returned_to_origin": "স্টোরে ফেরত এসেছে",
+        "completed": "সম্পন্ন",
+        "rejected": "নেওয়া সম্ভব হয়নি",
+        "cancelled_by_customer": "আপনি বাতিল করেছেন",
+        "cancelled_by_store": "স্টোর বাতিল করেছে"
+      },
+      "subtotal": "প্রোডাক্টের দাম",
+      "savings": "অফারে সাশ্রয়",
+      "coupon": "কুপন ছাড়",
+      "delivery": "ডেলিভারি চার্জ",
+      "grandTotal": "সর্বমোট",
+      "free": "ফ্রি",
+      "qty": "× {qty}",
+      "back": "সব অর্ডার"
+    },
+    "ordersLink": "অর্ডার দেখুন",
+    "addressesLink": "অ্যাড্রেস ম্যানেজ করুন"
   },
   "store": {
     "home": {
@@ -530,6 +628,32 @@
       "checkoutFix": "অর্ডার করার আগে উপরের সমস্যাগুলো ঠিক করুন।",
       "signInToSave": "লগইন করলে কার্ট আপনার অ্যাকাউন্টে থেকে যাবে।",
       "priceNote": "দাম চেকআউটে আবার মিলিয়ে দেখা হয়।"
+    },
+    "checkout": {
+      "title": "চেকআউট",
+      "closed": "অনলাইন অর্ডার এখনো চালু হয়নি।",
+      "closedText": "স্টোর অর্ডার নেওয়া চালু করলে এখান থেকে অর্ডার করা যাবে। আপনার কার্ট রাখা থাকবে।",
+      "backToCart": "কার্টে ফিরুন",
+      "fixCart": "কার্টে কিছু সমস্যা আছে। আগে কার্ট ঠিক করুন।",
+      "sampleBlocked": "কার্টে এমন প্রোডাক্ট আছে যা এখন বিক্রির জন্য নয়। সেগুলো সরিয়ে দিন।",
+      "address": "ডেলিভারি অ্যাড্রেস",
+      "chooseAddress": "অ্যাড্রেস বেছে নিন",
+      "useAddress": "এই অ্যাড্রেস ব্যবহার করুন",
+      "addAddress": "নতুন অ্যাড্রেস যোগ করুন",
+      "manageAddresses": "অ্যাড্রেস ম্যানেজ করুন",
+      "noAddress": "অর্ডার করতে একটি অ্যাড্রেস যোগ করুন।",
+      "summary": "অর্ডার সামারি",
+      "payment": "পেমেন্ট: ক্যাশ অন ডেলিভারি। অর্ডার হাতে পেয়ে টাকা দিন।",
+      "confirmNote": "অর্ডার দেওয়ার পর স্টোর আপনার নম্বরে যোগাযোগ করে কনফার্ম করবে।",
+      "note": "স্টোরের জন্য নোট (অপশনাল)",
+      "place": "অর্ডার দিন",
+      "placing": "অর্ডার যাচ্ছে…",
+      "estimate": "ডেলিভারি: {estimate}",
+      "successTitle": "অর্ডার পেয়েছি",
+      "successText": "আপনার অর্ডার নম্বর {number}। স্টোর আপনার নম্বরে যোগাযোগ করে অর্ডার কনফার্ম করবে।",
+      "successEmail": "অর্ডারের বিস্তারিত ইমেইলেও পাঠানো হচ্ছে।",
+      "viewOrder": "অর্ডার দেখুন",
+      "keepShopping": "আরও কেনাকাটা করুন"
     }
   }
 }

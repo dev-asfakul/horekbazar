@@ -169,7 +169,8 @@
       "settings": "Settings",
       "delivery": "Delivery",
       "promotions": "Promotions",
-      "coupons": "Coupons"
+      "coupons": "Coupons",
+      "orders": "Orders"
     },
     "home": {
       "title": "Admin",
@@ -188,7 +189,8 @@
       "settingsDesc": "Store name, contact, theme, numbers and features.",
       "deliveryDesc": "Delivery zones, fees and estimates.",
       "promotionsDesc": "Sale prices and timed flash sales.",
-      "couponsDesc": "Codes customers enter at checkout."
+      "couponsDesc": "Codes customers enter at checkout.",
+      "ordersDesc": "Confirm, pack, ship and track orders."
     },
     "setup": {
       "title": "Set up the store owner",
@@ -596,7 +598,16 @@
       "roundingHint": "100 rounds prices to whole taka.",
       "featureWishlist": "Wishlist",
       "featureBrands": "Brands",
-      "featureReviews": "Reviews"
+      "featureReviews": "Reviews",
+      "couponsApplyToFlashSale": "Coupons also apply to flash-sale items",
+      "numberPrefix": "Order number prefix",
+      "numberPrefixHint": "2–6 capital letters or digits, for example SHOP. Empty uses ORD.",
+      "pendingAlertHours": "Flag unconfirmed orders after (hours)",
+      "pendingAlertHoursHint": "Orders waiting longer are flagged in the order list. Nothing is cancelled automatically.",
+      "returnWindowDays": "Return window (days after delivery)",
+      "returnWindowDaysHint": "Used by the returns workflow. Check it against your own policy.",
+      "featureCheckout": "Take online orders (cash on delivery)",
+      "featureCheckoutHint": "Customers can place orders. Products marked as sample are never sold, even when this is on. Turn on only when prices, stock, delivery zones and your terms are real."
     },
     "delivery": {
       "title": "Delivery",
@@ -710,6 +721,70 @@
         "active": "Active",
         "archived": "Archived"
       }
+    },
+    "orders": {
+      "title": "Orders",
+      "intro": "Every order waits for confirmation: call or message the customer to check the order and number before confirming. Stock is reserved at placement and taken off when the order ships.",
+      "filter": "Status",
+      "all": "All",
+      "apply": "Show",
+      "listTitle": "Orders ({count})",
+      "empty": "No orders here yet.",
+      "stale": "Waiting over {hours} hours",
+      "number": "Order",
+      "customer": "Customer",
+      "placed": "Placed",
+      "total": "Total",
+      "items": "{count} items",
+      "detailTitle": "Order {number}",
+      "back": "All orders",
+      "status": "Status",
+      "statuses": {
+        "pending_confirmation": "Pending confirmation",
+        "confirmed": "Confirmed",
+        "processing": "Processing",
+        "ready_to_ship": "Ready to ship",
+        "shipped": "Shipped",
+        "delivered": "Delivered",
+        "delivery_failed": "Delivery failed",
+        "returned_to_origin": "Returned to origin",
+        "completed": "Completed",
+        "rejected": "Rejected",
+        "cancelled_by_customer": "Cancelled by customer",
+        "cancelled_by_store": "Cancelled by store"
+      },
+      "actions": {
+        "confirmed": "Confirm order",
+        "rejected": "Reject",
+        "processing": "Start packing",
+        "ready_to_ship": "Mark ready to ship",
+        "shipped": "Mark shipped",
+        "delivered": "Mark delivered",
+        "delivery_failed": "Delivery failed",
+        "returned_to_origin": "Returned to store",
+        "completed": "Mark completed",
+        "cancelled_by_store": "Cancel order"
+      },
+      "reason": "Reason",
+      "reasonHint": "Shown to the customer. Required for reject, store cancel and failed delivery.",
+      "timeline": "Timeline",
+      "address": "Delivery address",
+      "phone": "Phone",
+      "call": "Call",
+      "payment": "Payment",
+      "cod": "Cash on delivery",
+      "note": "Customer note",
+      "lines": "Items",
+      "noNext": "No further steps for this order.",
+      "subtotal": "Products",
+      "savings": "Offer savings",
+      "coupon": "Coupon",
+      "delivery": "Delivery",
+      "grandTotal": "Total",
+      "free": "Free",
+      "qty": "× {qty}",
+      "by": "by {actor}",
+      "deny": "Your role cannot change this order's status."
     }
   },
   "forms": {
@@ -766,7 +841,7 @@
       "catalogue_bulk_none": "Select at least one product.",
       "catalogue_bulk_limit": "Select at most 25 products at a time.",
       "commerce_not_found": "That item no longer exists. Reload the page.",
-      "commerce_version_conflict": "Someone else changed this while you were editing. Reload the page to see the latest version, then try again.",
+      "commerce_version_conflict": "This changed in the meantime. Please reload the page.",
       "commerce_scope_not_found": "One of the chosen categories or products no longer exists. Reload and choose again.",
       "commerce_scope_empty": "Choose at least one category or product, or apply it to every product.",
       "commerce_invalid_value": "That amount is not allowed for this kind of discount.",
@@ -794,7 +869,23 @@
       "commerce_coupon_zone_not_covered": "This coupon does not cover your delivery area.",
       "commerce_coupon_not_needed": "Delivery is already free; no coupon needed.",
       "commerce_coupon_min_not_met": "The order is below this coupon's minimum.",
-      "catalogue_tiers_invalid": "Each quantity price needs more items and a lower price than the one before, all below the selling price."
+      "catalogue_tiers_invalid": "Each quantity price needs more items and a lower price than the one before, all below the selling price.",
+      "commerce_phone_invalid": "Enter a valid Bangladeshi mobile number.",
+      "commerce_zone_unavailable": "The store does not deliver to this area right now. Choose another.",
+      "commerce_address_limit": "You can keep up to 10 addresses. Delete an old one first.",
+      "commerce_address_required": "Choose a delivery address.",
+      "commerce_cart_empty": "Your cart is empty.",
+      "commerce_cart_changed": "Your cart changed while ordering. Please check it again.",
+      "commerce_lines_unavailable": "Some products in your cart are no longer available. Please fix your cart.",
+      "commerce_sample_not_for_sale": "Your cart has products that are not for sale right now.",
+      "commerce_price_changed": "A price or charge changed. Check the new total and order again.",
+      "commerce_checkout_disabled": "Online ordering is not open yet.",
+      "commerce_checkout_busy": "Many orders are coming in right now. Please try again in a few seconds.",
+      "commerce_idempotency_key_reused": "Please reload the page and order again.",
+      "commerce_idempotency_key_invalid": "Please reload the page and order again.",
+      "commerce_transition_not_allowed": "This order cannot move to that step now.",
+      "commerce_reason_required": "Please give a reason.",
+      "commerce_stock_inconsistent": "Stock records do not add up. Check inventory and try again."
     },
     "fieldErrors": {
       "email_invalid": "Enter an email address like name@example.com",
@@ -832,7 +923,8 @@
       "percent_range": "Enter a whole percentage from 1 to 100.",
       "flash_only": "Only a flash sale can have a quantity cap.",
       "coupon_code": "Use 3–30 capital letters, digits, - or _ (for example EID10).",
-      "tier_line": "Write each line as quantity = price, for example 5 = 80."
+      "tier_line": "Write each line as quantity = price, for example 5 = 80.",
+      "order_prefix": "Use 2–6 capital letters or digits."
     },
     "success": {
       "check_inbox": "Check your inbox. If this address can receive email, a verification link is on its way; it can take a few minutes. Open it to activate your account.",
@@ -875,7 +967,11 @@
       "cart_updated": "Cart updated.",
       "cart_removed": "Removed from your cart.",
       "coupon_applied": "Coupon applied.",
-      "coupon_removed": "Coupon removed."
+      "coupon_removed": "Coupon removed.",
+      "address_saved": "Address saved.",
+      "address_deleted": "Address deleted.",
+      "order_cancelled": "Order cancelled.",
+      "order_updated": "Order updated."
     }
   },
   "auth": {
@@ -959,14 +1055,16 @@
       "overview": "Overview",
       "profile": "Profile",
       "security": "Security",
-      "admin": "Store admin"
+      "admin": "Store admin",
+      "addresses": "Addresses",
+      "orders": "Orders"
     },
     "signedInAs": "Signed in as {email}",
     "signOut": "Sign out",
     "ordersTitle": "Orders",
-    "ordersBody": "Your orders will appear here once the shop opens for orders.",
+    "ordersBody": "All your orders and where each one is.",
     "addressesTitle": "Addresses",
-    "addressesBody": "Saved delivery addresses arrive with checkout.",
+    "addressesBody": "Save and edit delivery addresses.",
     "profile": {
       "title": "Profile",
       "name": "Name",
@@ -1013,7 +1111,82 @@
       "disablePending": "Turning off…",
       "disablePassword": "Password",
       "newPasswordConfirm": "Confirm new password"
-    }
+    },
+    "addresses": {
+      "title": "Addresses",
+      "intro": "Choose one of these when you order. Up to 10.",
+      "empty": "No addresses yet.",
+      "add": "New address",
+      "edit": "Edit",
+      "save": "Save address",
+      "saving": "Saving…",
+      "delete": "Delete",
+      "makeDefault": "Make default",
+      "default": "Default",
+      "label": "Type",
+      "labels": {
+        "home": "Home",
+        "office": "Office",
+        "other": "Other"
+      },
+      "name": "Recipient's name",
+      "phone": "Mobile number",
+      "phoneHint": "For example 01712-345678. The store will contact this number to confirm the order.",
+      "zone": "Delivery area",
+      "district": "District",
+      "area": "Thana / area",
+      "line": "House, road, block",
+      "landmark": "Nearby landmark (optional)",
+      "isDefault": "Make this my default address",
+      "locationNote": "Pick the delivery area from the store's areas; type the district and thana yourself."
+    },
+    "orders": {
+      "title": "Orders",
+      "intro": "All your orders, newest first.",
+      "empty": "No orders yet.",
+      "number": "Order number",
+      "placed": "Placed",
+      "status": "Status",
+      "total": "Total",
+      "view": "View",
+      "items": "{count} items",
+      "detailTitle": "Order {number}",
+      "timeline": "Order steps",
+      "address": "Delivery address",
+      "payment": "Payment",
+      "cod": "Cash on delivery",
+      "note": "Your note",
+      "reason": "Reason",
+      "cancel": "Cancel order",
+      "cancelling": "Cancelling…",
+      "cancelReason": "Reason (optional)",
+      "cancelHint": "You can cancel until packing starts.",
+      "cancelLater": "Packing has started. Contact the store to cancel.",
+      "statuses": {
+        "pending_confirmation": "Waiting for confirmation",
+        "confirmed": "Confirmed",
+        "processing": "Being packed",
+        "ready_to_ship": "Ready to ship",
+        "shipped": "Shipped",
+        "delivered": "Delivered",
+        "delivery_failed": "Delivery attempt failed",
+        "returned_to_origin": "Returned to store",
+        "completed": "Completed",
+        "rejected": "Could not be accepted",
+        "cancelled_by_customer": "Cancelled by you",
+        "cancelled_by_store": "Cancelled by the store"
+      },
+      "subtotal": "Products",
+      "savings": "Offer savings",
+      "coupon": "Coupon discount",
+      "delivery": "Delivery",
+      "grandTotal": "Total",
+      "free": "Free",
+      "qty": "× {qty}",
+      "back": "All orders"
+    },
+    "ordersLink": "View orders",
+    "addressesLink": "Manage addresses"
   },
   "store": {
     "home": {
@@ -1170,6 +1343,32 @@
       "checkoutFix": "Please fix the problems above before ordering.",
       "signInToSave": "Sign in to keep this cart on your account.",
       "priceNote": "Prices are checked again at checkout."
+    },
+    "checkout": {
+      "title": "Checkout",
+      "closed": "Online ordering is not open yet.",
+      "closedText": "When the store opens ordering you can order from here. Your cart is kept.",
+      "backToCart": "Back to cart",
+      "fixCart": "Something in your cart needs fixing first.",
+      "sampleBlocked": "Your cart has products that are not for sale right now. Please remove them.",
+      "address": "Delivery address",
+      "chooseAddress": "Choose an address",
+      "useAddress": "Use this address",
+      "addAddress": "Add a new address",
+      "manageAddresses": "Manage addresses",
+      "noAddress": "Add an address to order.",
+      "summary": "Order summary",
+      "payment": "Payment: cash on delivery. Pay when you receive the order.",
+      "confirmNote": "After you order, the store will contact your number to confirm it.",
+      "note": "Note for the store (optional)",
+      "place": "Place order",
+      "placing": "Placing order…",
+      "estimate": "Delivery: {estimate}",
+      "successTitle": "Order received",
+      "successText": "Your order number is {number}. The store will contact your number to confirm it.",
+      "successEmail": "The details are also on their way by email.",
+      "viewOrder": "View order",
+      "keepShopping": "Keep shopping"
     }
   }
 }
