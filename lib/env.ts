@@ -46,6 +46,8 @@ export const serverEnvSchema = z.object({
   VAPID_SUBJECT: optional(z.string().regex(/^(mailto:.+@.+|https:\/\/.+)$/, "mailto:<address> or https:// URL")),
 
   GEMINI_API_KEY: optional(z.string()),
+  /** Optional model override for AI drafts (B9 part 2b); default in lib/adapters/ai/gemini.ts. */
+  GEMINI_MODEL: optional(z.string().regex(/^[a-z0-9][a-z0-9.\-]{2,79}$/, "a Gemini model id such as gemini-3.5-flash-lite")),
 
   STEADFAST_API_KEY: optional(z.string()),
   STEADFAST_SECRET_KEY: optional(z.string()),

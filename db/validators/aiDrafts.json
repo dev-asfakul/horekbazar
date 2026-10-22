@@ -1,0 +1,199 @@
+{
+  "$jsonSchema": {
+    "bsonType": "object",
+    "properties": {
+      "_id": {
+        "bsonType": "objectId"
+      },
+      "targetType": {
+        "bsonType": "string",
+        "enum": [
+          "product",
+          "category",
+          "collection"
+        ]
+      },
+      "targetId": {
+        "bsonType": "objectId"
+      },
+      "targetVersion": {
+        "bsonType": [
+          "int",
+          "long"
+        ],
+        "minimum": 1
+      },
+      "fields": {
+        "bsonType": "object",
+        "properties": {
+          "name": {
+            "bsonType": "object",
+            "properties": {
+              "bn": {
+                "bsonType": "string",
+                "minLength": 1,
+                "maxLength": 120
+              },
+              "en": {
+                "bsonType": "string",
+                "minLength": 1,
+                "maxLength": 120
+              }
+            },
+            "required": [
+              "bn",
+              "en"
+            ],
+            "additionalProperties": false
+          },
+          "shortDescription": {
+            "bsonType": "object",
+            "properties": {
+              "bn": {
+                "bsonType": "string",
+                "minLength": 1,
+                "maxLength": 300
+              },
+              "en": {
+                "bsonType": "string",
+                "minLength": 1,
+                "maxLength": 300
+              }
+            },
+            "required": [
+              "bn",
+              "en"
+            ],
+            "additionalProperties": false
+          },
+          "description": {
+            "bsonType": "object",
+            "properties": {
+              "bn": {
+                "bsonType": "string",
+                "minLength": 1,
+                "maxLength": 5000
+              },
+              "en": {
+                "bsonType": "string",
+                "minLength": 1,
+                "maxLength": 5000
+              }
+            },
+            "required": [
+              "bn",
+              "en"
+            ],
+            "additionalProperties": false
+          },
+          "seoTitle": {
+            "bsonType": "object",
+            "properties": {
+              "bn": {
+                "bsonType": "string",
+                "minLength": 1,
+                "maxLength": 70
+              },
+              "en": {
+                "bsonType": "string",
+                "minLength": 1,
+                "maxLength": 70
+              }
+            },
+            "required": [
+              "bn",
+              "en"
+            ],
+            "additionalProperties": false
+          },
+          "seoDescription": {
+            "bsonType": "object",
+            "properties": {
+              "bn": {
+                "bsonType": "string",
+                "minLength": 1,
+                "maxLength": 170
+              },
+              "en": {
+                "bsonType": "string",
+                "minLength": 1,
+                "maxLength": 170
+              }
+            },
+            "required": [
+              "bn",
+              "en"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      },
+      "instructions": {
+        "bsonType": "string",
+        "maxLength": 300
+      },
+      "model": {
+        "bsonType": "string",
+        "minLength": 1,
+        "maxLength": 80
+      },
+      "status": {
+        "bsonType": "string",
+        "enum": [
+          "pending",
+          "partially_applied",
+          "applied",
+          "discarded"
+        ]
+      },
+      "appliedFields": {
+        "maxItems": 5,
+        "bsonType": "array",
+        "items": {
+          "bsonType": "string",
+          "enum": [
+            "name",
+            "shortDescription",
+            "description",
+            "seoTitle",
+            "seoDescription"
+          ]
+        }
+      },
+      "createdBy": {
+        "bsonType": "string",
+        "minLength": 1,
+        "maxLength": 100
+      },
+      "version": {
+        "bsonType": [
+          "int",
+          "long"
+        ],
+        "minimum": 1
+      },
+      "createdAt": {
+        "bsonType": "date"
+      },
+      "updatedAt": {
+        "bsonType": "date"
+      }
+    },
+    "required": [
+      "_id",
+      "targetType",
+      "targetId",
+      "targetVersion",
+      "fields",
+      "model",
+      "status",
+      "appliedFields",
+      "createdBy",
+      "version",
+      "createdAt",
+      "updatedAt"
+    ],
+    "additionalProperties": false
+  }
+}

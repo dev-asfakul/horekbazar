@@ -2,6 +2,15 @@
 
 Newest first. Each entry: date, phase, done, decided, open, next.
 
+## 2026-10-23 — B9 part 2b: AI drafts (Gemini) with per-field approval
+
+- **Done:** `aiDrafts` collection (validator 38, index `targetType, targetId, status`); Gemini adapter on plain `fetch` (`lib/adapters/ai/gemini.ts`), no SDK; draft module (`lib/modules/ai/drafts.ts`): the prompt lists only the product's own facts (name, category, attributes, active variant titles, current texts) and forbids invented claims, prices, stock or delivery promises; the answer is checked against the schema and length limits; Apply writes one field (`name`, `shortDescription`, `description`, `seo.title`, `seo.description`) in a transaction that checks both the product and draft versions, bumps the product version and writes `product.ai_field_applied` to the audit log; Discard is audited too. Admin panel on `/admin/products/[id]` with the free-tier notice, current-vs-draft comparison and a stale-draft note.
+- **Defaults:** the panel is not rendered without `GEMINI_API_KEY`; requires `catalogue.write`; limit 20 drafts per staff user per hour. `GEMINI_MODEL` optional (default `gemini-3.5-flash-lite`).
+- **Fixed in 2a (found here):** `PushRejectedError` used a constructor parameter property, which Node's type stripping rejects, so `npm run worker` could not load the outbox handlers. Plain field now, plus a unit test that loads the handlers in a plain Node process (fails on the old code, passes now). Commit `3857e35` on `feat/b9-notifications`.
+- **Decided:** plain fetch instead of `@google/genai` (DESIGN.md Decision trace). Feature bullets live as "• " lines in `description` because products have no separate bullets field. Category and collection drafts are reserved in the enum, not built.
+- **Verified:** see STATUS. One real draft against a dev product (read-only script; nothing stored in `aiDrafts`, no product changed).
+- **Database:** `db:migrate` on `horekbazar_dev` created `aiDrafts` only.
+- **Open:** signed-in browser check of the panel; Gemini key in Vercel not checked (no Vercel access from the agent).
 ## 2026-10-23 — B9 part 2a review fixes (PR #30)
 
 - **Consent at send time:** the push job now re-reads the subscription's topics. A campaign message queued before the customer unticked "Offers and news" finishes as `topic_off` without contacting the push service; order updates likewise once "Order updates" is off.

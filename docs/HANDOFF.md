@@ -1,6 +1,6 @@
 # Handoff for the next developer or agent
 
-Last updated 2026-10-23 (Asia/Dhaka), after B9 part 2a (browser notifications, campaigns, order e-mail log). The "B9 part 2a record" below is
+Last updated 2026-10-23 (Asia/Dhaka), after B9 part 2b (Gemini AI drafts). The "B9 part 2b record" below is
 the newest; older sections describe B4–B5 and are kept for their detail. Read this first, then `AGENTS.md`, `DESIGN.md` (Decision trace), `docs/BUILD-PLAN.md`
 §11 (phases), `docs/STATUS.md` and the newest entries of `docs/PROGRESS.md`.
 
@@ -19,7 +19,8 @@ the newest; older sections describe B4–B5 and are kept for their detail. Read 
 | B9 engagement (part 1) | branch `feat/b9-engagement`, PR into `main`, **not merged** (owner review); see "B9 record" |
 | B9 part 1 | merged to `main` (PR #27 `d47d451`); showcase population PR #29 (`4a0ef5b`) |
 | B9 part 2a notifications | branch `feat/b9-notifications`, PR into `main`, **not merged** (owner review); see "B9 part 2a record" |
-| B9 part 2b AI drafts → B11 hardening | not started |
+| B9 part 2b AI drafts | branch `feat/b9-ai-drafts`, stacked on `feat/b9-notifications`, PR **not merged** (owner review); see "B9 part 2b record" |
+| B10 → B11 hardening | not started |
 
 Branch flow: feature branch → PR into `preview/horekbazar-v1` → merge after CI is green → PR into `main`,
 merged by the agent after the required check passes (owner authorisation 2026-10-22, DESIGN.md Decision trace). `main` is protected (required check `check`).
@@ -107,6 +108,14 @@ Gate: FAIL (zero-variable `/` is the setup page; header search states; B6–B11 
    the schema), Banglish synonyms in search ("chal" does not find "Rice"). The SEO and 404 e2e tests
    take ~20 s each (request-context connection delay in the sandbox, not investigated).
 6. **B6 cart and pricing → B11 hardening**, per BUILD-PLAN §11, each with its checkpoint.
+
+## B9 part 2b record (2026-10-23)
+
+- **What:** Gemini drafts for product name, short description, description and SEO title/description, in Bengali and English, applied one field at a time. Code: `lib/adapters/ai/gemini.ts`, `lib/modules/ai/{schema,drafts}.ts`, `lib/actions/ai-drafts.ts`, `components/admin/AiDraftsPanel.tsx`.
+- **Switches:** `GEMINI_API_KEY` (panel hidden without it), `GEMINI_MODEL` (optional). Capability `catalogue.write`. Rate limit `ai-draft` 20/hour per staff user.
+- **Safety:** drafts never touch live fields; Apply is a version-checked transaction with an audit row; a draft made before a later product edit is shown with a stale note next to the current text, and Apply still needs the product version on screen, so a save by someone else after the page loaded makes Apply refuse with a conflict.
+- **Merge order:** PR A (notifications) first, then this PR (its base is `feat/b9-notifications`; after A merges, retarget it to `main`).
+- **Not done:** category/collection drafts (enum reserved); signed-in browser check of the panel.
 
 ## B9 part 2a record (2026-10-23)
 

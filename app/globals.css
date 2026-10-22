@@ -2315,3 +2315,9 @@ select[multiple].field-input {
 .thread-msg { padding: 10px 14px; background: var(--surface); border-inline-start: 3px solid var(--line); }
 .thread-msg[data-from="staff"] { border-inline-start-color: var(--accent); }
 .thread-msg p { margin: 0.25rem 0 0; white-space: pre-line; overflow-wrap: anywhere; }
+
+/* B9 part 2b: AI draft beside the live text (admin product editor). */
+.ai-field { margin-block: 0.75rem; padding-block-start: 0.75rem; border-block-start: 1px solid var(--line); }
+.ai-compare { display: grid; gap: 0.75rem; }
+@media (min-width: 768px) { .ai-compare { grid-template-columns: 1fr 1fr; } }
+.ai-text { margin: 0.25rem 0 0.5rem; max-width: 68ch; white-space: pre-line; overflow-wrap: anywhere; }
