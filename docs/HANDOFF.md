@@ -1,6 +1,6 @@
 # Handoff for the next developer or agent
 
-Last updated 2026-10-22 (Asia/Dhaka), after Phase B4 (catalogue administration). Read this first, then
+Last updated 2026-10-22 (Asia/Dhaka), after Phase B4 (catalogue administration) and the takeover audit. Read this first, then
 `AGENTS.md`, `DESIGN.md`, `docs/BUILD-PLAN.md` §11 (phases) and §13 (open decisions),
 `docs/STATUS.md` (verified state per requirement) and the newest entries of `docs/PROGRESS.md`.
 
@@ -14,9 +14,11 @@ Last updated 2026-10-22 (Asia/Dhaka), after Phase B4 (catalogue administration).
 | B4 catalogue admin | merged to `main` (PR #8, merge `04158f2`); post-merge CI success; Vercel `horekbazar-preview` success on `04158f2` (serves B4: `/api/media/sign` answers 403 cross-origin), still without a database |
 | B5 storefront and later | not started; each phase needs explicit owner approval (BUILD-PLAN §0) |
 
-Deployment: `horekbazar-preview.vercel.app` runs B3 code but reports `database: not_configured`, so it only shows setup-required. Two Vercel projects exist
-(`horekbazar`, `horekbazar-preview` in team `dev-choice`); the owner has not said which is
-canonical. Do not guess.
+Deployment (takeover audit, 2026-10-22): `horekbazar-preview.vercel.app` serves `main` and reports
+`database: connected`, `setupRequired: true`; the Owner setup form is live. Which database it uses is
+not known. Commit statuses come from `dev-choice/horekbazar-preview`; `horekbazar.vercel.app` is 404.
+The owner has not said which project is canonical. Do not guess. `preview/horekbazar-v1` carries one
+unmerged commit, `e517154` (Bangla copy rewrite), with no PR; ask the owner before merging or dropping it.
 
 ## B4 record (complete)
 
@@ -173,11 +175,17 @@ env file that was deleted after use. Vercel and normal machines resolve SRV fine
 3. Set `SETUP_TOKEN`, then create the first Owner at `/admin/setup`.
 4. Confirm D23 and the proposals `SETUP_TOKEN` and `secondFactorAt` (DESIGN.md Decision trace).
 5. Choose: stay public (keeps protection and secret scanning), go private on Free (loses both),
-   or upgrade the plan and then go private.
+   go private on Pro (keeps branch protection, still no secret scanning on a user-owned private
+   repository), or move to an organisation on Team with Secret Protection (keeps both, paid).
 6. Name the canonical Vercel project, give the agent's Vercel token access to `dev-choice`, and
    add the environment variables there per environment.
 7. Approve B5 when ready. D12/D21, D5, D20, D22 and coupon restoration on cancellation remain
    open. Set Cloudinary credentials for uploads and the real delivery fees in /admin/settings/delivery.
 8. Sample data: `horekbazar_dev` holds 39/144/235 `sample: true` records. Remove them with
    `npm run db:seed -- --remove-samples --confirm` when no longer wanted; they cannot be published
-   outside a `_dev` database.
+   outside a `_dev` database. The guard is the database name, so confirm the public preview does not
+   use `horekbazar_dev` (recommend `horekbazar_preview`).
+9. The preview Owner form is live: create the Owner soon (then `SETUP_TOKEN` no longer matters) and
+   confirm whether `e517154` was requested.
+10. Run the gate with a trailing slash (`http://127.0.0.1:3000/`); without it the session check
+   reports a false back-button failure (PROGRESS, takeover audit).
