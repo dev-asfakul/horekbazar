@@ -6,7 +6,7 @@ import { refresh } from "next/cache";
 import { headers } from "next/headers";
 import { ObjectId } from "mongodb";
 import type { FormState } from "@/lib/actions/form-state";
-import { fail, field, ok } from "@/lib/actions/staff-action";
+import { fail, field, normaliseDigits, ok } from "@/lib/actions/staff-action";
 import { getClient, getDatabase, databaseConfig } from "@/lib/adapters/db/client";
 import { getPrincipal } from "@/lib/auth/server";
 import { localeHref } from "@/lib/i18n/href";
@@ -15,6 +15,7 @@ import { createAddress, deleteAddress, setDefaultAddress, updateAddress, type Ad
 import { placeOrder } from "@/lib/modules/orders/checkout";
 import { ORDERS, type OrderDoc } from "@/lib/modules/orders/schema";
 import { transitionOrder } from "@/lib/modules/orders/transitions";
+import { requestReturn } from "@/lib/modules/fulfilment/returns";
 import { CommerceError } from "@/lib/modules/pricing/cart";
 import { getSetupStatus } from "@/lib/setup/status";
 
@@ -140,4 +141,32 @@ export async function cancelMyOrderAction(_: FormState, form: FormData): Promise
   }
   refresh();
   return ok("order_cancelled");
+}
+
+/** B8: the owning customer asks to return delivered items within the return window. */
+export async function requestReturnAction(_: FormState, form: FormData): Promise<FormState> {
+  const ctx = await customer();
+  if ("error" in ctx) return ctx.error;
+  const limit = await checkLimits([{ rule: LIMITS.returnRequest, key: ctx.principal.user.id }]);
+  if (limit === "limited") return fail("rate_limited");
+  if (limit === "unavailable") return fail("limits_unavailable");
+  const reason = field(form, "reason").trim().slice(0, 500);
+  const lineIds = field(form, "lineIds").split(",").filter((l) => /^[a-f0-9]{24}$/.test(l));
+  const values: Record<string, string> = { reason };
+  const lines: { lineId: string; qty: number }[] = [];
+  for (const id of lineIds) {
+    const raw = normaliseDigits(field(form, `qty_${id}`));
+    values[`qty_${id}`] = raw;
+    const qty = raw === "" ? 0 : Number(raw);
+    if (!Number.isInteger(qty) || qty < 0 || qty > 99) return fail("fix_fields", { [`qty_${id}`]: "number_invalid" }, values);
+    if (qty > 0) lines.push({ lineId: id, qty });
+  }
+  if (!reason) return fail("fix_fields", { reason: "required" }, values);
+  try {
+    await requestReturn(ctx.db, { userId: ctx.principal.user.id, orderNumber: field(form, "orderNumber"), lines, reason });
+  } catch (error) {
+    return commerceFail(error, values);
+  }
+  refresh();
+  return ok("return_requested");
 }

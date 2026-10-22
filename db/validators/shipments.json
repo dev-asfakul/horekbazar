@@ -1,0 +1,331 @@
+{
+  "$jsonSchema": {
+    "bsonType": "object",
+    "properties": {
+      "_id": {
+        "bsonType": "objectId"
+      },
+      "orderId": {
+        "bsonType": "objectId"
+      },
+      "orderNumber": {
+        "bsonType": "string",
+        "minLength": 1,
+        "maxLength": 40
+      },
+      "courier": {
+        "bsonType": "string",
+        "enum": [
+          "manual",
+          "steadfast",
+          "pathao",
+          "redx"
+        ]
+      },
+      "carrierName": {
+        "bsonType": "string",
+        "minLength": 1,
+        "maxLength": 80
+      },
+      "consignmentId": {
+        "bsonType": "string",
+        "minLength": 1,
+        "maxLength": 80,
+        "pattern": "^[A-Za-z0-9._\\-/]+$"
+      },
+      "trackingCode": {
+        "bsonType": "string",
+        "minLength": 1,
+        "maxLength": 80,
+        "pattern": "^[A-Za-z0-9._\\-/]+$"
+      },
+      "trackingUrl": {
+        "bsonType": "string",
+        "maxLength": 500,
+        "pattern": "^https:\\/\\/[^\\s]+$"
+      },
+      "invoice": {
+        "bsonType": "string",
+        "pattern": "^[A-Za-z0-9-]{3,60}$"
+      },
+      "codAmount": {
+        "bsonType": [
+          "int",
+          "long"
+        ],
+        "minimum": 0
+      },
+      "status": {
+        "bsonType": "string",
+        "enum": [
+          "draft",
+          "booked",
+          "handed_over",
+          "delivered",
+          "delivery_failed",
+          "returned",
+          "cancelled"
+        ]
+      },
+      "open": {
+        "bsonType": "bool"
+      },
+      "booking": {
+        "bsonType": "object",
+        "properties": {
+          "state": {
+            "bsonType": "string",
+            "enum": [
+              "requested",
+              "accepted",
+              "failed"
+            ]
+          },
+          "requestedAt": {
+            "bsonType": "date"
+          },
+          "settledAt": {
+            "bsonType": "date"
+          },
+          "error": {
+            "bsonType": "string",
+            "maxLength": 300
+          }
+        },
+        "required": [
+          "state",
+          "requestedAt"
+        ],
+        "additionalProperties": false
+      },
+      "courierStatus": {
+        "bsonType": "object",
+        "properties": {
+          "code": {
+            "bsonType": "string",
+            "enum": [
+              "in_review",
+              "pending",
+              "hold",
+              "delivered_approval_pending",
+              "partial_delivered_approval_pending",
+              "cancelled_approval_pending",
+              "unknown_approval_pending",
+              "delivered",
+              "partial_delivered",
+              "cancelled",
+              "unknown"
+            ]
+          },
+          "raw": {
+            "bsonType": "string",
+            "maxLength": 60
+          },
+          "rank": {
+            "bsonType": [
+              "int",
+              "long"
+            ],
+            "minimum": 0,
+            "maximum": 10
+          },
+          "at": {
+            "bsonType": "date"
+          }
+        },
+        "required": [
+          "code",
+          "raw",
+          "rank",
+          "at"
+        ],
+        "additionalProperties": false
+      },
+      "lastSync": {
+        "bsonType": "object",
+        "properties": {
+          "at": {
+            "bsonType": "date"
+          },
+          "ok": {
+            "bsonType": "bool"
+          },
+          "error": {
+            "bsonType": "string",
+            "maxLength": 300
+          }
+        },
+        "required": [
+          "at",
+          "ok"
+        ],
+        "additionalProperties": false
+      },
+      "checkpoints": {
+        "maxItems": 100,
+        "bsonType": "array",
+        "items": {
+          "bsonType": "object",
+          "properties": {
+            "code": {
+              "bsonType": "string",
+              "minLength": 1,
+              "maxLength": 60
+            },
+            "source": {
+              "bsonType": "string",
+              "enum": [
+                "staff",
+                "courier",
+                "system"
+              ]
+            },
+            "note": {
+              "bsonType": "string",
+              "maxLength": 300
+            },
+            "at": {
+              "bsonType": "date"
+            }
+          },
+          "required": [
+            "code",
+            "source",
+            "at"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "rtoInspection": {
+        "maxItems": 50,
+        "bsonType": "array",
+        "items": {
+          "bsonType": "object",
+          "properties": {
+            "lineId": {
+              "bsonType": "string",
+              "pattern": "^[a-f0-9]{24}$"
+            },
+            "outcome": {
+              "bsonType": "string",
+              "enum": [
+                "restock",
+                "write_off"
+              ]
+            },
+            "qty": {
+              "bsonType": [
+                "int",
+                "long"
+              ],
+              "minimum": 1,
+              "maximum": 99
+            },
+            "note": {
+              "bsonType": "string",
+              "maxLength": 300
+            },
+            "by": {
+              "bsonType": "object",
+              "properties": {
+                "type": {
+                  "bsonType": "string",
+                  "enum": [
+                    "staff",
+                    "system",
+                    "courier",
+                    "customer"
+                  ]
+                },
+                "id": {
+                  "bsonType": "string",
+                  "minLength": 1,
+                  "maxLength": 100
+                }
+              },
+              "required": [
+                "type",
+                "id"
+              ],
+              "additionalProperties": false
+            },
+            "at": {
+              "bsonType": "date"
+            }
+          },
+          "required": [
+            "lineId",
+            "outcome",
+            "qty",
+            "by",
+            "at"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "statusReason": {
+        "bsonType": "string",
+        "maxLength": 500
+      },
+      "handedOverAt": {
+        "bsonType": "date"
+      },
+      "closedAt": {
+        "bsonType": "date"
+      },
+      "createdBy": {
+        "bsonType": "object",
+        "properties": {
+          "type": {
+            "bsonType": "string",
+            "enum": [
+              "staff",
+              "system",
+              "courier",
+              "customer"
+            ]
+          },
+          "id": {
+            "bsonType": "string",
+            "minLength": 1,
+            "maxLength": 100
+          }
+        },
+        "required": [
+          "type",
+          "id"
+        ],
+        "additionalProperties": false
+      },
+      "version": {
+        "bsonType": [
+          "int",
+          "long"
+        ],
+        "minimum": 1
+      },
+      "createdAt": {
+        "bsonType": "date"
+      },
+      "updatedAt": {
+        "bsonType": "date"
+      }
+    },
+    "required": [
+      "_id",
+      "orderId",
+      "orderNumber",
+      "courier",
+      "invoice",
+      "codAmount",
+      "status",
+      "open",
+      "checkpoints",
+      "createdBy",
+      "version",
+      "createdAt",
+      "updatedAt"
+    ],
+    "additionalProperties": false
+  }
+}

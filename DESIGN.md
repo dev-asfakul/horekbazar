@@ -219,9 +219,9 @@ Evidence (file#pattern) is filled in during the build; Notes describe intent. Ma
 | edge | repeated checkout submit / network retry | required |  | backend | idempotency key |
 | edge | flash sale ends between cart and placement | required |  | backend | re-price at placement, show change |
 | edge | coupon limit reached by another shopper | required |  | backend | atomic usage counter |
-| edge | courier webhook delivered twice or out of order | required |  | integration | event id dedupe, monotonic status |
+| edge | courier webhook delivered twice or out of order | required | tests/integration/fulfilment.test.ts#a duplicate delivery is recorded once; tests/integration/fulfilment.test.ts#cannot regress the status | integration | event id dedupe, monotonic status |
 | edge | partial cancellation of one line | requested |  | backend |  |
-| edge | failed delivery and returned parcel | requested |  | backend |  |
+| edge | failed delivery and returned parcel | requested | tests/integration/fulfilment.test.ts#a failed delivery can go out again | backend |  |
 | edge | price or product edited after an order | required |  | backend | order lines snapshot |
 | edge | product deleted that appears in past orders | required |  | backend | archive, never hard delete |
 | edge | admin approves AI text while another admin edits | required |  | backend | version check |

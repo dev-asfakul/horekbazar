@@ -109,7 +109,8 @@ export async function failJob(
   return { dead, recorded: result.modifiedCount === 1 };
 }
 
-export type OutboxHandler = (job: OutboxDoc) => Promise<{ providerRef?: string }>;
+/** `ctx.db` lets a handler record the provider's answer (B8 courier booking writes the consignment id). */
+export type OutboxHandler = (job: OutboxDoc, ctx: { db: Db }) => Promise<{ providerRef?: string }>;
 
 /**
  * Runs one specific row immediately (for example a verification e-mail the shopper is waiting for).
@@ -133,7 +134,7 @@ export async function runOutboxJobNow(
   const handler = Object.hasOwn(handlers, job.type) ? handlers[job.type] : undefined;
   try {
     if (!handler) throw new Error(`no handler registered for ${job.type}`);
-    const outcome = await handler(job);
+    const outcome = await handler(job, { db });
     await completeJob(db, job._id, options.workerId, outcome.providerRef ? { providerRef: outcome.providerRef } : {});
     return "done";
   } catch (error) {
@@ -164,7 +165,7 @@ export async function drainOutbox(db: Db, handlers: Record<string, OutboxHandler
       const handler = Object.hasOwn(handlers, job.type) ? handlers[job.type] : undefined;
       try {
         if (!handler) throw new Error(`no handler registered for ${job.type}`);
-        const outcome = await handler(job);
+        const outcome = await handler(job, { db });
         if (await completeJob(db, job._id, options.workerId, outcome.providerRef ? { providerRef: outcome.providerRef } : {})) result.done++;
       } catch (error) {
         const failed = await failJob(db, job, options.workerId, error, options.maxAttempts ? { maxAttempts: options.maxAttempts } : {});

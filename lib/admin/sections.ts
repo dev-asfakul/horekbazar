@@ -3,7 +3,7 @@
 import type { Capability } from "@/lib/modules/identity/capabilities";
 import type { AdminPage } from "@/lib/modules/identity/paths";
 
-export type AdminSectionKey = "orders" | "products" | "categories" | "inventory" | "collections" | "homepage" | "banners" | "promotions" | "coupons" | "settings" | "delivery" | "staff" | "security" | "health";
+export type AdminSectionKey = "orders" | "shipments" | "returns" | "products" | "categories" | "inventory" | "collections" | "homepage" | "banners" | "promotions" | "coupons" | "settings" | "delivery" | "staff" | "security" | "health";
 
 export interface AdminSection {
   href: AdminPage;
@@ -14,6 +14,8 @@ export interface AdminSection {
 
 export const ADMIN_SECTIONS: AdminSection[] = [
   { href: "/admin/orders", key: "orders", capability: "orders.read" },
+  { href: "/admin/shipments", key: "shipments", capability: "fulfilment.write" },
+  { href: "/admin/returns", key: "returns", capability: "returns.process" },
   { href: "/admin/products", key: "products", capability: "catalogue.write" },
   { href: "/admin/categories", key: "categories", capability: "catalogue.write" },
   { href: "/admin/inventory", key: "inventory", capability: "inventory.adjust" },

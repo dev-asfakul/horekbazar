@@ -14,6 +14,7 @@ import { createAddress, normaliseBdPhone } from "@/lib/modules/orders/addresses"
 import { placeOrder, type PlaceOrderInput } from "@/lib/modules/orders/checkout";
 import type { OrderDoc } from "@/lib/modules/orders/schema";
 import { transitionOrder } from "@/lib/modules/orders/transitions";
+import { createShipment, transitionShipment } from "@/lib/modules/fulfilment/shipments";
 import { addToCart, applyCoupon, CommerceError } from "@/lib/modules/pricing/cart";
 import { quoteLines } from "@/lib/modules/pricing/quote";
 import { SETTINGS, SETTINGS_ID } from "@/lib/modules/settings/schema";
@@ -200,7 +201,10 @@ describe("transitions", () => {
     const id = new ObjectId(orderId);
     let v = 1;
     for (const to of ["confirmed", "processing", "ready_to_ship"] as const) v = (await transitionOrder(db, client, { orderId: id, expectedVersion: v, to, actor: staff })).version;
-    const both = await Promise.all([code(transitionOrder(db, client, { orderId: id, expectedVersion: v, to: "shipped", actor: staff })), code(transitionOrder(db, client, { orderId: id, expectedVersion: v, to: "shipped", actor: staff }))]);
+    // B8: shipping is a shipment step (a consignment must be recorded); the bare order step is refused.
+    expect(await code(transitionOrder(db, client, { orderId: id, expectedVersion: v, to: "shipped", actor: staff }))).toBe("shipment_required");
+    const s = await createShipment(db, { orderId: id, courier: "manual", carrierName: "Local rider", consignmentId: `C-${tag}-8b`, actor: staff });
+    const both = await Promise.all([code(transitionShipment(db, { shipmentId: s._id, expectedVersion: s.version, to: "handed_over", actor: staff })), code(transitionShipment(db, { shipmentId: s._id, expectedVersion: s.version, to: "handed_over", actor: staff }))]);
     expect(both.filter((x) => x === "ok").length).toBeGreaterThanOrEqual(1);
     expect(await stockOf(p.variant)).toMatchObject({ onHand: 2, reserved: 0, available: 2 });
     expect(await db.collection("inventoryLedger").countDocuments({ refId: orderId, kind: "commit" })).toBe(1);

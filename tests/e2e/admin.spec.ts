@@ -4,9 +4,11 @@
 import { expect, test } from "@playwright/test";
 import { watchCsp } from "./helpers";
 
+// B8: shipments and returns (the return detail page uses a well-formed id that does not exist).
+const B8_PAGES = ["/admin/shipments", "/admin/returns", "/admin/returns/66f0c0ffee0000000000abcd"];
 const B4_PAGES = ["/admin/products", "/admin/products/new", "/admin/products/66f0c0ffee0000000000abcd", "/admin/categories", "/admin/inventory", "/admin/collections", "/admin/homepage", "/admin/banners", "/admin/settings", "/admin/settings/delivery"];
 
-for (const path of ["/admin", "/admin/health", "/admin/staff", "/admin/security", "/admin/orders", ...B4_PAGES]) {
+for (const path of ["/admin", "/admin/health", "/admin/staff", "/admin/security", "/admin/orders", ...B4_PAGES, ...B8_PAGES]) {
   test(`${path} without a session redirects to sign-in, uncached`, async ({ request }) => {
     const r = await request.get(path, { maxRedirects: 0 });
     expect(r.status()).toBe(307);
@@ -53,6 +55,14 @@ test("job drain refuses requests while CRON_SECRET is not configured", async ({ 
   expect(await r.json()).toEqual({ error: "not_configured" });
   expect(r.headers()["cache-control"]).toBe("no-store");
   expect((await request.get("/api/jobs/drain")).status()).toBe(405);
+});
+
+test("courier webhook refuses requests while the courier is not configured (B8)", async ({ request }) => {
+  const r = await request.post("/api/webhooks/courier/steadfast", { headers: { authorization: "Bearer anything-at-all-123456" }, data: { consignment_id: 1, status: "delivered" } });
+  expect(r.status()).toBe(503);
+  expect(await r.json()).toEqual({ error: "not_configured" });
+  expect(r.headers()["cache-control"]).toBe("no-store");
+  expect((await request.post("/api/webhooks/courier/unknown", { data: {} })).status()).toBe(404);
 });
 
 test("media upload signing: cross-origin is refused, signed-out is 401, never a signature", async ({ request, baseURL }) => {
