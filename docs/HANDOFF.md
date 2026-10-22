@@ -1,6 +1,6 @@
 # Handoff for the next developer or agent
 
-Last updated 2026-10-22 (Asia/Dhaka), after B8 (fulfilment and returns). The B8 section below is
+Last updated 2026-10-22 (Asia/Dhaka), after B9 part 1 (reviews, rewards ledger, messaging). The B9 section below is
 the newest; older sections describe B4–B5 and are kept for their detail. Read this first, then `AGENTS.md`, `DESIGN.md` (Decision trace), `docs/BUILD-PLAN.md`
 §11 (phases), `docs/STATUS.md` and the newest entries of `docs/PROGRESS.md`.
 
@@ -15,7 +15,9 @@ the newest; older sections describe B4–B5 and are kept for their detail. Read 
 | Takeover audit docs | PR #10 (into `main`, open); its commits are also merged into `feat/b5-storefront` |
 | B6 cart and pricing, B7 checkout and orders | PR #22 into `preview/horekbazar-v1` (`77eb016`); on `main` through PR #23 (`4480140`) after `check` passed |
 | B8 fulfilment and returns | PR #24 (`feat/b8-fulfilment`) into `preview/horekbazar-v1`; see "B8 record" below |
-| B9 engagement → B11 hardening | not started; B9 needs the owner's approval of B8 |
+| B8 on `main` | yes: PR #25 (`e91afe2`); CI timeout fixed in PR #26 (`f3701cd`, push run success) |
+| B9 engagement (part 1) | branch `feat/b9-engagement`, PR into `main`, **not merged** (owner review); see "B9 record" |
+| B9 remainder → B11 hardening | not started |
 
 Branch flow: feature branch → PR into `preview/horekbazar-v1` → merge after CI is green → PR into `main`,
 merged by the agent after the required check passes (owner authorisation 2026-10-22, DESIGN.md Decision trace). `main` is protected (required check `check`).
@@ -88,6 +90,42 @@ Gate: FAIL (zero-variable `/` is the setup page; header search states; B6–B11 
    the schema), Banglish synonyms in search ("chal" does not find "Rice"). The SEO and 404 e2e tests
    take ~20 s each (request-context connection delay in the sandbox, not investigated).
 6. **B6 cart and pricing → B11 hardening**, per BUILD-PLAN §11, each with its checkpoint.
+
+## B9 record (2026-10-22)
+
+### What exists
+
+- **Reviews** (`lib/modules/reviews/`): eligible lines are delivered lines of the customer's own
+  `delivered`/`completed` orders; one review per customer per product (unique index); new reviews are
+  `pending`; staff publish, reject (reason required, kept) or reply; every step CAS on `version` and
+  audited. `/p/[slug]` shows published reviews only while `features.reviews` is on; no rating is shown
+  when there are none.
+- **Rewards** (`lib/modules/rewards/`): append-only `rewardLedger`, idempotency key per event.
+  `accrueForOrder` runs inside the order transition transaction when an order becomes `completed`
+  (only while `features.rewards` is on); `reverseForReturn` runs in `settleReturn`; staff
+  `adjustRewards` needs a reason and an Idempotency-Key and refuses a negative balance. Balance = sum of
+  entries that have not expired. Customer copy says loyalty discount points (domain-rules §5.7).
+- **Messaging** (`lib/modules/messaging/`): conversations with unread counters, optional link to the
+  customer's own order, open/closed, max 500 messages; `clientKey` makes a resubmit a no-op.
+  `components/store/AutoRefresh.tsx` refreshes every 20 s while the tab is visible (no Ably).
+- **Routes and capabilities:** `/account/{reviews,messages,messages/[id],rewards}`;
+  `/admin/reviews` (`reviews.moderate`), `/admin/messages` (`messages.reply`), `/admin/rewards`
+  (`rewards.write`) in `lib/modules/identity/paths.ts` and `lib/admin/sections.ts`; each action checks again.
+
+### Not done, and why
+
+- Rewards **redemption at checkout** and the **expiry job** (needs checkout pricing changes and a
+  scheduled job; rewards stay off for a BD production store until legal review **[L]**).
+- **Push notifications** (D3 library fit check not done), **campaigns**, **order e-mails** (Resend
+  domain not verified), **AI drafts** (SCHEMA: B10), **review photos**, **AggregateRating JSON-LD**.
+- `store_reward` refunds remain refused: domain-rules §5.7 "never paid out as a refund".
+- No B9 seed data on `horekbazar_dev` (would be fabricated customer activity).
+
+### Easy to break
+
+- Never insert into `rewardLedger` outside `insertEntry`: inside a transaction a duplicate-key error
+  aborts the whole transaction, so the key is checked first.
+- Keep `features.reviews` and `features.rewards` default off.
 
 ## B8 record (2026-10-22)
 
