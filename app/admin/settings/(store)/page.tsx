@@ -59,6 +59,11 @@ export default async function AdminSettingsPage() {
             { name: "wishlist", label: t("featureWishlist"), type: "checkbox", defaultValue: on(s.features.wishlist), wide: true },
             { name: "brands", label: t("featureBrands"), type: "checkbox", defaultValue: on(s.features.brands), wide: true },
             { name: "reviews", label: t("featureReviews"), type: "checkbox", defaultValue: on(s.features.reviews), wide: true },
+            { name: "couponsApplyToFlashSale", label: t("couponsApplyToFlashSale"), type: "checkbox", defaultValue: on(s.pricing.couponsApplyToFlashSale ?? false), wide: true },
+            { name: "numberPrefix", label: t("numberPrefix"), hint: t("numberPrefixHint"), defaultValue: s.orders?.numberPrefix ?? "", maxLength: 6, autoComplete: "off" },
+            { name: "pendingAlertHours", label: t("pendingAlertHours"), hint: t("pendingAlertHoursHint"), inputMode: "numeric", defaultValue: String(s.orders?.pendingAlertHours ?? 48) },
+            { name: "returnWindowDays", label: t("returnWindowDays"), hint: t("returnWindowDaysHint"), inputMode: "numeric", defaultValue: String(s.orders?.returnWindowDays ?? 7) },
+            { name: "checkout", label: t("featureCheckout"), hint: t("featureCheckoutHint"), type: "checkbox", defaultValue: on(s.features.checkout ?? false), wide: true },
           ]}
         />
       </section>

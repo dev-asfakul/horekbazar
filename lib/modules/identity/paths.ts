@@ -22,6 +22,8 @@ export const ADMIN_PAGE_CAPABILITY = {
   "/admin/collections": "merch.write",
   "/admin/homepage": "merch.write",
   "/admin/banners": "merch.write",
+  // B7 orders. Each status change checks its own capability in the server action.
+  "/admin/orders": "orders.read",
   // B6 pricing.
   "/admin/promotions": "promotions.write",
   "/admin/coupons": "promotions.write",

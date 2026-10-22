@@ -332,7 +332,7 @@ export async function updateGeneralSettingsAction(_: FormState, form: FormData):
   const ctx = await staffContext("settings.write");
   if ("error" in ctx) return ctx.error;
   const errors: Record<string, string> = {};
-  const values = snapshot(form, ["nameBn", "nameEn", "phone", "email", "addressBn", "addressEn", "hoursBn", "hoursEn", "fontPreset", "accent", "defaultLocale", "numerals", "grouping", "roundingUnit", "wishlist", "brands", "reviews"]);
+  const values = snapshot(form, ["nameBn", "nameEn", "phone", "email", "addressBn", "addressEn", "hoursBn", "hoursEn", "fontPreset", "accent", "defaultLocale", "numerals", "grouping", "roundingUnit", "wishlist", "brands", "reviews", "checkout", "couponsApplyToFlashSale", "numberPrefix", "pendingAlertHours", "returnWindowDays"]);
   const name = localized(form, "name", 60, true, errors);
   const phone = field(form, "phone").trim();
   if (phone && !/^01[3-9][0-9]{8}$/.test(phone)) errors.phone = "phone_format";
@@ -352,14 +352,21 @@ export async function updateGeneralSettingsAction(_: FormState, form: FormData):
   if (grouping !== "south_asian" && grouping !== "western") errors.grouping = "required";
   const roundingUnit = parseInteger(field(form, "roundingUnit"), 1, 10000);
   if (roundingUnit === null) errors.roundingUnit = "number_invalid";
-  if (Object.keys(errors).length || !name || roundingUnit === null) return fail("fix_fields", errors, values);
+  const numberPrefix = field(form, "numberPrefix").trim().toUpperCase();
+  if (numberPrefix && !/^[A-Z0-9]{2,6}$/.test(numberPrefix)) errors.numberPrefix = "order_prefix";
+  const pendingAlertHours = parseInteger(field(form, "pendingAlertHours") || "48", 1, 720);
+  if (pendingAlertHours === null) errors.pendingAlertHours = "number_invalid";
+  const returnWindowDays = parseInteger(field(form, "returnWindowDays") || "7", 0, 90);
+  if (returnWindowDays === null) errors.returnWindowDays = "number_invalid";
+  if (Object.keys(errors).length || !name || roundingUnit === null || pendingAlertHours === null || returnWindowDays === null) return fail("fix_fields", errors, values);
   try {
     await updateGeneralSettings(ctx.db, ctx.actor, versionOf(form), {
       store: { name, contact: { ...(phone ? { phone } : {}), ...(email ? { email } : {}), ...(address ? { address } : {}), ...(hours ? { hours } : {}) } },
       theme: { fontPreset: fontPreset as "khata" | "plain", accent: accent.toUpperCase() },
       locale: { default: def as "bn" | "en", numerals: numerals as "bengali" | "latin", grouping: grouping as "south_asian" | "western" },
-      pricing: { roundingUnit },
-      features: { wishlist: checked(form, "wishlist"), brands: checked(form, "brands"), reviews: checked(form, "reviews") },
+      pricing: { roundingUnit, couponsApplyToFlashSale: checked(form, "couponsApplyToFlashSale") },
+      features: { wishlist: checked(form, "wishlist"), brands: checked(form, "brands"), reviews: checked(form, "reviews"), checkout: checked(form, "checkout") },
+      orders: { pendingAlertHours, returnWindowDays, ...(numberPrefix ? { numberPrefix } : {}) },
     });
   } catch (error) {
     const code = serviceErrorCode(error);
