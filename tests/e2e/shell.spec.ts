@@ -31,7 +31,7 @@ for (const vp of widths) {
       );
       expect(order.slice(0, 5)).toEqual(["skip-link", "site-header", "main", "site-footer", "bottom-dock"]);
       await expect(page.locator("#site-search")).toBeVisible();
-      await expect(page.getByRole("link", { name: "বিভাগ" }).first()).toBeVisible();
+      await expect(page.getByRole("link", { name: "ক্যাটাগরি" }).first()).toBeVisible();
       await expect(page.locator("#bottom-dock")).toBeVisible({ visible: vp.dock });
       // Account and cart live in the header from band M up, and in the dock below it.
       await expect(page.locator(".header-action-wide").first()).toBeVisible({ visible: !vp.dock });
@@ -204,7 +204,7 @@ test.describe("language, fonts and motion", () => {
     await page.waitForURL("**/en/c/kitchen?page=2");
     await expect(page.locator("html")).toHaveAttribute("lang", "en");
     expect((await context.cookies()).find((c) => c.name === "hb-locale")?.value).toBe("en");
-    await page.getByRole("link", { name: "পাতাটি বাংলায় পড়ুন" }).click();
+    await page.getByRole("link", { name: "এই পেজটি বাংলায় দেখুন" }).click();
     await page.waitForURL((url) => url.pathname === "/c/kitchen" && url.search === "?page=2");
     await expect(page.locator("html")).toHaveAttribute("lang", "bn");
   });
@@ -266,9 +266,9 @@ test.describe("language, fonts and motion", () => {
 
 test.describe("states", () => {
   for (const [path, title, lang] of [
-    ["/nope", "পাতাটি পাওয়া যায়নি", "bn"],
+    ["/nope", "পেজটি পাওয়া যায়নি", "bn"],
     ["/en/nope", "Page not found", "en"],
-    ["/p", "পাতাটি পাওয়া যায়নি", "bn"],
+    ["/p", "পেজটি পাওয়া যায়নি", "bn"],
   ] as const) {
     test(`404 at ${path}`, async ({ page }) => {
       const response = await page.goto(path);

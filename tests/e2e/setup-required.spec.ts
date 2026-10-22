@@ -21,7 +21,7 @@ test("Bengali home at / shows setup-required with a nonce CSP and no violations"
   expect(response?.headers()["x-content-type-options"]).toBe("nosniff");
 
   await expect(page.locator("html")).toHaveAttribute("lang", "bn");
-  await expect(page.getByRole("heading", { level: 1 })).toHaveText("সেটআপ প্রয়োজন");
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("স্টোর সেটআপ বাকি");
   await expect(page.locator("main#main [data-state='setup-required']")).toContainText("MONGODB_URI");
   await expect(page.locator("#setup-required")).toHaveCount(1);
 

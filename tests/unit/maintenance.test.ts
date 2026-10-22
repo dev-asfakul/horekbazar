@@ -12,7 +12,7 @@ describe("maintenance", () => {
   it("renders a localised, noindex page styled only through the nonce (no style attributes)", () => {
     const html = maintenanceHtml("bn", "abc123==");
     expect(html).toContain('<html lang="bn"');
-    expect(html).toContain("রক্ষণাবেক্ষণ চলছে");
+    expect(html).toContain("সাইটের কাজ চলছে");
     expect(html).toContain('<meta name="robots" content="noindex">');
     expect(html).toContain('<style nonce="abc123==">');
     expect(html).not.toMatch(/\sstyle=/);
