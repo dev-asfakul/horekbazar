@@ -24,6 +24,9 @@ export const ADMIN_PAGE_CAPABILITY = {
   "/admin/banners": "merch.write",
   // B7 orders. Each status change checks its own capability in the server action.
   "/admin/orders": "orders.read",
+  // B8 fulfilment. Shipment steps need fulfilment.write; inspection, restock and refunds returns.process.
+  "/admin/shipments": "fulfilment.write",
+  "/admin/returns": "returns.process",
   // B6 pricing.
   "/admin/promotions": "promotions.write",
   "/admin/coupons": "promotions.write",

@@ -84,17 +84,32 @@ async function stockMove(db: Db, session: ClientSession, r: ReservationDoc, kind
   await db.collection(INVENTORY_LEDGER).insertOne(ledger, { session });
 }
 
+/**
+ * Steps that follow the parcel (B8). They run only inside the fulfilment service's transaction, so
+ * `shipped` always has a consignment recorded and the shipment record moves with the order.
+ */
+export const SHIPMENT_DRIVEN: readonly OrderStatus[] = ["shipped", "delivered", "delivery_failed", "returned_to_origin"];
+
 export async function transitionOrder(db: Db, client: MongoClient, input: TransitionInput): Promise<OrderDoc> {
+  return inTransaction(client, (session) => applyOrderTransition(db, session, { ...input, viaShipment: false }));
+}
+
+/**
+ * The transition body, inside the caller's transaction. Exported for the fulfilment service only
+ * (lib/modules/fulfilment/shipments.ts), which records the shipment change in the same transaction.
+ */
+export async function applyOrderTransition(db: Db, session: ClientSession, input: TransitionInput & { viaShipment: boolean }): Promise<OrderDoc> {
   const now = input.now ?? new Date();
   const reason = input.reason?.trim() || undefined;
   if (NEEDS_REASON.includes(input.to) && !reason) throw new CommerceError("reason_required");
-  return inTransaction(client, async (session) => {
+  {
     const orders = db.collection<OrderDoc>(ORDERS);
     const order = await orders.findOne({ _id: input.orderId }, { session });
     if (!order) throw new CommerceError("not_found");
     if (order.status === input.to && order.version === input.expectedVersion + 1) return order; // replay of the same step
     if (order.version !== input.expectedVersion) throw new CommerceError("version_conflict");
     if (!TRANSITIONS[order.status].includes(input.to)) throw new CommerceError("transition_not_allowed", { from: order.status, to: input.to });
+    if (SHIPMENT_DRIVEN.includes(input.to) && !input.viaShipment) throw new CommerceError("shipment_required");
     if (input.actor.type === "customer") {
       if (input.actor.id !== order.userId || input.to !== "cancelled_by_customer" || !CUSTOMER_CANCELLABLE.includes(order.status)) throw new CommerceError("transition_not_allowed");
     }
@@ -138,5 +153,5 @@ export async function transitionOrder(db: Db, client: MongoClient, input: Transi
       await recordAudit(db, { actor: { id: input.actor.id, role: input.actor.role }, action: "order.transition", target: { type: "order", id: order.orderNumber }, before: { status: order.status }, after: { status: input.to, ...(reason ? { reason } : {}) }, ip: input.actor.ip ?? null }, { session, now });
     }
     return { ...order, status: input.to, version, lines, statusChangedAt: now, updatedAt: now, ...(reason ? { statusReason: reason } : {}) };
-  });
+  }
 }

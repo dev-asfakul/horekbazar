@@ -43,6 +43,7 @@ import {
   PROMOTIONS,
   promotionSchema,
 } from "../modules/pricing/schema.ts";
+import { COURIER_EVENTS, courierEventSchema, RETURNS, returnSchema, SHIPMENTS, shipmentSchema } from "../modules/fulfilment/schema.ts";
 import { BANNERS, bannerSchema, COLLECTIONS, collectionSchema, HOME_SECTIONS, homeSectionSchema } from "../modules/merch/schema.ts";
 
 export interface CollectionSpec {
@@ -286,6 +287,43 @@ export const collections: CollectionSpec[] = [
     schema: orderEventSchema,
     indexes: [{ key: { orderId: 1, seq: 1 }, name: "orderId_seq_unique", unique: true }],
     serviceEnforced: ["seq = the order's new version, written in the transition's transaction"],
+  },
+  {
+    name: SHIPMENTS,
+    module: "fulfilment",
+    schema: shipmentSchema,
+    indexes: [
+      { key: { orderId: 1 }, name: "orderId_open_unique", unique: true, partialFilterExpression: { open: true } },
+      { key: { orderId: 1, createdAt: -1 }, name: "orderId_createdAt" },
+      { key: { courier: 1, consignmentId: 1 }, name: "courier_consignment_unique", unique: true, partialFilterExpression: { consignmentId: { $exists: true } } },
+      { key: { status: 1, updatedAt: -1 }, name: "status_updatedAt" },
+    ],
+    serviceEnforced: [
+      "status moves only through SHIPMENT_TRANSITIONS by compare-and-set on version, with the implied order step in the same transaction (fulfilment/shipments.ts)",
+      "open = status is draft | booked | handed_over | delivery_failed",
+      "courierStatus only moves forward (COURIER_STATUS_RANK) and is set only from the courier's status API",
+    ],
+  },
+  {
+    name: COURIER_EVENTS,
+    module: "fulfilment",
+    schema: courierEventSchema,
+    indexes: [
+      { key: { provider: 1, eventId: 1 }, name: "provider_eventId_unique", unique: true },
+      { key: { consignmentId: 1, receivedAt: -1 }, name: "consignmentId_receivedAt" },
+    ],
+    serviceEnforced: ["eventId = sha256 of the callback's identifying fields; unknown body fields are never stored (fulfilment/webhooks.ts)"],
+  },
+  {
+    name: RETURNS,
+    module: "fulfilment",
+    schema: returnSchema,
+    indexes: [
+      { key: { orderId: 1, createdAt: -1 }, name: "orderId_createdAt" },
+      { key: { userId: 1, createdAt: -1 }, name: "userId_createdAt" },
+      { key: { status: 1, updatedAt: -1 }, name: "status_updatedAt" },
+    ],
+    serviceEnforced: ["status moves only through RETURN_TRANSITIONS by compare-and-set on version; stock moves only from inspected (fulfilment/returns.ts)"],
   },
   {
     name: IDEMPOTENCY_KEYS,

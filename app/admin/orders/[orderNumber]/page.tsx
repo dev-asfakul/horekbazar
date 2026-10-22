@@ -1,6 +1,7 @@
 // /admin/orders/[orderNumber] (B7, orders.read). The order snapshot, the customer's number to call
 // before confirming (D13), the timeline, and one button per step the state machine allows from here
-// and the staff member's role can take. Reasons are shown to the customer.
+// and the staff member's role can take. Reasons are shown to the customer. Shipping, delivery and
+// the parcel coming back are recorded on the shipment panel (B8), never as a bare status change.
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -12,7 +13,9 @@ import { ADMIN_NUMBERS, adminPage, lt, money } from "@/lib/admin/page";
 import { getAdminLocale } from "@/lib/auth/server";
 import { displayBdPhone } from "@/lib/modules/orders/addresses";
 import { ORDER_EVENTS, ORDERS, type OrderDoc, type OrderEventDoc } from "@/lib/modules/orders/schema";
-import { TRANSITION_CAPABILITY, TRANSITIONS } from "@/lib/modules/orders/transitions";
+import { SHIPMENT_DRIVEN, TRANSITION_CAPABILITY, TRANSITIONS } from "@/lib/modules/orders/transitions";
+import { shipmentsForOrder } from "@/lib/modules/fulfilment/shipments";
+import { ShipmentPanel } from "@/components/admin/ShipmentPanel";
 import { decideAccess } from "@/lib/modules/identity/principal";
 import { OrderSummary } from "@/components/commerce/OrderSummary";
 
@@ -28,10 +31,11 @@ export default async function AdminOrderPage({ params }: PageProps<"/admin/order
   const { locale, db, messages, principal } = await adminPage("/admin/orders", `/admin/orders/${orderNumber}`);
   const order = await db.collection<OrderDoc>(ORDERS).findOne({ orderNumber });
   if (!order) notFound();
-  const events = await db.collection<OrderEventDoc>(ORDER_EVENTS).find({ orderId: order._id }).sort({ seq: 1 }).toArray();
+  const [events, shipments] = await Promise.all([db.collection<OrderEventDoc>(ORDER_EVENTS).find({ orderId: order._id }).sort({ seq: 1 }).toArray(), shipmentsForOrder(db, order._id)]);
   const t = await getTranslations({ locale, namespace: "admin.orders" });
   const date = new Intl.DateTimeFormat("en-GB", { dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Dhaka" });
-  const next = TRANSITIONS[order.status];
+  const all = TRANSITIONS[order.status];
+  const next = all.filter((to) => !SHIPMENT_DRIVEN.includes(to));
   const allowed = next.filter((to) => {
     const cap = TRANSITION_CAPABILITY[to];
     return cap && decideAccess(principal, cap).result === "allowed";
@@ -61,9 +65,10 @@ export default async function AdminOrderPage({ params }: PageProps<"/admin/order
         <h2 id="order-steps" className="admin-section-title">
           {t("status")}
         </h2>
-        {next.length === 0 ? (
+        {next.length < all.length ? <p className="field-hint">{t("shipmentDriven")}</p> : null}
+        {all.length === 0 ? (
           <p className="field-hint">{t("noNext")}</p>
-        ) : allowed.length === 0 ? (
+        ) : next.length === 0 ? null : allowed.length === 0 ? (
           <p className="field-hint">{t("deny")}</p>
         ) : (
           <div className="admin-actions" data-testid="order-actions">
@@ -84,6 +89,7 @@ export default async function AdminOrderPage({ params }: PageProps<"/admin/order
           </div>
         )}
       </section>
+      <ShipmentPanel order={order} shipments={shipments} principal={principal} messages={messages} />
       <section className="admin-section" aria-labelledby="order-customer">
         <h2 id="order-customer" className="admin-section-title">
           {t("address")}
