@@ -36,7 +36,7 @@ export default async function CategoriesPage({ params }: PageProps<"/[locale]/ca
           {store.tree.roots.map((root) => (
             <li key={root.id} className="dept">
               <h2 className="dept-title">
-                <Link href={localeHref(locale, categoryPath(root))} lang={shownLang(root.name)}>
+                <Link href={localeHref(locale, categoryPath(root))} lang={shownLang(root.name, locale)}>
                   {shown(root.name, locale)}
                 </Link>
               </h2>
@@ -44,7 +44,7 @@ export default async function CategoriesPage({ params }: PageProps<"/[locale]/ca
                 <ul className="dept-children">
                   {root.children.map((c) => (
                     <li key={c.id}>
-                      <Link href={localeHref(locale, categoryPath(c))} lang={shownLang(c.name)}>
+                      <Link href={localeHref(locale, categoryPath(c))} lang={shownLang(c.name, locale)}>
                         {shown(c.name, locale)}
                       </Link>
                     </li>

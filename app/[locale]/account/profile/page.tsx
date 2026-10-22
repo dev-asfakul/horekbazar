@@ -46,7 +46,7 @@ export default async function ProfilePage({ params }: PageProps<"/[locale]/accou
             type: "select",
             defaultValue: principal.user.locale,
             options: [
-              { value: "bn", label: "Banglish" },
+              { value: "bn", label: "বাংলা" },
               { value: "en", label: "English" },
             ],
           },

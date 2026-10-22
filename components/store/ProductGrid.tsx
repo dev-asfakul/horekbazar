@@ -43,7 +43,7 @@ export function ProductGrid({ items, locale, format, categoryNames, labels, eage
                   <LabelTile categoryName={categoryNames.get(p.primaryCategoryId) ?? ""} netQuantity={net} />
                 )}
               </span>
-              <span className="khata-name" lang={shownLang(p.name)}>
+              <span className="khata-name" lang={shownLang(p.name, locale)}>
                 {name}
               </span>
             </Link>

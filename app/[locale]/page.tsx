@@ -36,7 +36,7 @@ function CategoryTiles({ categories, locale, title }: { categories: StoreCategor
       <ul className="cat-tiles" data-testid="category-tiles">
         {categories.map((c) => (
           <li key={c.id}>
-            <Link className="cat-tile" href={localeHref(locale, categoryPath(c))} lang={shownLang(c.name)}>
+            <Link className="cat-tile" href={localeHref(locale, categoryPath(c))} lang={shownLang(c.name, locale)}>
               {shown(c.name, locale)}
             </Link>
           </li>
@@ -120,7 +120,7 @@ type Labels = Parameters<typeof ProductGrid>[0]["labels"];
 /** One published home section. A section whose referenced data is not published renders nothing. */
 async function renderSection(store: ReadyStore, locale: Locale, id: string, type: string, data: Record<string, unknown>, labels: Labels): Promise<React.ReactNode> {
   const text = (v: unknown) => shown(v as LocalizedText | undefined, locale);
-  const lang = (v: unknown) => shownLang(v as LocalizedText | undefined);
+  const lang = (v: unknown) => shownLang(v as LocalizedText | undefined, locale);
   const cloud = cloudinaryConfig();
   const t = await getTranslations({ locale, namespace: "store" });
   switch (type) {
@@ -194,7 +194,7 @@ async function renderSection(store: ReadyStore, locale: Locale, id: string, type
           <ul className="cat-tiles">
             {found.map((c) => (
               <li key={String(c._id)}>
-                <Link className="cat-tile" href={localeHref(locale, `/collections/${c.slug}`)} lang={shownLang(c.name)}>
+                <Link className="cat-tile" href={localeHref(locale, `/collections/${c.slug}`)} lang={shownLang(c.name, locale)}>
                   {shown(c.name, locale)}
                 </Link>
               </li>

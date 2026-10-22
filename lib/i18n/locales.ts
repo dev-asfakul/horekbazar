@@ -7,10 +7,10 @@ export type Locale = (typeof locales)[number];
 export const defaultLocale: Locale = "bn";
 
 /**
- * BCP 47 tag for `lang` and `hreflang`: the "bn" storefront is Bangla written in Latin script
- * (Banglish, owner decision 2026-10-22), so it is "bn-Latn"; the route segment stays "bn".
+ * BCP 47 tag for `lang` and `hreflang`. The "bn" storefront is Banglish written in Bengali script
+ * (conversational Bangla with English words in Bengali letters, e.g. "সেটআপ বাকি"; owner, 2026-10-22).
  */
-export const htmlLang: Record<Locale, string> = { bn: "bn-Latn", en: "en" };
+export const htmlLang: Record<Locale, string> = { bn: "bn", en: "en" };
 
 export function isLocale(value: string): value is Locale {
   return (locales as readonly string[]).includes(value);

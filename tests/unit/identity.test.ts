@@ -111,7 +111,7 @@ describe("normalisePhone", () => {
 describe("account e-mails", () => {
   it("escapes values, includes the link, uses the recipient's language, no em dashes", () => {
     const m = renderEmail({ template: "verify-email", to: "a@example.com", locale: "bn", name: "<b>x</b>", url: "https://shop.example/verify?t=a&b" });
-    expect(m.subject).toContain("Apnar email verify korun");
+    expect(m.subject).toContain("ইমেইল");
     expect(m.text).toContain("https://shop.example/verify?t=a&b");
     expect(m.html).toContain("&lt;b&gt;x&lt;/b&gt;");
     expect(m.html).toContain("t=a&amp;b");

@@ -37,12 +37,12 @@ export default async function CollectionsPage({ params }: PageProps<"/[locale]/c
           {list.map((c) => (
             <li key={String(c._id)} className="dept">
               <h2 className="dept-title">
-                <Link href={localeHref(locale, `/collections/${c.slug}`)} lang={shownLang(c.name)}>
+                <Link href={localeHref(locale, `/collections/${c.slug}`)} lang={shownLang(c.name, locale)}>
                   {shown(c.name, locale)}
                 </Link>
               </h2>
               {c.description ? (
-                <p className="field-hint" lang={shownLang(c.description)}>
+                <p className="field-hint" lang={shownLang(c.description, locale)}>
                   {shown(c.description, locale)}
                 </p>
               ) : null}

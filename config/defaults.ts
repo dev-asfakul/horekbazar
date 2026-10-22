@@ -10,9 +10,9 @@ export interface ThemeAndLocaleSettings {
 }
 
 /** SCHEMA.md → Settings: `theme.fontPreset` (DESIGN.md: "plain" is the template default with the lightest
- *  load; HorekBazar's own store selects "khata" in settings), `locale.numerals` default `latin` (Banglish storefront, owner decision 2026-10-22),
+ *  load; HorekBazar's own store selects "khata" in settings), `locale.numerals` default `bengali` on "/",
  *  `locale.grouping` default `south_asian`. */
 export const freshInstallDefaults: ThemeAndLocaleSettings = {
   theme: { fontPreset: "plain" },
-  locale: { numerals: "latin", grouping: "south_asian" },
+  locale: { numerals: "bengali", grouping: "south_asian" },
 };
