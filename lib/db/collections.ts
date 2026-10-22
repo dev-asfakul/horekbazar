@@ -19,6 +19,18 @@ import {
 } from "../modules/catalogue/schema.ts";
 import { CATALOGUE_LOCKS, catalogueLockSchema } from "../modules/catalogue/locks.ts";
 import { SETTINGS, settingsSchema } from "../modules/settings/schema.ts";
+import {
+  CARTS,
+  cartSchema,
+  COUPON_CUSTOMER_USAGE,
+  COUPON_REDEMPTIONS,
+  couponCustomerUsageSchema,
+  couponRedemptionSchema,
+  COUPONS,
+  couponSchema,
+  PROMOTIONS,
+  promotionSchema,
+} from "../modules/pricing/schema.ts";
 import { BANNERS, bannerSchema, COLLECTIONS, collectionSchema, HOME_SECTIONS, homeSectionSchema } from "../modules/merch/schema.ts";
 
 export interface CollectionSpec {
@@ -181,6 +193,50 @@ export const collections: CollectionSpec[] = [
     schema: bannerSchema,
     indexes: [{ key: { placement: 1, status: 1 }, name: "placement_status" }],
     serviceEnforced: ["internal href only; not hidden or deleted while a published section uses it (merch/merch.ts)"],
+  },
+  // B6 pricing and cart (domain-rules §5, §4.1).
+  {
+    name: PROMOTIONS,
+    module: "pricing",
+    schema: promotionSchema,
+    indexes: [{ key: { status: 1, startsAt: 1, endsAt: 1 }, name: "status_window" }],
+    serviceEnforced: ["a flash sale has a real end time after its start; sold ≤ cap through a guarded $inc at placement (pricing/admin.ts, orders/checkout.ts)"],
+  },
+  {
+    name: COUPONS,
+    module: "pricing",
+    schema: couponSchema,
+    indexes: [{ key: { code: 1 }, name: "code_unique", unique: true }],
+    serviceEnforced: ["used < usageLimit through a guarded $inc inside the placement transaction; percent value 1–100 (pricing/admin.ts, orders/checkout.ts)"],
+  },
+  {
+    name: COUPON_REDEMPTIONS,
+    module: "pricing",
+    schema: couponRedemptionSchema,
+    indexes: [
+      { key: { orderId: 1 }, name: "orderId_unique", unique: true },
+      { key: { couponId: 1, status: 1 }, name: "couponId_status" },
+    ],
+    serviceEnforced: ["held → consumed | released by compare-and-set only (orders/transitions.ts)"],
+  },
+  {
+    name: COUPON_CUSTOMER_USAGE,
+    module: "pricing",
+    schema: couponCustomerUsageSchema,
+    indexes: [{ key: { couponId: 1, userId: 1 }, name: "couponId_userId_unique", unique: true }],
+    serviceEnforced: ["count < perCustomerLimit through a guarded $inc (orders/checkout.ts)"],
+  },
+  {
+    name: CARTS,
+    module: "pricing",
+    schema: cartSchema,
+    indexes: [
+      { key: { userId: 1 }, name: "userId_active_unique", unique: true, partialFilterExpression: { status: "active", userId: { $exists: true } } },
+      { key: { deviceId: 1 }, name: "deviceId_active_unique", unique: true, partialFilterExpression: { status: "active", deviceId: { $exists: true } } },
+      // Device carts nobody came back to are removed after 60 days; customer carts are kept.
+      { key: { updatedAt: 1 }, name: "device_cart_ttl", expireAfterSeconds: 60 * 24 * 3600, partialFilterExpression: { deviceId: { $exists: true } } },
+    ],
+    serviceEnforced: ["exactly one of userId/deviceId; every change is a compare-and-set on version (pricing/cart.ts)"],
   },
 ];
 

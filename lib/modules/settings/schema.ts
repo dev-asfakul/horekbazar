@@ -15,6 +15,8 @@ export const deliveryZoneSchema = z
     id: z.string().min(2).max(40).regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
     name: localizedText(60),
     fee: money(),
+    /** Free delivery at or above this merchandise subtotal after the coupon (domain-rules §5.4). */
+    freeThreshold: money().optional(),
     estimate: localizedText(80),
     /** Location codes; empty until D12 chooses a location dataset (SCHEMA.md → DeliveryZone). */
     areas: z.array(z.string().max(40)).max(0),
@@ -44,8 +46,33 @@ export const settingsSchema = z
       .object({ default: z.enum(["bn", "en"]), numerals: z.enum(["bengali", "latin"]), grouping: z.enum(["south_asian", "western"]) })
       .strict(),
     delivery: z.object({ zones: z.array(deliveryZoneSchema).max(20) }).strict(),
-    pricing: z.object({ roundingUnit: zInt().min(1).max(10000) }).strict(),
-    features: z.object({ wishlist: z.boolean(), brands: z.boolean(), reviews: z.boolean() }).strict(),
+    pricing: z
+      .object({
+        roundingUnit: zInt().min(1).max(10000),
+        /** Coupons also discount flash-sale lines (domain-rules §5.3; default false). */
+        couponsApplyToFlashSale: z.boolean().optional(),
+      })
+      .strict(),
+    features: z
+      .object({
+        wishlist: z.boolean(),
+        brands: z.boolean(),
+        reviews: z.boolean(),
+        /** Online ordering (B7). Off until the owner turns it on; never on for a store with sample products. */
+        checkout: z.boolean().optional(),
+        /** Loyalty points (domain-rules §5.7); stays off for a BD production store until legal review. */
+        rewards: z.boolean().optional(),
+      })
+      .strict(),
+    /** Order rules (domain-rules §3): self-cancel states and the return window. */
+    orders: z
+      .object({
+        returnWindowDays: zInt().min(0).max(90),
+        /** Flag pending orders older than this to operators (default 48 h). */
+        pendingAlertHours: zInt().min(1).max(720),
+      })
+      .strict()
+      .optional(),
     version: zInt().min(1),
     updatedAt: zDate(),
   })

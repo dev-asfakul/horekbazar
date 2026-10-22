@@ -26,6 +26,10 @@ export const serverEnvSchema = z.object({
   AUTH_GOOGLE_CLIENT_SECRET: optional(z.string()),
   // One-time first-owner setup token (D23 hardening, proposed): the deployer sets it, /admin/setup asks for it.
   SETUP_TOKEN: optional(z.string().min(16, "at least 16 characters")),
+  // First Owner from deployment credentials (npm run owner:bootstrap). Server-only; never logged.
+  OWNER_EMAIL: optional(z.string().regex(/^[^\s@]+@[^\s@]+\.[^\s@]+$/, "an email address")),
+  OWNER_PASSWORD: optional(z.string().min(10, "at least 10 characters").max(128)),
+  OWNER_NAME: optional(z.string().max(80)),
 
   UPSTASH_REDIS_REST_URL: optional(z.string().url()),
   UPSTASH_REDIS_REST_TOKEN: optional(z.string()),

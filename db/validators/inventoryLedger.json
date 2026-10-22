@@ -47,7 +47,8 @@
             "bsonType": "string",
             "enum": [
               "staff",
-              "system"
+              "system",
+              "customer"
             ]
           },
           "id": {

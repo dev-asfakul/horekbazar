@@ -89,6 +89,8 @@ export const productSchema = z
     media: z.array(productMediaSchema).max(12),
     status: z.enum(CATALOGUE_STATUSES),
     seo: seoSchema.optional(),
+    /** Delivery is free when every cart line carries this flag (domain-rules §5.4). */
+    freeDelivery: z.boolean().optional(),
     publishedAt: zDate().optional(),
     sample,
     version: zInt().min(1),
@@ -112,6 +114,8 @@ export const variantSchema = z
     netQuantity: z.object({ value: z.number().positive().max(100000), unit: z.enum(NET_UNITS), verified: z.boolean() }).strict().optional(),
     price: money(),
     compareAt: money().optional(),
+    /** Quantity tiers (domain-rules §5.2 step 3): unit price from `minQty` units, below the base price. */
+    tiers: z.array(z.object({ minQty: zInt().min(2).max(1000), unitPrice: money() }).strict()).max(5).optional(),
     barcode: z.string().regex(/^[0-9A-Za-z-]+$/).max(40).optional(),
     weightGrams: zInt().min(1).max(1_000_000).optional(),
     position: zInt().min(0).max(1000),
@@ -150,11 +154,15 @@ export const inventoryLedgerSchema = z
     _id: zObjectId(),
     variantId: zObjectId(),
     kind: z.enum(LEDGER_KINDS),
-    /** Signed change to onHand (receive and restock > 0; adjust may be negative). */
+    /**
+     * receive/adjust/commit/restock: the signed change to onHand (commit is negative). reserve and
+     * release: the quantity added to or removed from `reserved`. write_off: the quantity written off
+     * (onHand was already deducted at commit).
+     */
     qty: zInt(),
     onHandAfter: zInt().min(0),
     reservedAfter: zInt().min(0),
-    actor: z.object({ type: z.enum(["staff", "system"]), id: z.string().min(1).max(100) }).strict(),
+    actor: z.object({ type: z.enum(["staff", "system", "customer"]), id: z.string().min(1).max(100) }).strict(),
     reason: z.string().trim().min(1).max(300).optional(),
     refType: z.enum(["order", "rto", "return", "stock"]),
     refId: z.string().regex(/^[A-Za-z0-9_-]+$/).max(100),

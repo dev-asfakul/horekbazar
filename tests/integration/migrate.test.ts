@@ -80,6 +80,26 @@ const fixtures: Record<string, { valid: Record<string, unknown>; invalid: Record
     valid: { _id: "categoryTree", seq: 1, updatedAt: now },
     invalid: { _id: "anything", seq: 0, updatedAt: now },
   },
+  promotions: {
+    valid: { _id: new ObjectId(), name: { bn: "অফার" }, kind: "flash_sale", discount: { type: "percent", value: 10 }, scope: { type: "all", ids: [] }, startsAt: now, endsAt: now, sold: 0, status: "draft", version: 1, createdAt: now, updatedAt: now },
+    invalid: { _id: new ObjectId(), name: { bn: "অফার" }, kind: "flash_sale", discount: { type: "percent", value: 0 }, scope: { type: "all", ids: [] }, startsAt: now, sold: -1, status: "draft", version: 1, createdAt: now, updatedAt: now },
+  },
+  coupons: {
+    valid: { _id: new ObjectId(), code: "SAVE10", kind: "percent", value: 10, used: 0, startsAt: now, eligibility: { firstOrderOnly: false, categoryIds: [], productIds: [], excludeCategoryIds: [], excludeProductIds: [], zoneIds: [] }, status: "active", version: 1, createdAt: now, updatedAt: now },
+    invalid: { _id: new ObjectId(), code: "save 10", kind: "percent", value: 10, used: 0, startsAt: now, eligibility: { firstOrderOnly: false, categoryIds: [], productIds: [], excludeCategoryIds: [], excludeProductIds: [], zoneIds: [] }, status: "active", version: 1, createdAt: now, updatedAt: now },
+  },
+  couponRedemptions: {
+    valid: { _id: new ObjectId(), couponId: new ObjectId(), userId: "u1", orderId: new ObjectId(), amount: 100, status: "held", createdAt: now, updatedAt: now },
+    invalid: { _id: new ObjectId(), couponId: new ObjectId(), userId: "u1", orderId: new ObjectId(), amount: -1, status: "spent", createdAt: now, updatedAt: now },
+  },
+  couponCustomerUsage: {
+    valid: { _id: new ObjectId(), couponId: new ObjectId(), userId: "u1", count: 1, updatedAt: now },
+    invalid: { _id: new ObjectId(), couponId: new ObjectId(), userId: "u1", count: -1, updatedAt: now },
+  },
+  carts: {
+    valid: { _id: new ObjectId(), userId: "u1", lines: [{ variantId: new ObjectId(), quantity: 2, addedAt: now }], status: "active", version: 1, createdAt: now, updatedAt: now },
+    invalid: { _id: new ObjectId(), userId: "u1", lines: [{ variantId: new ObjectId(), quantity: 0, addedAt: now }], status: "active", version: 1, createdAt: now, updatedAt: now },
+  },
 };
 
 describe("db:migrate on a replica set", () => {

@@ -200,6 +200,29 @@
                   ],
                   "additionalProperties": false
                 },
+                "freeThreshold": {
+                  "bsonType": "object",
+                  "properties": {
+                    "amountMinor": {
+                      "bsonType": [
+                        "int",
+                        "long"
+                      ],
+                      "minimum": 0
+                    },
+                    "currency": {
+                      "bsonType": "string",
+                      "enum": [
+                        "BDT"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "amountMinor",
+                    "currency"
+                  ],
+                  "additionalProperties": false
+                },
                 "estimate": {
                   "bsonType": "object",
                   "properties": {
@@ -258,6 +281,9 @@
             ],
             "minimum": 1,
             "maximum": 10000
+          },
+          "couponsApplyToFlashSale": {
+            "bsonType": "bool"
           }
         },
         "required": [
@@ -276,12 +302,44 @@
           },
           "reviews": {
             "bsonType": "bool"
+          },
+          "checkout": {
+            "bsonType": "bool"
+          },
+          "rewards": {
+            "bsonType": "bool"
           }
         },
         "required": [
           "wishlist",
           "brands",
           "reviews"
+        ],
+        "additionalProperties": false
+      },
+      "orders": {
+        "bsonType": "object",
+        "properties": {
+          "returnWindowDays": {
+            "bsonType": [
+              "int",
+              "long"
+            ],
+            "minimum": 0,
+            "maximum": 90
+          },
+          "pendingAlertHours": {
+            "bsonType": [
+              "int",
+              "long"
+            ],
+            "minimum": 1,
+            "maximum": 720
+          }
+        },
+        "required": [
+          "returnWindowDays",
+          "pendingAlertHours"
         ],
         "additionalProperties": false
       },

@@ -247,6 +247,9 @@
         },
         "additionalProperties": false
       },
+      "freeDelivery": {
+        "bsonType": "bool"
+      },
       "publishedAt": {
         "bsonType": "date"
       },
