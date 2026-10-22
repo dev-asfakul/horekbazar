@@ -64,6 +64,15 @@ Gate: FAIL (zero-variable `/` is the setup page; header search states; B6–B11 
 - **`npm run showcase:images`**: public-domain/CC0 photos from `catalogue/horekbazar/showcase-images.json`
   uploaded to Cloudinary (`horekbazar/products/showcase-<slug>`) and linked with `addProductMedia`. See
   PROGRESS for the count that actually landed; Wikimedia throttles bulk downloads (429), rerun to finish.
+- **Merchandising (2026-10-22, `npm run showcase`):** 5 published collections from
+  `catalogue/horekbazar/showcase-merch.json` (kitchen-staples, home-cleaning, school-ready, phone-and-power,
+  everyday-cotton-wear) and 8 published home sections (hero, category tiles, 5 product rails, collection
+  grid). Created only when absent, so admin edits survive reruns. No banners (they need an image).
+- **Owner sign-in (open):** the Owner account has a hashed password but `emailVerified: false` and no
+  session; auth requires a verified e-mail. The owner opens the verification e-mail already sent to that
+  inbox, or runs `OWNER_EMAIL=… OWNER_PASSWORD=… npm run owner:bootstrap -- --sync-password` locally.
+  Authentication was not changed. Store contact (phone, e-mail, address, hours) is empty on purpose:
+  the owner enters real details in `/admin/settings`.
 - From this sandbox the Atlas SRV name does not resolve: run scripts with a seed-list `MONGODB_URI`
   **and** `MONGODB_DB=horekbazar_dev`.
 
@@ -77,12 +86,12 @@ Gate: FAIL (zero-variable `/` is the setup page; header search states; B6–B11 
    `storefront_text`). Pass **both** `MONGODB_URI` and `MONGODB_DB`: a first run without `MONGODB_DB` went to
    the default database `horekbazar`, created it with 6 staff roles; it was verified to hold only those 7
    documents and dropped. The sandbox cannot resolve the Atlas SRV name; use a standard seed-list URI.
-3. **Catalogue images.** Requested by the owner (2026-10-22): upload images to Cloudinary and link
-   them. Conflicts with the approved `catalogue/horekbazar/IMAGE-ACQUISITION.md` (no generic photo as a
-   product photo; rights recorded). Smallest compliant path: images with a real licence (own photos,
-   supplier permission, or openly licensed photos marked as illustrative), uploaded through the existing
-   signed upload (`/api/media/sign`, `addProductMediaAction`) or a script that calls
-   `addProductMedia` so the `rights` field and audit are filled; record each in `MEDIA.md`. Not started.
+3. **Catalogue images.** 91 of 144 showcase products have one reviewed CC0/public-domain photo
+   (`catalogue/horekbazar/showcase-images.json`, source and licence per entry, uploaded with
+   `npm run showcase:images`, linked with `addProductMedia`; all 91 verified in Cloudinary and served by
+   the CDN, 2026-10-22). The other 53 keep the label tile because no unbranded, licensed photo was found
+   (e.g. powdered spices, oils, cleaners, cosmetics, lungi/panjabi/three-piece, power banks, kettle, rice
+   cooker). For a real store: own or supplier photos through `/admin/products` (signed upload).
 4. **Catalogue enrichment** (brands, more attributes, Banglish display names): needs the owner's review
    of representative names first (`docs/BANGLISH-PROPOSAL.md`), then a schema field for display names.
 5. **B5 leftovers:** header search suggestions (prefix API), mega-menu ≥1280 px (the `/categories` page

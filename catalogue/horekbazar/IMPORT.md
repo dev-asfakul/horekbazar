@@ -12,6 +12,19 @@ The owner changed D11 on 2026-10-22: "for catelog source generate some catalogue
 
 This change does **not** approve any record for production. The gated process below still applies to real catalogue content.
 
+## Showcase population of the development database (`npm run showcase`, `npm run showcase:images`)
+
+After `npm run db:seed -- --confirm`, two scripts make `horekbazar_dev` browsable as a stocked shop. Both refuse any database whose name does not end in `_dev`, print the database name (never the URI), are dry runs unless `--confirm` is passed, and write only through the admin services with the store Owner as the actor (versions, publish rules, inventory ledger and audit log apply).
+
+| Step | What it changes | Rerun |
+|---|---|---|
+| `npm run showcase -- --confirm` | Store settings (only if never saved), delivery zones `dhaka-city` and `outside-dhaka` (only if the id is absent), publishes categories and products that are drafts and were never published, opening stock through `moveStock` with the fixed adjustment id `showcase-open-<variantId>` (variants whose seeded quantity is 0 stay out of stock), the collections in `showcase-merch.json` (only if the slug is absent; published products only) and the home sections (hero, category tiles, one product rail per collection, collection grid; only while the store has no home section) | No write: settings saved, zones present, receipts replay, collections and sections left as they are. A record the admin unpublished or edited is never changed back |
+| `npm run showcase:images -- --confirm` | Downloads each photo in `showcase-images.json` (CC0 or public domain; source, creator, licence and landing page recorded per entry), uploads it to Cloudinary as `horekbazar/products/showcase-<slug>` and links it with `addProductMedia` (alt text and rights line set) | Products that already have the image are skipped |
+
+Verify: the script output counts; in the database, products with `media`, collections and home sections published, stock rows equal to ledger sums; in Cloudinary, every linked `publicId` present under `horekbazar/products/`; on the storefront, `/`, `/collections/<slug>`, `/c/<slug>`, `/search` and `/p/<slug>` (needs `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY` and `CLOUDINARY_API_SECRET` on the server, otherwise products show their label tile). From the agent sandbox the Atlas SRV name does not resolve: run with a seed-list `MONGODB_URI` and `MONGODB_DB=horekbazar_dev`.
+
+Products without a suitable unbranded, licensed photo keep the label tile; no stand-in image is linked.
+
 ## Gated process for real (approved) catalogue content
 
 **Production import is NOT allowed.** `meta.importAllowed` stays `false`: it refers to importing this package as real catalogue content, which still needs record-level approval. The steps below describe that future process.

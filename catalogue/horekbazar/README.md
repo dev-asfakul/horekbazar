@@ -25,7 +25,9 @@ A proposed starter catalogue for the HorekBazar flagship store, generated from s
 | `image-manifest.json` + [`IMAGE-ACQUISITION.md`](IMAGE-ACQUISITION.md) | Image slots (all missing) and the acquisition and licence checklist |
 | `sources.json` + [`SOURCES.md`](SOURCES.md) | Every source used, with URLs, dates and reliability notes |
 | [`REVIEW-CHECKLIST.md`](REVIEW-CHECKLIST.md) | What the owner must check before approving any record |
-| [`IMPORT.md`](IMPORT.md) | Explicit, gated import instructions |
+| [`IMPORT.md`](IMPORT.md) | Explicit, gated import instructions, and the showcase population steps for `horekbazar_dev` |
+| `showcase-images.json` | Reviewed CC0/public-domain photos for the showcase database, one entry per product with source and licence |
+| `showcase-merch.json` | Showcase collections and homepage sections (copy and product slugs) used by `npm run showcase` |
 | `tools/catalogue.mjs` | Zero-dependency validator (`validate`) and price report generator (`report`) |
 
 ## Hard facts about the draft
