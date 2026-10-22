@@ -185,7 +185,8 @@ env file that was deleted after use. Vercel and normal machines resolve SRV fine
    `npm run db:seed -- --remove-samples --confirm` when no longer wanted; they cannot be published
    outside a `_dev` database. The guard is the database name, so confirm the public preview does not
    use `horekbazar_dev` (recommend `horekbazar_preview`).
-9. The preview Owner form is live: create the Owner soon (then `SETUP_TOKEN` no longer matters) and
+9. Owner creation: follow `docs/OWNER-SETUP.md`. The preview Owner form is live: create the Owner soon (then `SETUP_TOKEN` no longer matters) and
    confirm whether `e517154` was requested.
 10. Run the gate with a trailing slash (`http://127.0.0.1:3000/`); without it the session check
    reports a false back-button failure (PROGRESS, takeover audit).
+11. Banglish copy: answer the decisions in `docs/BANGLISH-PROPOSAL.md` before any rewrite.

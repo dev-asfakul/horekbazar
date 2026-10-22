@@ -2,6 +2,16 @@
 
 Newest first. Each entry: date, phase, done, decided, open, next.
 
+## 2026-10-22 — Owner-supplied environment, Owner setup verification, Banglish audit (no application code changed)
+
+- **Owner input:** environment values for the showcase deployment ("horekbazar"), to be used locally too; "use seed data and push to database directly"; customer copy to be "Banglish-first"; Owner setup and password-security requirements. Values were pasted in chat, so they count as exposed: rotate before any production use.
+- **Local environment:** `.env.local` written in the sandbox only (mode 600; git-ignored by `.env.*`; `git ls-files` confirms untracked). Never committed or printed.
+- **Database (read-only checks):** the URI's database is `horekbazar_dev` on cluster `horekbazar.5d2bdw0`; the sandbox resolver cannot answer SRV, so a standard seed-list URI from public DNS (DoH) was used in memory. 21 collections; 39 categories, 144 products (all `draft`, `sample: true`), 235 variants, 235 stock rows (0 with stock on hand), 418 audit entries, 0 users, 0 settings, 6 staff roles. The user still has `atlasAdmin@admin`. `npm run db:seed` (dry run) on `horekbazar_dev`: 0 to create, 39/144/235 already present, so `--confirm` was not run (nothing to write). No product, variant or category text contains demo/mock/dummy/fake/placeholder/lorem/test/sample/example; the `sample` flag is internal (admin filter, publish guard, removal) and not shown to shoppers.
+- **Services (read-only):** Upstash `PING` → `PONG`; Cloudinary Admin `ping` → 200; Ably `/time` with the key → 200; Resend key is send-only (`restricted_api_key`), so domain status cannot be read with it. `EMAIL_FROM` is `onboarding@resend.dev`, which Resend delivers only to the Resend account owner's address.
+- **Owner setup:** implemented (B3, D23) and verified locally end to end, 19 checks; details and the owner's steps are in `docs/OWNER-SETUP.md`. Found on the way: email is sent inline at queue time (`runOutboxJobNow`), not only by the drain, so an early local run made one send attempt to an `example.test` address, which Resend rejected; later runs used a non-working key. `setupRequired` in `/api/health` stays `true` until settings also exist (by design). No Owner was created on `horekbazar_dev`.
+- **Banglish:** audit and proposal in `docs/BANGLISH-PROPOSAL.md`; owner decisions L1–L5 there. No copy changed.
+- **Next:** owner decisions (Banglish scope, `e517154`, preview database, visibility); Owner created by the owner; B5 needs approval.
+
 ## 2026-10-22 — Takeover audit and B4 closeout check (no application code changed)
 
 - **Scope:** new agent takeover. Read-only audit of repository, CI, deployment and gate; this docs-only branch `docs/takeover-audit-2026-10-22` from `main` `f7ca4ea`. B5 not started (not approved).
