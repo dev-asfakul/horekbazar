@@ -2185,3 +2185,82 @@ select[multiple].field-input {
 .search-page-row .field-input {
   flex: 1;
 }
+
+/* Loading skeletons (static, no shimmer; DESIGN.md). Sized like the content they stand in for. */
+.sk-bone {
+  display: block;
+  max-width: 100%;
+  border-radius: 6px;
+  background: color-mix(in oklab, var(--color-ink, #2b2620) 9%, transparent);
+}
+.sk-media {
+  background: color-mix(in oklab, var(--color-ink, #2b2620) 7%, transparent);
+}
+.khata-item .sk-bone + .sk-bone { margin-top: 0.4rem; }
+.khata-item .khata-media + .sk-bone { margin-top: 0.6rem; }
+.listing-head .sk-bone + .sk-bone { margin-top: 0.6rem; }
+.sk-crumbs { margin-bottom: 0.9rem; }
+.sk-count { margin-bottom: 1rem; }
+.sk-filters { display: grid; gap: 0.75rem; align-content: start; }
+.sk-stack { display: grid; gap: 0.75rem; align-content: start; }
+.sk-row { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+.sk-tiles {
+  list-style: none;
+  margin: 1.5rem 0;
+  padding: 0;
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: repeat(auto-fill, minmax(min(10rem, 45%), 1fr));
+}
+.sk-section-title { margin: 2rem 0 1rem; }
+.sk-account { display: grid; gap: 1.5rem; max-width: 40rem; padding-block: 1.5rem; }
+.sk-admin-filters { margin: 1rem 0 1.25rem; }
+.sk-table { display: grid; border-top: 1px solid color-mix(in oklab, var(--color-ink, #2b2620) 12%, transparent); }
+.sk-table-row {
+  display: grid;
+  grid-template-columns: 2fr repeat(4, 1fr);
+  gap: 1rem;
+  align-items: center;
+  min-height: 3.25rem;
+  border-bottom: 1px solid color-mix(in oklab, var(--color-ink, #2b2620) 8%, transparent);
+}
+.sk-admin-section { margin-top: 1.5rem; max-width: 40rem; }
+@media (max-width: 47.99rem) {
+  .sk-table-row { grid-template-columns: 1fr 1fr; }
+  .sk-table-row > :nth-child(n + 3) { display: none; }
+}
+
+.sk-box { border-radius: var(--radius-md, 8px); }
+.sk-pill { border-radius: 999px; }
+.sk-w-full { width: 100%; }
+.sk-w-90 { width: 90%; }
+.sk-w-88 { width: 88%; }
+.sk-w-80 { width: 80%; }
+.sk-w-70 { width: 70%; }
+.sk-w-65 { width: 65%; }
+.sk-w-60 { width: 60%; }
+.sk-w-55 { width: 55%; }
+.sk-w-40 { width: 40%; }
+.sk-w-5r { width: 5rem; }
+.sk-w-6r { width: 6rem; }
+.sk-w-7r { width: 7rem; }
+.sk-w-8r { width: 8rem; }
+.sk-w-9r { width: 9rem; }
+.sk-w-12r { width: 12rem; }
+.sk-w-14r { width: 14rem; }
+.sk-w-16r { width: 16rem; }
+.sk-w-title { width: min(22rem, 70%); }
+.sk-w-intro { width: min(30rem, 90%); }
+.sk-h-0_8 { height: 0.8rem; }
+.sk-h-0_85 { height: 0.85rem; }
+.sk-h-0_95 { height: 0.95rem; }
+.sk-h-1 { height: 1rem; }
+.sk-h-1_15 { height: 1.15rem; }
+.sk-h-1_25 { height: 1.25rem; }
+.sk-h-1_5 { height: 1.5rem; }
+.sk-h-1_75 { height: 1.75rem; }
+.sk-h-2 { height: 2rem; }
+.sk-h-2_5 { height: 2.5rem; }
+.sk-h-2_75 { height: 2.75rem; }
+.sk-h-3_5 { height: 3.5rem; }
+.sk-h-4_5 { height: 4.5rem; }

@@ -65,6 +65,11 @@ for (const [width, cols] of [
   test(`at ${width} px: home, category listing and product page work with real data`, async ({ page }) => {
     await page.setViewportSize({ width, height: 900 });
     const violations = await watchCsp(page);
+    // Every request while browsing succeeds, prefetches included (a 404 prefetch flashes an error page).
+    const failed: string[] = [];
+    page.on("response", (r) => {
+      if (r.status() >= 400) failed.push(`${r.status()} ${r.url()}`);
+    });
     await page.goto("/");
     await expect(page.locator("html")).toHaveAttribute("lang", "bn");
     await expect(page.getByTestId("category-tiles")).toContainText("খাবার");
@@ -96,6 +101,7 @@ for (const [width, cols] of [
     // Link prefetching keeps the network busy, so "networkidle" never settles here; wait for load.
     await page.waitForLoadState("load");
     await page.waitForTimeout(500);
+    expect(failed).toEqual([]);
     expect(await violations()).toEqual([]);
   });
 }
@@ -157,5 +163,24 @@ test("SEO: canonical, hreflang, JSON-LD, sitemap and robots", async ({ page, req
 test("unknown, draft and malformed storefront paths are 404", async ({ request }) => {
   for (const path of ["/p/not-a-product", "/c/e2e-pantry", "/c/e2e-food/nope", "/collections/nope", "/en/p/UPPER"]) {
     expect((await request.get(path)).status(), path).toBe(404);
+  }
+});
+
+test("sign-up asks for the password twice and the server refuses a mismatch", async ({ page }) => {
+  await page.goto("/register");
+  const confirm = page.getByLabel("পাসওয়ার্ড আবার দিন");
+  test.skip(!(await confirm.isVisible().catch(() => false)), "registration is not available in this environment");
+  await page.getByLabel("আপনার নাম").fill("Rahim");
+  await page.getByLabel("ইমেইল").fill("rahim@example.com");
+  await page.getByLabel("পাসওয়ার্ড", { exact: true }).fill("a long passphrase 1");
+  await confirm.fill("a long passphrase 2");
+  await page.getByRole("button", { name: "অ্যাকাউন্ট খুলুন" }).click();
+  await expect(page.getByText("দুটি পাসওয়ার্ড মেলেনি").first()).toBeVisible();
+});
+
+test("every storefront route has a loading skeleton", async () => {
+  const { existsSync } = await import("node:fs");
+  for (const dir of ["(home)", "categories", "collections/(index)", "collections/[slug]", "c/[...slug]", "p/[slug]", "search", "deals", "new", "account"]) {
+    expect(existsSync(`app/[locale]/${dir}/loading.tsx`), dir || "/").toBe(true);
   }
 });
