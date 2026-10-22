@@ -163,7 +163,7 @@ export function ActionForm({ action, fields, hidden, submitLabel, pendingLabel, 
             {f.type === "checkbox" ? null : f.type === "textarea" ? (
               <textarea {...common} rows={f.rows ?? 4} maxLength={f.maxLength} defaultValue={values[f.name] ?? f.defaultValue} />
             ) : f.type === "multiselect" ? (
-              <select {...common} multiple size={Math.min(8, Math.max(3, f.options?.length ?? 3))} defaultValue={values[f.name] !== undefined ? values[f.name]!.split(",").filter(Boolean) : f.defaultValues}>
+              <select {...common} key={`${f.name}:${values[f.name] ?? (f.defaultValues ?? []).join(",")}`} multiple size={Math.min(8, Math.max(3, f.options?.length ?? 3))} defaultValue={values[f.name] !== undefined ? values[f.name]!.split(",").filter(Boolean) : f.defaultValues}>
                 {f.options?.map((o) => (
                   <option key={o.value} value={o.value}>
                     {o.label}
@@ -171,7 +171,9 @@ export function ActionForm({ action, fields, hidden, submitLabel, pendingLabel, 
                 ))}
               </select>
             ) : f.type === "select" ? (
-              <select {...common} defaultValue={values[f.name] ?? f.defaultValue}>
+              // React resets the form after an action and a select reads defaultValue only on mount, so
+              // remount it when the echoed value changes; otherwise a refused submit loses the choice.
+              <select {...common} key={`${f.name}:${values[f.name] ?? f.defaultValue ?? ""}`} defaultValue={values[f.name] ?? f.defaultValue}>
                 {f.options?.map((o) => (
                   <option key={o.value} value={o.value}>
                     {o.label}

@@ -151,6 +151,51 @@
         ],
         "additionalProperties": false
       },
+      "tiers": {
+        "maxItems": 5,
+        "bsonType": "array",
+        "items": {
+          "bsonType": "object",
+          "properties": {
+            "minQty": {
+              "bsonType": [
+                "int",
+                "long"
+              ],
+              "minimum": 2,
+              "maximum": 1000
+            },
+            "unitPrice": {
+              "bsonType": "object",
+              "properties": {
+                "amountMinor": {
+                  "bsonType": [
+                    "int",
+                    "long"
+                  ],
+                  "minimum": 0
+                },
+                "currency": {
+                  "bsonType": "string",
+                  "enum": [
+                    "BDT"
+                  ]
+                }
+              },
+              "required": [
+                "amountMinor",
+                "currency"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "minQty",
+            "unitPrice"
+          ],
+          "additionalProperties": false
+        }
+      },
       "barcode": {
         "bsonType": "string",
         "maxLength": 40,

@@ -1,0 +1,67 @@
+{
+  "$jsonSchema": {
+    "bsonType": "object",
+    "properties": {
+      "_id": {
+        "bsonType": "objectId"
+      },
+      "scope": {
+        "bsonType": "string",
+        "enum": [
+          "checkout",
+          "order_transition",
+          "customer_cancel",
+          "return_transition",
+          "inventory",
+          "rewards_adjust"
+        ]
+      },
+      "principalId": {
+        "bsonType": "string",
+        "minLength": 1,
+        "maxLength": 100
+      },
+      "key": {
+        "bsonType": "string",
+        "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+      },
+      "fingerprint": {
+        "bsonType": "string",
+        "pattern": "^[a-f0-9]{64}$"
+      },
+      "resultRef": {
+        "bsonType": "string",
+        "maxLength": 100
+      },
+      "result": {
+        "bsonType": "object",
+        "properties": {
+          "orderNumber": {
+            "bsonType": "string",
+            "maxLength": 40
+          }
+        },
+        "required": [
+          "orderNumber"
+        ],
+        "additionalProperties": false
+      },
+      "expiresAt": {
+        "bsonType": "date"
+      },
+      "createdAt": {
+        "bsonType": "date"
+      }
+    },
+    "required": [
+      "_id",
+      "scope",
+      "principalId",
+      "key",
+      "fingerprint",
+      "expiresAt",
+      "createdAt"
+    ],
+    "additionalProperties": false
+  }
+}

@@ -85,13 +85,13 @@ function readProduct(form: FormData): { input?: Omit<ProductInput, "sample">; er
   const attributes = readAttributes(field(form, "attributes"), errors);
   const seo = readSeo(form, errors);
   if (Object.keys(errors).length || !name) return { errors, values };
-  return { input: { slug, name, shortDescription, description, primaryCategoryId, categoryIds, attributes, seo }, errors, values };
+  return { input: { slug, name, shortDescription, description, primaryCategoryId, categoryIds, attributes, seo, freeDelivery: checked(form, "freeDelivery") ? (true as const) : undefined }, errors, values };
 }
 
 function readVariant(form: FormData): { input?: Omit<VariantInput, "sample">; errors: Record<string, string>; values: Record<string, string> } {
   const errors: Record<string, string> = {};
   const values: Record<string, string> = {};
-  for (const k of ["sku", "titleBn", "titleEn", "price", "compareAt", "netValue", "netUnit", "netVerified", "barcode", "weightGrams", "position", "options"]) values[k] = field(form, k);
+  for (const k of ["sku", "titleBn", "titleEn", "price", "compareAt", "netValue", "netUnit", "netVerified", "barcode", "weightGrams", "position", "options", "tiers"]) values[k] = field(form, k);
   const sku = field(form, "sku").trim().toUpperCase();
   if (!SKU.test(sku) || sku.length < 2 || sku.length > 64) errors.sku = "sku_invalid";
   const title = localized(form, "title", 60, true, errors);
@@ -120,9 +120,11 @@ function readVariant(form: FormData): { input?: Omit<VariantInput, "sample">; er
     else options.push({ key, value: en ? { bn, en } : { bn } });
   }
   if (options.length > 5) errors.options = "too_many";
+  const tiers = readTiers(field(form, "tiers"), errors);
   if (Object.keys(errors).length || !title || price === null || position === null) return { errors, values };
   return {
     input: {
+      tiers,
       sku,
       title,
       options,
@@ -136,6 +138,23 @@ function readVariant(form: FormData): { input?: Omit<VariantInput, "sample">; er
     errors,
     values,
   };
+}
+
+/** Quantity price breaks, one per line: "5 = 80" (from 5 items, ৳80 each). */
+function readTiers(text: string, errors: Record<string, string>) {
+  const tiers: { minQty: number; unitPrice: { amountMinor: number; currency: "BDT" } }[] = [];
+  for (const raw of text.split("\n").map((l) => l.trim()).filter(Boolean)) {
+    const m = /^(\S+)\s*=\s*(\S+)$/.exec(raw);
+    const qty = m ? parseInteger(m[1]!, 2, 999) : null;
+    const price = m ? parseTaka(m[2]!) : null;
+    if (qty === null || price === null) {
+      errors.tiers = "tier_line";
+      return undefined;
+    }
+    tiers.push({ minQty: qty, unitPrice: { amountMinor: price, currency: "BDT" } });
+  }
+  if (tiers.length > 5) errors.tiers = "too_many";
+  return tiers.length ? tiers : undefined;
 }
 
 // ── Products ────────────────────────────────────────────────────────────────────────────────

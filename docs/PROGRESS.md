@@ -2,6 +2,28 @@
 
 Newest first. Each entry: date, phase, done, decided, open, next.
 
+## 2026-10-22 — B7 checkout and orders (cash on delivery)
+
+- **Owner:** "Keep real checkout, payments, and order placement safely disabled until their required workflows are complete and verified"; "make sure you have pused on huthub, every step with proper commits".
+- **Customer:** `/account/addresses` (add, edit, delete, default; BD mobile number; zone from store settings), `/checkout` (sign-in required; closed while `features.checkout` is off; refuses sample or blocking lines; re-priced for the chosen address zone; COD; expected total + per-view request key), `/checkout/success/[n]`, `/account/orders`, `/account/orders/[n]` (snapshot totals, timeline, self-cancel before packing).
+- **Admin:** `/admin/orders` (filter, flag past alert window), `/admin/orders/[n]` (phone to call, one form per allowed step, capability checked per step, reasons where shown to the customer). Settings: take online orders, coupons on flash-sale items, order prefix, alert hours, return window.
+- **Fixes found on the way:** settings saves dropped the `orders` section and unshown feature flags; selects in every admin/customer form reset to the first option after a refused submit.
+- **Ordering stays OFF on `horekbazar_dev`** (`features.checkout` unset); the catalogue is all `sample`, so placement is refused even if switched on. No orders were created there.
+- **Checks (local, observed):** lint, typecheck, unit 138/138, integration 116/116, build, Playwright 215 passed / 58 skipped, e2e-db 14 passed / 1 skipped (sign-up needs e-mail). Commits pushed to `feat/b6-cart-pricing`.
+- **Open:** migrations for the new collections not yet run on `horekbazar_dev`; invoice print view; B8 shipments/returns next.
+
+## 2026-10-22 — B6 cart and pricing; Owner from environment credentials
+
+- **Owner:** "Continue the existing HorekBazar project from B6 through B11"; "it will be master seed … horekbazar is just a shop name, main goal is to build this like a template"; "mainly the admin email and password wil be store in environment credentials".
+- **Pricing engine (`lib/modules/pricing/engine.ts`):** pure, integer poisha; quantity tiers, best single promotion (sale or flash sale with cap), coupons (percent with cap, fixed, free delivery with fee cap; limits, per-customer, first order, include/exclude, zones, minimum), delivery (zone fee, zone threshold, free-delivery products), coupon allocation by largest remainder (BigInt). 22 unit tests.
+- **Quote loader (`quote.ts`):** the one place cart, checkout and placement read prices, stock, promotions and coupons (placement passes its transaction session in B7).
+- **Cart (`cart.ts`, `/cart`, product page):** device or customer cart, CAS on `version`, merge after sign-in, notices (price up/down, stock low/out, no longer sold), coupon apply/remove with the reason when refused, zone charge, totals. Checkout stays closed while `features.checkout` is off.
+- **Admin:** `/admin/promotions`, `/admin/coupons` (promotions.write, versioned, audited); quantity prices on variants, free delivery on products, free-delivery threshold on zones.
+- **Owner bootstrap:** `npm run owner:bootstrap` from `OWNER_EMAIL`/`OWNER_PASSWORD`/`OWNER_NAME` (DESIGN.md decision row). Not run against `horekbazar_dev`: the variables are not set yet and an Owner already exists (it would report "exists").
+- **Checks (local):** typecheck, lint, unit 137/137, integration 101/101 (new: cart 8, migrate fixtures for 5 new collections), e2e-db cart journey 1/1. Full browser suites and CI: see the PR.
+- **Open:** cart count badge in the header/dock not added (needs a per-request cart read in the shared layout; deferred). Template neutrality and the store pack land with B10.
+- **Next:** B7 addresses, checkout, order placement.
+
 ## 2026-10-22 — Showcase live: Owner, settings, published catalogue, stock, images; skeletons; confirm password
 
 - **Owner:** "i shared env variable for you ... i am using them for showcase"; "there is no skeleton/loader while changing page"; "even in signup page, there is no confirm password".

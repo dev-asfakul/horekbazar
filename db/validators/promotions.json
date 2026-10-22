@@ -1,0 +1,143 @@
+{
+  "$jsonSchema": {
+    "bsonType": "object",
+    "properties": {
+      "_id": {
+        "bsonType": "objectId"
+      },
+      "name": {
+        "bsonType": "object",
+        "properties": {
+          "bn": {
+            "bsonType": "string",
+            "minLength": 1,
+            "maxLength": 80
+          },
+          "en": {
+            "bsonType": "string",
+            "minLength": 1,
+            "maxLength": 80
+          }
+        },
+        "required": [
+          "bn"
+        ],
+        "additionalProperties": false
+      },
+      "kind": {
+        "bsonType": "string",
+        "enum": [
+          "product",
+          "flash_sale"
+        ]
+      },
+      "discount": {
+        "bsonType": "object",
+        "properties": {
+          "type": {
+            "bsonType": "string",
+            "enum": [
+              "percent",
+              "fixed"
+            ]
+          },
+          "value": {
+            "bsonType": [
+              "int",
+              "long"
+            ],
+            "minimum": 1,
+            "maximum": 100000000
+          }
+        },
+        "required": [
+          "type",
+          "value"
+        ],
+        "additionalProperties": false
+      },
+      "scope": {
+        "bsonType": "object",
+        "properties": {
+          "type": {
+            "bsonType": "string",
+            "enum": [
+              "all",
+              "categories",
+              "products",
+              "variants"
+            ]
+          },
+          "ids": {
+            "maxItems": 500,
+            "bsonType": "array",
+            "items": {
+              "bsonType": "objectId"
+            }
+          }
+        },
+        "required": [
+          "type",
+          "ids"
+        ],
+        "additionalProperties": false
+      },
+      "startsAt": {
+        "bsonType": "date"
+      },
+      "endsAt": {
+        "bsonType": "date"
+      },
+      "cap": {
+        "bsonType": [
+          "int",
+          "long"
+        ],
+        "minimum": 1,
+        "maximum": 1000000
+      },
+      "sold": {
+        "bsonType": [
+          "int",
+          "long"
+        ],
+        "minimum": 0
+      },
+      "status": {
+        "bsonType": "string",
+        "enum": [
+          "draft",
+          "active",
+          "archived"
+        ]
+      },
+      "version": {
+        "bsonType": [
+          "int",
+          "long"
+        ],
+        "minimum": 1
+      },
+      "createdAt": {
+        "bsonType": "date"
+      },
+      "updatedAt": {
+        "bsonType": "date"
+      }
+    },
+    "required": [
+      "_id",
+      "name",
+      "kind",
+      "discount",
+      "scope",
+      "startsAt",
+      "sold",
+      "status",
+      "version",
+      "createdAt",
+      "updatedAt"
+    ],
+    "additionalProperties": false
+  }
+}

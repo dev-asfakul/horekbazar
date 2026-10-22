@@ -1,0 +1,88 @@
+{
+  "$jsonSchema": {
+    "bsonType": "object",
+    "properties": {
+      "_id": {
+        "bsonType": "objectId"
+      },
+      "userId": {
+        "bsonType": "string",
+        "minLength": 1,
+        "maxLength": 100
+      },
+      "label": {
+        "bsonType": "string",
+        "enum": [
+          "home",
+          "office",
+          "other"
+        ]
+      },
+      "name": {
+        "bsonType": "string",
+        "minLength": 1,
+        "maxLength": 80
+      },
+      "phone": {
+        "bsonType": "string",
+        "pattern": "^\\+8801[3-9]\\d{8}$"
+      },
+      "zoneId": {
+        "bsonType": "string",
+        "pattern": "^[a-z0-9][a-z0-9-]{0,39}$"
+      },
+      "district": {
+        "bsonType": "string",
+        "minLength": 1,
+        "maxLength": 60
+      },
+      "area": {
+        "bsonType": "string",
+        "minLength": 1,
+        "maxLength": 80
+      },
+      "line": {
+        "bsonType": "string",
+        "minLength": 1,
+        "maxLength": 200
+      },
+      "landmark": {
+        "bsonType": "string",
+        "minLength": 1,
+        "maxLength": 120
+      },
+      "isDefault": {
+        "bsonType": "bool"
+      },
+      "version": {
+        "bsonType": [
+          "int",
+          "long"
+        ],
+        "minimum": 1
+      },
+      "createdAt": {
+        "bsonType": "date"
+      },
+      "updatedAt": {
+        "bsonType": "date"
+      }
+    },
+    "required": [
+      "_id",
+      "userId",
+      "label",
+      "name",
+      "phone",
+      "zoneId",
+      "district",
+      "area",
+      "line",
+      "isDefault",
+      "version",
+      "createdAt",
+      "updatedAt"
+    ],
+    "additionalProperties": false
+  }
+}

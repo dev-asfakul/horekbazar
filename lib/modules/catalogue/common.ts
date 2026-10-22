@@ -26,6 +26,7 @@ export type CatalogueErrorCode =
   | "category_unpublished"
   | "no_sellable_variant"
   | "compare_at_not_higher"
+  | "tiers_invalid"
   | "sample_publish_blocked"
   | "in_use"
   | "insufficient_stock"

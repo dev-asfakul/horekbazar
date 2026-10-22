@@ -1,0 +1,91 @@
+{
+  "$jsonSchema": {
+    "bsonType": "object",
+    "properties": {
+      "_id": {
+        "bsonType": "objectId"
+      },
+      "userId": {
+        "bsonType": "string",
+        "minLength": 1,
+        "maxLength": 100
+      },
+      "deviceId": {
+        "bsonType": "string",
+        "pattern": "^[A-Za-z0-9_-]{20,64}$"
+      },
+      "lines": {
+        "maxItems": 50,
+        "bsonType": "array",
+        "items": {
+          "bsonType": "object",
+          "properties": {
+            "variantId": {
+              "bsonType": "objectId"
+            },
+            "quantity": {
+              "bsonType": [
+                "int",
+                "long"
+              ],
+              "minimum": 1,
+              "maximum": 99
+            },
+            "seenUnitPrice": {
+              "bsonType": [
+                "int",
+                "long"
+              ],
+              "minimum": 0
+            },
+            "addedAt": {
+              "bsonType": "date"
+            }
+          },
+          "required": [
+            "variantId",
+            "quantity",
+            "addedAt"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "couponCode": {
+        "bsonType": "string",
+        "pattern": "^[A-Z0-9][A-Z0-9_-]{2,29}$"
+      },
+      "status": {
+        "bsonType": "string",
+        "enum": [
+          "active",
+          "converted"
+        ]
+      },
+      "version": {
+        "bsonType": [
+          "int",
+          "long"
+        ],
+        "minimum": 0
+      },
+      "convertedOrderId": {
+        "bsonType": "objectId"
+      },
+      "createdAt": {
+        "bsonType": "date"
+      },
+      "updatedAt": {
+        "bsonType": "date"
+      }
+    },
+    "required": [
+      "_id",
+      "lines",
+      "status",
+      "version",
+      "createdAt",
+      "updatedAt"
+    ],
+    "additionalProperties": false
+  }
+}
