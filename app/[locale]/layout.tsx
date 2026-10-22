@@ -1,4 +1,4 @@
-// Root layout, one per locale ("/" is Banglish through a proxy rewrite, "/en" is English).
+// Root layout, one per locale ("/" is Bengali-script Banglish through a proxy rewrite, "/en" is English).
 // DOM order: skip link, header, main, footer, bottom dock (DESIGN.md → Layout; BUILD-PLAN §6).
 import "../globals.css";
 import type { Metadata, Viewport } from "next";
@@ -35,7 +35,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps<"/[
   if (!isLocale(locale)) notFound();
   setRequestLocale(locale);
 
-  // Exactly one preloaded font file per locale: the Noto Sans Latin subset (both locales are Latin script).
+  // Exactly one preloaded font file per locale: the Noto Sans Bengali subset for the page's script.
   preload(preloadedFontByLocale[locale], { as: "font", type: "font/woff2", crossOrigin: "anonymous" });
 
   const t = await getTranslations({ locale, namespace: "shell" });

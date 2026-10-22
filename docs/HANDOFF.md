@@ -22,13 +22,14 @@ merged by the agent after the required check passes (owner authorisation 2026-10
 
 ### Done
 
-1. **Banglish-first storefront (owner decision).** `messages/bn.json` is Latin-script Banglish (202
-   customer strings); admin-only form messages carry the English text; the admin namespace is served
-   from `en` for every locale (`i18n/request.ts`, `lib/i18n/admin.ts` always returns `en`). `lang="bn-Latn"`,
-   Latin digits and the Latin font preload by default, Banglish e-mails, maintenance and global error pages.
-   Guard test `tests/unit/banglish.test.ts` fails on any Bengali-script UI string. Product and category
-   data are **not** rewritten: the storefront shows the stored English name (fallback Bengali) through
-   `shown()` in `lib/storefront/context.ts`; approved Banglish display names would slot in there.
+1. **Banglish storefront in Bengali script (owner, corrected 2026-10-22).** `messages/bn.json` is
+   conversational Bangla with English words in Bengali letters ("সেটআপ বাকি", "কার্ট", "লগইন করুন"),
+   272 shopper strings. A first pass in Latin letters ("Setup baki") was a misreading of "Banglish" and
+   was replaced. Admin-only form messages are English; the admin namespace is served from `en` for every
+   locale (`i18n/request.ts`, `lib/i18n/admin.ts`). `lang="bn"`, Bengali digits, Bangla e-mails. Guard test
+   `tests/unit/banglish.test.ts` (Bengali script everywhere for shoppers, one spelling per commerce
+   term). Product and category data are not rewritten; `shown()` in `lib/storefront/context.ts` picks the
+   stored Bangla text on `/` and English on `/en`.
 2. **Bulk product status** (`bulkProductStatusAction`, `components/admin/BulkStatusForm.tsx`): checkbox per
    row, up to 25, every product through `setProductStatus` (publish rules, sample guard, audit).
 3. **Real readiness.** `getSetupStatus().ready` is true only with a connected database, an Owner
@@ -50,7 +51,8 @@ Gate: FAIL (zero-variable `/` is the setup page; header search states; B6–B11 
 
 ### Left, in order
 
-1. **Owner actions on the showcase** (nothing on the storefront shows until these exist): create the
+1. **Owner actions on the showcase** (nothing on the storefront shows until these exist; this is why
+   the preview says "সেটআপ বাকি"): create the
    Owner at `/admin/setup` (`docs/OWNER-SETUP.md`), save `/admin/settings` once, add delivery zones with
    real fees, publish the 9 top-level then 30 child categories, then bulk-publish products in
    `/admin/products`, receive stock in `/admin/inventory`. All 144 catalogue records are drafts with 0 stock.

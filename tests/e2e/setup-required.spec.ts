@@ -20,8 +20,8 @@ test("Bengali home at / shows setup-required with a nonce CSP and no violations"
   expect(csp).not.toContain("unsafe-inline");
   expect(response?.headers()["x-content-type-options"]).toBe("nosniff");
 
-  await expect(page.locator("html")).toHaveAttribute("lang", "bn-Latn");
-  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Setup baki");
+  await expect(page.locator("html")).toHaveAttribute("lang", "bn");
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("সেটআপ বাকি");
   await expect(page.locator("main#main [data-state='setup-required']")).toContainText("MONGODB_URI");
   await expect(page.locator("#setup-required")).toHaveCount(1);
 

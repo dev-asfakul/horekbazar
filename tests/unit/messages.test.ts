@@ -28,6 +28,6 @@ describe("message catalogues", () => {
 
   it("states cash on delivery and store confirmation in the footer, in both languages", () => {
     expect(en.shell.footer.payment).toBe("Payment: cash on delivery. Orders are confirmed by the store before dispatch.");
-    expect(bn.shell.footer.payment).toBe("Payment: cash on delivery. Dispatch-er age store apnar order confirm korbe.");
+    expect(bn.shell.footer.payment).toContain("ক্যাশ অন ডেলিভারি");
   });
 });

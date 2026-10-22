@@ -58,8 +58,8 @@ export default async function ProductPage({ params, searchParams }: PageProps<"/
   const chain = primaryCategory ? [...primaryCategory.ancestors, primaryCategory] : [];
   const crumbs = [
     { name: shell("nav.home"), href: localeHref(locale, "/") },
-    ...chain.map((c) => ({ name: shown(c.name, locale), href: localeHref(locale, categoryPath(c)), lang: shownLang(c.name) })),
-    { name, href: localeHref(locale, path), lang: shownLang(product.name) },
+    ...chain.map((c) => ({ name: shown(c.name, locale), href: localeHref(locale, categoryPath(c)), lang: shownLang(c.name, locale) })),
+    { name, href: localeHref(locale, path), lang: shownLang(product.name, locale) },
   ];
   const related = primaryCategory ? (await listPublishedProducts(store.db, { categoryIds: [primaryCategory.id], sort: "new", pageSize: 9 })).items.filter((i) => i.id !== String(product._id)).slice(0, 8) : [];
   const images = cloud ? product.media : [];
@@ -83,11 +83,11 @@ export default async function ProductPage({ params, searchParams }: PageProps<"/
           )}
         </div>
         <div className="pdp-info">
-          <h1 className="font-display pdp-title" lang={shownLang(product.name)}>
+          <h1 className="font-display pdp-title" lang={shownLang(product.name, locale)}>
             {name}
           </h1>
           {product.shortDescription ? (
-            <p className="pdp-short" lang={shownLang(product.shortDescription)}>
+            <p className="pdp-short" lang={shownLang(product.shortDescription, locale)}>
               {shown(product.shortDescription, locale)}
             </p>
           ) : null}
@@ -98,7 +98,7 @@ export default async function ProductPage({ params, searchParams }: PageProps<"/
               <ul>
                 {variants.map((v) => (
                   <li key={v.sku}>
-                    <Link className="variant-chip" href={`${localeHref(locale, path)}?v=${encodeURIComponent(v.sku)}`} aria-current={v.sku === variant.sku ? "true" : undefined} data-out={v.available > 0 ? undefined : ""} replace scroll={false} lang={shownLang(v.title)}>
+                    <Link className="variant-chip" href={`${localeHref(locale, path)}?v=${encodeURIComponent(v.sku)}`} aria-current={v.sku === variant.sku ? "true" : undefined} data-out={v.available > 0 ? undefined : ""} replace scroll={false} lang={shownLang(v.title, locale)}>
                       {shown(v.title, locale)}
                     </Link>
                   </li>
@@ -127,7 +127,7 @@ export default async function ProductPage({ params, searchParams }: PageProps<"/
               <div>
                 <dt>{t("product.category")}</dt>
                 <dd>
-                  <Link className="prose-link" href={localeHref(locale, categoryPath(primaryCategory))} lang={shownLang(primaryCategory.name)}>
+                  <Link className="prose-link" href={localeHref(locale, categoryPath(primaryCategory))} lang={shownLang(primaryCategory.name, locale)}>
                     {shown(primaryCategory.name, locale)}
                   </Link>
                 </dd>
@@ -145,9 +145,9 @@ export default async function ProductPage({ params, searchParams }: PageProps<"/
                 <ul className="pdp-zones" data-testid="delivery-zones">
                   {zones.map((z) => (
                     <li key={z.id}>
-                      <span lang={shownLang(z.name)}>{shown(z.name, locale)}</span>
+                      <span lang={shownLang(z.name, locale)}>{shown(z.name, locale)}</span>
                       <span>{formatMoney(z.fee.amountMinor, format)}</span>
-                      <span className="field-hint" lang={shownLang(z.estimate)}>
+                      <span className="field-hint" lang={shownLang(z.estimate, locale)}>
                         {shown(z.estimate, locale)}
                       </span>
                     </li>
@@ -165,7 +165,7 @@ export default async function ProductPage({ params, searchParams }: PageProps<"/
             {t("product.details")}
           </h2>
           {product.description ? (
-            <p className="pdp-description" lang={shownLang(product.description)}>
+            <p className="pdp-description" lang={shownLang(product.description, locale)}>
               {shown(product.description, locale)}
             </p>
           ) : null}
@@ -175,10 +175,10 @@ export default async function ProductPage({ params, searchParams }: PageProps<"/
               <tbody>
                 {product.attributes.map((a) => (
                   <tr key={a.key}>
-                    <th scope="row" lang={shownLang(a.label)}>
+                    <th scope="row" lang={shownLang(a.label, locale)}>
                       {shown(a.label, locale)}
                     </th>
-                    <td lang={shownLang(a.value)}>{shown(a.value, locale)}</td>
+                    <td lang={shownLang(a.value, locale)}>{shown(a.value, locale)}</td>
                   </tr>
                 ))}
               </tbody>

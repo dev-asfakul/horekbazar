@@ -31,11 +31,11 @@ for (const vp of widths) {
       );
       expect(order.slice(0, 5)).toEqual(["skip-link", "site-header", "main", "site-footer", "bottom-dock"]);
       await expect(page.locator("#site-search")).toBeVisible();
-      await expect(page.getByRole("link", { name: "Categories" }).first()).toBeVisible();
+      await expect(page.getByRole("link", { name: "ক্যাটাগরি" }).first()).toBeVisible();
       await expect(page.locator("#bottom-dock")).toBeVisible({ visible: vp.dock });
       // Account and cart live in the header from band M up, and in the dock below it.
       await expect(page.locator(".header-action-wide").first()).toBeVisible({ visible: !vp.dock });
-      await expect(page.locator("#site-footer")).toContainText("Payment: cash on delivery");
+      await expect(page.locator("#site-footer")).toContainText("ক্যাশ অন ডেলিভারি");
     });
 
     test("the dock never covers content: --dock-h matches the dock and the footer ends above it", async ({ page }) => {
@@ -167,7 +167,7 @@ test.describe("band S interactions (375 px)", () => {
 
   test("the current dock item has aria-current and a text label", async ({ page }) => {
     await page.goto("/");
-    await expect(page.locator("#bottom-dock [aria-current='page']")).toHaveText("Home");
+    await expect(page.locator("#bottom-dock [aria-current='page']")).toHaveText("হোম");
     await page.goto("/en/cart");
     await expect(page.locator("#bottom-dock [aria-current='page']")).toHaveText("Cart");
     await expect(page.locator("#bottom-dock [aria-current='page']")).toHaveCount(1);
@@ -200,17 +200,17 @@ test.describe("language, fonts and motion", () => {
   test("language switch keeps the page and query and remembers the choice", async ({ page, context }) => {
     await page.goto("/c/kitchen?page=2");
     await waitForHydration(page);
-    await page.getByRole("link", { name: "Ei page-ti English-e dekhun" }).click();
+    await page.getByRole("link", { name: "এই পেজটি English-এ দেখুন" }).click();
     await page.waitForURL("**/en/c/kitchen?page=2");
     await expect(page.locator("html")).toHaveAttribute("lang", "en");
     expect((await context.cookies()).find((c) => c.name === "hb-locale")?.value).toBe("en");
-    await page.getByRole("link", { name: "View this page in Banglish" }).click();
+    await page.getByRole("link", { name: "এই পেজটি বাংলায় দেখুন" }).click();
     await page.waitForURL((url) => url.pathname === "/c/kitchen" && url.search === "?page=2");
-    await expect(page.locator("html")).toHaveAttribute("lang", "bn-Latn");
+    await expect(page.locator("html")).toHaveAttribute("lang", "bn");
   });
 
   for (const [path, file] of [
-    ["/", "noto-sans-bengali-latin.woff2"],
+    ["/", "noto-sans-bengali-bengali.woff2"],
     ["/en", "noto-sans-bengali-latin.woff2"],
   ] as const) {
     test(`exactly one font file is preloaded on ${path}`, async ({ page }) => {
@@ -266,9 +266,9 @@ test.describe("language, fonts and motion", () => {
 
 test.describe("states", () => {
   for (const [path, title, lang] of [
-    ["/nope", "Page-ti paowa jayni", "bn-Latn"],
+    ["/nope", "পেজটি পাওয়া যায়নি", "bn"],
     ["/en/nope", "Page not found", "en"],
-    ["/p", "Page-ti paowa jayni", "bn-Latn"],
+    ["/p", "পেজটি পাওয়া যায়নি", "bn"],
   ] as const) {
     test(`404 at ${path}`, async ({ page }) => {
       const response = await page.goto(path);

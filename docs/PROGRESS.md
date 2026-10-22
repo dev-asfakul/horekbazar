@@ -2,6 +2,12 @@
 
 Newest first. Each entry: date, phase, done, decided, open, next.
 
+## 2026-10-22 — Banglish corrected to Bengali script
+
+- **Owner:** "why banglish like in english? banglish mean, english in bangla, like, সেটআপ বাকি"; also asked why the preview still shows the setup page.
+- **Done:** all 272 shopper strings rewritten in Bengali-script Banglish; `lang="bn"`, Bengali font preload, Bengali digits, default store name হরেকবাজার, Bangla e-mails and error pages; storefront shows stored Bangla product/category names on `/`. Guard test rewritten. Admin unchanged (English).
+- **Setup page:** shown because `horekbazar_dev` has no Owner and no saved settings (the catalogue is there: 39 categories, 144 products, all draft). Creating the Owner is the owner's step (no default account is created by agents).
+
 ## 2026-10-22 — Banglish storefront, B4 bulk status, B5 storefront catalogue
 
 - **Owner input:** build all remaining stages; storefront in natural Latin-script Banglish, `/en` English, admin English only, no Bengali-script third option; preserve catalogue data; then: populate a realistic catalogue with Cloudinary images, verify the admin on persisted data, continue the phases, push with proper commits and write a handoff.

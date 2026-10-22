@@ -38,14 +38,14 @@ export default async function CollectionPage({ params, searchParams }: PageProps
   const crumbs = [
     { name: shell("nav.home"), href: localeHref(locale, "/") },
     { name: t("collections.title"), href: localeHref(locale, "/collections") },
-    { name, href: localeHref(locale, `/collections/${collection.slug}`), lang: shownLang(collection.name) },
+    { name, href: localeHref(locale, `/collections/${collection.slug}`), lang: shownLang(collection.name, locale) },
   ];
   return (
     <ListingView
       locale={locale}
       format={moneyFormat(store, locale)}
       title={name}
-      titleLang={shownLang(collection.name)}
+      titleLang={shownLang(collection.name, locale)}
       before={<Breadcrumbs items={crumbs} label={t("product.breadcrumb")} origin={await siteOrigin()} />}
       intro={collection.description ? <p className="listing-intro">{shown(collection.description, locale)}</p> : null}
       listing={listing}
