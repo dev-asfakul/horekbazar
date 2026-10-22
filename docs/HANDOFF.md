@@ -16,7 +16,7 @@ the newest; older sections describe B4–B5 and are kept for their detail. Read 
 | B6 cart and pricing, B7 checkout and orders | PR #22 into `preview/horekbazar-v1` (`77eb016`); on `main` through PR #23 (`4480140`) after `check` passed |
 | B8 fulfilment and returns | PR #24 (`feat/b8-fulfilment`) into `preview/horekbazar-v1`; see "B8 record" below |
 | B8 on `main` | yes: PR #25 (`e91afe2`); CI timeout fixed in PR #26 (`f3701cd`, push run success) |
-| B9 engagement (part 1) | branch `feat/b9-engagement`, PR into `main`, **not merged** (owner review); see "B9 record" |
+| B9 engagement (part 1) | merged: PR #27 (head `5947530`, merge commit `d47d451`, 2026-10-22); `main` push run 39816729651 success; see "B9 record" |
 | B9 remainder → B11 hardening | not started |
 
 Branch flow: feature branch → PR into `preview/horekbazar-v1` → merge after CI is green → PR into `main`,

@@ -2,6 +2,13 @@
 
 Newest first. Each entry: date, phase, done, decided, open, next.
 
+## 2026-10-22 — B9 part 1 merged
+
+- **Owner:** "merge only if you have the necessary permissions and all required checks pass."
+- Final cleanup `5947530`: SCHEMA.md `features` default now `{ wishlist: false, brands: false, reviews: false }` (checkout and rewards absent = off), `settings.rewards` noted as absent by default; `lib/modules/reviews/schema.ts` header states one review per order line. Lint, typecheck, unit 160/160, validators no diff, engagement + migrate integration 53/53 passed locally.
+- PR #27 checks on `5947530`: push run 39813187246 success, PR run 39813195029 success, Vercel preview passed. Approval refused by GitHub (author cannot approve own PR; branch protection requires 0). Merged as `d47d451`; `main` push run 39816729651 success.
+- Credentials: not rotated (no dashboard access). Checklist in HANDOFF.
+
 ## 2026-10-22 — PR #27 review corrections (B9 part 1)
 
 - **Owner:** "Use the purchase-specific domain rule as the default: one review per eligible order line." "Do not merge PR #27."
