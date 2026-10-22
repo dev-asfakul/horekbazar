@@ -29,8 +29,8 @@ A single versioned document in `settings`, edited in `/admin/settings`. It holds
 | `locale.grouping` | enum(south_asian\|western) | required | `south_asian` | price formatter |
 | `delivery.zones` | list<DeliveryZone> | required for checkout | see below | `/checkout`, `/p/[slug]` delivery line, running total bar |
 | `pricing.roundingUnit` | int (minor units) | required | `100` | server pricing (§5.1) |
-| `features` | map<string,bool> | required | `{ wishlist: false, brands: false, reviews: true }` | feature flags (D16) |
-| `rewards` | { pointsPer100Taka int 0–20, expiryDays int 30–730 } | optional (B9) | `{ pointsPer100Taka: 1, expiryDays: 365 }` | `/admin/rewards`, `/account/rewards`; used only while `features.rewards` is on (off by default) |
+| `features` | { wishlist bool, brands bool, reviews bool, checkout bool?, rewards bool? } (strict) | required | `{ wishlist: false, brands: false, reviews: false }` (the built-in default; `checkout` and `rewards` are absent, which means off) | feature flags (D16). Reviews, checkout and rewards are off by default; each is refused on the server while off |
+| `rewards` | { pointsPer100Taka int 0–20, expiryDays int 30–730 } | optional (B9) | `{ pointsPer100Taka: 1, expiryDays: 365 }` (absent by default; `/admin/rewards` pre-fills these values) | `/admin/rewards`, `/account/rewards`; used only while `features.rewards` is on (off by default) |
 | `version` | int | required | `7` | optimistic concurrency |
 
 ### DeliveryZone (embedded in Settings)

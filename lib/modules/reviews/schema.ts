@@ -2,8 +2,9 @@
 // of the committed validator. A review is written by a signed-in customer about a product they
 // received (order delivered or completed, line delivered), starts `pending`, and is public only once
 // a member of staff with `reviews.moderate` publishes it. Plain text only: no HTML, no links rendered.
-// One review per customer per product (SCHEMA.md unique index {userId, productId}); this is stricter
-// than domain-rules' "one per order line" and never allows more than one per line.
+// One review per eligible order line (domain-rules §5.7; unique index `orderId_lineId_unique`), so
+// the same product bought on another eligible order can be reviewed again. A written review is final:
+// no edits and no resubmission for that line (`review_exists`).
 import { z } from "zod";
 import { zDate, zInt, zObjectId } from "../../db/bson-zod.ts";
 
