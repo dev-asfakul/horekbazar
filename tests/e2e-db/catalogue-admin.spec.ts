@@ -120,6 +120,35 @@ test("catalogue editor creates, fills and publishes a product", async ({ page })
   expect(actions.length).toBeGreaterThanOrEqual(5); // category create + publish, product create, variant create, product publish
 });
 
+test("bulk status changes the selected products on the server, one by one", async ({ page, viewport }) => {
+  await signIn(page.context());
+  await page.goto("/admin/products?q=e2e");
+  const form = page.getByTestId("bulk-status-form");
+  // Nothing selected: the server refuses with a clear message.
+  await form.getByRole("button", { name: "Apply to selected" }).click();
+  await expect(form.getByRole("alert")).toHaveText("Select at least one product.");
+
+  // Select the product (visible layout only), set it back to draft.
+  await form.getByRole("button", { name: "Select all on this page" }).click();
+  await expect(page.getByTestId("bulk-count")).toHaveText("1 selected");
+  await form.getByLabel("New status").selectOption("draft");
+  await form.getByRole("button", { name: "Apply to selected" }).click();
+  await expect(form.getByRole("status").first()).toContainText("1 of 1 products changed.");
+  const status = async () => (await db.collection("products").findOne({ slug: "e2e-steel-pot" }))?.status;
+  await expect.poll(status).toBe("draft");
+
+  // Publish again through the same rules as the single-product button.
+  await form.getByRole("button", { name: "Select all on this page" }).click();
+  await form.getByLabel("New status").selectOption("published");
+  await form.getByRole("button", { name: "Apply to selected" }).click();
+  // The result line reads the same as before, so the server state decides.
+  await expect.poll(status).toBe("published");
+  await expect(form.getByRole("status").first()).toContainText("1 of 1 products changed.");
+  const audit = await db.collection("auditLog").find({ action: { $in: ["product.draft", "product.published"] }, "target.type": "product" }).toArray();
+  expect(audit.length).toBeGreaterThanOrEqual(3);
+  expect(viewport).not.toBeNull();
+});
+
 test("a section outside the role is refused by the server", async ({ page }) => {
   await signIn(page.context());
   // (/admin itself shows first-owner setup while no owner exists — B3 behaviour.)

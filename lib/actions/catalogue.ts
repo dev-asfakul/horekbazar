@@ -182,6 +182,41 @@ export async function setProductStatusAction(_: FormState, form: FormData): Prom
   return ok(`catalogue_status_${status}`);
 }
 
+/**
+ * Bulk status for the products list (B4 contract: "/admin/products: list, filters, bulk status").
+ * Each selected item posts "id:version" as rendered; every product goes through setProductStatus, so
+ * the publish rules (published category, priced active variant, sample guard) and the audit entry
+ * apply one by one. One failure never hides the others: the result lists what was not changed.
+ */
+export async function bulkProductStatusAction(_: FormState, form: FormData): Promise<FormState> {
+  const ctx = await staffContext("catalogue.write");
+  if ("error" in ctx) return ctx.error;
+  const status = field(form, "status");
+  if (status !== "draft" && status !== "published" && status !== "archived") return fail("try_again");
+  // The table (≥1024 px) and the cards both carry a checkbox per product; one id counts once.
+  const items = [...new Set(form.getAll("item").map(String))];
+  if (items.length === 0) return fail("catalogue_bulk_none");
+  if (items.length > BULK_LIMIT) return fail("catalogue_bulk_limit");
+  const parsed = items.map((raw) => /^([a-f0-9]{24}):(\d{1,9})$/.exec(raw));
+  if (parsed.some((m) => m === null)) return fail("try_again");
+  if (new Set(parsed.map((m) => (m as RegExpExecArray)[1])).size !== parsed.length) return fail("try_again");
+  let done = 0;
+  const failures: { id: string; code: string }[] = [];
+  for (const m of parsed as RegExpExecArray[]) {
+    const id = m[1] ?? "";
+    try {
+      await setProductStatus(ctx.db, ctx.client, ctx.actor, id, Number(m[2]), status);
+      done += 1;
+    } catch (error) {
+      failures.push({ id, code: serviceErrorCode(error) });
+    }
+  }
+  refresh();
+  return { status: "success", code: "catalogue_bulk_done", data: { done, total: items.length, failures } };
+}
+
+const BULK_LIMIT = 25;
+
 export async function deleteProductAction(_: FormState, form: FormData): Promise<FormState> {
   const ctx = await staffContext("catalogue.write");
   if ("error" in ctx) return ctx.error;
