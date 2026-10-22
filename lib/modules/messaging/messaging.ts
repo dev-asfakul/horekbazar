@@ -85,20 +85,24 @@ export async function postMessage(client: MongoClient, db: Db, author: Author, c
   if (!conv || (author.from === "customer" && conv.userId !== author.customer.id)) throw new CommerceError("not_found");
   const authorId = author.from === "customer" ? author.customer.id : author.actor.id;
   const existing = await db.collection<MessageDoc>(MESSAGES).findOne({ authorId, clientKey: input.clientKey });
-  if (existing) return { id: String(existing._id), created: false };
+  if (existing) {
+    if (!existing.conversationId.equals(conv._id)) throw new CommerceError("idempotency_key_reused");
+    return { id: String(existing._id), created: false };
+  }
   if (author.from === "staff" && conv.status === "closed") throw new CommerceError("conversation_closed");
   const msg: MessageDoc = { _id: new ObjectId(), conversationId: conv._id, from: author.from, authorId, body, clientKey: input.clientKey, createdAt: now };
   try {
     await inTransaction(client, async (session) => {
       const res = await convs.updateOne(
-        { _id: conv._id, messageCount: { $lt: MAX_MESSAGES } },
+        // Staff may only post while it is open, re-checked here in case it was closed meanwhile.
+        { _id: conv._id, messageCount: { $lt: MAX_MESSAGES }, ...(author.from === "staff" ? { status: "open" as const } : {}) },
         {
           $set: { lastMessageAt: now, lastFrom: author.from, updatedAt: now, ...(author.from === "customer" ? { status: "open" as const } : {}) },
           $inc: { messageCount: 1, version: 1, ...(author.from === "customer" ? { unreadByStaff: 1 } : { unreadByCustomer: 1 }) },
         },
         { session },
       );
-      if (res.matchedCount !== 1) throw new CommerceError("conversation_full");
+      if (res.matchedCount !== 1) throw new CommerceError(author.from === "staff" && (await convs.findOne({ _id: conv._id }, { session, projection: { status: 1 } }))?.status === "closed" ? "conversation_closed" : "conversation_full");
       await db.collection<MessageDoc>(MESSAGES).insertOne(msg, { session });
     });
   } catch (error) {
@@ -120,7 +124,9 @@ export async function readConversation(db: Db, reader: { from: "customer"; userI
   const conv = await convs.findOne({ _id: oid(conversationId) });
   if (!conv || (reader.from === "customer" && conv.userId !== reader.userId)) return null;
   const field = reader.from === "customer" ? "unreadByCustomer" : "unreadByStaff";
-  if (conv[field] > 0) await convs.updateOne({ _id: conv._id }, { $set: { [field]: 0 } });
+  // Clear only if no message arrived since it was read (messageCount is unchanged), so a message
+  // posted at the same moment stays unread instead of being marked as seen without being shown.
+  if (conv[field] > 0) await convs.updateOne({ _id: conv._id, messageCount: conv.messageCount }, { $set: { [field]: 0 } });
   const messages = await db.collection<MessageDoc>(MESSAGES).find({ conversationId: conv._id }).sort({ createdAt: 1, _id: 1 }).limit(MAX_MESSAGES).toArray();
   return { conversation: { ...conv, [field]: 0 }, messages };
 }

@@ -46,7 +46,7 @@ import {
 import { COURIER_EVENTS, courierEventSchema, RETURNS, returnSchema, SHIPMENTS, shipmentSchema } from "../modules/fulfilment/schema.ts";
 import { BANNERS, bannerSchema, COLLECTIONS, collectionSchema, HOME_SECTIONS, homeSectionSchema } from "../modules/merch/schema.ts";
 import { REVIEWS, reviewSchema } from "../modules/reviews/schema.ts";
-import { REWARD_LEDGER, rewardEntrySchema } from "../modules/rewards/schema.ts";
+import { REWARD_LEDGER, REWARD_LOCKS, rewardEntrySchema, rewardLockSchema } from "../modules/rewards/schema.ts";
 import { CONVERSATIONS, conversationSchema, MESSAGES, messageSchema } from "../modules/messaging/schema.ts";
 
 export interface CollectionSpec {
@@ -334,11 +334,14 @@ export const collections: CollectionSpec[] = [
     module: "reviews",
     schema: reviewSchema,
     indexes: [
-      { key: { userId: 1, productId: 1 }, name: "userId_productId_unique", unique: true },
+      // domain-rules §5.7: one review per order line (a product bought again on a later order can be
+      // reviewed again). lineId is unique only within its order, so the key is the pair.
+      { key: { orderId: 1, lineId: 1 }, name: "orderId_lineId_unique", unique: true },
+      { key: { userId: 1, createdAt: -1 }, name: "userId_createdAt" },
       { key: { productId: 1, status: 1, createdAt: -1 }, name: "productId_status_createdAt" },
       { key: { status: 1, createdAt: -1 }, name: "status_createdAt" },
     ],
-    serviceEnforced: ["only a delivered line of the author's own delivered/completed order; published only by reviews.moderate with compare-and-set on version (reviews/reviews.ts)"],
+    serviceEnforced: ["only a delivered line of the author's own delivered/completed order; no edits or resubmission once written; published only by reviews.moderate with compare-and-set on version (reviews/reviews.ts)"],
   },
   {
     name: REWARD_LEDGER,
@@ -349,7 +352,14 @@ export const collections: CollectionSpec[] = [
       { key: { userId: 1, createdAt: -1 }, name: "userId_createdAt" },
       { key: { orderId: 1, kind: 1 }, name: "orderId_kind", partialFilterExpression: { orderId: { $exists: true } } },
     ],
-    serviceEnforced: ["append-only; sign of points matches kind; balance = sum of entries; written only while features.rewards is on (rewards/rewards.ts)"],
+    serviceEnforced: ["append-only; sign of points matches kind; balance derived from entries (availablePoints); written only while features.rewards is on, under the customer's rewardLocks document (rewards/rewards.ts)"],
+  },
+  {
+    name: REWARD_LOCKS,
+    module: "rewards",
+    schema: rewardLockSchema,
+    indexes: [],
+    serviceEnforced: ["one per customer; seq incremented by every ledger write transaction (rewards/rewards.ts lockAccount)"],
   },
   {
     name: CONVERSATIONS,

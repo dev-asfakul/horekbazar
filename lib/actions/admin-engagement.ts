@@ -78,7 +78,7 @@ export async function adjustRewardsAction(_: FormState, form: FormData): Promise
   if (!values.reason.trim()) errors.reason = "required";
   if (Object.keys(errors).length) return fail("fix_fields", errors, values);
   try {
-    await adjustRewards(ctx.db, ctx.actor, { userId: values.userId, points, reason: values.reason, idempotencyKey: field(form, "idempotencyKey") });
+    await adjustRewards(ctx.db, ctx.client, ctx.actor, { userId: values.userId, points, reason: values.reason, idempotencyKey: field(form, "idempotencyKey") });
   } catch (error) {
     return failed(error, values);
   }

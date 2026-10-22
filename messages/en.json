@@ -1163,11 +1163,12 @@
       "commerce_reviews_off": "Reviews are not open on this store.",
       "commerce_review_not_eligible": "You can review a product once it has been delivered to you.",
       "commerce_review_invalid": "Choose a rating from 1 to 5 and write a few words.",
-      "commerce_review_exists": "You have already reviewed this product.",
+      "commerce_review_exists": "You have already reviewed this item from this order.",
       "commerce_message_invalid": "Write a subject and a message (up to 2,000 characters).",
       "commerce_conversation_closed": "This conversation is closed. Reopen it to reply.",
       "commerce_conversation_full": "This conversation is full. Start a new one.",
-      "commerce_rewards_insufficient": "That would take the balance below zero."
+      "commerce_rewards_insufficient": "That would take the balance below zero.",
+      "commerce_rewards_off": "Rewards are turned off for this store."
     },
     "fieldErrors": {
       "email_invalid": "Enter an email address like name@example.com",

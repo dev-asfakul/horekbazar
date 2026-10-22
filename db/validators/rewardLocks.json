@@ -1,0 +1,28 @@
+{
+  "$jsonSchema": {
+    "bsonType": "object",
+    "properties": {
+      "_id": {
+        "bsonType": "string",
+        "minLength": 1,
+        "maxLength": 100
+      },
+      "seq": {
+        "bsonType": [
+          "int",
+          "long"
+        ],
+        "minimum": 1
+      },
+      "updatedAt": {
+        "bsonType": "date"
+      }
+    },
+    "required": [
+      "_id",
+      "seq",
+      "updatedAt"
+    ],
+    "additionalProperties": false
+  }
+}

@@ -1,5 +1,5 @@
 // /account/reviews (B9; noindex; signed-in customer). Products the customer received, a form to
-// review each once, and the status of their reviews (waiting, published, or not published + reason).
+// review each order line once, and the status of their reviews (waiting, published, or not published + reason).
 // Shown only while the store has reviews on.
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -35,7 +35,7 @@ export default async function AccountReviewsPage({ params }: PageProps<"/[locale
   if (!settings.features.reviews) notFound();
   const t = await getTranslations({ locale, namespace: "account.reviews" });
   const [lines, mine, messages] = await Promise.all([reviewableLines(db, principal.user.id), customerReviews(db, principal.user.id), formMessages(locale)]);
-  const byProduct = new Map(mine.map((r) => [String(r.productId), r]));
+  const byLine = new Map(mine.map((r) => [`${String(r.orderId)}:${r.lineId}`, r]));
   const name = (n: { bn: string; en?: string | undefined }) => (locale === "en" && n.en ? n.en : n.bn);
   const ratingOptions = [5, 4, 3, 2, 1].map((n) => ({ value: String(n), label: t("stars", { count: n }) }));
 
@@ -49,9 +49,9 @@ export default async function AccountReviewsPage({ params }: PageProps<"/[locale
       ) : (
         <ul className="review-list" data-testid="reviewable">
           {lines.map((l) => {
-            const r = byProduct.get(l.productId);
+            const r = byLine.get(`${l.orderId}:${l.lineId}`);
             return (
-              <li key={l.productId} className="review-item" data-testid="reviewable-line" data-reviewed={r ? r.status : undefined}>
+              <li key={`${l.orderId}:${l.lineId}`} className="review-item" data-testid="reviewable-line" data-reviewed={r ? r.status : undefined}>
                 <p className="cart-line-name">
                   <Link href={localeHref(locale, `/p/${l.slug}`)}>{name(l.name)}</Link>
                 </p>

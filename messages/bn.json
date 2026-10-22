@@ -194,11 +194,12 @@
       "commerce_reviews_off": "এই স্টোরে এখন রিভিউ দেওয়া যাচ্ছে না।",
       "commerce_review_not_eligible": "প্রোডাক্ট ডেলিভারি পাওয়ার পর রিভিউ দিতে পারবেন।",
       "commerce_review_invalid": "১ থেকে ৫ এর মধ্যে রেটিং দিন আর কয়েকটা কথা লিখুন।",
-      "commerce_review_exists": "এই প্রোডাক্টের রিভিউ আপনি আগেই দিয়েছেন।",
+      "commerce_review_exists": "এই অর্ডারের এই প্রোডাক্টের রিভিউ আপনি আগেই দিয়েছেন।",
       "commerce_message_invalid": "একটা বিষয় আর মেসেজ লিখুন (২,০০০ অক্ষরের মধ্যে)।",
       "commerce_conversation_closed": "এই কথোপকথন বন্ধ করা হয়েছে।",
       "commerce_conversation_full": "এই কথোপকথনে আর মেসেজ যোগ করা যাবে না। নতুন একটা শুরু করুন।",
-      "commerce_rewards_insufficient": "ব্যালেন্স শূন্যের নিচে নামানো যাবে না।"
+      "commerce_rewards_insufficient": "ব্যালেন্স শূন্যের নিচে নামানো যাবে না।",
+      "commerce_rewards_off": "এই স্টোরে রিওয়ার্ড পয়েন্ট এখন বন্ধ।"
     },
     "fieldErrors": {
       "email_invalid": "name@example.com-এর মতো ইমেইল অ্যাড্রেস দিন",

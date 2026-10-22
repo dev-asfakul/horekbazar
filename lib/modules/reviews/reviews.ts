@@ -31,7 +31,11 @@ const oid = (id: string) => {
   }
 };
 
-/** Order lines this customer may review: line delivered, order delivered or completed. */
+/**
+ * Order lines this customer may review: line delivered, order delivered or completed. One review per
+ * order line (domain-rules §5.7), so the same product bought on two orders appears twice. Each line
+ * carries its review, if any (a written review is final: no edits, no resubmission).
+ */
 export async function reviewableLines(db: Db, userId: string) {
   const orders = await db
     .collection<OrderDoc>(ORDERS)
@@ -39,16 +43,14 @@ export async function reviewableLines(db: Db, userId: string) {
     .sort({ placedAt: -1 })
     .limit(100)
     .toArray();
-  const mine = await db.collection<ReviewDoc>(REVIEWS).find({ userId }, { projection: { productId: 1, status: 1, rating: 1 } }).toArray();
-  const reviewed = new Map(mine.map((r) => [String(r.productId), r]));
-  const seen = new Set<string>();
-  const lines: { orderId: string; orderNumber: string; lineId: string; productId: string; slug: string; name: OrderDoc["lines"][number]["name"]; review?: { status: ReviewDoc["status"]; rating: number } }[] = [];
+  const mine = await db.collection<ReviewDoc>(REVIEWS).find({ userId }, { projection: { orderId: 1, lineId: 1, status: 1, rating: 1 } }).toArray();
+  const reviewed = new Map(mine.map((r) => [`${String(r.orderId)}:${r.lineId}`, r]));
+  const lines: { orderId: string; orderNumber: string; lineId: string; productId: string; slug: string; name: OrderDoc["lines"][number]["name"]; review?: { id: string; status: ReviewDoc["status"]; rating: number } }[] = [];
   for (const o of orders) {
     for (const l of o.lines) {
-      if (l.status !== "delivered" || seen.has(String(l.productId))) continue;
-      seen.add(String(l.productId));
-      const r = reviewed.get(String(l.productId));
-      lines.push({ orderId: String(o._id), orderNumber: o.orderNumber, lineId: l.lineId, productId: String(l.productId), slug: l.slug, name: l.name, ...(r ? { review: { status: r.status, rating: r.rating } } : {}) });
+      if (l.status !== "delivered") continue;
+      const r = reviewed.get(`${String(o._id)}:${l.lineId}`);
+      lines.push({ orderId: String(o._id), orderNumber: o.orderNumber, lineId: l.lineId, productId: String(l.productId), slug: l.slug, name: l.name, ...(r ? { review: { id: String(r._id), status: r.status, rating: r.rating } } : {}) });
     }
   }
   return lines;
@@ -62,7 +64,11 @@ export interface ReviewInput {
   body: string;
 }
 
-/** Creates a pending review. Refuses when reviews are off, the line is not the customer's delivered line, or a review exists. */
+/**
+ * Creates a pending review. Refuses when reviews are off, the line is not the customer's delivered
+ * line, or that line already has a review (unique `orderId_lineId_unique`, so concurrent submits
+ * create one review and the others get `review_exists`).
+ */
 export async function submitReview(db: Db, customer: CustomerRef, input: ReviewInput, options: { enabled: boolean; now?: Date }) {
   if (!options.enabled) throw new CommerceError("reviews_off");
   const now = options.now ?? new Date();
@@ -142,11 +148,16 @@ export async function moderateReview(db: Db, actor: Actor, reviewId: string, exp
 }
 
 /** Published reviews for one product plus the rating summary (published only). */
+/** Public fields only: no customer id, order, line, moderation data or staff id ever leaves here. */
+const PUBLIC_REVIEW = { rating: 1, title: 1, body: 1, authorName: 1, createdAt: 1, "reply.body": 1, "reply.at": 1 } as const;
+export type PublicReview = Pick<ReviewDoc, "_id" | "rating" | "title" | "body" | "authorName" | "createdAt"> & { reply?: { body: string; at: Date } };
+
+/** Published reviews of a product with their real count and average (0 / none when there are none). */
 export async function productReviews(db: Db, productId: string | ObjectId, limit = 20) {
   const id = typeof productId === "string" ? oid(productId) : productId;
   const col = db.collection<ReviewDoc>(REVIEWS);
   const [items, agg] = await Promise.all([
-    col.find({ productId: id, status: "published" }).sort({ createdAt: -1 }).limit(limit).toArray(),
+    col.find({ productId: id, status: "published" }, { projection: PUBLIC_REVIEW }).sort({ createdAt: -1 }).limit(limit).toArray() as Promise<PublicReview[]>,
     col.aggregate<{ _id: null; count: number; sum: number }>([{ $match: { productId: id, status: "published" } }, { $group: { _id: null, count: { $sum: 1 }, sum: { $sum: "$rating" } } }]).toArray(),
   ]);
   const count = agg[0]?.count ?? 0;

@@ -140,6 +140,10 @@ const fixtures: Record<string, { valid: Record<string, unknown>; invalid: Record
     valid: { _id: new ObjectId(), userId: "u1", kind: "accrue", points: 12, orderId: new ObjectId(), basisMinor: 120000, expiresAt: now, actor: { type: "system", id: "orders" }, idempotencyKey: "reward:accrue:o1", createdAt: now },
     invalid: { _id: new ObjectId(), userId: "u1", kind: "gift", points: 1.5, actor: { type: "customer", id: "u1" }, idempotencyKey: "", createdAt: now },
   },
+  rewardLocks: {
+    valid: { _id: "u1", seq: 1, updatedAt: now },
+    invalid: { _id: "u1", seq: 0, updatedAt: now, balance: 10 },
+  },
   conversations: {
     valid: { _id: new ObjectId(), userId: "u1", customerName: "রহিম", subject: "ডেলিভারি", status: "open", lastMessageAt: now, lastFrom: "customer", unreadByStaff: 1, unreadByCustomer: 0, messageCount: 1, version: 1, createdAt: now, updatedAt: now },
     invalid: { _id: new ObjectId(), userId: "u1", customerName: "রহিম", subject: "ডেলিভারি", status: "pending", lastMessageAt: now, lastFrom: "bot", unreadByStaff: -1, unreadByCustomer: 0, messageCount: 501, version: 1, createdAt: now, updatedAt: now },
