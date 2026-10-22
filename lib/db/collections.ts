@@ -45,6 +45,9 @@ import {
 } from "../modules/pricing/schema.ts";
 import { COURIER_EVENTS, courierEventSchema, RETURNS, returnSchema, SHIPMENTS, shipmentSchema } from "../modules/fulfilment/schema.ts";
 import { BANNERS, bannerSchema, COLLECTIONS, collectionSchema, HOME_SECTIONS, homeSectionSchema } from "../modules/merch/schema.ts";
+import { REVIEWS, reviewSchema } from "../modules/reviews/schema.ts";
+import { REWARD_LEDGER, rewardEntrySchema } from "../modules/rewards/schema.ts";
+import { CONVERSATIONS, conversationSchema, MESSAGES, messageSchema } from "../modules/messaging/schema.ts";
 
 export interface CollectionSpec {
   name: string;
@@ -324,6 +327,49 @@ export const collections: CollectionSpec[] = [
       { key: { status: 1, updatedAt: -1 }, name: "status_updatedAt" },
     ],
     serviceEnforced: ["status moves only through RETURN_TRANSITIONS by compare-and-set on version; stock moves only from inspected (fulfilment/returns.ts)"],
+  },
+  // ── B9: engagement ──────────────────────────────────────────────────────────────────────
+  {
+    name: REVIEWS,
+    module: "reviews",
+    schema: reviewSchema,
+    indexes: [
+      { key: { userId: 1, productId: 1 }, name: "userId_productId_unique", unique: true },
+      { key: { productId: 1, status: 1, createdAt: -1 }, name: "productId_status_createdAt" },
+      { key: { status: 1, createdAt: -1 }, name: "status_createdAt" },
+    ],
+    serviceEnforced: ["only a delivered line of the author's own delivered/completed order; published only by reviews.moderate with compare-and-set on version (reviews/reviews.ts)"],
+  },
+  {
+    name: REWARD_LEDGER,
+    module: "rewards",
+    schema: rewardEntrySchema,
+    indexes: [
+      { key: { idempotencyKey: 1 }, name: "idempotencyKey_unique", unique: true },
+      { key: { userId: 1, createdAt: -1 }, name: "userId_createdAt" },
+      { key: { orderId: 1, kind: 1 }, name: "orderId_kind", partialFilterExpression: { orderId: { $exists: true } } },
+    ],
+    serviceEnforced: ["append-only; sign of points matches kind; balance = sum of entries; written only while features.rewards is on (rewards/rewards.ts)"],
+  },
+  {
+    name: CONVERSATIONS,
+    module: "messaging",
+    schema: conversationSchema,
+    indexes: [
+      { key: { userId: 1, lastMessageAt: -1 }, name: "userId_lastMessageAt" },
+      { key: { status: 1, lastMessageAt: -1 }, name: "status_lastMessageAt" },
+    ],
+    serviceEnforced: ["customers only see their own; orderId only for the customer's own order; at most 500 messages (messaging/messaging.ts)"],
+  },
+  {
+    name: MESSAGES,
+    module: "messaging",
+    schema: messageSchema,
+    indexes: [
+      { key: { conversationId: 1, createdAt: 1 }, name: "conversationId_createdAt" },
+      { key: { authorId: 1, clientKey: 1 }, name: "authorId_clientKey_unique", unique: true },
+    ],
+    serviceEnforced: ["plain text; posted with its conversation counters in one transaction (messaging/messaging.ts)"],
   },
   {
     name: IDEMPOTENCY_KEYS,

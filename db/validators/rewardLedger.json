@@ -1,0 +1,94 @@
+{
+  "$jsonSchema": {
+    "bsonType": "object",
+    "properties": {
+      "_id": {
+        "bsonType": "objectId"
+      },
+      "userId": {
+        "bsonType": "string",
+        "minLength": 1,
+        "maxLength": 100
+      },
+      "kind": {
+        "bsonType": "string",
+        "enum": [
+          "accrue",
+          "redeem",
+          "reverse",
+          "adjust",
+          "expire"
+        ]
+      },
+      "points": {
+        "bsonType": [
+          "int",
+          "long"
+        ],
+        "minimum": -1000000,
+        "maximum": 1000000
+      },
+      "orderId": {
+        "bsonType": "objectId"
+      },
+      "returnId": {
+        "bsonType": "objectId"
+      },
+      "basisMinor": {
+        "bsonType": [
+          "int",
+          "long"
+        ],
+        "minimum": 0
+      },
+      "expiresAt": {
+        "bsonType": "date"
+      },
+      "note": {
+        "bsonType": "string",
+        "minLength": 1,
+        "maxLength": 300
+      },
+      "actor": {
+        "bsonType": "object",
+        "properties": {
+          "type": {
+            "bsonType": "string",
+            "enum": [
+              "system",
+              "staff"
+            ]
+          },
+          "id": {
+            "bsonType": "string",
+            "minLength": 1,
+            "maxLength": 100
+          }
+        },
+        "required": [
+          "type",
+          "id"
+        ],
+        "additionalProperties": false
+      },
+      "idempotencyKey": {
+        "bsonType": "string",
+        "minLength": 1,
+        "maxLength": 200
+      },
+      "createdAt": {
+        "bsonType": "date"
+      }
+    },
+    "required": [
+      "_id",
+      "userId",
+      "kind",
+      "points",
+      "actor",
+      "idempotencyKey",
+      "createdAt"
+    ],
+    "additionalProperties": false
+  }
+}

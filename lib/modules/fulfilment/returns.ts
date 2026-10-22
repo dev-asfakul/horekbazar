@@ -7,6 +7,7 @@
 import { ObjectId, type Db } from "mongodb";
 import { inTransaction } from "../catalogue/common.ts";
 import { recordAudit } from "../platform/audit.ts";
+import { reverseForReturn } from "../rewards/rewards.ts";
 import { CommerceError } from "../pricing/cart.ts";
 import { ORDER_EVENTS, ORDERS, type OrderDoc, type OrderEventDoc } from "../orders/schema.ts";
 import { SETTINGS, SETTINGS_ID, type SettingsDoc } from "../settings/schema.ts";
@@ -179,6 +180,9 @@ export async function settleReturn(db: Db, input: StepBase): Promise<ReturnDoc> 
       if (!l.outcome) throw new CommerceError("inspection_incomplete", { lineId: l.lineId });
       await moveReturnedStock(db, session, { variantId: l.variantId, qty: l.qty, outcome: l.outcome, refType: "return", refId: String(r._id), lineRef: l.lineId, actor: { type: "staff", id: input.actor.id }, reason: l.note, now });
     }
+    // B9: take back the loyalty points the returned goods earned (only when the order had accrued).
+    const order = await db.collection<OrderDoc>(ORDERS).findOne({ _id: r.orderId }, { session, projection: { lines: 1 } });
+    if (order) await reverseForReturn(db, session, r, order, now);
     return {};
   });
 }
