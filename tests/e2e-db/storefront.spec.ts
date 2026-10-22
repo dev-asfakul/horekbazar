@@ -31,26 +31,26 @@ test.beforeAll(async () => {
   const settings = await getSettings(db);
   await upsertDeliveryZone(db, actor, settings.version, { id: "inside-dhaka", name: lt("ঢাকার ভেতরে", "Inside Dhaka"), fee: { amountMinor: 6000, currency: "BDT" }, estimate: lt("১-২ দিন", "1-2 days"), areas: [], enabled: true });
 
-  const publishCat = async (slug: string, parentId: string | null, en: string) => {
-    const id = String(await createCategory(db, client, actor, { slug, parentId, name: lt("বিভাগ", en), position: 1 }));
+  const publishCat = async (slug: string, parentId: string | null, en: string, bnName: string) => {
+    const id = String(await createCategory(db, client, actor, { slug, parentId, name: lt(bnName, en), position: 1 }));
     await setCategoryStatus(db, client, actor, id, (await getCategory(db, id))!.version, "published");
     return id;
   };
-  const food = await publishCat("e2e-food", null, "Food");
-  const pantry = await publishCat("e2e-pantry", food, "Pantry");
-  const product = async (slug: string, en: string, variants: { title: string; amount: number; compareAt?: number; stock?: number }[]) => {
-    const id = String(await createProduct(db, client, actor, { slug, name: lt("পণ্য", en), shortDescription: lt("বিবরণ", `${en}, packed for everyday cooking.`), description: lt("বিবরণ", `${en}. Store in a cool, dry place.`), primaryCategoryId: pantry, categoryIds: [pantry], attributes: [{ key: "origin", label: lt("উৎস", "Origin"), value: lt("বাংলাদেশ", "Bangladesh") }] }));
+  const food = await publishCat("e2e-food", null, "Food", "খাবার");
+  const pantry = await publishCat("e2e-pantry", food, "Pantry", "প্যান্ট্রি");
+  const product = async (slug: string, en: string, bnName: string, variants: { title: string; amount: number; compareAt?: number; stock?: number }[]) => {
+    const id = String(await createProduct(db, client, actor, { slug, name: lt(bnName, en), shortDescription: lt(`${bnName}, রোজকার রান্নার জন্য।`, `${en}, packed for everyday cooking.`), description: lt(`${bnName}। ঠান্ডা, শুকনো জায়গায় রাখুন।`, `${en}. Store in a cool, dry place.`), primaryCategoryId: pantry, categoryIds: [pantry], attributes: [{ key: "origin", label: lt("উৎস", "Origin"), value: lt("বাংলাদেশ", "Bangladesh") }] }));
     for (const [i, v] of variants.entries()) {
-      const vid = String(await createVariant(db, client, actor, id, { sku: `E2E-${randomUUID().slice(0, 8).toUpperCase()}`, title: lt("প্যাক", v.title), options: [], netQuantity: { value: i === 0 ? 1 : 5, unit: "kg", verified: true }, price: { amountMinor: v.amount, currency: "BDT" }, ...(v.compareAt ? { compareAt: { amountMinor: v.compareAt, currency: "BDT" } } : {}), position: i }));
+      const vid = String(await createVariant(db, client, actor, id, { sku: `E2E-${randomUUID().slice(0, 8).toUpperCase()}`, title: lt(v.title === "1 kg" ? "১ কেজি" : "৫ কেজি", v.title), options: [], netQuantity: { value: i === 0 ? 1 : 5, unit: "kg", verified: true }, price: { amountMinor: v.amount, currency: "BDT" }, ...(v.compareAt ? { compareAt: { amountMinor: v.compareAt, currency: "BDT" } } : {}), position: i }));
       if (v.stock) await moveStock(db, client, actor, { adjustmentId: randomUUID(), kind: "receive", lines: [{ variantId: vid, qty: v.stock }] });
     }
     await setProductStatus(db, client, actor, id, (await getProduct(db, id))!.product.version, "published");
   };
-  await product("e2e-miniket-rice", "Miniket Rice", [
+  await product("e2e-miniket-rice", "Miniket Rice", "মিনিকেট চাল", [
     { title: "1 kg", amount: 8500, stock: 12 },
     { title: "5 kg", amount: 42500, compareAt: 45000 },
   ]);
-  for (let i = 1; i < PANTRY_COUNT; i++) await product(`e2e-pantry-item-${i}`, `Pantry Item ${i}`, [{ title: "1 kg", amount: 10000 + i * 100 }]);
+  for (let i = 1; i < PANTRY_COUNT; i++) await product(`e2e-pantry-item-${i}`, `Pantry Item ${i}`, `প্যান্ট্রি আইটেম ${i}`, [{ title: "1 kg", amount: 10000 + i * 100 }]);
 });
 
 test.afterAll(async () => client?.close());
@@ -66,33 +66,33 @@ for (const [width, cols] of [
     await page.setViewportSize({ width, height: 900 });
     const violations = await watchCsp(page);
     await page.goto("/");
-    await expect(page.locator("html")).toHaveAttribute("lang", "bn-Latn");
-    await expect(page.getByTestId("category-tiles")).toContainText("Food");
+    await expect(page.locator("html")).toHaveAttribute("lang", "bn");
+    await expect(page.getByTestId("category-tiles")).toContainText("খাবার");
     await expect(page.getByTestId("home-new-grid")).toBeVisible();
 
-    await page.getByTestId("category-tiles").getByRole("link", { name: "Food" }).click();
+    await page.getByTestId("category-tiles").getByRole("link", { name: "খাবার" }).click();
     await expect(page).toHaveURL(/\/c\/e2e-food$/);
-    await expect(page.getByRole("heading", { level: 1 })).toHaveText("Food");
-    await expect(page.locator("#listing-count")).toHaveText(`${PANTRY_COUNT}-ti product`);
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText("খাবার");
+    await expect(page.locator("#listing-count")).toHaveText("২৬টি প্রোডাক্ট");
     await expect(page.getByTestId("product-grid").locator("li")).toHaveCount(24);
     expect(await columns(page)).toBe(cols);
     // No horizontal overflow at this width.
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
 
-    await page.getByRole("link", { name: "Porer page" }).click();
+    await page.getByRole("link", { name: "পরের পেজ" }).click();
     await expect(page).toHaveURL(/page=2/);
     await expect(page.getByTestId("product-grid").locator("li")).toHaveCount(PANTRY_COUNT - 24);
 
     await page.goto("/p/e2e-miniket-rice");
-    await expect(page.getByRole("heading", { level: 1 })).toHaveText("Miniket Rice");
-    await expect(page.getByTestId("stock")).toHaveText("Stock-e ache");
-    await expect(page.locator(".pdp-info .price-tag-amount")).toHaveText("৳85");
-    await page.getByRole("link", { name: "5 kg" }).click();
-    await expect(page.locator(".pdp-info .price-tag-amount")).toHaveText("৳425");
-    await expect(page.locator(".pdp-info .price-tag-compare")).toHaveText("৳450");
-    await expect(page.getByTestId("stock")).toHaveText("Ei option-ti ekhon stock-e nei");
-    await expect(page.getByTestId("delivery-zones")).toContainText("Inside Dhaka");
-    await expect(page.getByRole("note")).toContainText("Online order ekhono chalu hoyni");
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText("মিনিকেট চাল");
+    await expect(page.getByTestId("stock")).toHaveText("স্টকে আছে");
+    await expect(page.locator(".pdp-info .price-tag-amount")).toHaveText("৳৮৫");
+    await page.getByRole("link", { name: "৫ কেজি" }).click();
+    await expect(page.locator(".pdp-info .price-tag-amount")).toHaveText("৳৪২৫");
+    await expect(page.locator(".pdp-info .price-tag-compare")).toHaveText("৳৪৫০");
+    await expect(page.getByTestId("stock")).toHaveText("এই অপশনটি এখন স্টকে নেই");
+    await expect(page.getByTestId("delivery-zones")).toContainText("ঢাকার ভেতরে");
+    await expect(page.getByRole("note")).toContainText("অনলাইন অর্ডার এখনো চালু হয়নি");
     // Link prefetching keeps the network busy, so "networkidle" never settles here; wait for load.
     await page.waitForLoadState("load");
     await page.waitForTimeout(500);
@@ -120,9 +120,12 @@ test("search finds whole words and prefixes, and says so when nothing matches", 
   await page.getByRole("searchbox").first().fill("miniket");
   await page.getByRole("searchbox").first().press("Enter");
   await expect(page).toHaveURL(/\/search\?q=miniket/);
-  await expect(page.getByTestId("product-grid")).toContainText("Miniket Rice");
+  await expect(page.getByTestId("product-grid")).toContainText("মিনিকেট চাল");
   await page.goto("/search?q=mini");
-  await expect(page.getByTestId("product-grid")).toContainText("Miniket Rice");
+  await expect(page.getByTestId("product-grid")).toContainText("মিনিকেট চাল");
+  // Bangla words find the stored Bangla names too.
+  await page.goto("/search?q=চাল");
+  await expect(page.getByTestId("product-grid")).toContainText("মিনিকেট চাল");
   await page.goto("/en/search?q=nothing-like-this");
   await expect(page.getByTestId("listing-empty")).toContainText("No products found for");
   await page.goto("/en/search");
@@ -133,7 +136,7 @@ test("SEO: canonical, hreflang, JSON-LD, sitemap and robots", async ({ page, req
   await page.goto("/en/p/e2e-miniket-rice");
   const origin = new URL(page.url()).origin;
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute("href", `${origin}/en/p/e2e-miniket-rice`);
-  await expect(page.locator('link[rel="alternate"][hreflang="bn-Latn"]')).toHaveAttribute("href", `${origin}/p/e2e-miniket-rice`);
+  await expect(page.locator('link[rel="alternate"][hreflang="bn"]')).toHaveAttribute("href", `${origin}/p/e2e-miniket-rice`);
   await expect(page.locator('link[rel="alternate"][hreflang="x-default"]')).toHaveAttribute("href", `${origin}/p/e2e-miniket-rice`);
   const ld = (await page.locator('script[type="application/ld+json"]').allTextContents()).map((s) => JSON.parse(s) as { "@type": string; offers?: { price: string; availability: string }[] });
   const productLd = ld.find((d) => d["@type"] === "Product")!;

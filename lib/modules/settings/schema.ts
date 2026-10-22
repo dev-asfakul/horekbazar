@@ -59,9 +59,9 @@ export type SettingsDoc = z.infer<typeof settingsSchema>;
  */
 export const DEFAULT_SETTINGS: Omit<SettingsDoc, "updatedAt"> & { version: number } = {
   _id: SETTINGS_ID,
-  store: { name: { bn: "HorekBazar", en: "HorekBazar" }, contact: {} },
+  store: { name: { bn: "হরেকবাজার", en: "HorekBazar" }, contact: {} },
   theme: { fontPreset: "khata", accent: "#1E4E9C" },
-  locale: { default: "bn", numerals: "latin", grouping: "south_asian" },
+  locale: { default: "bn", numerals: "bengali", grouping: "south_asian" },
   delivery: { zones: [] },
   pricing: { roundingUnit: 100 },
   features: { wishlist: false, brands: false, reviews: false },

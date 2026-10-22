@@ -1,6 +1,7 @@
-// Banglish-first guard (owner decision 2026-10-22; review checklist in docs/BANGLISH-PROPOSAL.md).
-// The "bn" storefront is Latin-script Banglish: no Bengali-script UI string may come back by accident.
-// Product and category data is not checked here: it is source data and is never rewritten by copy work.
+// Banglish guard (owner, 2026-10-22): the "bn" storefront is Banglish written in Bengali script:
+// conversational Bangla with English words in Bengali letters ("সেটআপ বাকি", "কার্ট", "লগইন করুন").
+// Admin-only form messages are English (the admin is English only) and are recognised by being equal
+// to the English text. Product and category data are source data and are not checked here.
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import bn from "@/messages/bn.json";
@@ -8,6 +9,8 @@ import en from "@/messages/en.json";
 import { renderEmail, EMAIL_TEMPLATES } from "@/lib/modules/identity/emails";
 
 const BENGALI = /[\u0980-\u09FF]/;
+/** Shopper-facing strings that are rightly Latin: the language switch's own name, and "SKU". */
+const LATIN_OK = new Set(["shell.localeSwitch.label", "store.product.sku"]);
 
 function entries(value: unknown, prefix = ""): [string, string][] {
   if (typeof value === "string") return [[prefix, value]];
@@ -15,50 +18,52 @@ function entries(value: unknown, prefix = ""): [string, string][] {
   return Object.entries(value).flatMap(([k, v]) => entries(v, prefix ? `${prefix}.${k}` : k));
 }
 
-/** One spelling per commerce term (proposal → conventions). Wrong spellings that must not appear. */
+const english = new Map(entries(en));
+const customer = entries(bn).filter(([k, v]) => english.get(k) !== v || LATIN_OK.has(k));
+
+/** One Bengali spelling per commerce term; these variants must not appear. */
 const GLOSSARY: [RegExp, string][] = [
-  [/\bkart\b/i, "Cart"],
-  [/\bchekout\b|\bcheck-out\b/i, "Checkout"],
-  [/\bacount\b|\bekaunt\b/i, "Account"],
-  [/\blog-?in koro\b/i, "Login korun (polite form)"],
-  [/\bsign in\b/i, "Login"],
-  [/\bsign out\b/i, "Logout"],
+  [/\b(Cart|Checkout|Orders?|Wishlist|Search|Login|Account|Delivery|Payment)\b/, "write the term in Bengali letters (কার্ট, চেকআউট, অর্ডার, উইশলিস্ট, সার্চ, লগইন, অ্যাকাউন্ট, ডেলিভারি, পেমেন্ট)"],
+  [/একাউন্ট|এ্যাকাউন্ট/, "অ্যাকাউন্ট"],
+  [/লগ ইন|লগ-ইন/, "লগইন"],
+  [/লগ আউট|লগ-আউট/, "লগআউট"],
+  [/চেক আউট/, "চেকআউট"],
+  [/ইমেল\b|ই-মেইল/, "ইমেইল"],
+  [/প্রডাক্ট|প্রোডাক্‌ট|পণ্য/, "প্রোডাক্ট (UI copy)"],
 ];
 
-describe("Banglish catalogue", () => {
-  const all = entries(bn);
+describe("Banglish catalogue (Bengali script)", () => {
+  it("covers every shopper-facing string", () => {
+    expect(customer.length).toBeGreaterThan(260);
+  });
 
-  it("has no Bengali-script string", () => {
-    expect(all.filter(([, v]) => BENGALI.test(v)).map(([k]) => k)).toEqual([]);
+  it("writes every shopper-facing string in Bengali script", () => {
+    expect(customer.filter(([k, v]) => !LATIN_OK.has(k) && !BENGALI.test(v)).map(([k, v]) => `${k}: ${v}`)).toEqual([]);
   });
 
   it("uses one spelling for each commerce term", () => {
-    // Admin-only form messages are deliberately the English text (the admin is English only).
-    const english = new Map(entries(en));
-    const banglish = all.filter(([k, v]) => english.get(k) !== v);
-    expect(banglish.length).toBeGreaterThan(150);
     for (const [pattern, preferred] of GLOSSARY) {
-      expect(banglish.filter(([, v]) => pattern.test(v)).map(([k]) => `${k} (use ${preferred})`)).toEqual([]);
+      expect(customer.filter(([, v]) => pattern.test(v)).map(([k, v]) => `${k}: ${v} (use ${preferred})`)).toEqual([]);
     }
   });
 
   it("keeps button labels short (at most four words)", () => {
-    const buttons = all.filter(([k]) => /\.(submit|retry|action|reload|signOut|revoke|revokeOthers|register|login|requestNew|enableSubmit|disableSubmit|confirmSubmit|passwordSubmit|resendSubmit)$/.test(k));
+    const buttons = customer.filter(([k]) => /\.(submit|retry|action|reload|signOut|revoke|revokeOthers|register|login|requestNew|enableSubmit|disableSubmit|confirmSubmit|passwordSubmit|resendSubmit)$/.test(k));
     expect(buttons.length).toBeGreaterThan(10);
     expect(buttons.filter(([, v]) => v.split(/\s+/).length > 4).map(([k, v]) => `${k}: ${v}`)).toEqual([]);
   });
 });
 
 describe("hard-coded customer copy", () => {
-  it("Banglish e-mails contain no Bengali script and are marked bn-Latn", () => {
+  it("Bangla e-mails are in Bengali script and marked lang=bn", () => {
     for (const template of EMAIL_TEMPLATES) {
       const mail = renderEmail({ template, to: "a@example.com", locale: "bn", url: "https://example.com/x", role: "Owner" });
-      expect(BENGALI.test(mail.subject + mail.text + mail.html)).toBe(false);
-      expect(mail.html).toContain('lang="bn-Latn"');
+      expect(BENGALI.test(mail.subject)).toBe(true);
+      expect(mail.html).toContain('lang="bn"');
     }
   });
 
-  it("the last-resort error page contains no Bengali script", () => {
-    expect(BENGALI.test(readFileSync("app/global-error.tsx", "utf8"))).toBe(false);
+  it("the last-resort error page carries the Bangla text", () => {
+    expect(readFileSync("app/global-error.tsx", "utf8")).toContain("কিছু একটা সমস্যা হয়েছে");
   });
 });

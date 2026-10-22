@@ -25,18 +25,16 @@ export const loadStore = cache(async (): Promise<StoreContext> => {
 });
 
 /**
- * Catalogue text on the storefront. Product and category data is stored as { bn (Bengali script), en }.
- * The "/" storefront is Latin-script Banglish (owner decision 2026-10-22) and the source data is not
- * rewritten, so both locales show the English text and fall back to the stored Bengali text.
- * Approved Banglish display names would slot in here first (docs/BANGLISH-PROPOSAL.md, proposed).
+ * Catalogue text on the storefront: the stored text for the page's language, falling back to the other.
+ * Product and category data are kept as entered ({ bn: Bengali script, en }); nothing is transliterated.
  */
-export function shown(text: LocalizedText | undefined, _locale: Locale): string {
-  void _locale;
-  return text?.en ?? text?.bn ?? "";
+export function shown(text: LocalizedText | undefined, locale: Locale): string {
+  return (locale === "bn" ? (text?.bn ?? text?.en) : (text?.en ?? text?.bn)) ?? "";
 }
 
-/** The `lang` of catalogue text as shown: English when an English text exists, otherwise Bengali. */
-export function shownLang(text: LocalizedText | undefined): string {
+/** The `lang` of catalogue text as shown on a page of `locale`. */
+export function shownLang(text: LocalizedText | undefined, locale: Locale = "bn"): string {
+  if (locale === "bn") return text?.bn ? "bn" : "en";
   return text?.en ? "en" : "bn";
 }
 

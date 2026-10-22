@@ -5,15 +5,15 @@ import "./globals.css";
 
 export default function GlobalError({ error, retry }: { error: Error & { digest?: string }; retry: () => void }) {
   return (
-    <html lang="bn-Latn">
+    <html lang="bn">
       <body>
         <main id="main">
           <section className="state-page" data-state="error" aria-labelledby="state-title">
-            <title>Kichu ekta shomossha hoyeche | Something went wrong</title>
+            <title>কিছু একটা সমস্যা হয়েছে | Something went wrong</title>
             <h1 id="state-title" className="state-title">
-              Kichu ekta shomossha hoyeche
+              কিছু একটা সমস্যা হয়েছে
             </h1>
-            <p className="state-body">Ei page-ti ekhon dekhano jacche na. Ektu por abar try korun.</p>
+            <p className="state-body">এই পেজটি এখন দেখানো যাচ্ছে না। একটু পরে আবার চেষ্টা করুন।</p>
             <p className="state-body" lang="en">
               Something went wrong. This page can&apos;t be shown right now. Please try again in a moment.
             </p>
@@ -24,7 +24,7 @@ export default function GlobalError({ error, retry }: { error: Error & { digest?
             ) : null}
             <p className="state-actions">
               <button type="button" className="btn btn-primary" onClick={() => retry()}>
-                Abar try korun / Try again
+                আবার চেষ্টা করুন / Try again
               </button>
             </p>
           </section>

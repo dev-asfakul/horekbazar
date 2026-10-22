@@ -38,14 +38,14 @@ export default async function CategoryPage({ params, searchParams }: PageProps<"
   const crumbs = [
     { name: shell("nav.home"), href: localeHref(locale, "/") },
     { name: shell("categories"), href: localeHref(locale, "/categories") },
-    ...[...category.ancestors, category].map((c) => ({ name: shown(c.name, locale), href: localeHref(locale, categoryPath(c)), lang: shownLang(c.name) })),
+    ...[...category.ancestors, category].map((c) => ({ name: shown(c.name, locale), href: localeHref(locale, categoryPath(c)), lang: shownLang(c.name, locale) })),
   ];
   return (
     <ListingView
       locale={locale}
       format={moneyFormat(store, locale)}
       title={shown(category.name, locale)}
-      titleLang={shownLang(category.name)}
+      titleLang={shownLang(category.name, locale)}
       before={
         <>
           <Breadcrumbs items={crumbs} label={t("product.breadcrumb")} origin={origin} />
@@ -54,7 +54,7 @@ export default async function CategoryPage({ params, searchParams }: PageProps<"
               <ul>
                 {category.children.map((c) => (
                   <li key={c.id}>
-                    <Link className="chip-link" href={localeHref(locale, categoryPath(c))} lang={shownLang(c.name)}>
+                    <Link className="chip-link" href={localeHref(locale, categoryPath(c))} lang={shownLang(c.name, locale)}>
                       {shown(c.name, locale)}
                     </Link>
                   </li>
