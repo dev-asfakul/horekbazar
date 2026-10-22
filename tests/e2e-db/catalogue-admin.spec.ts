@@ -84,7 +84,7 @@ test("catalogue editor creates, fills and publishes a product", async ({ page })
   await expect(page.getByTestId("admin-product")).toBeVisible();
   // No photo yet: the honest LabelTile, never a stock image.
   await expect(page.getByTestId("product-preview").locator("img")).toHaveCount(0);
-  await expect(page.getByTestId("product-preview")).toContainText("রান্নাঘর");
+  await expect(page.getByTestId("product-preview")).toContainText("Kitchen"); // the admin is English only: the English category name
   await expect(page.getByTestId("variants-empty")).toBeVisible();
 
   // Publishing without an active priced variant is refused by the server.
