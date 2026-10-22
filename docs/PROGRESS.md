@@ -11,7 +11,9 @@ Newest first. Each entry: date, phase, done, decided, open, next.
 - **Checks:** lint, typecheck, unit 112/112, integration 88/88, build, Playwright 215/58 skipped/0 failed, `test:e2e:db` 10/10.
 - **Merged into `preview/horekbazar-v1`:** #11 (`cbf8471`), #12 (`1468fb3`), #13 (B5), each after CI `check` and Vercel success. `main` untouched (owner merges).
 - **Gate** (zero-variable build, `http://127.0.0.1:3000/`): FAIL, exit 1, 384 s. SEO seo-03/04/06/18 are measured on the setup-required `/` (noindex by design); the real home has canonical, description and JSON-LD (e2e-db SEO test) but no og:image yet. Journey: 80 header search form states, 1 error state. Completeness items for B6–B11.
-- **Not done:** catalogue images and enrichment (policy conflict recorded in HANDOFF), `db:migrate` on `horekbazar_dev`, Owner setup (owner action), B6–B11.
+- **Main:** PR #14 (`preview/horekbazar-v1` → `main`) merged `376decc` on the owner's instruction; post-merge CI success; Vercel success; live preview serves Banglish (`lang=bn-Latn`), `/api/health` database connected, setupRequired true (no Owner yet). PR #10 auto-marked merged.
+- **Database:** `db:migrate` on `horekbazar_dev` OK. Mistake caught and reverted: a first run without `MONGODB_DB` created the default database `horekbazar` (7 documents of its own); verified and dropped.
+- **Not done:** catalogue images and enrichment (policy conflict recorded in HANDOFF), Owner setup (owner action), B6–B11.
 - **Next:** merge #12 and the B5 PR after CI; owner creates the Owner and publishes; images per HANDOFF item 3; B6.
 
 ## 2026-10-22 — Owner-supplied environment, Owner setup verification, Banglish audit (no application code changed)

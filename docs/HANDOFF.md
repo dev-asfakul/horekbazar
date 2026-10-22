@@ -11,12 +11,12 @@ Last updated 2026-10-22 (Asia/Dhaka), after the Banglish change, the B4 bulk-sta
 | B0–B4 | merged to `main` (PRs #1–#9). B4 had one contract gap (bulk status), fixed in PR #12 |
 | Banglish storefront copy, English-only admin | PR #11 merged into `preview/horekbazar-v1` (merge `cbf8471`), CI green |
 | B4 bulk product status | PR #12 merged into `preview/horekbazar-v1` (`1468fb3`) |
-| B5 storefront catalogue | PR #13 merged into `preview/horekbazar-v1`; not on `main` yet, so the public preview (serves `main`) does not show it |
+| B5 storefront catalogue | PR #13 merged into `preview/horekbazar-v1`; on `main` through PR #14 (merge `376decc`, owner-authorised), post-merge CI success, live on horekbazar-preview.vercel.app (shows the setup page until the Owner exists) |
 | Takeover audit docs | PR #10 (into `main`, open); its commits are also merged into `feat/b5-storefront` |
 | B6 cart → B11 hardening | not started |
 
-Branch flow (D18): feature branch → PR into `preview/horekbazar-v1` → merge after CI is green. Only the
-owner merges `preview/horekbazar-v1` into `main`. `main` is protected (required check `check`).
+Branch flow: feature branch → PR into `preview/horekbazar-v1` → merge after CI is green → PR into `main`,
+merged by the agent after the required check passes (owner authorisation 2026-10-22, DESIGN.md Decision trace). `main` is protected (required check `check`).
 
 ## Session 2026-10-22: what was done, how, and what is left
 
@@ -54,9 +54,10 @@ Gate: FAIL (zero-variable `/` is the setup page; header search states; B6–B11 
    Owner at `/admin/setup` (`docs/OWNER-SETUP.md`), save `/admin/settings` once, add delivery zones with
    real fees, publish the 9 top-level then 30 child categories, then bulk-publish products in
    `/admin/products`, receive stock in `/admin/inventory`. All 144 catalogue records are drafts with 0 stock.
-2. **Run `npm run db:migrate` against `horekbazar_dev`** after B5 is merged, to create the
-   `storefront_text` and `status_publishedAt` indexes (index-only; verify the target database first;
-   from this sandbox the Atlas SRV name does not resolve, so a standard seed-list URI is needed).
+2. **Done 2026-10-22:** `db:migrate` on `horekbazar_dev` (validators unchanged, products 6 indexes incl.
+   `storefront_text`). Pass **both** `MONGODB_URI` and `MONGODB_DB`: a first run without `MONGODB_DB` went to
+   the default database `horekbazar`, created it with 6 staff roles; it was verified to hold only those 7
+   documents and dropped. The sandbox cannot resolve the Atlas SRV name; use a standard seed-list URI.
 3. **Catalogue images.** Requested by the owner (2026-10-22): upload images to Cloudinary and link
    them. Conflicts with the approved `catalogue/horekbazar/IMAGE-ACQUISITION.md` (no generic photo as a
    product photo; rights recorded). Smallest compliant path: images with a real licence (own photos,
