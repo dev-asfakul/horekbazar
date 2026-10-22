@@ -10,6 +10,12 @@
 # The mongod binary is cached between runs; the suite never sees a real database URI.
 # B4: signed-in admin catalogue journeys in Chromium against the zero-variable build, backed by a
 # disposable in-memory replica set (playwright.db.config.ts, scripts/e2e-db-server.mjs).
+# 2026-10-22 (post-B8): run 39787262867 on main was cancelled by the 30-minute job limit while
+# `playwright install --with-deps` waited on a stalled azure.archive.ubuntu.com mirror (every
+# check before it had passed in ~1 min). Job limit set to 60 minutes (owner target; GitHub-hosted
+# jobs allow up to 6 h). apt now gives up on a stalled package after 30 s and retries, system
+# packages and browsers are installed in separate steps with their own limits, and the browser
+# binaries are cached per Playwright version. No test, engine or check was removed.
 name: CI
 
 on:
@@ -26,7 +32,7 @@ concurrency:
 jobs:
   check:
     runs-on: ubuntu-24.04
-    timeout-minutes: 30
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
@@ -54,7 +60,24 @@ jobs:
 
       - name: Build with zero environment variables
         run: npm run build
-      - run: npx playwright install --with-deps chromium firefox webkit
+      - name: Fail fast and retry on a stalled apt mirror
+        run: |
+          printf 'Acquire::Retries "5";\nAcquire::http::Timeout "30";\nAcquire::https::Timeout "30";\n' \
+            | sudo tee /etc/apt/apt.conf.d/99ci-network >/dev/null
+      - name: Playwright version
+        id: pw
+        run: echo "version=$(node -p "require('@playwright/test/package.json').version")" >> "$GITHUB_OUTPUT"
+      - name: Cache Playwright browsers
+        uses: actions/cache@v6
+        with:
+          path: /home/runner/.cache/ms-playwright
+          key: playwright-${{ steps.pw.outputs.version }}-ubuntu-24.04
+      - name: Playwright system packages
+        timeout-minutes: 25
+        run: npx playwright install-deps chromium firefox webkit
+      - name: Playwright browsers
+        timeout-minutes: 10
+        run: npx playwright install chromium firefox webkit
       - name: Playwright (375 / 768 / 1440, three engines)
         run: npm run test:e2e
       - name: Signed-in admin journeys (Chromium, disposable replica set)
