@@ -48,8 +48,13 @@ describe("getSetupStatus", () => {
   });
 
   it("reports the checked database state, and is not ready before settings and an Owner exist", async () => {
-    const configured = await getSetupStatus({ MONGODB_URI: "mongodb+srv://cluster.example.invalid/" }, async () => "connected");
+    const uri = { MONGODB_URI: "mongodb+srv://cluster.example.invalid/" };
+    const configured = await getSetupStatus(uri, async () => "connected", async () => false);
     expect(configured).toEqual({ ready: false, missing: [], invalid: [], database: "connected" });
+    // Ready only once the Owner and the saved settings exist; a failing probe is "not ready", never ready.
+    expect((await getSetupStatus(uri, async () => "connected", async () => true)).ready).toBe(true);
+    expect((await getSetupStatus(uri, async () => "connected", async () => Promise.reject(new Error("x")))).ready).toBe(false);
+    expect((await getSetupStatus(uri, async () => "unreachable", async () => true)).ready).toBe(false);
     const standalone = await getSetupStatus({ MONGODB_URI: "mongodb://127.0.0.1:1/" }, async () => "not_replica_set");
     expect(standalone.database).toBe("not_replica_set");
   });

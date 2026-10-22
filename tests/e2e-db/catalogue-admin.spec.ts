@@ -7,7 +7,7 @@
 // without it — tests/e2e covers that state). So the fixture signs in with the app's own auth service
 // and the server's throwaway secret, and hands the resulting session cookie to the browser. Every
 // admin request after that is a normal browser request checked by the server.
-import { readFileSync, rmSync } from "node:fs";
+import { readFileSync } from "node:fs";
 import { expect, test, type BrowserContext } from "@playwright/test";
 import { MongoClient, type Db } from "mongodb";
 import { createAuth } from "@/lib/modules/identity/auth";
@@ -48,8 +48,8 @@ async function signIn(context: BrowserContext) {
 
 test.afterAll(async () => {
   await client?.close();
-  // The harness may be killed before it can clean up; the throwaway secret is useless after the run.
-  rmSync("test-results/e2e-db.json", { force: true });
+  // test-results/e2e-db.json is removed by the harness on exit (later spec files still read it); its
+  // throwaway secret is useless after the run.
 });
 
 test("catalogue editor creates, fills and publishes a product", async ({ page }) => {
@@ -84,7 +84,7 @@ test("catalogue editor creates, fills and publishes a product", async ({ page })
   await expect(page.getByTestId("admin-product")).toBeVisible();
   // No photo yet: the honest LabelTile, never a stock image.
   await expect(page.getByTestId("product-preview").locator("img")).toHaveCount(0);
-  await expect(page.getByTestId("product-preview")).toContainText("রান্নাঘর");
+  await expect(page.getByTestId("product-preview")).toContainText("Kitchen"); // the admin is English only: the English category name
   await expect(page.getByTestId("variants-empty")).toBeVisible();
 
   // Publishing without an active priced variant is refused by the server.
@@ -118,6 +118,35 @@ test("catalogue editor creates, fills and publishes a product", async ({ page })
   const actions = (await db.collection("auditLog").find({ "actor.role": "catalogue_editor" }).toArray()).map((a) => a.action as string);
   expect(actions).toEqual(expect.arrayContaining(["category.created", "product.created"]));
   expect(actions.length).toBeGreaterThanOrEqual(5); // category create + publish, product create, variant create, product publish
+});
+
+test("bulk status changes the selected products on the server, one by one", async ({ page, viewport }) => {
+  await signIn(page.context());
+  await page.goto("/admin/products?q=e2e");
+  const form = page.getByTestId("bulk-status-form");
+  // Nothing selected: the server refuses with a clear message.
+  await form.getByRole("button", { name: "Apply to selected" }).click();
+  await expect(form.getByRole("alert")).toHaveText("Select at least one product.");
+
+  // Select the product (visible layout only), set it back to draft.
+  await form.getByRole("button", { name: "Select all on this page" }).click();
+  await expect(page.getByTestId("bulk-count")).toHaveText("1 selected");
+  await form.getByLabel("New status").selectOption("draft");
+  await form.getByRole("button", { name: "Apply to selected" }).click();
+  await expect(form.getByRole("status").first()).toContainText("1 of 1 products changed.");
+  const status = async () => (await db.collection("products").findOne({ slug: "e2e-steel-pot" }))?.status;
+  await expect.poll(status).toBe("draft");
+
+  // Publish again through the same rules as the single-product button.
+  await form.getByRole("button", { name: "Select all on this page" }).click();
+  await form.getByLabel("New status").selectOption("published");
+  await form.getByRole("button", { name: "Apply to selected" }).click();
+  // The result line reads the same as before, so the server state decides.
+  await expect.poll(status).toBe("published");
+  await expect(form.getByRole("status").first()).toContainText("1 of 1 products changed.");
+  const audit = await db.collection("auditLog").find({ action: { $in: ["product.draft", "product.published"] }, "target.type": "product" }).toArray();
+  expect(audit.length).toBeGreaterThanOrEqual(3);
+  expect(viewport).not.toBeNull();
 });
 
 test("a section outside the role is refused by the server", async ({ page }) => {

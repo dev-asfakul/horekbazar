@@ -1,8 +1,7 @@
-// Admin language. Staff preference arrives with staff accounts (B3); until then the admin uses the
-// store's default locale (NEXT_PUBLIC_DEFAULT_LOCALE, Bengali when unset).
-import { defaultLocale, isLocale, type Locale } from "@/lib/i18n/locales";
+// Admin language: English only (owner decision 2026-10-22). Staff language preferences still pick
+// the language of their e-mails; the admin screens themselves are always English.
+import type { Locale } from "@/lib/i18n/locales";
 
-export function adminLocale(env: Record<string, string | undefined> = process.env): Locale {
-  const configured = env.NEXT_PUBLIC_DEFAULT_LOCALE?.trim() ?? "";
-  return isLocale(configured) ? configured : defaultLocale;
+export function adminLocale(): Locale {
+  return "en";
 }

@@ -14,6 +14,9 @@ export const serverEnvSchema = z.object({
   STORE_TIMEZONE: optional(z.string().min(1)),
   // "on" answers every storefront page with the maintenance state (503). Anything else, or unset, is off.
   MAINTENANCE_MODE: z.preprocess((v) => (typeof v === "string" && v.trim() !== "" ? v.trim().toLowerCase() : undefined), z.enum(["on", "off"]).optional()),
+  // "on" lets search engines crawl the storefront (robots.txt, page robots meta). Off by default: this is
+  // a development and showcase deployment until the owner decides to launch.
+  SITE_INDEXING: z.preprocess((v) => (typeof v === "string" && v.trim() !== "" ? v.trim().toLowerCase() : undefined), z.enum(["on", "off"]).optional()),
 
   MONGODB_URI: optional(z.string().regex(/^mongodb(\+srv)?:\/\/.+/, "must start with mongodb:// or mongodb+srv://")),
   MONGODB_DB: optional(z.string().regex(/^[A-Za-z0-9_-]{1,63}$/, "letters, digits, _ and - only")),

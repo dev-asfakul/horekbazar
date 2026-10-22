@@ -102,6 +102,15 @@ export const collections: CollectionSpec[] = [
       { key: { categoryIds: 1, status: 1 }, name: "categoryIds_status" },
       { key: { primaryCategoryId: 1 }, name: "primaryCategoryId" },
       { key: { status: 1, updatedAt: -1 }, name: "status_updatedAt" },
+      { key: { status: 1, publishedAt: -1 }, name: "status_publishedAt" },
+      // B5 storefront search. Language "none": no stemming or stop words, so Banglish, Bengali and
+      // English words all match as written (BUILD-PLAN B5: "MongoDB text index, default_language none").
+      {
+        key: { "name.en": "text", "name.bn": "text", "shortDescription.en": "text", "shortDescription.bn": "text" },
+        name: "storefront_text",
+        default_language: "none",
+        weights: { "name.en": 10, "name.bn": 10, "shortDescription.en": 2, "shortDescription.bn": 2 },
+      },
     ],
     serviceEnforced: [
       "primary category is a leaf and in categoryIds; publish needs a published category and a priced active variant (catalogue/products.ts)",

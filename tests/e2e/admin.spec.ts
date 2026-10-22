@@ -27,8 +27,8 @@ test("/admin/setup lists what is missing, private and not indexed", async ({ pag
   const response = await page.goto("/admin/setup");
   expect(response?.status()).toBe(200);
   expect(response?.headers()["content-security-policy"]).toContain("frame-ancestors 'none'");
-  await expect(page.locator("html")).toHaveAttribute("lang", "bn");
-  await expect(page.getByRole("heading", { level: 1 })).toHaveText("স্টোরের মালিক ঠিক করুন");
+  await expect(page.locator("html")).toHaveAttribute("lang", "en");
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Set up the store owner");
   const blockers = page.getByTestId("setup-blockers");
   await expect(blockers.locator("[data-blocker='database']")).toContainText("MONGODB_URI");
   await expect(blockers.locator("[data-blocker='auth_secret']")).toContainText("AUTH_SECRET");

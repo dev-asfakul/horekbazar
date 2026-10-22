@@ -5,7 +5,7 @@ import { watchCsp } from "./helpers";
 const base = `http://127.0.0.1:${Number(process.env.E2E_MAINTENANCE_PORT ?? 3101)}`;
 
 test("every storefront page answers 503 with Retry-After and the localised maintenance page", async ({ request }) => {
-  for (const [path, lang] of [["/", "bn"], ["/cart", "bn"], ["/en", "en"], ["/en/c/kitchen", "en"]] as const) {
+  for (const [path, lang] of [["/", "bn-Latn"], ["/cart", "bn-Latn"], ["/en", "en"], ["/en/c/kitchen", "en"]] as const) {
     const r = await request.get(`${base}${path}`);
     expect(r.status(), path).toBe(503);
     expect(r.headers()["retry-after"]).toBe("600");
