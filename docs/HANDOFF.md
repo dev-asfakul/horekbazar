@@ -67,12 +67,18 @@ Gate: FAIL (zero-variable `/` is the setup page; header search states; B6–B11 
 - **Merchandising (2026-10-22, `npm run showcase`):** 5 published collections from
   `catalogue/horekbazar/showcase-merch.json` (kitchen-staples, home-cleaning, school-ready, phone-and-power,
   everyday-cotton-wear) and 8 published home sections (hero, category tiles, 5 product rails, collection
-  grid). Created only when absent, so admin edits survive reruns. No banners (they need an image).
-- **Owner sign-in (open):** the Owner account has a hashed password but `emailVerified: false` and no
-  session; auth requires a verified e-mail. The owner opens the verification e-mail already sent to that
-  inbox, or runs `OWNER_EMAIL=… OWNER_PASSWORD=… npm run owner:bootstrap -- --sync-password` locally.
-  Authentication was not changed. Store contact (phone, e-mail, address, hours) is empty on purpose:
-  the owner enters real details in `/admin/settings`.
+  grid). Created only when absent, so admin edits survive reruns. The script creates no banners (they need an image).
+- **Owner sign-in (verified by records, 2026-10-22):** the Owner completed the normal flow themselves
+  (password-reset e-mail 18:58 UTC, password changed 19:01, signed in 19:02, `identity.two_factor_enabled`
+  19:02, `banner.created` and `banner.published` 19:06, all with the Owner as actor). `emailVerified` is
+  true; one Owner, one credential account. Neither `owner:bootstrap` nor any manual change was used. Note:
+  `owner:bootstrap -- --sync-password` only replaces the Owner's password hash and signs out every
+  session; it does not verify the e-mail (only the first-Owner creation path does). A verification link
+  lasts 24 h; `/login` offers "resend verification e-mail".
+- **Banner:** the Owner published one `home_top` banner (own image in `horekbazar/banners/`, links to
+  `/c/rice`). Banners appear on `/` only through a `banner` section in `/admin/homepage`; none added yet
+  (Owner's choice). Store contact (phone, e-mail, address, hours) is still empty: the owner enters real
+  details in `/admin/settings`.
 - From this sandbox the Atlas SRV name does not resolve: run scripts with a seed-list `MONGODB_URI`
   **and** `MONGODB_DB=horekbazar_dev`.
 
