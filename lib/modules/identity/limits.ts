@@ -21,6 +21,9 @@ export const LIMITS = {
   couponIp: { name: "coupon-ip", limit: 20, windowSeconds: 600 },
   // returns.request: 5 per hour per customer (SCHEMA.md API surface).
   returnRequest: { name: "return-request", limit: 5, windowSeconds: 3600 },
+  // B9: reviews 5 per hour, messages 30 per 10 minutes, per customer.
+  reviewSubmit: { name: "review-submit", limit: 5, windowSeconds: 3600 },
+  messagePost: { name: "message-post", limit: 20, windowSeconds: 3600 },
 } satisfies Record<string, LimitRule>;
 
 export type LimitOutcome = "ok" | "limited" | "unavailable";

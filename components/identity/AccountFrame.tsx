@@ -6,15 +6,29 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import { getTranslations } from "next-intl/server";
 import { signOutAction } from "@/lib/actions/identity";
+import { getIdentity } from "@/lib/auth/server";
 import { localeHref } from "@/lib/i18n/href";
+import { getSettings } from "@/lib/modules/settings/settings";
 
-type Section = "overview" | "orders" | "addresses" | "profile" | "security";
+type Section = "overview" | "orders" | "messages" | "reviews" | "rewards" | "addresses" | "profile" | "security";
+
+/** B9: reviews and rewards appear only while the store has them on; messages always. */
+async function engagementFlags() {
+  const identity = await getIdentity();
+  if (!identity.ok) return { reviews: false, rewards: false };
+  const f = (await getSettings(identity.identity.db)).features;
+  return { reviews: f.reviews, rewards: f.rewards === true };
+}
 
 export async function AccountFrame({ locale, current, title, staff, children }: { locale: "bn" | "en"; current: Section; title: string; staff: boolean; children: ReactNode }) {
   const t = await getTranslations({ locale, namespace: "account" });
+  const flags = await engagementFlags();
   const items: { key: Section; href: string }[] = [
     { key: "overview", href: "/account" },
     { key: "orders", href: "/account/orders" },
+    { key: "messages", href: "/account/messages" },
+    ...(flags.reviews ? [{ key: "reviews" as const, href: "/account/reviews" }] : []),
+    ...(flags.rewards ? [{ key: "rewards" as const, href: "/account/rewards" }] : []),
     { key: "addresses", href: "/account/addresses" },
     { key: "profile", href: "/account/profile" },
     { key: "security", href: "/account/security" },

@@ -75,6 +75,18 @@ export const settingsSchema = z
       })
       .strict()
       .optional(),
+    /**
+     * Loyalty points rules (B9, domain-rules §5.7). Used only while `features.rewards` is on.
+     * Points earned per ৳100 of goods paid for (after coupon), credited when the order completes;
+     * the customer-facing copy states the expiry.
+     */
+    rewards: z
+      .object({
+        pointsPer100Taka: zInt().min(0).max(20),
+        expiryDays: zInt().min(30).max(730),
+      })
+      .strict()
+      .optional(),
     version: zInt().min(1),
     updatedAt: zDate(),
   })

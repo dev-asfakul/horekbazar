@@ -190,7 +190,16 @@
       "commerce_window_closed": "রিটার্নের সময় শেষ হয়ে গেছে।",
       "commerce_not_returnable": "এই অর্ডার এখন রিটার্ন করা যাবে না।",
       "commerce_return_lines_required": "কমপক্ষে একটা আইটেম আর তার সংখ্যা দিন।",
-      "commerce_return_qty_exceeded": "যত আইটেম পেয়েছেন, তার বেশি রিটার্ন করা যাবে না।"
+      "commerce_return_qty_exceeded": "যত আইটেম পেয়েছেন, তার বেশি রিটার্ন করা যাবে না।",
+      "commerce_reviews_off": "এই স্টোরে এখন রিভিউ দেওয়া যাচ্ছে না।",
+      "commerce_review_not_eligible": "প্রোডাক্ট ডেলিভারি পাওয়ার পর রিভিউ দিতে পারবেন।",
+      "commerce_review_invalid": "১ থেকে ৫ এর মধ্যে রেটিং দিন আর কয়েকটা কথা লিখুন।",
+      "commerce_review_exists": "এই অর্ডারের এই প্রোডাক্টের রিভিউ আপনি আগেই দিয়েছেন।",
+      "commerce_message_invalid": "একটা বিষয় আর মেসেজ লিখুন (২,০০০ অক্ষরের মধ্যে)।",
+      "commerce_conversation_closed": "এই কথোপকথন বন্ধ করা হয়েছে।",
+      "commerce_conversation_full": "এই কথোপকথনে আর মেসেজ যোগ করা যাবে না। নতুন একটা শুরু করুন।",
+      "commerce_rewards_insufficient": "ব্যালেন্স শূন্যের নিচে নামানো যাবে না।",
+      "commerce_rewards_off": "এই স্টোরে রিওয়ার্ড পয়েন্ট এখন বন্ধ।"
     },
     "fieldErrors": {
       "email_invalid": "name@example.com-এর মতো ইমেইল অ্যাড্রেস দিন",
@@ -283,7 +292,13 @@
       "shipment_updated": "Shipment updated.",
       "courier_synced": "Courier status checked.",
       "return_updated": "Return updated.",
-      "return_requested": "রিটার্ন রিকোয়েস্ট পাঠানো হয়েছে। স্টোর রিভিউ করে জানাবে।"
+      "return_requested": "রিটার্ন রিকোয়েস্ট পাঠানো হয়েছে। স্টোর রিভিউ করে জানাবে।",
+      "review_submitted": "ধন্যবাদ। স্টোর দেখে নেওয়ার পর আপনার রিভিউ দেখা যাবে।",
+      "review_updated": "রিভিউ আপডেট হয়েছে।",
+      "message_sent": "মেসেজ পাঠানো হয়েছে।",
+      "conversation_closed": "কথোপকথন বন্ধ হয়েছে।",
+      "conversation_reopened": "কথোপকথন আবার খোলা হয়েছে।",
+      "rewards_adjusted": "পয়েন্ট ঠিক করা হয়েছে।"
     }
   },
   "auth": {
@@ -369,7 +384,10 @@
       "security": "সিকিউরিটি",
       "admin": "স্টোর অ্যাডমিন",
       "addresses": "অ্যাড্রেস",
-      "orders": "অর্ডার"
+      "orders": "অর্ডার",
+      "messages": "মেসেজ",
+      "reviews": "রিভিউ",
+      "rewards": "রিওয়ার্ড"
     },
     "signedInAs": "{email} হিসেবে লগইন করা",
     "signOut": "লগআউট",
@@ -547,10 +565,65 @@
         "credited": "রিওয়ার্ড দেওয়া হয়েছে",
         "closed": "বন্ধ"
       },
-      "returnItems": "{count}টা আইটেম"
+      "returnItems": "{count}টা আইটেম",
+      "messageStore": "এই অর্ডার নিয়ে স্টোরকে মেসেজ করুন"
     },
     "ordersLink": "অর্ডার দেখুন",
-    "addressesLink": "অ্যাড্রেস ম্যানেজ করুন"
+    "addressesLink": "অ্যাড্রেস ম্যানেজ করুন",
+    "reviews": {
+      "title": "রিভিউ",
+      "intro": "যে প্রোডাক্টগুলো হাতে পেয়েছেন সেগুলোর রিভিউ দিন। স্টোর দেখে নেওয়ার পর রিভিউ দেখা যায়, আর শুধু আপনার নামের প্রথম অংশ দেখানো হয়।",
+      "empty": "এখনো রিভিউ দেওয়ার মতো কিছু নেই। ডেলিভারি পাওয়ার পর প্রোডাক্ট এখানে আসবে।",
+      "rating": "রেটিং",
+      "stars": "{count}টি স্টার",
+      "reviewTitle": "শিরোনাম (ইচ্ছা হলে)",
+      "body": "আপনার রিভিউ",
+      "bodyHint": "শুধু লেখা। ফোন নম্বর বা ঠিকানা লিখবেন না।",
+      "submit": "রিভিউ পাঠান",
+      "submitting": "পাঠানো হচ্ছে",
+      "statuses": {
+        "pending": "স্টোরের দেখার অপেক্ষায়",
+        "published": "প্রকাশিত",
+        "rejected": "প্রকাশ করা হয়নি"
+      },
+      "rejectedBecause": "প্রকাশ করা হয়নি: {reason}",
+      "storeReply": "স্টোরের উত্তর"
+    },
+    "messages": {
+      "title": "মেসেজ",
+      "intro": "স্টোরকে কোনো প্রশ্ন করুন। উত্তর এখানে আসবে; পেজ খোলা থাকলে নিজে থেকেই আপডেট হয়।",
+      "new": "নতুন মেসেজ",
+      "subject": "বিষয়",
+      "orderNumber": "অর্ডার নম্বর (ইচ্ছা হলে)",
+      "orderNumberHint": "যেমন ORD-2610-AB12CD। শুধু আপনার নিজের অর্ডার।",
+      "body": "মেসেজ",
+      "send": "পাঠান",
+      "sending": "পাঠানো হচ্ছে",
+      "list": "আপনার কথোপকথন",
+      "empty": "এখনো কোনো মেসেজ নেই।",
+      "unread": "{count}টি নতুন",
+      "closed": "বন্ধ",
+      "back": "সব মেসেজ",
+      "fromStore": "স্টোর",
+      "fromYou": "আপনি",
+      "reply": "উত্তর",
+      "closedNote": "স্টোর এই কথোপকথন বন্ধ করেছে। মেসেজ পাঠালে আবার খুলে যাবে।"
+    },
+    "rewards": {
+      "title": "রিওয়ার্ড",
+      "balance": "ব্যালেন্স",
+      "points": "{n} পয়েন্ট",
+      "rules": "প্রোডাক্টের জন্য প্রতি ৳১০০ পেমেন্টে {rate} পয়েন্ট পাবেন, অর্ডার কমপ্লিট হলে যোগ হয়। পয়েন্ট পাওয়ার {days} দিন পর মেয়াদ শেষ হয়। ফেরত দেওয়া প্রোডাক্টের পয়েন্ট বাদ যায়।",
+      "empty": "এখনো কোনো পয়েন্ট নেই।",
+      "expires": "মেয়াদ {date}",
+      "kinds": {
+        "accrue": "পেয়েছেন",
+        "redeem": "ব্যবহার করেছেন",
+        "reverse": "বাদ গেছে (রিটার্ন)",
+        "adjust": "স্টোর ঠিক করেছে",
+        "expire": "মেয়াদ শেষ"
+      }
+    }
   },
   "store": {
     "home": {
@@ -733,6 +806,15 @@
       "successEmail": "অর্ডারের বিস্তারিত ইমেইলেও পাঠানো হচ্ছে।",
       "viewOrder": "অর্ডার দেখুন",
       "keepShopping": "আরও কেনাকাটা করুন"
+    },
+    "reviews": {
+      "title": "রিভিউ",
+      "none": "এখনো কোনো রিভিউ নেই।",
+      "average": "৫ এর মধ্যে {average}",
+      "count": "{count}টি রিভিউ",
+      "stars": "{count}টি স্টার",
+      "verified": "এখান থেকে কেনা",
+      "storeReply": "স্টোরের উত্তর"
     }
   }
 }

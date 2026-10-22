@@ -13,6 +13,7 @@ import { CommerceError } from "../pricing/cart.ts";
 import { COUPON_CUSTOMER_USAGE, COUPON_REDEMPTIONS, COUPONS, PROMOTIONS } from "../pricing/schema.ts";
 import { EMAIL_JOB } from "../../adapters/jobs/handlers.ts";
 import { loadSettingsFor } from "../pricing/quote.ts";
+import { accrueForOrder } from "../rewards/rewards.ts";
 import { orderEmailExtras } from "./notify.ts";
 import { ORDER_EVENTS, ORDERS, RESERVATIONS, type OrderDoc, type OrderStatus, type ReservationDoc } from "./schema.ts";
 
@@ -144,6 +145,8 @@ export async function applyOrderTransition(db: Db, session: ClientSession, input
       }
     }
     if (input.to === "completed") await db.collection(COUPON_REDEMPTIONS).updateOne({ orderId: order._id, status: "held" }, { $set: { status: "consumed", updatedAt: now } }, { session });
+    // Loyalty points (B9, domain-rules §5.7): credited only on completion, in this transaction, idempotent.
+    if (input.to === "completed") await accrueForOrder(db, session, order, await loadSettingsFor(db, session), now);
 
     if (NOTIFY.includes(input.to) && order.customer.email) {
       const settings = await loadSettingsFor(db, session);

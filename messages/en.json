@@ -172,7 +172,10 @@
       "coupons": "Coupons",
       "orders": "Orders",
       "shipments": "Shipments",
-      "returns": "Returns"
+      "returns": "Returns",
+      "messages": "Messages",
+      "reviews": "Reviews",
+      "rewards": "Rewards"
     },
     "home": {
       "title": "Admin",
@@ -194,7 +197,10 @@
       "couponsDesc": "Codes customers enter at checkout.",
       "ordersDesc": "Confirm, pack, ship and track orders.",
       "shipmentsDesc": "Parcels, couriers, tracking and returned parcels.",
-      "returnsDesc": "Customer return requests, inspection and refunds."
+      "returnsDesc": "Customer return requests, inspection and refunds.",
+      "messagesDesc": "Customer questions and your replies.",
+      "reviewsDesc": "Publish, reject or reply to customer reviews.",
+      "rewardsDesc": "Loyalty points rules, balances and adjustments."
     },
     "setup": {
       "title": "Set up the store owner",
@@ -966,6 +972,73 @@
       "noNext": "Nothing more to do.",
       "deny": "Your role cannot change this.",
       "orderLink": "Open order"
+    },
+    "engagement": {
+      "filterStatus": "Status",
+      "filterAll": "All",
+      "filterApply": "Show",
+      "reviewsTitle": "Reviews",
+      "reviewsIntro": "Reviews from customers who received the product. Nothing is public until you publish it; a rejected review shows your reason to its author only.",
+      "reviewsOff": "Reviews are off for this store (Settings, features). Customers cannot write reviews and none are shown.",
+      "reviewsEmpty": "No reviews here.",
+      "reviewStatuses": {
+        "pending": "Waiting",
+        "published": "Published",
+        "rejected": "Rejected"
+      },
+      "productGone": "Product removed",
+      "ratingOf": "{rating} of 5",
+      "rejectedBecause": "Rejected: {reason}",
+      "storeReply": "Store reply",
+      "publish": "Publish",
+      "reject": "Reject",
+      "rejectReason": "Reason (shown to the author)",
+      "rejectReasonHint": "For example: mentions a phone number.",
+      "replyLabel": "Reply",
+      "reply": "Save reply",
+      "messagesTitle": "Messages",
+      "messagesIntro": "Conversations started by signed-in customers. The thread page updates by itself while open.",
+      "messagesEmpty": "No conversations here.",
+      "conversationStatuses": {
+        "open": "Open",
+        "closed": "Closed"
+      },
+      "unread": "{count} unread",
+      "thread": "Conversation",
+      "fromStore": "Store",
+      "send": "Send reply",
+      "sending": "Sending",
+      "close": "Close conversation",
+      "reopen": "Reopen",
+      "closedNote": "Closed. Reopen it to reply; a customer message reopens it too.",
+      "rewardsTitle": "Rewards",
+      "rewardsIntro": "Loyalty points are earned when an order completes and taken back when returned goods are settled. Every change is a ledger entry.",
+      "rewardsLegal": "Keep rewards off for a Bangladesh production store until the legal review in docs/LICENSING.md is done. Points cannot be used at checkout yet.",
+      "rewardsRules": "Rules",
+      "rewardsEnabled": "Rewards on",
+      "pointsPer100Taka": "Points per ৳100",
+      "pointsPer100TakaHint": "Whole number, 0 to 20.",
+      "expiryDays": "Expiry (days)",
+      "expiryDaysHint": "30 to 730. Shown to customers.",
+      "save": "Save",
+      "rewardsCustomer": "Customer balance",
+      "customerEmail": "Customer e-mail",
+      "find": "Find",
+      "noCustomer": "No customer with that e-mail.",
+      "points": "{count} points",
+      "adjustPoints": "Points to add or remove",
+      "adjustPointsHint": "For example 50 or -20.",
+      "adjustReason": "Reason",
+      "adjust": "Adjust",
+      "noEntries": "No entries yet.",
+      "rewardKinds": {
+        "accrue": "Earned",
+        "redeem": "Used",
+        "reverse": "Return",
+        "adjust": "Adjusted",
+        "expire": "Expired"
+      },
+      "expires": "expires {date}"
     }
   },
   "forms": {
@@ -1086,7 +1159,16 @@
       "commerce_window_closed": "The return window has closed.",
       "commerce_not_returnable": "This order cannot be returned now.",
       "commerce_return_lines_required": "Choose at least one item and how many.",
-      "commerce_return_qty_exceeded": "You cannot return more than you received."
+      "commerce_return_qty_exceeded": "You cannot return more than you received.",
+      "commerce_reviews_off": "Reviews are not open on this store.",
+      "commerce_review_not_eligible": "You can review a product once it has been delivered to you.",
+      "commerce_review_invalid": "Choose a rating from 1 to 5 and write a few words.",
+      "commerce_review_exists": "You have already reviewed this item from this order.",
+      "commerce_message_invalid": "Write a subject and a message (up to 2,000 characters).",
+      "commerce_conversation_closed": "This conversation is closed. Reopen it to reply.",
+      "commerce_conversation_full": "This conversation is full. Start a new one.",
+      "commerce_rewards_insufficient": "That would take the balance below zero.",
+      "commerce_rewards_off": "Rewards are turned off for this store."
     },
     "fieldErrors": {
       "email_invalid": "Enter an email address like name@example.com",
@@ -1179,7 +1261,13 @@
       "shipment_updated": "Shipment updated.",
       "courier_synced": "Courier status checked.",
       "return_updated": "Return updated.",
-      "return_requested": "Return request sent. The store will review it."
+      "return_requested": "Return request sent. The store will review it.",
+      "review_submitted": "Thank you. Your review will appear once the store has checked it.",
+      "review_updated": "Review updated.",
+      "message_sent": "Message sent.",
+      "conversation_closed": "Conversation closed.",
+      "conversation_reopened": "Conversation reopened.",
+      "rewards_adjusted": "Points adjusted."
     }
   },
   "auth": {
@@ -1265,7 +1353,10 @@
       "security": "Security",
       "admin": "Store admin",
       "addresses": "Addresses",
-      "orders": "Orders"
+      "orders": "Orders",
+      "messages": "Messages",
+      "reviews": "Reviews",
+      "rewards": "Rewards"
     },
     "signedInAs": "Signed in as {email}",
     "signOut": "Sign out",
@@ -1443,10 +1534,65 @@
         "credited": "Reward credited",
         "closed": "Closed"
       },
-      "returnItems": "{count} items"
+      "returnItems": "{count} items",
+      "messageStore": "Message the store about this order"
     },
     "ordersLink": "View orders",
-    "addressesLink": "Manage addresses"
+    "addressesLink": "Manage addresses",
+    "reviews": {
+      "title": "Reviews",
+      "intro": "Review the products you have received. Reviews are checked by the store before they appear, and only your first name is shown.",
+      "empty": "Nothing to review yet. Products appear here once they are delivered.",
+      "rating": "Rating",
+      "stars": "{count, plural, one {# star} other {# stars}}",
+      "reviewTitle": "Title (optional)",
+      "body": "Your review",
+      "bodyHint": "Plain text. Do not include phone numbers or addresses.",
+      "submit": "Send review",
+      "submitting": "Sending",
+      "statuses": {
+        "pending": "Waiting for the store",
+        "published": "Published",
+        "rejected": "Not published"
+      },
+      "rejectedBecause": "Not published: {reason}",
+      "storeReply": "Store reply"
+    },
+    "messages": {
+      "title": "Messages",
+      "intro": "Ask the store a question. Replies appear here; this page updates by itself while it is open.",
+      "new": "New message",
+      "subject": "Subject",
+      "orderNumber": "Order number (optional)",
+      "orderNumberHint": "For example ORD-2610-AB12CD. Only your own orders.",
+      "body": "Message",
+      "send": "Send",
+      "sending": "Sending",
+      "list": "Your conversations",
+      "empty": "No messages yet.",
+      "unread": "{count} new",
+      "closed": "Closed",
+      "back": "All messages",
+      "fromStore": "Store",
+      "fromYou": "You",
+      "reply": "Reply",
+      "closedNote": "The store closed this conversation. Sending a message opens it again."
+    },
+    "rewards": {
+      "title": "Rewards",
+      "balance": "Balance",
+      "points": "{count, plural, one {{n} point} other {{n} points}}",
+      "rules": "You earn {rate} points for every ৳100 you pay for goods, added when the order is completed. Points expire {days} days after they are earned. Points for returned goods are taken back.",
+      "empty": "No points yet.",
+      "expires": "expires {date}",
+      "kinds": {
+        "accrue": "Earned",
+        "redeem": "Used",
+        "reverse": "Taken back (return)",
+        "adjust": "Adjusted by the store",
+        "expire": "Expired"
+      }
+    }
   },
   "store": {
     "home": {
@@ -1629,6 +1775,15 @@
       "successEmail": "The details are also on their way by email.",
       "viewOrder": "View order",
       "keepShopping": "Keep shopping"
+    },
+    "reviews": {
+      "title": "Reviews",
+      "none": "No reviews yet.",
+      "average": "{average} out of 5",
+      "count": "{count, plural, one {# review} other {# reviews}}",
+      "stars": "{count, plural, one {# star} other {# stars}}",
+      "verified": "Bought here",
+      "storeReply": "Store reply"
     }
   }
 }

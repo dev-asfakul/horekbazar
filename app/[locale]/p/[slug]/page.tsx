@@ -3,7 +3,8 @@
 // higher) and stock. Delivery charges come from the enabled delivery zones in settings (no area mapping
 // until D12). Add to cart (B6) is a plain form post with a quantity; checkout opens only when the
 // store turns ordering on (features.checkout), and the page says so while it is off.
-// JSON-LD Product/Offer for real published data only, plus BreadcrumbList.
+// JSON-LD Product/Offer for real published data only, plus BreadcrumbList. B9: published reviews
+// (moderated, verified purchase) when the store has reviews on; no rating markup is emitted.
 import { productBySlug } from "@/lib/storefront/lookups";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -20,6 +21,7 @@ import { SetupRequired } from "@/components/states/SetupRequired";
 import { cloudinaryConfig, deliveryUrl } from "@/lib/adapters/media/cloudinary";
 import { formatMoney } from "@/lib/format/money";
 import { localeHref } from "@/lib/i18n/href";
+import { productReviews } from "@/lib/modules/reviews/reviews";
 import { categoryPath, listPublishedProducts } from "@/lib/modules/storefront/catalogue";
 import { loadStore, moneyFormat, shown, shownLang, siteOrigin } from "@/lib/storefront/context";
 import { categoryNames, localeOf, storeMetadata } from "@/lib/storefront/page";
@@ -68,6 +70,9 @@ export default async function ProductPage({ params, searchParams }: PageProps<"/
   ];
   const related = primaryCategory ? (await listPublishedProducts(store.db, { categoryIds: [primaryCategory.id], sort: "new", pageSize: 9 })).items.filter((i) => i.id !== String(product._id)).slice(0, 8) : [];
   const images = cloud ? product.media : [];
+  // B9: published reviews only, while the store has reviews on.
+  const reviews = store.settings.features.reviews ? await productReviews(store.db, product._id, 10) : null;
+  const dateFmt = new Intl.DateTimeFormat(locale === "bn" ? "bn-BD" : "en-GB", { dateStyle: "medium", timeZone: "Asia/Dhaka" });
 
   return (
     <article className="pdp" data-testid="product" data-sku={variant.sku}>
@@ -212,6 +217,38 @@ export default async function ProductPage({ params, searchParams }: PageProps<"/
               </tbody>
             </table>
           ) : null}
+        </section>
+      ) : null}
+      {reviews ? (
+        <section className="pdp-section" aria-labelledby="pdp-reviews" data-testid="pdp-reviews">
+          <h2 id="pdp-reviews" className="pdp-h2">
+            {t("reviews.title")}
+          </h2>
+          {reviews.count === 0 ? (
+            <p className="field-hint">{t("reviews.none")}</p>
+          ) : (
+            <>
+              <p className="rating-line" data-testid="pdp-rating">
+                <strong>{t("reviews.average", { average: new Intl.NumberFormat(format.numerals === "bengali" ? "bn-BD" : "en-GB", { maximumFractionDigits: 1 }).format(reviews.average) })}</strong>
+                <span className="field-hint">{t("reviews.count", { count: reviews.count })}</span>
+              </p>
+              <ul className="review-list">
+                {reviews.items.map((r) => (
+                  <li key={String(r._id)} className="review-item" data-testid="pdp-review">
+                    <p className="rating-line">
+                      <span>{t("reviews.stars", { count: r.rating })}</span>
+                      <span className="field-hint">
+                        {r.authorName} · {t("reviews.verified")} · {dateFmt.format(r.createdAt)}
+                      </span>
+                    </p>
+                    {r.title ? <p className="review-title">{r.title}</p> : null}
+                    <p className="review-body">{r.body}</p>
+                    {r.reply ? <p className="review-reply">{t("reviews.storeReply")}: {r.reply.body}</p> : null}
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
         </section>
       ) : null}
       {related.length > 0 ? (

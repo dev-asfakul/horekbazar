@@ -1,0 +1,47 @@
+{
+  "$jsonSchema": {
+    "bsonType": "object",
+    "properties": {
+      "_id": {
+        "bsonType": "objectId"
+      },
+      "conversationId": {
+        "bsonType": "objectId"
+      },
+      "from": {
+        "bsonType": "string",
+        "enum": [
+          "customer",
+          "staff"
+        ]
+      },
+      "authorId": {
+        "bsonType": "string",
+        "minLength": 1,
+        "maxLength": 100
+      },
+      "body": {
+        "bsonType": "string",
+        "minLength": 1,
+        "maxLength": 2000
+      },
+      "clientKey": {
+        "bsonType": "string",
+        "pattern": "^[A-Za-z0-9-]{16,64}$"
+      },
+      "createdAt": {
+        "bsonType": "date"
+      }
+    },
+    "required": [
+      "_id",
+      "conversationId",
+      "from",
+      "authorId",
+      "body",
+      "clientKey",
+      "createdAt"
+    ],
+    "additionalProperties": false
+  }
+}

@@ -1,6 +1,6 @@
 # Handoff for the next developer or agent
 
-Last updated 2026-10-22 (Asia/Dhaka), after B8 (fulfilment and returns). The B8 section below is
+Last updated 2026-10-22 (Asia/Dhaka), after B9 part 1 (reviews, rewards ledger, messaging) and its review corrections. The B9 section below is
 the newest; older sections describe B4–B5 and are kept for their detail. Read this first, then `AGENTS.md`, `DESIGN.md` (Decision trace), `docs/BUILD-PLAN.md`
 §11 (phases), `docs/STATUS.md` and the newest entries of `docs/PROGRESS.md`.
 
@@ -15,7 +15,9 @@ the newest; older sections describe B4–B5 and are kept for their detail. Read 
 | Takeover audit docs | PR #10 (into `main`, open); its commits are also merged into `feat/b5-storefront` |
 | B6 cart and pricing, B7 checkout and orders | PR #22 into `preview/horekbazar-v1` (`77eb016`); on `main` through PR #23 (`4480140`) after `check` passed |
 | B8 fulfilment and returns | PR #24 (`feat/b8-fulfilment`) into `preview/horekbazar-v1`; see "B8 record" below |
-| B9 engagement → B11 hardening | not started; B9 needs the owner's approval of B8 |
+| B8 on `main` | yes: PR #25 (`e91afe2`); CI timeout fixed in PR #26 (`f3701cd`, push run success) |
+| B9 engagement (part 1) | branch `feat/b9-engagement`, PR into `main`, **not merged** (owner review); see "B9 record" |
+| B9 remainder → B11 hardening | not started |
 
 Branch flow: feature branch → PR into `preview/horekbazar-v1` → merge after CI is green → PR into `main`,
 merged by the agent after the required check passes (owner authorisation 2026-10-22, DESIGN.md Decision trace). `main` is protected (required check `check`).
@@ -89,6 +91,88 @@ Gate: FAIL (zero-variable `/` is the setup page; header search states; B6–B11 
    take ~20 s each (request-context connection delay in the sandbox, not investigated).
 6. **B6 cart and pricing → B11 hardening**, per BUILD-PLAN §11, each with its checkpoint.
 
+## B9 record (2026-10-22)
+
+### What exists
+
+- **Reviews** (`lib/modules/reviews/`): eligible lines are delivered lines of the customer's own
+  `delivered`/`completed` orders; **one review per order line** (domain-rules §5.7, unique index
+  `orderId_lineId_unique`), so a product bought on two orders can be reviewed twice, a line never.
+  A written review is final (no edits, no resubmission: `review_exists`). New reviews are `pending`;
+  staff publish, reject (reason required, kept) or reply; every step CAS on `version` and audited.
+  `/p/[slug]` shows published reviews only while `features.reviews` is on, with public fields only
+  (rating, title, body, first name, date, reply text); no rating or count when there are none.
+  Conflict resolved by the owner (2026-10-22): SCHEMA's earlier `{userId, productId}` unique index
+  yielded to domain-rules §5.7; data migration `0002-reviews-one-per-order-line` drops that index and
+  keeps existing reviews (under the old index no two reviews can share an order line, so the new
+  index cannot collide). Reversible: no document is changed.
+- **Rewards** (`lib/modules/rewards/`): append-only `rewardLedger`, idempotency key per event; no
+  cached balance. `availablePoints` derives the balance: each accrual net of its order's reversals
+  until its `expiresAt` (then both stop counting), plus adjustments; `expire` entries are ignored, so
+  the deferred expiry job cannot take points twice. `accrueForOrder` runs inside the order transition
+  transaction when an order becomes `completed` (only while `features.rewards` is on);
+  `reverseForReturn` runs in `settleReturn`; staff `adjustRewards` needs `rewards.write`, a reason,
+  an Idempotency-Key and rewards on, and refuses a negative balance. Every ledger write holds the
+  customer's `rewardLocks` document in its transaction, so completion racing a return settlement, or
+  two deductions at once, cannot double count (tests fail with the lock removed). Customer copy says
+  loyalty discount points (domain-rules §5.7). Customers have no action that writes the ledger.
+- **Messaging** (`lib/modules/messaging/`): conversations with unread counters, optional link to the
+  customer's own order (another customer's order number is `not_found`), open/closed (staff close and
+  reopen, version-checked; a customer message reopens), max 500 messages; `clientKey` makes a
+  resubmit a no-op and a key reused on another conversation is refused. Reading clears the reader's
+  counter only if no message arrived meanwhile. Staff replies re-check `open` inside the transaction.
+  `components/store/AutoRefresh.tsx` refreshes every 20 s while the tab is visible (no Ably).
+- **Routes and capabilities:** `/account/{reviews,messages,messages/[id],rewards}`;
+  `/admin/reviews` (`reviews.moderate`), `/admin/messages` (`messages.reply`), `/admin/rewards`
+  (`rewards.write`) in `lib/modules/identity/paths.ts` and `lib/admin/sections.ts`; each action checks again.
+
+### Not done, and why
+
+- Rewards **redemption at checkout** and the **expiry job** (needs checkout pricing changes and a
+  scheduled job; rewards stay off for a BD production store until legal review **[L]**).
+- **Push notifications** (D3 library fit check not done), **campaigns**, **order e-mails** (Resend
+  domain not verified), **AI drafts** (SCHEMA: B10), **review photos**, **AggregateRating JSON-LD**.
+- `store_reward` refunds remain refused: domain-rules §5.7 "never paid out as a refund".
+- No B9 seed data on `horekbazar_dev` (would be fabricated customer activity).
+
+### Credentials (exposed in conversation, NOT rotated)
+
+The agent has no access to the Atlas, Upstash, Cloudinary, Resend, Google AI, Ably or Vercel
+dashboards, so nothing was rotated. Git history and the PR diff were scanned for the values: none
+found. `.env.local` is ignored (`.gitignore` `.env.*`). Owner checklist, in this order:
+
+1. **Atlas:** create a database user with `readWrite` on `horekbazar_dev` only; delete or change the
+   password of the current user (it has `atlasAdmin`); update `MONGODB_URI` locally and in Vercel
+   Preview. Restrict Network Access if possible.
+2. Generate new `AUTH_SECRET` (signs every session out), `SETUP_TOKEN`, `CRON_SECRET`,
+   `COURIER_WEBHOOK_SECRET` (`openssl rand -base64 32`), and a new VAPID key pair
+   (`NEXT_PUBLIC_VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`).
+3. Rotate `UPSTASH_REDIS_REST_TOKEN` (Upstash: reset password), `CLOUDINARY_API_KEY` /
+   `CLOUDINARY_API_SECRET` (new key, then disable the old one), `RESEND_API_KEY`, `GEMINI_API_KEY`,
+   `ABLY_API_KEY`.
+4. Put the new values in `.env.local` and Vercel Preview (Production stays separate, with its own
+   database and secrets).
+
+Needed locally and in Preview for the current features: `NEXT_PUBLIC_SITE_URL`, `MONGODB_URI`,
+`MONGODB_DB`, `AUTH_SECRET`, `SETUP_TOKEN` (until setup), `UPSTASH_REDIS_REST_URL`,
+`UPSTASH_REDIS_REST_TOKEN`, `RESEND_API_KEY`, `EMAIL_FROM`, `JOBS_TRIGGER`, `CRON_SECRET`; optional:
+`CLOUDINARY_*` (images), `COURIER_WEBHOOK_SECRET` (courier webhooks), `NEXT_PUBLIC_DEFAULT_LOCALE`,
+`STORE_TIMEZONE`, `MAINTENANCE_MODE`. Not used by any feature yet: VAPID, `GEMINI_API_KEY`,
+`ABLY_API_KEY`. Only the site URL, default locale and VAPID public key are `NEXT_PUBLIC_*`.
+
+### Known limitation
+
+- Account pages stream behind `loading.tsx`, so `notFound()` (feature off, someone else's
+  conversation or order) shows the not-found page with HTTP 200, as `/account/orders/[orderNumber]`
+  already does on `main`. They are `noindex`; nothing private is rendered. Not changed here.
+
+### Easy to break
+
+- Never insert into `rewardLedger` outside `insertEntry`: inside a transaction a duplicate-key error
+  aborts the whole transaction, so the key is checked first.
+- Keep `features.reviews` and `features.rewards` default off.
+- Any new code that writes `rewardLedger` must call `lockAccount` first in the same transaction.
+
 ## B8 record (2026-10-22)
 
 ### What exists
@@ -125,6 +209,37 @@ Gate: FAIL (zero-variable `/` is the setup page; header search states; B6–B11 
 - **Pathao** waits for D12; **RedX** has no official public API document; **refunds to store rewards**
   wait for B9; **partial delivery** is shown to staff but does not split lines.
 - **Gate:** FAIL as in B4/B7 (SEO on the setup page, header search states, B9–B11 completeness).
+
+### Credentials (exposed in conversation, NOT rotated)
+
+The agent has no access to the Atlas, Upstash, Cloudinary, Resend, Google AI, Ably or Vercel
+dashboards, so nothing was rotated. Git history and the PR diff were scanned for the values: none
+found. `.env.local` is ignored (`.gitignore` `.env.*`). Owner checklist, in this order:
+
+1. **Atlas:** create a database user with `readWrite` on `horekbazar_dev` only; delete or change the
+   password of the current user (it has `atlasAdmin`); update `MONGODB_URI` locally and in Vercel
+   Preview. Restrict Network Access if possible.
+2. Generate new `AUTH_SECRET` (signs every session out), `SETUP_TOKEN`, `CRON_SECRET`,
+   `COURIER_WEBHOOK_SECRET` (`openssl rand -base64 32`), and a new VAPID key pair
+   (`NEXT_PUBLIC_VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`).
+3. Rotate `UPSTASH_REDIS_REST_TOKEN` (Upstash: reset password), `CLOUDINARY_API_KEY` /
+   `CLOUDINARY_API_SECRET` (new key, then disable the old one), `RESEND_API_KEY`, `GEMINI_API_KEY`,
+   `ABLY_API_KEY`.
+4. Put the new values in `.env.local` and Vercel Preview (Production stays separate, with its own
+   database and secrets).
+
+Needed locally and in Preview for the current features: `NEXT_PUBLIC_SITE_URL`, `MONGODB_URI`,
+`MONGODB_DB`, `AUTH_SECRET`, `SETUP_TOKEN` (until setup), `UPSTASH_REDIS_REST_URL`,
+`UPSTASH_REDIS_REST_TOKEN`, `RESEND_API_KEY`, `EMAIL_FROM`, `JOBS_TRIGGER`, `CRON_SECRET`; optional:
+`CLOUDINARY_*` (images), `COURIER_WEBHOOK_SECRET` (courier webhooks), `NEXT_PUBLIC_DEFAULT_LOCALE`,
+`STORE_TIMEZONE`, `MAINTENANCE_MODE`. Not used by any feature yet: VAPID, `GEMINI_API_KEY`,
+`ABLY_API_KEY`. Only the site URL, default locale and VAPID public key are `NEXT_PUBLIC_*`.
+
+### Known limitation
+
+- Account pages stream behind `loading.tsx`, so `notFound()` (feature off, someone else's
+  conversation or order) shows the not-found page with HTTP 200, as `/account/orders/[orderNumber]`
+  already does on `main`. They are `noindex`; nothing private is rendered. Not changed here.
 
 ### Easy to break
 

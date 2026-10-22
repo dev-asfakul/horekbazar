@@ -59,7 +59,7 @@ async function save(db: Db, actor: Actor, expectedVersion: number, next: Omit<Se
 
 // Every save writes the whole document, so each one carries the sections it does not edit unchanged
 // (including the optional `orders` section, B7).
-const base = (s: Awaited<ReturnType<typeof getSettings>>) => ({ _id: s._id, store: s.store, theme: s.theme, locale: s.locale, delivery: s.delivery, pricing: s.pricing, features: s.features, ...(s.orders ? { orders: s.orders } : {}) });
+const base = (s: Awaited<ReturnType<typeof getSettings>>) => ({ _id: s._id, store: s.store, theme: s.theme, locale: s.locale, delivery: s.delivery, pricing: s.pricing, features: s.features, ...(s.orders ? { orders: s.orders } : {}), ...(s.rewards ? { rewards: s.rewards } : {}) });
 
 export type GeneralSettingsInput = Pick<SettingsDoc, "store" | "theme" | "locale" | "pricing" | "features"> & { orders?: SettingsDoc["orders"] };
 
@@ -72,6 +72,19 @@ export async function updateGeneralSettings(db: Db, actor: Actor, expectedVersio
   // Fields this form does not show (for example features.rewards) keep their stored values.
   const next = { ...base(current), ...input, theme: { ...input.theme, accent }, pricing: { ...current.pricing, ...input.pricing }, features: { ...current.features, ...input.features }, ...(input.orders ?? current.orders ? { orders: input.orders ?? current.orders } : {}) };
   return save(db, actor, expectedVersion, next, "settings.updated", { store, theme, locale, pricing, features, orders: current.orders }, { ...input, theme: { ...input.theme, accent } });
+}
+
+/**
+ * Loyalty points switch and rules (B9, domain-rules §5.7). Turning rewards on needs the rules; turning
+ * it off keeps them so the ledger and customer balances stay readable.
+ */
+export async function updateRewardSettings(db: Db, actor: Actor, expectedVersion: number, input: { enabled: boolean; rules?: NonNullable<SettingsDoc["rewards"]> }) {
+  const current = await getSettings(db);
+  if (current.version !== expectedVersion) throw new CatalogueError("version_conflict", { current: current.version });
+  const rules = input.rules ?? current.rewards;
+  if (input.enabled && !rules) throw new CatalogueError("invalid", { field: "rewards" });
+  const next = { ...base(current), features: { ...current.features, rewards: input.enabled }, ...(rules ? { rewards: rules } : {}) };
+  return save(db, actor, expectedVersion, next, "settings.rewards_updated", { rewards: current.features.rewards ?? false, rules: current.rewards }, { rewards: input.enabled, rules });
 }
 
 /** Adds or replaces the zone with the same `id`. */

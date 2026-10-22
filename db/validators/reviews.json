@@ -1,0 +1,121 @@
+{
+  "$jsonSchema": {
+    "bsonType": "object",
+    "properties": {
+      "_id": {
+        "bsonType": "objectId"
+      },
+      "userId": {
+        "bsonType": "string",
+        "minLength": 1,
+        "maxLength": 100
+      },
+      "productId": {
+        "bsonType": "objectId"
+      },
+      "orderId": {
+        "bsonType": "objectId"
+      },
+      "lineId": {
+        "bsonType": "string",
+        "pattern": "^[a-f0-9]{24}$"
+      },
+      "rating": {
+        "bsonType": [
+          "int",
+          "long"
+        ],
+        "minimum": 1,
+        "maximum": 5
+      },
+      "title": {
+        "bsonType": "string",
+        "minLength": 1,
+        "maxLength": 120
+      },
+      "body": {
+        "bsonType": "string",
+        "minLength": 1,
+        "maxLength": 2000
+      },
+      "authorName": {
+        "bsonType": "string",
+        "minLength": 1,
+        "maxLength": 60
+      },
+      "status": {
+        "bsonType": "string",
+        "enum": [
+          "pending",
+          "published",
+          "rejected"
+        ]
+      },
+      "rejectionReason": {
+        "bsonType": "string",
+        "minLength": 1,
+        "maxLength": 300
+      },
+      "reply": {
+        "bsonType": "object",
+        "properties": {
+          "body": {
+            "bsonType": "string",
+            "minLength": 1,
+            "maxLength": 1000
+          },
+          "by": {
+            "bsonType": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "at": {
+            "bsonType": "date"
+          }
+        },
+        "required": [
+          "body",
+          "by",
+          "at"
+        ],
+        "additionalProperties": false
+      },
+      "moderatedBy": {
+        "bsonType": "string",
+        "minLength": 1,
+        "maxLength": 100
+      },
+      "moderatedAt": {
+        "bsonType": "date"
+      },
+      "version": {
+        "bsonType": [
+          "int",
+          "long"
+        ],
+        "minimum": 1
+      },
+      "createdAt": {
+        "bsonType": "date"
+      },
+      "updatedAt": {
+        "bsonType": "date"
+      }
+    },
+    "required": [
+      "_id",
+      "userId",
+      "productId",
+      "orderId",
+      "lineId",
+      "rating",
+      "body",
+      "authorName",
+      "status",
+      "version",
+      "createdAt",
+      "updatedAt"
+    ],
+    "additionalProperties": false
+  }
+}

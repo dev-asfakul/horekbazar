@@ -1,0 +1,101 @@
+{
+  "$jsonSchema": {
+    "bsonType": "object",
+    "properties": {
+      "_id": {
+        "bsonType": "objectId"
+      },
+      "userId": {
+        "bsonType": "string",
+        "minLength": 1,
+        "maxLength": 100
+      },
+      "customerName": {
+        "bsonType": "string",
+        "minLength": 1,
+        "maxLength": 120
+      },
+      "subject": {
+        "bsonType": "string",
+        "minLength": 1,
+        "maxLength": 120
+      },
+      "orderId": {
+        "bsonType": "objectId"
+      },
+      "orderNumber": {
+        "bsonType": "string",
+        "minLength": 1,
+        "maxLength": 40
+      },
+      "status": {
+        "bsonType": "string",
+        "enum": [
+          "open",
+          "closed"
+        ]
+      },
+      "lastMessageAt": {
+        "bsonType": "date"
+      },
+      "lastFrom": {
+        "bsonType": "string",
+        "enum": [
+          "customer",
+          "staff"
+        ]
+      },
+      "unreadByStaff": {
+        "bsonType": [
+          "int",
+          "long"
+        ],
+        "minimum": 0
+      },
+      "unreadByCustomer": {
+        "bsonType": [
+          "int",
+          "long"
+        ],
+        "minimum": 0
+      },
+      "messageCount": {
+        "bsonType": [
+          "int",
+          "long"
+        ],
+        "minimum": 0,
+        "maximum": 500
+      },
+      "version": {
+        "bsonType": [
+          "int",
+          "long"
+        ],
+        "minimum": 1
+      },
+      "createdAt": {
+        "bsonType": "date"
+      },
+      "updatedAt": {
+        "bsonType": "date"
+      }
+    },
+    "required": [
+      "_id",
+      "userId",
+      "customerName",
+      "subject",
+      "status",
+      "lastMessageAt",
+      "lastFrom",
+      "unreadByStaff",
+      "unreadByCustomer",
+      "messageCount",
+      "version",
+      "createdAt",
+      "updatedAt"
+    ],
+    "additionalProperties": false
+  }
+}

@@ -14,7 +14,23 @@ export interface DataMigration {
 }
 
 /** One-time data migrations, applied in id order and recorded in `migrations`. */
-export const dataMigrations: DataMigration[] = [{ id: "0001-built-in-staff-roles", up: (db) => seedBuiltInRoles(db) }];
+/**
+ * 0002 (B9): reviews moved from one per customer per product to one per order line (domain-rules
+ * §5.7). The new `orderId_lineId_unique` index is created with the collection's indexes above; this
+ * drops the old `userId_productId_unique` index if a database still has it. Existing reviews are
+ * kept as they are: under the old index each customer had at most one review per product, and each
+ * review names one line of one order, so no existing pair can collide with the new index.
+ */
+async function reviewsPerOrderLine(db: Db) {
+  const reviews = db.collection("reviews");
+  const names = (await reviews.listIndexes().toArray()).map((i) => i.name as string);
+  if (names.includes("userId_productId_unique")) await reviews.dropIndex("userId_productId_unique");
+}
+
+export const dataMigrations: DataMigration[] = [
+  { id: "0001-built-in-staff-roles", up: (db) => seedBuiltInRoles(db) },
+  { id: "0002-reviews-one-per-order-line", up: reviewsPerOrderLine },
+];
 
 export interface MigrationReport {
   created: string[];

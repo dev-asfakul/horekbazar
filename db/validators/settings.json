@@ -347,6 +347,32 @@
         ],
         "additionalProperties": false
       },
+      "rewards": {
+        "bsonType": "object",
+        "properties": {
+          "pointsPer100Taka": {
+            "bsonType": [
+              "int",
+              "long"
+            ],
+            "minimum": 0,
+            "maximum": 20
+          },
+          "expiryDays": {
+            "bsonType": [
+              "int",
+              "long"
+            ],
+            "minimum": 30,
+            "maximum": 730
+          }
+        },
+        "required": [
+          "pointsPer100Taka",
+          "expiryDays"
+        ],
+        "additionalProperties": false
+      },
       "version": {
         "bsonType": [
           "int",
