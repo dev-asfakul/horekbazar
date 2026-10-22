@@ -1,0 +1,308 @@
+{
+  "$jsonSchema": {
+    "bsonType": "object",
+    "properties": {
+      "_id": {
+        "bsonType": "objectId"
+      },
+      "orderId": {
+        "bsonType": "objectId"
+      },
+      "orderNumber": {
+        "bsonType": "string",
+        "minLength": 1,
+        "maxLength": 40
+      },
+      "userId": {
+        "bsonType": "string",
+        "minLength": 1,
+        "maxLength": 100
+      },
+      "lines": {
+        "minItems": 1,
+        "maxItems": 50,
+        "bsonType": "array",
+        "items": {
+          "bsonType": "object",
+          "properties": {
+            "lineId": {
+              "bsonType": "string",
+              "pattern": "^[a-f0-9]{24}$"
+            },
+            "variantId": {
+              "bsonType": "objectId"
+            },
+            "qty": {
+              "bsonType": [
+                "int",
+                "long"
+              ],
+              "minimum": 1,
+              "maximum": 99
+            },
+            "outcome": {
+              "bsonType": "string",
+              "enum": [
+                "restock",
+                "write_off"
+              ]
+            },
+            "note": {
+              "bsonType": "string",
+              "maxLength": 300
+            }
+          },
+          "required": [
+            "lineId",
+            "variantId",
+            "qty"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "reason": {
+        "bsonType": "string",
+        "minLength": 1,
+        "maxLength": 500
+      },
+      "status": {
+        "bsonType": "string",
+        "enum": [
+          "requested",
+          "approved",
+          "rejected",
+          "received",
+          "inspected",
+          "restocked",
+          "written_off",
+          "refunded",
+          "credited",
+          "closed"
+        ]
+      },
+      "statusReason": {
+        "bsonType": "string",
+        "maxLength": 500
+      },
+      "inspection": {
+        "bsonType": "object",
+        "properties": {
+          "note": {
+            "bsonType": "string",
+            "maxLength": 500
+          },
+          "by": {
+            "bsonType": "object",
+            "properties": {
+              "type": {
+                "bsonType": "string",
+                "enum": [
+                  "staff",
+                  "system",
+                  "courier",
+                  "customer"
+                ]
+              },
+              "id": {
+                "bsonType": "string",
+                "minLength": 1,
+                "maxLength": 100
+              }
+            },
+            "required": [
+              "type",
+              "id"
+            ],
+            "additionalProperties": false
+          },
+          "at": {
+            "bsonType": "date"
+          }
+        },
+        "required": [
+          "by",
+          "at"
+        ],
+        "additionalProperties": false
+      },
+      "refund": {
+        "bsonType": "object",
+        "properties": {
+          "method": {
+            "bsonType": "string",
+            "enum": [
+              "bkash",
+              "nagad",
+              "bank",
+              "store_reward"
+            ]
+          },
+          "amount": {
+            "bsonType": [
+              "int",
+              "long"
+            ],
+            "minimum": 0
+          },
+          "reference": {
+            "bsonType": "string",
+            "maxLength": 100
+          },
+          "by": {
+            "bsonType": "object",
+            "properties": {
+              "type": {
+                "bsonType": "string",
+                "enum": [
+                  "staff",
+                  "system",
+                  "courier",
+                  "customer"
+                ]
+              },
+              "id": {
+                "bsonType": "string",
+                "minLength": 1,
+                "maxLength": 100
+              }
+            },
+            "required": [
+              "type",
+              "id"
+            ],
+            "additionalProperties": false
+          },
+          "at": {
+            "bsonType": "date"
+          }
+        },
+        "required": [
+          "method",
+          "amount",
+          "by",
+          "at"
+        ],
+        "additionalProperties": false
+      },
+      "history": {
+        "minItems": 1,
+        "maxItems": 30,
+        "bsonType": "array",
+        "items": {
+          "bsonType": "object",
+          "properties": {
+            "from": {
+              "anyOf": [
+                {
+                  "bsonType": "string",
+                  "enum": [
+                    "requested",
+                    "approved",
+                    "rejected",
+                    "received",
+                    "inspected",
+                    "restocked",
+                    "written_off",
+                    "refunded",
+                    "credited",
+                    "closed"
+                  ]
+                },
+                {
+                  "bsonType": "string",
+                  "enum": [
+                    "new"
+                  ]
+                }
+              ]
+            },
+            "to": {
+              "bsonType": "string",
+              "enum": [
+                "requested",
+                "approved",
+                "rejected",
+                "received",
+                "inspected",
+                "restocked",
+                "written_off",
+                "refunded",
+                "credited",
+                "closed"
+              ]
+            },
+            "by": {
+              "bsonType": "object",
+              "properties": {
+                "type": {
+                  "bsonType": "string",
+                  "enum": [
+                    "staff",
+                    "system",
+                    "courier",
+                    "customer"
+                  ]
+                },
+                "id": {
+                  "bsonType": "string",
+                  "minLength": 1,
+                  "maxLength": 100
+                }
+              },
+              "required": [
+                "type",
+                "id"
+              ],
+              "additionalProperties": false
+            },
+            "note": {
+              "bsonType": "string",
+              "maxLength": 500
+            },
+            "at": {
+              "bsonType": "date"
+            }
+          },
+          "required": [
+            "from",
+            "to",
+            "by",
+            "at"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "version": {
+        "bsonType": [
+          "int",
+          "long"
+        ],
+        "minimum": 1
+      },
+      "requestedAt": {
+        "bsonType": "date"
+      },
+      "createdAt": {
+        "bsonType": "date"
+      },
+      "updatedAt": {
+        "bsonType": "date"
+      }
+    },
+    "required": [
+      "_id",
+      "orderId",
+      "orderNumber",
+      "userId",
+      "lines",
+      "reason",
+      "status",
+      "history",
+      "version",
+      "requestedAt",
+      "createdAt",
+      "updatedAt"
+    ],
+    "additionalProperties": false
+  }
+}

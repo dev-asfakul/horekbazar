@@ -1,0 +1,78 @@
+{
+  "$jsonSchema": {
+    "bsonType": "object",
+    "properties": {
+      "_id": {
+        "bsonType": "objectId"
+      },
+      "provider": {
+        "bsonType": "string",
+        "enum": [
+          "manual",
+          "steadfast",
+          "pathao",
+          "redx"
+        ]
+      },
+      "eventId": {
+        "bsonType": "string",
+        "pattern": "^[a-f0-9]{64}$"
+      },
+      "consignmentId": {
+        "bsonType": "string",
+        "minLength": 1,
+        "maxLength": 80,
+        "pattern": "^[A-Za-z0-9._\\-/]+$"
+      },
+      "shipmentId": {
+        "bsonType": "objectId"
+      },
+      "claimedStatus": {
+        "bsonType": "string",
+        "maxLength": 60
+      },
+      "verifiedStatus": {
+        "bsonType": "string",
+        "enum": [
+          "in_review",
+          "pending",
+          "hold",
+          "delivered_approval_pending",
+          "partial_delivered_approval_pending",
+          "cancelled_approval_pending",
+          "unknown_approval_pending",
+          "delivered",
+          "partial_delivered",
+          "cancelled",
+          "unknown"
+        ]
+      },
+      "outcome": {
+        "bsonType": "string",
+        "enum": [
+          "received",
+          "applied",
+          "stale",
+          "unmatched",
+          "verify_failed",
+          "outside_window"
+        ]
+      },
+      "occurredAt": {
+        "bsonType": "date"
+      },
+      "receivedAt": {
+        "bsonType": "date"
+      }
+    },
+    "required": [
+      "_id",
+      "provider",
+      "eventId",
+      "consignmentId",
+      "outcome",
+      "receivedAt"
+    ],
+    "additionalProperties": false
+  }
+}

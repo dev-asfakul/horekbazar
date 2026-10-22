@@ -88,6 +88,18 @@ const fixtures: Record<string, { valid: Record<string, unknown>; invalid: Record
     valid: { _id: new ObjectId(), orderNumber: "ORD-261022-ABC234", userId: "u1", customer: { name: "রহিম", email: "r@example.com" }, status: "pending_confirmation", lines: [{ lineId: "a".repeat(24), variantId: new ObjectId(), productId: new ObjectId(), sku: "S-1", slug: "rice", name: { bn: "চাল" }, variantTitle: { bn: "৫ কেজি" }, options: [], basePrice: 100, unitPrice: 100, quantity: 1, lineTotal: 100, couponShare: 0, status: "active" }], address: { label: "home", name: "রহিম", phone: "+8801712345678", zoneId: "dhaka", zoneName: { bn: "ঢাকা" }, district: "ঢাকা", area: "মিরপুর", line: "রোড ৩" }, delivery: { zoneId: "dhaka", fee: 60, baseFee: 60 }, totals: { merchandise: 100, savings: 0, coupon: 0, rewards: 0, delivery: 60, grandTotal: 160 }, paymentMethod: "cod", locale: "bn", checkoutKey: "6f1c2d3e-4a5b-4c6d-8e7f-9a0b1c2d3e4f", version: 1, placedAt: now, statusChangedAt: now, createdAt: now, updatedAt: now },
     invalid: { _id: new ObjectId(), orderNumber: "1", userId: "u1", customer: { name: "রহিম", email: "r@example.com" }, status: "shipping", lines: [], paymentMethod: "card", locale: "bn", checkoutKey: "x", version: 0, placedAt: now, statusChangedAt: now, createdAt: now, updatedAt: now },
   },
+  shipments: {
+    valid: { _id: new ObjectId(), orderId: new ObjectId(), orderNumber: "ORD-261022-ABC234", courier: "manual", carrierName: "Local rider", invoice: "ORD-261022-ABC234-1", codAmount: 160, status: "draft", open: true, checkpoints: [{ code: "draft", source: "staff", at: now }], createdBy: { type: "staff", id: "s1" }, version: 1, createdAt: now, updatedAt: now },
+    invalid: { _id: new ObjectId(), orderId: new ObjectId(), orderNumber: "ORD-261022-ABC234", courier: "dhl", invoice: "x", codAmount: -1, status: "lost", open: true, checkpoints: [], createdBy: { type: "staff", id: "s1" }, version: 0, createdAt: now, updatedAt: now },
+  },
+  courierEvents: {
+    valid: { _id: new ObjectId(), provider: "steadfast", eventId: "a".repeat(64), consignmentId: "1424107", claimedStatus: "delivered", outcome: "received", receivedAt: now },
+    invalid: { _id: new ObjectId(), provider: "steadfast", eventId: "not-a-hash", consignmentId: "1424107", outcome: "accepted", receivedAt: now },
+  },
+  returns: {
+    valid: { _id: new ObjectId(), orderId: new ObjectId(), orderNumber: "ORD-261022-ABC234", userId: "u1", lines: [{ lineId: "a".repeat(24), variantId: new ObjectId(), qty: 1 }], reason: "প্যাকেট ছেঁড়া", status: "requested", history: [{ from: "new", to: "requested", by: { type: "customer", id: "u1" }, at: now }], version: 1, requestedAt: now, createdAt: now, updatedAt: now },
+    invalid: { _id: new ObjectId(), orderId: new ObjectId(), orderNumber: "ORD-261022-ABC234", userId: "u1", lines: [{ lineId: "a".repeat(24), variantId: new ObjectId(), qty: 0 }], reason: "", status: "pending", history: [], version: 1, requestedAt: now, createdAt: now, updatedAt: now },
+  },
   reservations: {
     valid: { _id: new ObjectId(), orderId: new ObjectId(), lineId: "a".repeat(24), variantId: new ObjectId(), qty: 1, status: "active", createdAt: now, updatedAt: now },
     invalid: { _id: new ObjectId(), orderId: new ObjectId(), lineId: "a".repeat(24), variantId: new ObjectId(), qty: 0, status: "held", createdAt: now, updatedAt: now },

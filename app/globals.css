@@ -2298,4 +2298,9 @@ select[multiple].field-input {
 .order-totals { margin-top: 0.75rem; }
 .admin-filter { max-width: 28rem; margin-bottom: 1rem; }
 .admin-actions { display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: start; }
+/* B8 shipment panel and returns: sub-headings inside an admin section, and the courier status list. */
+.admin-subtitle { margin: 1.25rem 0 0.5rem; font-size: var(--text-step-0); font-weight: 600; }
+.courier-states { list-style: none; margin: 0 0 1rem; padding: 0; display: grid; gap: 0.375rem; }
+.courier-states li { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: baseline; }
+.order-tracking { display: grid; gap: 0.75rem; }
 .record-warn { color: var(--warning); font-weight: 600; }

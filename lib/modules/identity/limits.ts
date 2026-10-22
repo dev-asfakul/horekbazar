@@ -19,6 +19,8 @@ export const LIMITS = {
   checkoutIp: { name: "checkout-ip", limit: 20, windowSeconds: 60 },
   // Coupon guessing: a few tries per device and address.
   couponIp: { name: "coupon-ip", limit: 20, windowSeconds: 600 },
+  // returns.request: 5 per hour per customer (SCHEMA.md API surface).
+  returnRequest: { name: "return-request", limit: 5, windowSeconds: 3600 },
 } satisfies Record<string, LimitRule>;
 
 export type LimitOutcome = "ok" | "limited" | "unavailable";
