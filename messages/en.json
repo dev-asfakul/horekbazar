@@ -868,5 +868,99 @@
       "disablePending": "Turning off…",
       "disablePassword": "Password"
     }
+  },
+  "store": {
+    "home": {
+      "title": "Online bazar",
+      "heading": "Shop by category",
+      "newHeading": "New products",
+      "allCategories": "All categories",
+      "seeAll": "See all",
+      "emptyTitle": "No products published yet",
+      "emptyBody": "Products appear here once the store publishes them. Please check back later."
+    },
+    "categories": {
+      "title": "Categories",
+      "description": "Every category in one place.",
+      "empty": "No categories published yet.",
+      "productsLink": "All products in {name}"
+    },
+    "listing": {
+      "results": "{count} products",
+      "empty": "No products here yet.",
+      "emptyFiltered": "No products match these filters.",
+      "clearFilters": "Clear filters",
+      "filters": "Filters",
+      "sort": "Sort",
+      "inStock": "In stock only",
+      "minPrice": "Lowest price (taka)",
+      "maxPrice": "Highest price (taka)",
+      "apply": "Apply filters",
+      "priceRange": "Prices here range from {min} to {max}",
+      "pagination": "Pages",
+      "prev": "Previous page",
+      "next": "Next page",
+      "pageOf": "Page {page} of {pages}",
+      "subcategories": "Subcategories",
+      "priceInvalid": "Enter a price in taka, like 250"
+    },
+    "sorts": {
+      "relevance": "Best match",
+      "new": "Newest first",
+      "price_asc": "Price: low to high",
+      "price_desc": "Price: high to low"
+    },
+    "card": {
+      "outOfStock": "Out of stock",
+      "options": "{count} options"
+    },
+    "product": {
+      "breadcrumb": "You are here",
+      "variants": "Choose an option",
+      "inStock": "In stock",
+      "outOfStock": "This option is out of stock",
+      "details": "Product details",
+      "specs": "Specifications",
+      "delivery": "Delivery charge",
+      "deliveryNote": "The charge depends on the area. Checkout sets it from your address.",
+      "deliveryNone": "Delivery areas are not set up yet.",
+      "freeOver": "Free delivery on orders over {amount}",
+      "orderingOff": "Online ordering is not open yet. Cart and checkout come in the next stage.",
+      "sku": "SKU",
+      "netQuantity": "Quantity",
+      "category": "Category",
+      "related": "More in this category"
+    },
+    "search": {
+      "title": "Search",
+      "heading": "Results for “{q}”",
+      "prompt": "Type a product name to search.",
+      "empty": "No products found for “{q}”.",
+      "emptyHint": "Try another word, a shorter spelling, or the English name.",
+      "label": "Product search"
+    },
+    "collections": {
+      "title": "Collections",
+      "description": "Hand-picked groups of products.",
+      "empty": "No collections published yet.",
+      "products": "{count} products"
+    },
+    "deals": {
+      "title": "Deals",
+      "description": "Products priced below their earlier price. Earlier prices are real, never made up.",
+      "empty": "No deals right now."
+    },
+    "newArrivals": {
+      "title": "New products",
+      "description": "Products published in the last 30 days.",
+      "empty": "No new products in the last 30 days."
+    },
+    "units": {
+      "g": "g",
+      "kg": "kg",
+      "ml": "ml",
+      "l": "L",
+      "pc": "pc"
+    }
   }
 }
