@@ -137,8 +137,10 @@ export async function signUpAction(_: FormState, form: FormData): Promise<FormSt
       const key = String(issue.path[0]);
       fields[key] = key === "email" ? "email_invalid" : key === "password" ? "password_length" : "required";
     }
+    if (!fields.password && field(form, "passwordConfirm") !== field(form, "password")) fields.passwordConfirm = "password_mismatch";
     return fail("fix_fields", fields, values);
   }
+  if (field(form, "passwordConfirm") !== parsed.data.password) return fail("fix_fields", { passwordConfirm: "password_mismatch" }, values);
   const identity = await ready();
   if (!identity) return fail("accounts_unavailable");
   if (!identity.emailEnabled) return fail("email_unavailable");
@@ -187,6 +189,7 @@ export async function resetPasswordAction(_: FormState, form: FormData): Promise
   if (!token.success) return fail("reset_link_invalid");
   const parsed = password.safeParse(field(form, "password"));
   if (!parsed.success) return fail("fix_fields", { password: "password_length" });
+  if (field(form, "passwordConfirm") !== parsed.data) return fail("fix_fields", { passwordConfirm: "password_mismatch" });
   const identity = await ready();
   if (!identity) return fail("accounts_unavailable");
   const h = await headers();
@@ -238,6 +241,7 @@ export async function changePasswordAction(_: FormState, form: FormData): Promis
   const fields: Record<string, string> = {};
   if (!current.success) fields.currentPassword = "required";
   if (!next.success) fields.newPassword = "password_length";
+  else if (field(form, "newPasswordConfirm") !== next.data) fields.newPasswordConfirm = "password_mismatch";
   if (Object.keys(fields).length > 0) return fail("fix_fields", fields);
   const h = await headers();
   const limit = await checkLimits([{ rule: LIMITS.accountChange, key: ctx.principal.user.id }]);

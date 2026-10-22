@@ -48,8 +48,10 @@ export async function setupOwnerAction(_: FormState, form: FormData): Promise<Fo
       const key = String(issue.path[0]);
       fields[key] = key === "email" ? "email_invalid" : key === "password" ? "password_length" : "required";
     }
+    if (!fields.password && field(form, "passwordConfirm") !== field(form, "password")) fields.passwordConfirm = "password_mismatch";
     return fail("fix_fields", fields, values);
   }
+  if (field(form, "passwordConfirm") !== parsed.data.password) return fail("fix_fields", { passwordConfirm: "password_mismatch" }, values);
   const result = await getIdentity();
   if (!result.ok) return fail("accounts_unavailable");
   const { auth, db, emailEnabled } = result.identity;

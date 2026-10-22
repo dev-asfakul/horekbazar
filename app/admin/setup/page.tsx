@@ -71,6 +71,7 @@ export default async function AdminSetupPage() {
               { name: "name", label: t("name"), autoComplete: "name", required: true },
               { name: "email", label: t("email"), type: "email", autoComplete: "email", required: true },
               { name: "password", label: t("password"), type: "password", autoComplete: "new-password", required: true, hint: t("passwordHint") },
+              { name: "passwordConfirm", label: t("passwordConfirm"), type: "password", autoComplete: "new-password", required: true },
               { name: "setupToken", label: t("setupToken"), type: "password", autoComplete: "off", required: true, hint: t("setupTokenHint") },
             ]}
             footer={
