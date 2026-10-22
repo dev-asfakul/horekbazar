@@ -26,41 +26,69 @@ export interface PushMessageData {
   tag?: string;
 }
 
-export type PushResult = { outcome: "accepted"; status: number } | { outcome: "gone"; status: number };
+export type PushResult =
+  { outcome: "accepted"; status: number } | { outcome: "gone"; status: number };
 
+// Plain fields, not constructor parameter properties: CLI scripts run modules under Node's type
+// stripping, which does not support them (same as CatalogueError).
 export class PushRejectedError extends Error {
-  constructor(readonly status: number) {
+  readonly status: number;
+  constructor(status: number) {
     super(`push service answered ${status}`);
     this.name = "PushRejectedError";
+    this.status = status;
   }
 }
 
 const B64URL = /^[A-Za-z0-9_-]+$/;
 
 /** All three VAPID variables, or null (push opt-in stays hidden). Shape-checked, never logged. */
-export function pushConfig(env: Record<string, string | undefined> = process.env): PushConfig | null {
+export function pushConfig(
+  env: Record<string, string | undefined> = process.env,
+): PushConfig | null {
   const publicKey = env.NEXT_PUBLIC_VAPID_PUBLIC_KEY?.trim();
   const privateKey = env.VAPID_PRIVATE_KEY?.trim();
   const subject = env.VAPID_SUBJECT?.trim();
   if (!publicKey || !privateKey || !subject) return null;
   // Uncompressed P-256 public key (65 bytes → 87 chars) and a 32-byte private scalar (43 chars).
-  if (!B64URL.test(publicKey) || publicKey.length !== 87 || !B64URL.test(privateKey) || privateKey.length !== 43) return null;
+  if (
+    !B64URL.test(publicKey) ||
+    publicKey.length !== 87 ||
+    !B64URL.test(privateKey) ||
+    privateKey.length !== 43
+  )
+    return null;
   if (!/^(mailto:.+@.+|https:\/\/.+)$/.test(subject)) return null;
   return { publicKey, privateKey, subject };
 }
 
 /** Topic header: at most 32 URL-safe characters (RFC 8030 §5.4). */
-const topicOf = (tag?: string) => (tag ? tag.replace(/[^A-Za-z0-9_-]/g, "").slice(0, 32) || undefined : undefined);
+const topicOf = (tag?: string) =>
+  tag
+    ? tag.replace(/[^A-Za-z0-9_-]/g, "").slice(0, 32) || undefined
+    : undefined;
 
 export async function sendPush(
   config: PushConfig,
   target: PushTarget,
   data: PushMessageData,
-  options: { ttlSeconds?: number; urgency?: "low" | "normal" | "high"; fetchImpl?: typeof fetch; timeoutMs?: number } = {},
+  options: {
+    ttlSeconds?: number;
+    urgency?: "low" | "normal" | "high";
+    fetchImpl?: typeof fetch;
+    timeoutMs?: number;
+  } = {},
 ): Promise<PushResult> {
   const topic = topicOf(data.tag);
   const payload = await buildPushPayload(
-    { data: { ...data }, options: { ttl: options.ttlSeconds ?? 24 * 60 * 60, urgency: options.urgency ?? "normal", ...(topic ? { topic } : {}) } },
+    {
+      data: { ...data },
+      options: {
+        ttl: options.ttlSeconds ?? 24 * 60 * 60,
+        urgency: options.urgency ?? "normal",
+        ...(topic ? { topic } : {}),
+      },
+    },
     { endpoint: target.endpoint, expirationTime: null, keys: target.keys },
     config,
   );
@@ -72,7 +100,9 @@ export async function sendPush(
   });
   // The response body is not needed; release it.
   await res.body?.cancel().catch(() => undefined);
-  if (res.status === 404 || res.status === 410) return { outcome: "gone", status: res.status };
-  if (res.status >= 200 && res.status < 300) return { outcome: "accepted", status: res.status };
+  if (res.status === 404 || res.status === 410)
+    return { outcome: "gone", status: res.status };
+  if (res.status >= 200 && res.status < 300)
+    return { outcome: "accepted", status: res.status };
   throw new PushRejectedError(res.status);
 }
