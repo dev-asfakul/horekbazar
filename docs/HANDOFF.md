@@ -10,8 +10,8 @@ Last updated 2026-10-22 (Asia/Dhaka), after the Banglish change, the B4 bulk-sta
 |---|---|
 | B0–B4 | merged to `main` (PRs #1–#9). B4 had one contract gap (bulk status), fixed in PR #12 |
 | Banglish storefront copy, English-only admin | PR #11 merged into `preview/horekbazar-v1` (merge `cbf8471`), CI green |
-| B4 bulk product status | PR #12 into `preview/horekbazar-v1` (open when written; merge after CI) |
-| B5 storefront catalogue | branch `feat/b5-storefront`, PR into `preview/horekbazar-v1` (see PROGRESS for the number and checks) |
+| B4 bulk product status | PR #12 merged into `preview/horekbazar-v1` (`1468fb3`) |
+| B5 storefront catalogue | PR #13 merged into `preview/horekbazar-v1`; not on `main` yet, so the public preview (serves `main`) does not show it |
 | Takeover audit docs | PR #10 (into `main`, open); its commits are also merged into `feat/b5-storefront` |
 | B6 cart → B11 hardening | not started |
 
@@ -45,7 +45,8 @@ owner merges `preview/horekbazar-v1` into `main`. `main` is protected (required 
 
 lint OK · typecheck OK · unit 112/112 · integration 88/88 (7 new storefront tests on a replica set) ·
 zero-variable build OK · Playwright 215 passed / 58 skipped / 0 failed · `test:e2e:db` 10/10 (3 admin,
-7 storefront at 375/768/1440 px with data created through the B4 services). Gate: see PROGRESS.
+7 storefront at 375/768/1440 px with data created through the B4 services). CI `check` green on #11–#13.
+Gate: FAIL (zero-variable `/` is the setup page; header search states; B6–B11 completeness), see PROGRESS.
 
 ### Left, in order
 

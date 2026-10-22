@@ -9,6 +9,8 @@ Newest first. Each entry: date, phase, done, decided, open, next.
 - **B4 gap (PR #12):** bulk product status on `/admin/products` (contract item that was missing).
 - **B5 (branch `feat/b5-storefront`):** readiness check, storefront read model, nine storefront routes, SEO, sitemap, robots, text index; integration and browser tests. Deviation (proposed): native `<details>` filters and the `/categories` page instead of Radix FilterSheet/MegaMenu (no UI library in the project).
 - **Checks:** lint, typecheck, unit 112/112, integration 88/88, build, Playwright 215/58 skipped/0 failed, `test:e2e:db` 10/10.
+- **Merged into `preview/horekbazar-v1`:** #11 (`cbf8471`), #12 (`1468fb3`), #13 (B5), each after CI `check` and Vercel success. `main` untouched (owner merges).
+- **Gate** (zero-variable build, `http://127.0.0.1:3000/`): FAIL, exit 1, 384 s. SEO seo-03/04/06/18 are measured on the setup-required `/` (noindex by design); the real home has canonical, description and JSON-LD (e2e-db SEO test) but no og:image yet. Journey: 80 header search form states, 1 error state. Completeness items for B6–B11.
 - **Not done:** catalogue images and enrichment (policy conflict recorded in HANDOFF), `db:migrate` on `horekbazar_dev`, Owner setup (owner action), B6–B11.
 - **Next:** merge #12 and the B5 PR after CI; owner creates the Owner and publishes; images per HANDOFF item 3; B6.
 
