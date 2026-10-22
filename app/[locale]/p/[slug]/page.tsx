@@ -82,6 +82,11 @@ export default async function ProductPage({ params, searchParams }: PageProps<"/
           ) : (
             <LabelTile categoryName={primaryCategory ? shown(primaryCategory.name, locale) : ""} netQuantity={net} />
           )}
+          {images.some((m) => m.rights.startsWith("Illustrative")) ? (
+            <p className="field-hint pdp-media-note" data-testid="illustrative-note">
+              {t("product.illustrative")}
+            </p>
+          ) : null}
         </div>
         <div className="pdp-info">
           <h1 className="font-display pdp-title" lang={shownLang(product.name, locale)}>

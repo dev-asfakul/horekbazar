@@ -25,6 +25,7 @@
     "db:migrate": "node --env-file-if-exists=.env.local scripts/db-migrate.ts",
     "db:seed": "node --env-file-if-exists=.env.local scripts/db-seed.ts",
     "showcase": "node --env-file-if-exists=.env.local scripts/showcase.ts",
+    "showcase:images": "node --env-file-if-exists=.env.local scripts/showcase-images.ts",
     "worker": "node --env-file-if-exists=.env.local scripts/worker.ts",
     "admin:recover-owner": "node --env-file-if-exists=.env.local scripts/admin-recover-owner.ts"
   },

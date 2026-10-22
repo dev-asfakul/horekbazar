@@ -933,7 +933,8 @@
       "sku": "SKU",
       "netQuantity": "Quantity",
       "category": "Category",
-      "related": "More in this category"
+      "related": "More in this category",
+      "illustrative": "Illustrative photo; the actual pack may look different."
     },
     "search": {
       "title": "Search",
