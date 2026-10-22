@@ -115,8 +115,10 @@ Gate: FAIL (zero-variable `/` is the setup page; header search states; B6–B11 
 
 ### Not done, and why
 
-- **Migrations:** not run anywhere real. `horekbazar_dev` lacks `shipments`, `courierEvents`, `returns`
-  until the owner runs `npm run db:migrate` with `MONGODB_URI` **and** `MONGODB_DB`.
+- **Migrations:** run on `horekbazar_dev` 2026-10-22 with the owner's development credentials (all
+  B6–B8 collections created; second run a no-op; showcase data unchanged; 0 orders). Any other database
+  needs `npm run db:migrate` with `MONGODB_URI` **and** `MONGODB_DB`. Credentials live outside the repo;
+  from this sandbox use a seed-list URI (look up the SRV and TXT records over DNS-over-HTTPS).
 - **Real couriers:** no credentials were available; Steadfast is tested only against a stubbed `fetch`
   (request shape, accepted, refused 4xx, 200-without-consignment, 5xx). The first live booking should
   be a single test parcel with the owner watching.
@@ -291,7 +293,9 @@ env file that was deleted after use. Vercel and normal machines resolve SRV fine
    add the environment variables there per environment.
 7. Approve B8 (PR #24) and then B9. For Steadfast: set `STEADFAST_API_KEY`, `STEADFAST_SECRET_KEY`,
    `COURIER_WEBHOOK_SECRET`, put `https://<site>/api/webhooks/courier/steadfast` with that secret as
-   Bearer token in the Steadfast portal, and run `db:migrate` on the target database.
+   Bearer token in the Steadfast portal (`horekbazar_dev` is already migrated). Rotate the
+   development credentials pasted in chat on 2026-10-22 before production; Resend needs a verified
+   domain (the key is send-only and `onboarding@resend.dev` reaches only the account owner).
    Approve B5 when ready. D12/D21, D5, D20, D22 and coupon restoration on cancellation remain
    open. Set Cloudinary credentials for uploads and the real delivery fees in /admin/settings/delivery.
 8. Sample data: `horekbazar_dev` holds 39/144/235 `sample: true` records. Remove them with
