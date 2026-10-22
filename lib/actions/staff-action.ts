@@ -2,6 +2,7 @@
 // Not a "use server" module: it exports helpers, not actions. Every action calls `staffContext` first,
 // which re-resolves the principal and runs decideAccess(…, capability, { mutation: true }) on the
 // server; hidden buttons are never the authorisation (MASTER ORDER: enforce on the server).
+import { CommerceError } from "@/lib/modules/pricing/cart";
 import { headers } from "next/headers";
 import { getIdentity, getPrincipal } from "@/lib/auth/server";
 import { CatalogueError } from "@/lib/modules/catalogue/common";
@@ -40,6 +41,7 @@ export async function staffContext(capability: Capability) {
 /** Maps a service error to a message key under forms.errors (unknown errors stay generic). */
 export function serviceErrorCode(error: unknown): string {
   if (error instanceof CatalogueError) return `catalogue_${error.code}`;
+  if (error instanceof CommerceError) return `commerce_${error.code}`;
   // MongoDB document validation failure: the committed validator rejected the write.
   if (typeof error === "object" && error !== null && (error as { code?: number }).code === 121) return "catalogue_invalid";
   return "try_again";

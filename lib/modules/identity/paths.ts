@@ -22,6 +22,9 @@ export const ADMIN_PAGE_CAPABILITY = {
   "/admin/collections": "merch.write",
   "/admin/homepage": "merch.write",
   "/admin/banners": "merch.write",
+  // B6 pricing.
+  "/admin/promotions": "promotions.write",
+  "/admin/coupons": "promotions.write",
   "/admin/settings": "settings.write",
   "/admin/settings/delivery": "delivery.write",
 } as const satisfies Record<string, Capability | null>;

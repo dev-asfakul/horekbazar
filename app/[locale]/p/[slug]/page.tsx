@@ -1,7 +1,8 @@
 // /p/[slug] (B5): a published product. Option chips are links (?v=SKU) so choosing works without
 // JavaScript; the server picks the chosen variant and shows its real price, compare-at price (only when
 // higher) and stock. Delivery charges come from the enabled delivery zones in settings (no area mapping
-// until D12). Ordering opens with the cart in B6, and the page says so; there is no inert buy button.
+// until D12). Add to cart (B6) is a plain form post with a quantity; checkout opens only when the
+// store turns ordering on (features.checkout), and the page says so while it is off.
 // JSON-LD Product/Offer for real published data only, plus BreadcrumbList.
 import { productBySlug } from "@/lib/storefront/lookups";
 import Link from "next/link";
@@ -9,6 +10,9 @@ import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { LabelTile } from "@/components/commerce/LabelTile";
 import { PriceTag } from "@/components/commerce/PriceTag";
+import { ActionForm } from "@/components/forms/ActionForm";
+import { addToCartAction } from "@/lib/actions/cart";
+import { formMessages } from "@/lib/i18n/form-messages";
 import { Breadcrumbs } from "@/components/store/Breadcrumbs";
 import { JsonLd } from "@/components/store/JsonLd";
 import { ProductGrid, netText } from "@/components/store/ProductGrid";
@@ -115,9 +119,27 @@ export default async function ProductPage({ params, searchParams }: PageProps<"/
           <p className="pdp-stock" data-testid="stock" data-available={variant.available > 0 ? "yes" : "no"}>
             {variant.available > 0 ? t("product.inStock") : t("product.outOfStock")}
           </p>
-          <p className="pdp-notice" role="note">
-            {t("product.orderingOff")}
-          </p>
+          {variant.available > 0 ? (
+            <div className="pdp-buy" data-testid="add-to-cart">
+              <ActionForm
+                action={addToCartAction}
+                hidden={{ variantId: String(variant._id) }}
+                fields={[{ name: "quantity", label: t("product.quantity"), inputMode: "numeric", defaultValue: "1", required: true, maxLength: 2, autoComplete: "off" }]}
+                messages={await formMessages(locale)}
+                submitLabel={t("product.addToCart")}
+                pendingLabel={t("product.adding")}
+                layout="inline"
+              />
+              <Link className="prose-link pdp-cart-link" href={localeHref(locale, "/cart")} prefetch={false}>
+                {t("product.viewCart")}
+              </Link>
+            </div>
+          ) : null}
+          {store.settings.features.checkout ? null : (
+            <p className="pdp-notice" role="note">
+              {t("product.orderingOff")}
+            </p>
+          )}
           <dl className="pdp-facts">
             <div>
               <dt>{t("product.sku")}</dt>

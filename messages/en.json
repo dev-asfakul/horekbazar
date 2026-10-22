@@ -167,7 +167,9 @@
       "homepage": "Homepage",
       "banners": "Banners",
       "settings": "Settings",
-      "delivery": "Delivery"
+      "delivery": "Delivery",
+      "promotions": "Promotions",
+      "coupons": "Coupons"
     },
     "home": {
       "title": "Admin",
@@ -184,7 +186,9 @@
       "homepageDesc": "The sections shown on the storefront homepage.",
       "bannersDesc": "Banner images and where they appear.",
       "settingsDesc": "Store name, contact, theme, numbers and features.",
-      "deliveryDesc": "Delivery zones, fees and estimates."
+      "deliveryDesc": "Delivery zones, fees and estimates.",
+      "promotionsDesc": "Sale prices and timed flash sales.",
+      "couponsDesc": "Codes customers enter at checkout."
     },
     "setup": {
       "title": "Set up the store owner",
@@ -607,6 +611,99 @@
       "enabled": "Offer this zone at checkout",
       "addTitle": "Add a zone",
       "addSubmit": "Add zone"
+    },
+    "promotions": {
+      "title": "Promotions",
+      "intro": "A sale price for products, a category or the whole store. A flash sale has an end time and an optional quantity cap. The lowest price for each item wins; promotions never stack. Prices are re-checked at checkout.",
+      "listTitle": "Promotions ({count})",
+      "empty": "No promotions yet.",
+      "addTitle": "Add a promotion",
+      "addSubmit": "Add promotion",
+      "kind": "Type",
+      "kinds": {
+        "product": "Sale price",
+        "flash_sale": "Flash sale"
+      },
+      "discountType": "Discount",
+      "discountTypes": {
+        "percent": "Percentage off",
+        "fixed": "Taka off each item"
+      },
+      "discountValue": "Amount",
+      "discountValueHint": "A whole percentage (1–100) or taka per item.",
+      "scopeType": "Applies to",
+      "scopes": {
+        "all": "Every product",
+        "categories": "Chosen categories (and their sub-categories)",
+        "products": "Chosen products"
+      },
+      "categories": "Categories",
+      "products": "Products",
+      "pickHint": "Hold Ctrl (or ⌘) to choose several.",
+      "startsAt": "Starts (Dhaka time)",
+      "endsAt": "Ends (Dhaka time)",
+      "endsAtHint": "Required for a flash sale.",
+      "cap": "Quantity cap",
+      "capHint": "Flash sale only: stops after this many items are sold.",
+      "sold": "{sold} sold",
+      "window": "{start} → {end}",
+      "noEnd": "no end",
+      "activate": "Activate",
+      "deactivate": "Move to draft",
+      "archive": "Archive",
+      "off": "{value}% off",
+      "offTaka": "৳{value} off",
+      "statuses": {
+        "draft": "Draft",
+        "active": "Active",
+        "archived": "Archived"
+      }
+    },
+    "coupons": {
+      "title": "Coupons",
+      "intro": "Codes customers type in the cart. A coupon is checked again when the order is placed, and its usage limit holds even when many customers order at once.",
+      "listTitle": "Coupons ({count})",
+      "empty": "No coupons yet.",
+      "addTitle": "Add a coupon",
+      "addSubmit": "Add coupon",
+      "code": "Code",
+      "codeHint": "3–30 capital letters, digits, - or _. Cannot change after it is used.",
+      "description": "Description",
+      "kind": "Type",
+      "kinds": {
+        "percent": "Percentage off",
+        "fixed": "Taka off the order",
+        "free_delivery": "Free delivery"
+      },
+      "value": "Amount",
+      "valueHint": "Percentage (1–100) or taka. Leave empty for free delivery.",
+      "maxDiscount": "Maximum discount (৳)",
+      "maxDiscountHint": "Percentage coupons only.",
+      "minSubtotal": "Minimum order (৳)",
+      "maxFee": "Covers delivery up to (৳)",
+      "maxFeeHint": "Free delivery only. Empty covers the whole fee.",
+      "usageLimit": "Total uses",
+      "perCustomerLimit": "Uses per customer",
+      "limitHint": "Empty means no limit.",
+      "startsAt": "Starts (Dhaka time)",
+      "endsAt": "Ends (Dhaka time)",
+      "firstOrderOnly": "First order only",
+      "categories": "Only these categories",
+      "products": "Only these products",
+      "excludeCategories": "Never these categories",
+      "excludeProducts": "Never these products",
+      "zones": "Only these delivery zones",
+      "pickHint": "Hold Ctrl (or ⌘) to choose several. Empty means any.",
+      "used": "Used {used}",
+      "usedOf": "Used {used} of {limit}",
+      "activate": "Activate",
+      "deactivate": "Move to draft",
+      "archive": "Archive",
+      "statuses": {
+        "draft": "Draft",
+        "active": "Active",
+        "archived": "Archived"
+      }
     }
   },
   "forms": {
@@ -661,7 +758,36 @@
       "catalogue_idempotency_key_reused": "This form was already used for a different change. Reload the page and try again.",
       "catalogue_invalid": "Some values are not valid. Check the fields and try again.",
       "catalogue_bulk_none": "Select at least one product.",
-      "catalogue_bulk_limit": "Select at most 25 products at a time."
+      "catalogue_bulk_limit": "Select at most 25 products at a time.",
+      "commerce_not_found": "That item no longer exists. Reload the page.",
+      "commerce_version_conflict": "Someone else changed this while you were editing. Reload the page to see the latest version, then try again.",
+      "commerce_scope_not_found": "One of the chosen categories or products no longer exists. Reload and choose again.",
+      "commerce_scope_empty": "Choose at least one category or product, or apply it to every product.",
+      "commerce_invalid_value": "That amount is not allowed for this kind of discount.",
+      "commerce_window_invalid": "The end time must be after the start time.",
+      "commerce_flash_needs_end": "A flash sale needs an end time in the future.",
+      "commerce_cap_flash_only": "Only a flash sale can have a quantity cap.",
+      "commerce_cap_percent_only": "A maximum discount applies only to percentage coupons.",
+      "commerce_code_invalid": "Use 3–30 capital letters, digits, - or _.",
+      "commerce_code_taken": "Another coupon already uses this code.",
+      "commerce_code_locked": "This coupon has been used on orders, so its code cannot change.",
+      "commerce_limit_below_used": "The usage limit cannot be lower than the number of times it has been used.",
+      "commerce_unavailable": "This product is not on sale right now.",
+      "commerce_insufficient_stock": "Not enough in stock. Please lower the quantity.",
+      "commerce_qty_range": "Enter a quantity from 1 to 99.",
+      "commerce_cart_full": "A cart can hold up to 50 different products.",
+      "commerce_busy": "The cart is busy. Please try again.",
+      "commerce_coupon_not_found": "We could not find that coupon code.",
+      "commerce_coupon_inactive": "This coupon is not active.",
+      "commerce_coupon_not_started": "This coupon has not started yet.",
+      "commerce_coupon_expired": "This coupon has expired.",
+      "commerce_coupon_limit_reached": "This coupon has been fully used.",
+      "commerce_coupon_already_used": "You have already used this coupon.",
+      "commerce_coupon_first_order_only": "This coupon is for a first order only.",
+      "commerce_coupon_not_eligible": "This coupon does not apply to the products in your cart.",
+      "commerce_coupon_zone_not_covered": "This coupon does not cover your delivery area.",
+      "commerce_coupon_not_needed": "Delivery is already free; no coupon needed.",
+      "commerce_coupon_min_not_met": "The order is below this coupon's minimum."
     },
     "fieldErrors": {
       "email_invalid": "Enter an email address like name@example.com",
@@ -695,7 +821,10 @@
       "colour_invalid": "Enter a hex colour like #1E4E9C",
       "accent_contrast": "This colour is too light on the page background. Choose a darker one",
       "zone_taken": "A zone already uses this code",
-      "password_mismatch": "The two passwords do not match"
+      "password_mismatch": "The two passwords do not match",
+      "percent_range": "Enter a whole percentage from 1 to 100.",
+      "flash_only": "Only a flash sale can have a quantity cap.",
+      "coupon_code": "Use 3–30 capital letters, digits, - or _ (for example EID10)."
     },
     "success": {
       "check_inbox": "Check your inbox. If this address can receive email, a verification link is on its way; it can take a few minutes. Open it to activate your account.",
@@ -733,7 +862,12 @@
       "merch_created": "Added as a draft.",
       "settings_saved": "Settings saved.",
       "settings_zone_saved": "Zone saved.",
-      "settings_zone_removed": "Zone removed."
+      "settings_zone_removed": "Zone removed.",
+      "cart_added": "Added to your cart.",
+      "cart_updated": "Cart updated.",
+      "cart_removed": "Removed from your cart.",
+      "coupon_applied": "Coupon applied.",
+      "coupon_removed": "Coupon removed."
     }
   },
   "auth": {
@@ -929,12 +1063,17 @@
       "deliveryNote": "The charge depends on the area. Checkout sets it from your address.",
       "deliveryNone": "Delivery areas are not set up yet.",
       "freeOver": "Free delivery on orders over {amount}",
-      "orderingOff": "Online ordering is not open yet. Cart and checkout come in the next stage.",
+      "orderingOff": "You can keep items in your cart. Checkout opens when the store starts taking online orders.",
       "sku": "SKU",
       "netQuantity": "Quantity",
       "category": "Category",
       "related": "More in this category",
-      "illustrative": "Illustrative photo; the actual pack may look different."
+      "illustrative": "Illustrative photo; the actual pack may look different.",
+      "addToCart": "Add to cart",
+      "adding": "Adding…",
+      "quantity": "Quantity",
+      "viewCart": "View cart",
+      "added": "Added to your cart."
     },
     "search": {
       "title": "Search",
@@ -966,6 +1105,63 @@
       "ml": "ml",
       "l": "L",
       "pc": "pc"
+    },
+    "cart": {
+      "title": "Your cart",
+      "empty": "Your cart is empty",
+      "emptyText": "Add products you like and they will show here.",
+      "browse": "Browse categories",
+      "items": "{count} items",
+      "quantity": "Quantity",
+      "update": "Update",
+      "remove": "Remove",
+      "each": "{price} each",
+      "lineTotal": "Total",
+      "sale": "Sale",
+      "flash": "Flash sale",
+      "tier": "Lower price for {qty} or more",
+      "notices": {
+        "unavailable": "This product is no longer available. Please remove it.",
+        "out_of_stock": "Out of stock. Please remove it.",
+        "insufficient_stock": "Only {available} in stock. Please lower the quantity.",
+        "price_up": "Price went up: was {was}",
+        "price_down": "Price dropped: was {was}"
+      },
+      "unavailableTitle": "Not available",
+      "coupon": "Coupon code",
+      "couponApply": "Apply",
+      "couponApplied": "Coupon {code} applied",
+      "couponRemove": "Remove coupon",
+      "couponProblems": {
+        "not_found": "We could not find that coupon code.",
+        "inactive": "This coupon is not active.",
+        "not_started": "This coupon has not started yet.",
+        "expired": "This coupon has expired.",
+        "limit_reached": "This coupon has been fully used.",
+        "already_used": "You have already used this coupon.",
+        "first_order_only": "This coupon is for a first order only.",
+        "not_eligible": "This coupon does not apply to the products in your cart.",
+        "min_not_met": "Add {missing} more to use this coupon.",
+        "zone_not_covered": "This coupon does not cover your delivery area.",
+        "not_needed": "Delivery is already free; no coupon needed."
+      },
+      "zone": "Delivery area",
+      "zoneChoose": "Choose an area",
+      "zoneShow": "Show charge",
+      "summary": "Order summary",
+      "subtotal": "Products",
+      "savings": "Offer savings",
+      "couponDiscount": "Coupon discount",
+      "delivery": "Delivery",
+      "deliveryLater": "Shown when you choose an area",
+      "deliveryFree": "Free",
+      "freeMissing": "Add {amount} more for free delivery",
+      "total": "Total",
+      "checkout": "Checkout",
+      "checkoutOff": "Online ordering is not open yet. When the store opens it, you can order from here.",
+      "checkoutFix": "Please fix the problems above before ordering.",
+      "signInToSave": "Sign in to keep this cart on your account.",
+      "priceNote": "Prices are checked again at checkout."
     }
   }
 }
