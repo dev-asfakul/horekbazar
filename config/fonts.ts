@@ -5,9 +5,13 @@ import type { Locale } from "@/lib/i18n/locales";
 export const fontPresets = ["khata", "plain"] as const;
 export type FontPreset = (typeof fontPresets)[number];
 
-/** The one font file preloaded per locale: the Noto Sans Bengali text subset for that locale's script. */
+/**
+ * The one font file preloaded per locale: the Latin subset for both, because the "bn" storefront is
+ * Latin-script Banglish (owner decision 2026-10-22). The Bengali subset still loads on demand
+ * (unicode-range) for Bengali product data and the taka sign.
+ */
 export const preloadedFontByLocale: Record<Locale, string> = {
-  bn: "/fonts/v1/noto-sans-bengali-bengali.woff2",
+  bn: "/fonts/v1/noto-sans-bengali-latin.woff2",
   en: "/fonts/v1/noto-sans-bengali-latin.woff2",
 };
 

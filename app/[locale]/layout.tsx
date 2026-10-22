@@ -1,4 +1,4 @@
-// Root layout, one per locale ("/" is Bengali through a proxy rewrite, "/en" is English).
+// Root layout, one per locale ("/" is Banglish through a proxy rewrite, "/en" is English).
 // DOM order: skip link, header, main, footer, bottom dock (DESIGN.md → Layout; BUILD-PLAN §6).
 import "../globals.css";
 import type { Metadata, Viewport } from "next";
@@ -13,7 +13,7 @@ import { SiteFooter } from "@/components/shell/SiteFooter";
 import { SiteHeader } from "@/components/shell/SiteHeader";
 import { freshInstallDefaults } from "@/config/defaults";
 import { preloadedFontByLocale } from "@/config/fonts";
-import { isLocale } from "@/lib/i18n/locales";
+import { htmlLang, isLocale } from "@/lib/i18n/locales";
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -35,7 +35,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps<"/[
   if (!isLocale(locale)) notFound();
   setRequestLocale(locale);
 
-  // Exactly one preloaded font file per locale: the Noto Sans Bengali subset for the page's script.
+  // Exactly one preloaded font file per locale: the Noto Sans Latin subset (both locales are Latin script).
   preload(preloadedFontByLocale[locale], { as: "font", type: "font/woff2", crossOrigin: "anonymous" });
 
   const t = await getTranslations({ locale, namespace: "shell" });
@@ -45,7 +45,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps<"/[
   const settings = freshInstallDefaults; // replaced by the settings document in B4
 
   return (
-    <html lang={locale} data-font-preset={settings.theme.fontPreset}>
+    <html lang={htmlLang[locale]} data-font-preset={settings.theme.fontPreset}>
       <body>
         <a href="#main" className="skip-link">
           {t("skipToMain")}

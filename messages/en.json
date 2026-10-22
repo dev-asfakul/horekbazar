@@ -12,8 +12,8 @@
     "account": "Account",
     "cart": "Cart",
     "localeSwitch": {
-      "label": "বাংলা",
-      "ariaLabel": "এই পেজটি বাংলায় দেখুন"
+      "label": "Banglish",
+      "ariaLabel": "View this page in Banglish"
     },
     "nav": {
       "label": "Main",

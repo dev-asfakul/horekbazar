@@ -7,7 +7,7 @@
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { localeHref, stripLocalePrefix } from "@/lib/i18n/href";
-import type { Locale } from "@/lib/i18n/locales";
+import { htmlLang, type Locale } from "@/lib/i18n/locales";
 
 interface Props {
   target: Locale;
@@ -22,8 +22,8 @@ export function LocaleSwitch({ target, label, ariaLabel }: Props) {
   return (
     <Link
       href={href}
-      hrefLang={target}
-      lang={target}
+      hrefLang={htmlLang[target]}
+      lang={htmlLang[target]}
       aria-label={ariaLabel}
       className="nav-link header-action"
       prefetch={false}
@@ -39,7 +39,7 @@ export function LocaleSwitch({ target, label, ariaLabel }: Props) {
 /** Server-rendered fallback (same link without the query) used while search params resolve. */
 export function LocaleSwitchFallback({ target, label, ariaLabel, currentPath }: Props & { currentPath: string }) {
   return (
-    <a href={localeHref(target, currentPath)} hrefLang={target} lang={target} aria-label={ariaLabel} className="nav-link header-action">
+    <a href={localeHref(target, currentPath)} hrefLang={htmlLang[target]} lang={htmlLang[target]} aria-label={ariaLabel} className="nav-link header-action">
       {label}
     </a>
   );

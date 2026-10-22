@@ -13,8 +13,10 @@ function values(value: unknown): string[] {
 }
 
 describe("message catalogues", () => {
-  it("English has exactly the Bengali keys", () => {
-    expect(keys(en).sort()).toEqual(keys(bn).sort());
+  it("Banglish has exactly the English keys, except the English-only admin namespace", () => {
+    const storefront = keys(en).filter((k) => !k.startsWith("admin."));
+    expect(keys(bn).sort()).toEqual(storefront.sort());
+    expect("admin" in bn).toBe(false);
   });
 
   it("has no empty strings and no em dashes (house copy rule)", () => {
@@ -26,6 +28,6 @@ describe("message catalogues", () => {
 
   it("states cash on delivery and store confirmation in the footer, in both languages", () => {
     expect(en.shell.footer.payment).toBe("Payment: cash on delivery. Orders are confirmed by the store before dispatch.");
-    expect(bn.shell.footer.payment).toContain("ক্যাশ অন ডেলিভারি");
+    expect(bn.shell.footer.payment).toBe("Payment: cash on delivery. Dispatch-er age store apnar order confirm korbe.");
   });
 });

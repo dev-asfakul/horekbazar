@@ -82,8 +82,7 @@ export const getPrincipal = cache(async function getPrincipal(): Promise<Princip
 
 /** Admin language: the signed-in staff member's preference, else the store default. */
 export async function getAdminLocale(): Promise<"bn" | "en"> {
-  const principal = await getPrincipal();
-  return principal?.user.locale ?? adminLocale();
+  return adminLocale();
 }
 
 export async function requireCustomer(locale: "bn" | "en", path: string): Promise<Principal> {
