@@ -2,6 +2,16 @@
 
 Newest first. Each entry: date, phase, done, decided, open, next.
 
+## 2026-10-22 — Showcase live: Owner, settings, published catalogue, stock, images; skeletons; confirm password
+
+- **Owner:** "i shared env variable for you ... i am using them for showcase"; "there is no skeleton/loader while changing page"; "even in signup page, there is no confirm password".
+- **Showcase (`horekbazar_dev`, verified by query):** Owner created through the live `/admin/setup` (mail.horekbazar@gmail.com; verification e-mail sent; owner sets their password with Forgot password). `npm run showcase`: settings, zones ৳60/৳120, 39/39 categories and 144/144 products published, 214 stock rows = 214 ledger receipts (21 variants left at 0). `npm run showcase:images`: 51 products with a reviewed CC0/public-domain photo in Cloudinary, all 51 resolve, rights/alt/size on each; the other 93 keep the label tile. 870 audit entries. Live `/api/health`: `setupRequired:false`.
+- **Skeletons (PR #18, main `d811fa9`):** static `loading.tsx` on every data-backed page; measured on the live site: listing/product skeleton 70–110 ms after a click; 404s stay 404. Router prefetches now pass the proxy (they used to 404).
+- **Confirm password:** sign-up, reset, change, Owner setup; server refuses a mismatch (checked live: "দুটি পাসওয়ার্ড মেলেনি").
+- **This PR:** header shows the saved store name (was always "নতুন স্টোর"); product page says the photo is illustrative; image script and list.
+- **Checks:** lint, typecheck, unit, build, Playwright 215 passed / 0 failed, e2e-db 11 passed / 1 skipped (sign-up needs e-mail; verified live), CI green on #18/#19.
+- **Next:** B6 cart → B11. Rotate the credentials pasted in chat before production.
+
 ## 2026-10-22 — Banglish corrected to Bengali script
 
 - **Owner:** "why banglish like in english? banglish mean, english in bangla, like, সেটআপ বাকি"; also asked why the preview still shows the setup page.

@@ -49,10 +49,23 @@ zero-variable build OK · Playwright 215 passed / 58 skipped / 0 failed · `test
 7 storefront at 375/768/1440 px with data created through the B4 services). CI `check` green on #11–#13.
 Gate: FAIL (zero-variable `/` is the setup page; header search states; B6–B11 completeness), see PROGRESS.
 
+### Showcase (horekbazar_dev), set up 2026-10-22
+
+- **Owner:** created through the live `/admin/setup` (role owner, email `mail.horekbazar@gmail.com`,
+  verification e-mail sent). The owner opens that e-mail, then uses "Forgot password" to choose a
+  password, signs in and enrols two-step verification. The generated setup password is not in the repo.
+- **`npm run showcase`** (idempotent, `_dev` only, Owner as actor): settings saved, zones `dhaka-city`
+  ৳60 and `outside-dhaka` ৳120 (showcase values), 39 categories and 144 products published, opening
+  stock for 214 of 235 variants (21 deliberately at 0). Live: `/api/health` `setupRequired:false`.
+- **`npm run showcase:images`**: public-domain/CC0 photos from `catalogue/horekbazar/showcase-images.json`
+  uploaded to Cloudinary (`horekbazar/products/showcase-<slug>`) and linked with `addProductMedia`. See
+  PROGRESS for the count that actually landed; Wikimedia throttles bulk downloads (429), rerun to finish.
+- From this sandbox the Atlas SRV name does not resolve: run scripts with a seed-list `MONGODB_URI`
+  **and** `MONGODB_DB=horekbazar_dev`.
+
 ### Left, in order
 
-1. **Owner actions on the showcase** (nothing on the storefront shows until these exist; this is why
-   the preview says "সেটআপ বাকি"): create the
+1. **Done for the showcase** (see above). For a fresh database: create the
    Owner at `/admin/setup` (`docs/OWNER-SETUP.md`), save `/admin/settings` once, add delivery zones with
    real fees, publish the 9 top-level then 30 child categories, then bulk-publish products in
    `/admin/products`, receive stock in `/admin/inventory`. All 144 catalogue records are drafts with 0 stock.
