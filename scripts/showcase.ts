@@ -1,0 +1,133 @@
+// npm run showcase -- [--confirm] — makes the development/showcase database ("_dev" only) browsable:
+// store settings, two delivery zones, published categories and products, and opening stock.
+// Every write goes through the same services as the admin (versions, publish rules, inventory ledger,
+// audit log) with the store Owner as the actor; nothing is written around them.
+//
+// Idempotent: settings are saved only if missing, a zone only if its id is absent, only drafts are
+// published, and each variant's opening stock uses a fixed adjustment id (a rerun is a ledger replay,
+// never a second receipt). Dry run by default. Prints counts and the database name, never the URI.
+//
+// Showcase values (the owner adjusts them in /admin): zone fees and estimates, and stock quantities.
+import { createHash } from "node:crypto";
+import { closeDatabase, databaseConfig, getClient, getDatabase } from "../lib/adapters/db/client.ts";
+import { setCategoryStatus } from "../lib/modules/catalogue/categories.ts";
+import { moveStock } from "../lib/modules/catalogue/inventory.ts";
+import { setProductStatus } from "../lib/modules/catalogue/products.ts";
+import { CATEGORIES, PRODUCTS, STOCK, VARIANTS } from "../lib/modules/catalogue/schema.ts";
+import { getSettings, updateGeneralSettings, upsertDeliveryZone } from "../lib/modules/settings/settings.ts";
+
+const args = new Set(process.argv.slice(2));
+const unknown = [...args].filter((a) => a !== "--confirm");
+if (unknown.length) {
+  console.error(`Unknown option(s): ${unknown.join(" ")}. Use --confirm to write.`);
+  process.exit(2);
+}
+const confirm = args.has("--confirm");
+
+/** Opening stock per variant, derived from its id so reruns agree: ~8% out of stock, ~15% low. */
+export function openingQty(variantId: string): number {
+  const n = createHash("sha256").update(variantId).digest().readUInt32BE(0) % 1000;
+  if (n < 80) return 0;
+  if (n < 230) return 2 + (n % 4); // 2–5: at or under a typical low-stock threshold
+  return 12 + (n % 69); // 12–80
+}
+
+const ZONES = [
+  { id: "dhaka-city", name: { bn: "ঢাকা সিটির ভেতরে", en: "Inside Dhaka city" }, fee: { amountMinor: 6000, currency: "BDT" as const }, estimate: { bn: "১–২ দিন", en: "1–2 days" }, areas: [], enabled: true },
+  { id: "outside-dhaka", name: { bn: "ঢাকার বাইরে", en: "Outside Dhaka" }, fee: { amountMinor: 12000, currency: "BDT" as const }, estimate: { bn: "৩–৫ দিন", en: "3–5 days" }, areas: [], enabled: true },
+];
+
+try {
+  const db = await getDatabase();
+  const client = getClient(databaseConfig(process.env)!);
+  console.log(`database: ${db.databaseName}`);
+  console.log(`mode:     ${confirm ? "WRITE (--confirm)" : "dry run (add --confirm to write)"}`);
+  if (!db.databaseName.endsWith("_dev")) throw new Error("refused: the showcase script only runs on a database whose name ends in _dev");
+
+  const owner = await db.collection("user").findOne({ staffRoleKey: "owner" }, { projection: { _id: 1 } });
+  if (!owner) throw new Error("refused: no Owner yet; create it at /admin/setup first (docs/OWNER-SETUP.md)");
+  const actor = { id: String(owner._id), role: "owner", ip: null };
+
+  // 1. Settings (once) and delivery zones (missing ids only).
+  let settings = await getSettings(db);
+  const saved = settings.version > 0;
+  console.log(`settings: ${saved ? "already saved" : confirm ? "saving defaults" : "would save defaults"}`);
+  if (!saved && confirm) {
+    const { store, theme, locale, pricing, features } = settings;
+    await updateGeneralSettings(db, actor, 0, { store, theme, locale, pricing, features });
+    settings = await getSettings(db);
+  }
+  for (const zone of ZONES) {
+    const present = settings.delivery.zones.some((z) => z.id === zone.id);
+    console.log(`zone ${zone.id}: ${present ? "present" : confirm ? "adding" : "would add"}`);
+    if (!present && confirm) {
+      await upsertDeliveryZone(db, actor, settings.version, zone);
+      settings = await getSettings(db);
+    }
+  }
+
+  // 2. Categories: parents before children (a child needs a published parent).
+  const categories = await db.collection(CATEGORIES).find({}, { projection: { parentId: 1, status: 1, version: 1, slug: 1 } }).toArray();
+  const depth = (c: (typeof categories)[number]): number => {
+    let d = 0;
+    let p = c.parentId;
+    while (p) {
+      d++;
+      p = categories.find((x) => String(x._id) === String(p))?.parentId;
+    }
+    return d;
+  };
+  const drafts = categories.filter((c) => c.status === "draft").sort((a, b) => depth(a) - depth(b));
+  let catDone = 0;
+  for (const c of drafts) {
+    if (confirm) await setCategoryStatus(db, client, actor, String(c._id), c.version as number, "published");
+    catDone++;
+  }
+  console.log(`categories: ${categories.length} total, ${confirm ? "published" : "would publish"} ${catDone}`);
+
+  // 3. Products (drafts only; the publish rules decide, failures are listed).
+  const products = await db.collection(PRODUCTS).find({ status: "draft" }, { projection: { slug: 1, version: 1 } }).toArray();
+  let prodDone = 0;
+  const prodFailed: string[] = [];
+  for (const p of products) {
+    if (!confirm) {
+      prodDone++;
+      continue;
+    }
+    try {
+      await setProductStatus(db, client, actor, String(p._id), p.version as number, "published");
+      prodDone++;
+    } catch (error) {
+      prodFailed.push(`${p.slug}: ${(error as { code?: string }).code ?? (error as Error).message}`);
+    }
+  }
+  console.log(`products: ${confirm ? "published" : "would publish"} ${prodDone} drafts${prodFailed.length ? `, not published ${prodFailed.length}` : ""}`);
+  for (const f of prodFailed) console.log(`  not published: ${f}`);
+
+  // 4. Opening stock through the ledger (fixed adjustment id per variant).
+  const variants = await db.collection(VARIANTS).find({ status: "active" }, { projection: { _id: 1 } }).toArray();
+  const stock = new Map((await db.collection(STOCK).find({}, { projection: { variantId: 1, onHand: 1 } }).toArray()).map((s) => [String(s.variantId), s.onHand as number]));
+  let received = 0;
+  let replayed = 0;
+  let zero = 0;
+  for (const v of variants) {
+    const qty = openingQty(String(v._id));
+    if (qty === 0) {
+      zero++;
+      continue;
+    }
+    if (!confirm) {
+      if ((stock.get(String(v._id)) ?? 0) === 0) received++;
+      continue;
+    }
+    const r = await moveStock(db, client, actor, { adjustmentId: `showcase-open-${String(v._id)}`, kind: "receive", lines: [{ variantId: String(v._id), qty }] });
+    if (r.replayed) replayed++;
+    else received++;
+  }
+  console.log(`stock: ${variants.length} active variants; ${confirm ? "received" : "would receive"} ${received}, already received ${replayed}, left at 0 (out of stock) ${zero}`);
+} catch (error) {
+  console.error((error as Error).message);
+  process.exitCode = 1;
+} finally {
+  await closeDatabase();
+}

@@ -51,7 +51,10 @@ export default async function ResetPasswordPage({ params, searchParams }: PagePr
         <ActionForm
           action={resetPasswordAction}
           hidden={{ token, locale }}
-          fields={[{ name: "password", label: t("reset.newPassword"), type: "password", autoComplete: "new-password", hint: t("passwordHint"), required: true }]}
+          fields={[
+            { name: "password", label: t("reset.newPassword"), type: "password", autoComplete: "new-password", hint: t("passwordHint"), required: true },
+            { name: "passwordConfirm", label: t("passwordConfirm"), type: "password", autoComplete: "new-password", required: true },
+          ]}
           submitLabel={t("reset.submit")}
           pendingLabel={t("reset.pending")}
           messages={m}
