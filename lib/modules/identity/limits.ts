@@ -14,6 +14,9 @@ export const LIMITS = {
   oauthIp: { name: "oauth-ip", limit: 30, windowSeconds: 600 },
   accountChange: { name: "account-change", limit: 20, windowSeconds: 600 },
   cartIp: { name: "cart-ip", limit: 120, windowSeconds: 600 },
+  // checkout.place: 5 per minute per customer (SCHEMA.md API surface), and per address.
+  checkoutUser: { name: "checkout-user", limit: 5, windowSeconds: 60 },
+  checkoutIp: { name: "checkout-ip", limit: 20, windowSeconds: 60 },
   // Coupon guessing: a few tries per device and address.
   couponIp: { name: "coupon-ip", limit: 20, windowSeconds: 600 },
 } satisfies Record<string, LimitRule>;
