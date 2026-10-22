@@ -7,7 +7,7 @@
 // without it — tests/e2e covers that state). So the fixture signs in with the app's own auth service
 // and the server's throwaway secret, and hands the resulting session cookie to the browser. Every
 // admin request after that is a normal browser request checked by the server.
-import { readFileSync, rmSync } from "node:fs";
+import { readFileSync } from "node:fs";
 import { expect, test, type BrowserContext } from "@playwright/test";
 import { MongoClient, type Db } from "mongodb";
 import { createAuth } from "@/lib/modules/identity/auth";
@@ -48,8 +48,8 @@ async function signIn(context: BrowserContext) {
 
 test.afterAll(async () => {
   await client?.close();
-  // The harness may be killed before it can clean up; the throwaway secret is useless after the run.
-  rmSync("test-results/e2e-db.json", { force: true });
+  // test-results/e2e-db.json is removed by the harness on exit (later spec files still read it); its
+  // throwaway secret is useless after the run.
 });
 
 test("catalogue editor creates, fills and publishes a product", async ({ page }) => {

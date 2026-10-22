@@ -332,5 +332,99 @@
       "disablePending": "Bondho hocche…",
       "disablePassword": "Password"
     }
+  },
+  "store": {
+    "home": {
+      "title": "Online bazar",
+      "heading": "Category dhore kenakata",
+      "newHeading": "Notun product",
+      "allCategories": "Shob categories",
+      "seeAll": "Shob dekhun",
+      "emptyTitle": "Ekhono kono product publish hoyni",
+      "emptyBody": "Store product publish korle ekhane dekhabe. Ektu por abar dekhun."
+    },
+    "categories": {
+      "title": "Categories",
+      "description": "Shob category ek jaygay.",
+      "empty": "Ekhono kono category publish hoyni.",
+      "productsLink": "{name}-er shob product"
+    },
+    "listing": {
+      "results": "{count}-ti product",
+      "empty": "Ei jaygay ekhono kono product nei.",
+      "emptyFiltered": "Ei filter-e kono product paowa jayni.",
+      "clearFilters": "Filter muche felun",
+      "filters": "Filter",
+      "sort": "Sort",
+      "inStock": "Shudhu stock-e ache emon",
+      "minPrice": "Kom-poksho dam (taka)",
+      "maxPrice": "Beshi-poksho dam (taka)",
+      "apply": "Filter apply korun",
+      "priceRange": "Ekhane dam {min} theke {max}",
+      "pagination": "Pages",
+      "prev": "Ager page",
+      "next": "Porer page",
+      "pageOf": "Page {page} / {pages}",
+      "subcategories": "Sub-categories",
+      "priceInvalid": "Dam taka-y likhun, jemon 250"
+    },
+    "sorts": {
+      "relevance": "Best match",
+      "new": "Notun age",
+      "price_asc": "Dam: kom theke beshi",
+      "price_desc": "Dam: beshi theke kom"
+    },
+    "card": {
+      "outOfStock": "Stock nei",
+      "options": "{count}-ti option"
+    },
+    "product": {
+      "breadcrumb": "Apni ekhane",
+      "variants": "Option bechhe nin",
+      "inStock": "Stock-e ache",
+      "outOfStock": "Ei option-ti ekhon stock-e nei",
+      "details": "Product details",
+      "specs": "Specification",
+      "delivery": "Delivery charge",
+      "deliveryNote": "Charge area onujayi. Checkout-e apnar address diye charge thik hobe.",
+      "deliveryNone": "Delivery area ekhono set kora hoyni.",
+      "freeOver": "{amount}-er beshi order-e delivery free",
+      "orderingOff": "Online order ekhono chalu hoyni. Cart ar checkout porer dhape ashbe.",
+      "sku": "SKU",
+      "netQuantity": "Poriman",
+      "category": "Category",
+      "related": "Ei category-r aro product"
+    },
+    "search": {
+      "title": "Search",
+      "heading": "“{q}”-er result",
+      "prompt": "Product-er nam likhe search korun.",
+      "empty": "“{q}” diye kono product paowa jayni.",
+      "emptyHint": "Onno shobdo, choto bannan ba English nam diye try korun.",
+      "label": "Product search"
+    },
+    "collections": {
+      "title": "Collections",
+      "description": "Bachai kora product-er collection.",
+      "empty": "Ekhono kono collection publish hoyni.",
+      "products": "{count}-ti product"
+    },
+    "deals": {
+      "title": "Deals",
+      "description": "Ager dam-er cheye kom dam-e ache emon product. Dekhano ager dam-ti ashol dam.",
+      "empty": "Ekhon kono deal nei."
+    },
+    "newArrivals": {
+      "title": "Notun product",
+      "description": "Gato 30 diner moddhe publish kora product.",
+      "empty": "Gato 30 dine notun kono product ashe nai."
+    },
+    "units": {
+      "g": "g",
+      "kg": "kg",
+      "ml": "ml",
+      "l": "L",
+      "pc": "pc"
+    }
   }
 }
