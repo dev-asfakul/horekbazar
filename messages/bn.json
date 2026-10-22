@@ -122,7 +122,9 @@
       "catalogue_in_use": "This is in use (published before, or has stock history), so it cannot be deleted. Archive it instead.",
       "catalogue_insufficient_stock": "That would take stock below zero or below what is reserved for orders.",
       "catalogue_idempotency_key_reused": "This form was already used for a different change. Reload the page and try again.",
-      "catalogue_invalid": "Some values are not valid. Check the fields and try again."
+      "catalogue_invalid": "Some values are not valid. Check the fields and try again.",
+      "catalogue_bulk_none": "Select at least one product.",
+      "catalogue_bulk_limit": "Select at most 25 products at a time."
     },
     "fieldErrors": {
       "email_invalid": "name@example.com-er moto email address din",

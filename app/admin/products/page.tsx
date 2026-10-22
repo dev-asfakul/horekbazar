@@ -6,6 +6,8 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { LabelTile } from "@/components/commerce/LabelTile";
 import { AdminImage, Pager, SampleBadge, StatusChip } from "@/components/admin/RecordBits";
+import { BulkStatusForm } from "@/components/admin/BulkStatusForm";
+import { bulkProductStatusAction } from "@/lib/actions/catalogue";
 import { adminPage, count, lt, money, searchParam } from "@/lib/admin/page";
 import { getAdminLocale } from "@/lib/auth/server";
 import { cloudinaryConfig, deliveryUrl } from "@/lib/adapters/media/cloudinary";
@@ -22,7 +24,7 @@ type Search = Promise<Record<string, string | string[] | undefined>>;
 
 export default async function AdminProductsPage({ searchParams }: { searchParams: Search }) {
   const sp = await searchParams;
-  const { locale, db } = await adminPage("/admin/products");
+  const { locale, db, messages } = await adminPage("/admin/products");
   const t = await getTranslations({ locale, namespace: "admin.products" });
   const c = await getTranslations({ locale, namespace: "admin.catalogue" });
   const q = searchParam(sp.q).slice(0, 80);
@@ -138,10 +140,21 @@ export default async function AdminProductsPage({ searchParams }: { searchParams
         </div>
       ) : (
         <>
+          <BulkStatusForm
+            formId="bulk-status"
+            action={bulkProductStatusAction}
+            messages={messages}
+            options={CATALOGUE_STATUSES.map((st) => ({ value: st, label: c(`statuses.${st}`) }))}
+            names={Object.fromEntries(list.items.map(({ product: p }) => [String(p._id), lt(p.name, locale)]))}
+            labels={{ legend: t("bulkLabel"), status: t("bulkStatus"), apply: t("bulkApply"), pending: t("bulkPending"), selectAll: t("bulkSelectAll"), clear: t("bulkClear"), selected: t("bulkSelected", { count: "{count}" }), done: t("bulkDone", { done: "{done}", total: "{total}" }), failed: t("bulkFailed"), hint: t("bulkHint") }}
+          />
           <table className="record-table" data-testid="products-table">
             <caption className="sr-only">{t("tableCaption")}</caption>
             <thead>
               <tr>
+                <th scope="col">
+                  <span className="sr-only">{t("bulkLabel")}</span>
+                </th>
                 <th scope="col">
                   <span className="sr-only">{t("image")}</span>
                 </th>
@@ -159,6 +172,9 @@ export default async function AdminProductsPage({ searchParams }: { searchParams
             <tbody>
               {list.items.map(({ product: p, variants, minPrice }) => (
                 <tr key={String(p._id)} data-slug={p.slug}>
+                  <td>
+                    <input type="checkbox" className="bulk-check" form="bulk-status" name="item" value={`${String(p._id)}:${p.version}`} aria-label={t("bulkSelect", { name: lt(p.name, locale) })} />
+                  </td>
                   <td>{thumb(p)}</td>
                   <td>
                     <Link className="record-link" href={`/admin/products/${String(p._id)}`}>
@@ -182,6 +198,7 @@ export default async function AdminProductsPage({ searchParams }: { searchParams
           <ul className="record-cards" data-testid="products-cards">
             {list.items.map(({ product: p, variants, minPrice }) => (
               <li key={String(p._id)} className="record-card">
+                <input type="checkbox" className="bulk-check" form="bulk-status" name="item" data-card="" value={`${String(p._id)}:${p.version}`} aria-label={t("bulkSelect", { name: lt(p.name, locale) })} />
                 {thumb(p)}
                 <div className="record-card-body">
                   <Link className="record-link" href={`/admin/products/${String(p._id)}`}>
