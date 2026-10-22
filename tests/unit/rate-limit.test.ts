@@ -15,6 +15,15 @@ describe("rate-limit port", () => {
     expect((await limiter.limit("ip:1")).success).toBe(true);
   });
 
+  it("allows the in-process limiter in production only for the loopback test server", () => {
+    const local = { NODE_ENV: "production", RATE_LIMIT_LOCAL_TEST: "1", MONGODB_URI: "mongodb://127.0.0.1:41234/?replicaSet=testset" };
+    expect(rateLimiter(rule, local).backend).toBe("memory");
+    expect(() => rateLimiter(rule, { ...local, RATE_LIMIT_LOCAL_TEST: undefined })).toThrow(RateLimitUnavailableError);
+    expect(() => rateLimiter(rule, { ...local, MONGODB_URI: "mongodb+srv://user:pass@cluster.example.net/db" })).toThrow(RateLimitUnavailableError);
+    expect(() => rateLimiter(rule, { ...local, MONGODB_URI: "mongodb://127.0.0.1.evil.example:27017/db" })).toThrow(RateLimitUnavailableError);
+    expect(() => rateLimiter(rule, { ...local, VERCEL: "1" })).toThrow(RateLimitUnavailableError);
+  });
+
   it("fails closed in production without Upstash, and uses memory in development", () => {
     expect(() => rateLimiter(rule, { NODE_ENV: "production" })).toThrow(RateLimitUnavailableError);
     expect(rateLimiter(rule, { NODE_ENV: "development" }).backend).toBe("memory");

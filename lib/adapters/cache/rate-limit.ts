@@ -85,11 +85,18 @@ class UpstashRateLimiter implements RateLimiter {
 
 const memoryLimiters = new Map<string, MemoryRateLimiter>();
 
+/**
+ * The browser suite's disposable server (scripts/e2e-db-server.mjs) runs a production build without
+ * Upstash. It may use the in-process limiter only when it says so explicitly AND its database is on
+ * the loopback interface, which no deployment can be; anything else still fails closed.
+ */
+export const localTestLimiter = (env: Env) => env.RATE_LIMIT_LOCAL_TEST === "1" && /^mongodb:\/\/127\.0\.0\.1:\d+\//.test(env.MONGODB_URI ?? "") && !env.VERCEL;
+
 /** The limiter for one rule. Throws RateLimitUnavailableError in production without Upstash (fail closed). */
 export function rateLimiter(rule: LimitRule, env: Env = process.env): RateLimiter {
   const config = upstashConfig(env);
   if (config) return new UpstashRateLimiter(new Redis({ url: config.url, token: config.token }), rule);
-  if (env.NODE_ENV === "production") throw new RateLimitUnavailableError();
+  if (env.NODE_ENV === "production" && !localTestLimiter(env)) throw new RateLimitUnavailableError();
   const id = `${rule.name}:${rule.limit}:${rule.windowSeconds}`;
   let limiter = memoryLimiters.get(id);
   if (!limiter) memoryLimiters.set(id, (limiter = new MemoryRateLimiter(rule)));
@@ -101,7 +108,7 @@ export type CacheState = "connected" | "not_configured" | "unreachable" | "memor
 /** Health: one PING over REST. Never returns the URL or token. */
 export async function checkCache(env: Env = process.env): Promise<CacheState> {
   const config = upstashConfig(env);
-  if (!config) return env.NODE_ENV === "production" ? "not_configured" : "memory_fallback";
+  if (!config) return env.NODE_ENV === "production" && !localTestLimiter(env) ? "not_configured" : "memory_fallback";
   try {
     const pong = await new Redis({ url: config.url, token: config.token, retry: false }).ping();
     return pong === "PONG" ? "connected" : "unreachable";

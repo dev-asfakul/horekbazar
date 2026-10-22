@@ -25,6 +25,8 @@ const env = {
   MONGODB_DB: dbName,
   AUTH_SECRET: randomBytes(32).toString("hex"),
   NEXT_PUBLIC_SITE_URL: `http://localhost:${port}`,
+  // In-process rate limits for this loopback-only test server (lib/adapters/cache/rate-limit.ts).
+  RATE_LIMIT_LOCAL_TEST: "1",
 };
 // Asynchronous on purpose: a synchronous child would block this process, which must keep reading
 // the in-memory mongod's output (a full pipe stalls mongod and the migration with it).
