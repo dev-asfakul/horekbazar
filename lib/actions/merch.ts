@@ -332,7 +332,7 @@ export async function updateGeneralSettingsAction(_: FormState, form: FormData):
   const ctx = await staffContext("settings.write");
   if ("error" in ctx) return ctx.error;
   const errors: Record<string, string> = {};
-  const values = snapshot(form, ["nameBn", "nameEn", "phone", "email", "addressBn", "addressEn", "hoursBn", "hoursEn", "fontPreset", "accent", "defaultLocale", "numerals", "grouping", "roundingUnit", "wishlist", "brands", "reviews"]);
+  const values = snapshot(form, ["nameBn", "nameEn", "phone", "email", "addressBn", "addressEn", "hoursBn", "hoursEn", "fontPreset", "accent", "defaultLocale", "numerals", "grouping", "roundingUnit", "wishlist", "brands", "reviews", "checkout", "couponsApplyToFlashSale", "numberPrefix", "pendingAlertHours", "returnWindowDays"]);
   const name = localized(form, "name", 60, true, errors);
   const phone = field(form, "phone").trim();
   if (phone && !/^01[3-9][0-9]{8}$/.test(phone)) errors.phone = "phone_format";
@@ -352,14 +352,21 @@ export async function updateGeneralSettingsAction(_: FormState, form: FormData):
   if (grouping !== "south_asian" && grouping !== "western") errors.grouping = "required";
   const roundingUnit = parseInteger(field(form, "roundingUnit"), 1, 10000);
   if (roundingUnit === null) errors.roundingUnit = "number_invalid";
-  if (Object.keys(errors).length || !name || roundingUnit === null) return fail("fix_fields", errors, values);
+  const numberPrefix = field(form, "numberPrefix").trim().toUpperCase();
+  if (numberPrefix && !/^[A-Z0-9]{2,6}$/.test(numberPrefix)) errors.numberPrefix = "order_prefix";
+  const pendingAlertHours = parseInteger(field(form, "pendingAlertHours") || "48", 1, 720);
+  if (pendingAlertHours === null) errors.pendingAlertHours = "number_invalid";
+  const returnWindowDays = parseInteger(field(form, "returnWindowDays") || "7", 0, 90);
+  if (returnWindowDays === null) errors.returnWindowDays = "number_invalid";
+  if (Object.keys(errors).length || !name || roundingUnit === null || pendingAlertHours === null || returnWindowDays === null) return fail("fix_fields", errors, values);
   try {
     await updateGeneralSettings(ctx.db, ctx.actor, versionOf(form), {
       store: { name, contact: { ...(phone ? { phone } : {}), ...(email ? { email } : {}), ...(address ? { address } : {}), ...(hours ? { hours } : {}) } },
       theme: { fontPreset: fontPreset as "khata" | "plain", accent: accent.toUpperCase() },
       locale: { default: def as "bn" | "en", numerals: numerals as "bengali" | "latin", grouping: grouping as "south_asian" | "western" },
-      pricing: { roundingUnit },
-      features: { wishlist: checked(form, "wishlist"), brands: checked(form, "brands"), reviews: checked(form, "reviews") },
+      pricing: { roundingUnit, couponsApplyToFlashSale: checked(form, "couponsApplyToFlashSale") },
+      features: { wishlist: checked(form, "wishlist"), brands: checked(form, "brands"), reviews: checked(form, "reviews"), checkout: checked(form, "checkout") },
+      orders: { pendingAlertHours, returnWindowDays, ...(numberPrefix ? { numberPrefix } : {}) },
     });
   } catch (error) {
     const code = serviceErrorCode(error);
@@ -374,18 +381,21 @@ export async function upsertDeliveryZoneAction(_: FormState, form: FormData): Pr
   const ctx = await staffContext("delivery.write");
   if ("error" in ctx) return ctx.error;
   const errors: Record<string, string> = {};
-  const values = snapshot(form, ["zoneId", "nameBn", "nameEn", "fee", "estimateBn", "estimateEn", "enabled"]);
+  const values = snapshot(form, ["zoneId", "nameBn", "nameEn", "fee", "freeThreshold", "estimateBn", "estimateEn", "enabled"]);
   const id = field(form, "zoneId").trim().toLowerCase();
   if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(id) || id.length < 2 || id.length > 40) errors.zoneId = "slug_invalid";
   const name = localized(form, "name", 60, true, errors);
   const fee = parseTaka(field(form, "fee"));
   if (fee === null) errors.fee = "price_invalid";
+  const thresholdText = field(form, "freeThreshold").trim();
+  const freeThreshold = thresholdText ? parseTaka(thresholdText) : undefined;
+  if (freeThreshold === null || freeThreshold === 0) errors.freeThreshold = "price_invalid";
   const estimate = localized(form, "estimate", 80, true, errors);
   if (Object.keys(errors).length || !name || !estimate || fee === null) return fail("fix_fields", errors, values);
   // The add form must not silently replace an existing zone that happens to share the id.
   if (field(form, "mode") === "create" && (await getSettings(ctx.db)).delivery.zones.some((z) => z.id === id)) return fail("fix_fields", { zoneId: "zone_taken" }, values);
   try {
-    await upsertDeliveryZone(ctx.db, ctx.actor, versionOf(form), { id, name, fee: { amountMinor: fee, currency: "BDT" }, estimate, areas: [], enabled: checked(form, "enabled") });
+    await upsertDeliveryZone(ctx.db, ctx.actor, versionOf(form), { id, name, fee: { amountMinor: fee, currency: "BDT" }, ...(freeThreshold ? { freeThreshold: { amountMinor: freeThreshold, currency: "BDT" as const } } : {}), estimate, areas: [], enabled: checked(form, "enabled") });
   } catch (error) {
     return fail(serviceErrorCode(error), undefined, values);
   }

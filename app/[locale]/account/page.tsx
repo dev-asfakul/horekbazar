@@ -1,6 +1,7 @@
-// /account (B3; noindex; signed-in customers and staff). Orders and addresses arrive with B6/B7, so their
-// sections say so plainly instead of showing empty placeholders that look broken.
+// /account (B3; noindex; signed-in customers and staff). Links to orders and addresses (B7).
 import type { Metadata } from "next";
+import Link from "next/link";
+import { localeHref } from "@/lib/i18n/href";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { AccountFrame } from "@/components/identity/AccountFrame";
@@ -33,12 +34,18 @@ export default async function AccountPage({ params }: PageProps<"/[locale]/accou
           {t("ordersTitle")}
         </h2>
         <p>{t("ordersBody")}</p>
+        <Link className="prose-link" href={localeHref(locale, "/account/orders")}>
+          {t("ordersLink")}
+        </Link>
       </section>
       <section className="account-section" aria-labelledby="addresses-title">
         <h2 id="addresses-title" className="account-section-title">
           {t("addressesTitle")}
         </h2>
         <p>{t("addressesBody")}</p>
+        <Link className="prose-link" href={localeHref(locale, "/account/addresses")}>
+          {t("addressesLink")}
+        </Link>
       </section>
     </AccountFrame>
   );

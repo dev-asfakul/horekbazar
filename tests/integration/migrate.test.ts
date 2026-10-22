@@ -80,6 +80,46 @@ const fixtures: Record<string, { valid: Record<string, unknown>; invalid: Record
     valid: { _id: "categoryTree", seq: 1, updatedAt: now },
     invalid: { _id: "anything", seq: 0, updatedAt: now },
   },
+  addresses: {
+    valid: { _id: new ObjectId(), userId: "u1", label: "home", name: "রহিম", phone: "+8801712345678", zoneId: "dhaka", district: "ঢাকা", area: "মিরপুর", line: "রোড ৩", isDefault: true, version: 1, createdAt: now, updatedAt: now },
+    invalid: { _id: new ObjectId(), userId: "u1", label: "home", name: "রহিম", phone: "01712345678", zoneId: "dhaka", district: "ঢাকা", area: "মিরপুর", line: "রোড ৩", isDefault: true, version: 1, createdAt: now, updatedAt: now },
+  },
+  orders: {
+    valid: { _id: new ObjectId(), orderNumber: "ORD-261022-ABC234", userId: "u1", customer: { name: "রহিম", email: "r@example.com" }, status: "pending_confirmation", lines: [{ lineId: "a".repeat(24), variantId: new ObjectId(), productId: new ObjectId(), sku: "S-1", slug: "rice", name: { bn: "চাল" }, variantTitle: { bn: "৫ কেজি" }, options: [], basePrice: 100, unitPrice: 100, quantity: 1, lineTotal: 100, couponShare: 0, status: "active" }], address: { label: "home", name: "রহিম", phone: "+8801712345678", zoneId: "dhaka", zoneName: { bn: "ঢাকা" }, district: "ঢাকা", area: "মিরপুর", line: "রোড ৩" }, delivery: { zoneId: "dhaka", fee: 60, baseFee: 60 }, totals: { merchandise: 100, savings: 0, coupon: 0, rewards: 0, delivery: 60, grandTotal: 160 }, paymentMethod: "cod", locale: "bn", checkoutKey: "6f1c2d3e-4a5b-4c6d-8e7f-9a0b1c2d3e4f", version: 1, placedAt: now, statusChangedAt: now, createdAt: now, updatedAt: now },
+    invalid: { _id: new ObjectId(), orderNumber: "1", userId: "u1", customer: { name: "রহিম", email: "r@example.com" }, status: "shipping", lines: [], paymentMethod: "card", locale: "bn", checkoutKey: "x", version: 0, placedAt: now, statusChangedAt: now, createdAt: now, updatedAt: now },
+  },
+  reservations: {
+    valid: { _id: new ObjectId(), orderId: new ObjectId(), lineId: "a".repeat(24), variantId: new ObjectId(), qty: 1, status: "active", createdAt: now, updatedAt: now },
+    invalid: { _id: new ObjectId(), orderId: new ObjectId(), lineId: "a".repeat(24), variantId: new ObjectId(), qty: 0, status: "held", createdAt: now, updatedAt: now },
+  },
+  orderEvents: {
+    valid: { _id: new ObjectId(), orderId: new ObjectId(), seq: 1, from: "placed", to: "pending_confirmation", actor: { type: "customer", id: "u1" }, createdAt: now },
+    invalid: { _id: new ObjectId(), orderId: new ObjectId(), seq: 0, from: "placed", to: "lost", actor: { type: "customer", id: "u1" }, createdAt: now },
+  },
+  idempotencyKeys: {
+    valid: { _id: new ObjectId(), scope: "checkout", principalId: "u1", key: "6f1c2d3e-4a5b-4c6d-8e7f-9a0b1c2d3e4f", fingerprint: "a".repeat(64), expiresAt: now, createdAt: now },
+    invalid: { _id: new ObjectId(), scope: "checkout", principalId: "u1", key: "not-a-uuid", fingerprint: "short", expiresAt: now, createdAt: now },
+  },
+  promotions: {
+    valid: { _id: new ObjectId(), name: { bn: "অফার" }, kind: "flash_sale", discount: { type: "percent", value: 10 }, scope: { type: "all", ids: [] }, startsAt: now, endsAt: now, sold: 0, status: "draft", version: 1, createdAt: now, updatedAt: now },
+    invalid: { _id: new ObjectId(), name: { bn: "অফার" }, kind: "flash_sale", discount: { type: "percent", value: 0 }, scope: { type: "all", ids: [] }, startsAt: now, sold: -1, status: "draft", version: 1, createdAt: now, updatedAt: now },
+  },
+  coupons: {
+    valid: { _id: new ObjectId(), code: "SAVE10", kind: "percent", value: 10, used: 0, startsAt: now, eligibility: { firstOrderOnly: false, categoryIds: [], productIds: [], excludeCategoryIds: [], excludeProductIds: [], zoneIds: [] }, status: "active", version: 1, createdAt: now, updatedAt: now },
+    invalid: { _id: new ObjectId(), code: "save 10", kind: "percent", value: 10, used: 0, startsAt: now, eligibility: { firstOrderOnly: false, categoryIds: [], productIds: [], excludeCategoryIds: [], excludeProductIds: [], zoneIds: [] }, status: "active", version: 1, createdAt: now, updatedAt: now },
+  },
+  couponRedemptions: {
+    valid: { _id: new ObjectId(), couponId: new ObjectId(), userId: "u1", orderId: new ObjectId(), amount: 100, status: "held", createdAt: now, updatedAt: now },
+    invalid: { _id: new ObjectId(), couponId: new ObjectId(), userId: "u1", orderId: new ObjectId(), amount: -1, status: "spent", createdAt: now, updatedAt: now },
+  },
+  couponCustomerUsage: {
+    valid: { _id: new ObjectId(), couponId: new ObjectId(), userId: "u1", count: 1, updatedAt: now },
+    invalid: { _id: new ObjectId(), couponId: new ObjectId(), userId: "u1", count: -1, updatedAt: now },
+  },
+  carts: {
+    valid: { _id: new ObjectId(), userId: "u1", lines: [{ variantId: new ObjectId(), quantity: 2, addedAt: now }], status: "active", version: 1, createdAt: now, updatedAt: now },
+    invalid: { _id: new ObjectId(), userId: "u1", lines: [{ variantId: new ObjectId(), quantity: 0, addedAt: now }], status: "active", version: 1, createdAt: now, updatedAt: now },
+  },
 };
 
 describe("db:migrate on a replica set", () => {

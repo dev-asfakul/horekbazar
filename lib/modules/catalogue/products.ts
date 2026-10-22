@@ -38,6 +38,8 @@ export interface ProductInput {
   categoryIds: string[];
   attributes: ProductDoc["attributes"];
   seo?: ProductDoc["seo"] | undefined;
+  /** Delivery is free for an order containing this product (domain-rules §5.4). */
+  freeDelivery?: true | undefined;
   sample?: true | undefined;
 }
 
@@ -50,6 +52,7 @@ const productSnapshot = (doc: Partial<ProductDoc>) => ({
   categoryIds: doc.categoryIds?.map(String),
   attributes: doc.attributes,
   seo: doc.seo,
+  freeDelivery: doc.freeDelivery,
   status: doc.status,
 });
 
@@ -134,6 +137,7 @@ export async function createProduct(db: Db, client: MongoClient, actor: Actor, i
       media: [],
       status: "draft" as const,
       seo: input.seo,
+      freeDelivery: input.freeDelivery,
       sample: input.sample,
       version: 1,
       createdAt: now,
@@ -180,7 +184,7 @@ export async function updateProduct(db: Db, client: MongoClient, actor: Actor, i
       seo: patch.seo,
       updatedAt: now,
     });
-    const result = await products(db).updateOne({ _id, version: expectedVersion }, { $set: set, $inc: { version: 1 }, ...unsetMissing(patch, ["shortDescription", "description", "seo"]) }, { session });
+    const result = await products(db).updateOne({ _id, version: expectedVersion }, { $set: set, $inc: { version: 1 }, ...unsetMissing(patch, ["shortDescription", "description", "seo", "freeDelivery"]) }, { session });
     if (result.matchedCount !== 1) throw new CatalogueError("version_conflict");
     await recordAudit(db, { actor: actorOf(actor), action: "product.updated", target: { type: "product", id }, before: productSnapshot(before), after: productSnapshot({ ...before, ...set }), ip: actor.ip ?? null }, { session, now });
     return expectedVersion + 1;
@@ -273,11 +277,21 @@ export interface VariantInput {
   barcode?: string | undefined;
   weightGrams?: number | undefined;
   position: number;
+  /** Quantity price breaks: buy at least minQty, pay unitPrice each (domain-rules §5.2 step 2). */
+  tiers?: VariantDoc["tiers"] | undefined;
   sample?: true | undefined;
 }
 
-function checkPrices(input: Pick<VariantInput, "price" | "compareAt">) {
+function checkPrices(input: Pick<VariantInput, "price" | "compareAt" | "tiers">) {
   if (input.compareAt && input.compareAt.amountMinor <= input.price.amountMinor) throw new CatalogueError("compare_at_not_higher");
+  // Each break needs more items and a lower price than the one before, all below the base price.
+  let prevQty = 1;
+  let prevPrice = input.price.amountMinor;
+  for (const t of input.tiers ?? []) {
+    if (t.minQty <= prevQty || t.unitPrice.amountMinor >= prevPrice || t.unitPrice.amountMinor < 1) throw new CatalogueError("tiers_invalid");
+    prevQty = t.minQty;
+    prevPrice = t.unitPrice.amountMinor;
+  }
 }
 
 const variantSnapshot = (v: Partial<VariantDoc>) => ({
@@ -290,6 +304,7 @@ const variantSnapshot = (v: Partial<VariantDoc>) => ({
   barcode: v.barcode,
   weightGrams: v.weightGrams,
   position: v.position,
+  tiers: v.tiers,
   status: v.status,
 });
 
@@ -312,6 +327,7 @@ export async function createVariant(db: Db, client: MongoClient, actor: Actor, p
       barcode: input.barcode,
       weightGrams: input.weightGrams,
       position: input.position,
+      tiers: input.tiers?.length ? input.tiers : undefined,
       status: "active" as const,
       sample: input.sample,
       version: 1,
@@ -345,8 +361,9 @@ export async function updateVariant(db: Db, client: MongoClient, actor: Actor, v
     }
     if (patch.price.amountMinor === 0 && before.status === "active") await assertOtherSellable(db, session, before);
     const now = new Date();
-    const set = defined({ ...patch, updatedAt: now });
-    const result = await variants(db).updateOne({ _id, version: expectedVersion }, { $set: set, $inc: { version: 1 }, ...unsetMissing(patch, ["netQuantity", "compareAt", "barcode", "weightGrams"]) }, { session });
+    const clean = { ...patch, tiers: patch.tiers?.length ? patch.tiers : undefined };
+    const set = defined({ ...clean, updatedAt: now });
+    const result = await variants(db).updateOne({ _id, version: expectedVersion }, { $set: set, $inc: { version: 1 }, ...unsetMissing(clean, ["netQuantity", "compareAt", "barcode", "weightGrams", "tiers"]) }, { session });
     if (result.matchedCount !== 1) throw new CatalogueError("version_conflict");
     await recordAudit(db, { actor: actorOf(actor), action: "variant.updated", target: { type: "variant", id: variantId }, before: variantSnapshot(before), after: variantSnapshot({ ...before, ...patch }), ip: actor.ip ?? null }, { session, now });
     return expectedVersion + 1;

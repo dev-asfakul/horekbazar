@@ -27,7 +27,8 @@
     "showcase": "node --env-file-if-exists=.env.local scripts/showcase.ts",
     "showcase:images": "node --env-file-if-exists=.env.local scripts/showcase-images.ts",
     "worker": "node --env-file-if-exists=.env.local scripts/worker.ts",
-    "admin:recover-owner": "node --env-file-if-exists=.env.local scripts/admin-recover-owner.ts"
+    "admin:recover-owner": "node --env-file-if-exists=.env.local scripts/admin-recover-owner.ts",
+    "owner:bootstrap": "node --env-file-if-exists=.env.local scripts/owner-bootstrap.ts"
   },
   "dependencies": {
     "@upstash/ratelimit": "2.2.0",

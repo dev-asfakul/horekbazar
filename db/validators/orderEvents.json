@@ -1,0 +1,105 @@
+{
+  "$jsonSchema": {
+    "bsonType": "object",
+    "properties": {
+      "_id": {
+        "bsonType": "objectId"
+      },
+      "orderId": {
+        "bsonType": "objectId"
+      },
+      "seq": {
+        "bsonType": [
+          "int",
+          "long"
+        ],
+        "minimum": 1
+      },
+      "from": {
+        "anyOf": [
+          {
+            "bsonType": "string",
+            "enum": [
+              "pending_confirmation",
+              "confirmed",
+              "processing",
+              "ready_to_ship",
+              "shipped",
+              "delivered",
+              "delivery_failed",
+              "returned_to_origin",
+              "completed",
+              "rejected",
+              "cancelled_by_customer",
+              "cancelled_by_store"
+            ]
+          },
+          {
+            "bsonType": "string",
+            "enum": [
+              "placed"
+            ]
+          }
+        ]
+      },
+      "to": {
+        "bsonType": "string",
+        "enum": [
+          "pending_confirmation",
+          "confirmed",
+          "processing",
+          "ready_to_ship",
+          "shipped",
+          "delivered",
+          "delivery_failed",
+          "returned_to_origin",
+          "completed",
+          "rejected",
+          "cancelled_by_customer",
+          "cancelled_by_store"
+        ]
+      },
+      "actor": {
+        "bsonType": "object",
+        "properties": {
+          "type": {
+            "bsonType": "string",
+            "enum": [
+              "customer",
+              "staff",
+              "system",
+              "courier"
+            ]
+          },
+          "id": {
+            "bsonType": "string",
+            "minLength": 1,
+            "maxLength": 100
+          }
+        },
+        "required": [
+          "type",
+          "id"
+        ],
+        "additionalProperties": false
+      },
+      "reason": {
+        "bsonType": "string",
+        "maxLength": 500
+      },
+      "createdAt": {
+        "bsonType": "date"
+      }
+    },
+    "required": [
+      "_id",
+      "orderId",
+      "seq",
+      "from",
+      "to",
+      "actor",
+      "createdAt"
+    ],
+    "additionalProperties": false
+  }
+}

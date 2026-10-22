@@ -84,6 +84,7 @@ export function productFields(t: T, categories: CategoryOption[], product?: Prod
     ...localizedFields(t, "shortDescription", t("fields.shortDescription"), product?.shortDescription, { max: 300, textarea: true }),
     ...localizedFields(t, "description", t("fields.description"), product?.description, { max: 5000, textarea: true }),
     { name: "attributes", label: t("fields.attributes"), hint: t("fields.attributesHint"), type: "textarea", rows: 5, defaultValue: product ? attributesText(product.attributes) : "", wide: true },
+    { name: "freeDelivery", label: t("fields.freeDelivery"), hint: t("fields.freeDeliveryHint"), type: "checkbox", defaultValue: product?.freeDelivery ? "on" : "", wide: true },
     ...seoFields(t, product?.seo),
   ];
 }
@@ -95,6 +96,7 @@ export function variantFields(t: T, variant?: VariantDoc): FieldSpec[] {
     ...localizedFields(t, "title", t("fields.variantTitle"), variant?.title, { required: true, max: 60, hint: t("fields.variantTitleHint") }),
     { name: "price", label: t("fields.price"), hint: t("fields.priceHint"), type: "number", required: true, defaultValue: variant ? takaText(variant.price.amountMinor) : "" },
     { name: "compareAt", label: t("fields.compareAt"), hint: t("fields.compareAtHint"), type: "number", defaultValue: variant?.compareAt ? takaText(variant.compareAt.amountMinor) : "" },
+    { name: "tiers", label: t("fields.tiers"), hint: t("fields.tiersHint"), type: "textarea", rows: 3, defaultValue: variant?.tiers?.map((x) => `${x.minQty} = ${takaText(x.unitPrice.amountMinor)}`).join("\n") ?? "", wide: true },
     { name: "netValue", label: t("fields.netValue"), type: "number", defaultValue: variant?.netQuantity ? String(variant.netQuantity.value) : "" },
     { name: "netUnit", label: t("fields.netUnit"), type: "select", defaultValue: variant?.netQuantity?.unit ?? "kg", options: NET_UNITS.map((u) => ({ value: u, label: t(`units.${u}`) })) },
     { name: "netVerified", label: t("fields.netVerified"), hint: t("fields.netVerifiedHint"), type: "checkbox", defaultValue: variant?.netQuantity?.verified ? "on" : "", wide: true },

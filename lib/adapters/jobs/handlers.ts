@@ -13,7 +13,7 @@ function parseEmailPayload(payload: Record<string, unknown>): EmailPayload {
   if (typeof template !== "string" || !(EMAIL_TEMPLATES as readonly string[]).includes(template)) throw new Error("email job: unknown template");
   if (typeof to !== "string" || !to.includes("@")) throw new Error("email job: missing recipient");
   const text = (key: string) => (typeof payload[key] === "string" ? { [key]: payload[key] as string } : {});
-  return { template: template as EmailPayload["template"], to, locale: locale === "en" ? "en" : "bn", ...text("name"), ...text("url"), ...text("storeName"), ...text("role") };
+  return { template: template as EmailPayload["template"], to, locale: locale === "en" ? "en" : "bn", ...text("name"), ...text("url"), ...text("storeName"), ...text("role"), ...text("orderNumber"), ...text("total"), ...text("status"), ...text("reason") };
 }
 
 export const outboxHandlers: Record<string, OutboxHandler> = {

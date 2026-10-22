@@ -1,0 +1,187 @@
+{
+  "$jsonSchema": {
+    "bsonType": "object",
+    "properties": {
+      "_id": {
+        "bsonType": "objectId"
+      },
+      "code": {
+        "bsonType": "string",
+        "pattern": "^[A-Z0-9][A-Z0-9_-]{2,29}$"
+      },
+      "description": {
+        "bsonType": "object",
+        "properties": {
+          "bn": {
+            "bsonType": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "en": {
+            "bsonType": "string",
+            "minLength": 1,
+            "maxLength": 160
+          }
+        },
+        "required": [
+          "bn"
+        ],
+        "additionalProperties": false
+      },
+      "kind": {
+        "bsonType": "string",
+        "enum": [
+          "percent",
+          "fixed",
+          "free_delivery"
+        ]
+      },
+      "value": {
+        "bsonType": [
+          "int",
+          "long"
+        ],
+        "minimum": 0,
+        "maximum": 100000000
+      },
+      "maxDiscount": {
+        "bsonType": [
+          "int",
+          "long"
+        ],
+        "minimum": 1
+      },
+      "minSubtotal": {
+        "bsonType": [
+          "int",
+          "long"
+        ],
+        "minimum": 1
+      },
+      "maxFee": {
+        "bsonType": [
+          "int",
+          "long"
+        ],
+        "minimum": 1
+      },
+      "usageLimit": {
+        "bsonType": [
+          "int",
+          "long"
+        ],
+        "minimum": 1,
+        "maximum": 10000000
+      },
+      "perCustomerLimit": {
+        "bsonType": [
+          "int",
+          "long"
+        ],
+        "minimum": 1,
+        "maximum": 1000
+      },
+      "used": {
+        "bsonType": [
+          "int",
+          "long"
+        ],
+        "minimum": 0
+      },
+      "startsAt": {
+        "bsonType": "date"
+      },
+      "endsAt": {
+        "bsonType": "date"
+      },
+      "eligibility": {
+        "bsonType": "object",
+        "properties": {
+          "firstOrderOnly": {
+            "bsonType": "bool"
+          },
+          "categoryIds": {
+            "maxItems": 200,
+            "bsonType": "array",
+            "items": {
+              "bsonType": "objectId"
+            }
+          },
+          "productIds": {
+            "maxItems": 500,
+            "bsonType": "array",
+            "items": {
+              "bsonType": "objectId"
+            }
+          },
+          "excludeCategoryIds": {
+            "maxItems": 200,
+            "bsonType": "array",
+            "items": {
+              "bsonType": "objectId"
+            }
+          },
+          "excludeProductIds": {
+            "maxItems": 500,
+            "bsonType": "array",
+            "items": {
+              "bsonType": "objectId"
+            }
+          },
+          "zoneIds": {
+            "maxItems": 20,
+            "bsonType": "array",
+            "items": {
+              "bsonType": "string",
+              "maxLength": 40
+            }
+          }
+        },
+        "required": [
+          "firstOrderOnly",
+          "categoryIds",
+          "productIds",
+          "excludeCategoryIds",
+          "excludeProductIds",
+          "zoneIds"
+        ],
+        "additionalProperties": false
+      },
+      "status": {
+        "bsonType": "string",
+        "enum": [
+          "draft",
+          "active",
+          "archived"
+        ]
+      },
+      "version": {
+        "bsonType": [
+          "int",
+          "long"
+        ],
+        "minimum": 1
+      },
+      "createdAt": {
+        "bsonType": "date"
+      },
+      "updatedAt": {
+        "bsonType": "date"
+      }
+    },
+    "required": [
+      "_id",
+      "code",
+      "kind",
+      "value",
+      "used",
+      "startsAt",
+      "eligibility",
+      "status",
+      "version",
+      "createdAt",
+      "updatedAt"
+    ],
+    "additionalProperties": false
+  }
+}

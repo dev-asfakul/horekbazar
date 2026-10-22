@@ -80,5 +80,6 @@ jobs:
           CLOUDINARY_API_SECRET: ci-canary-cloudinary-secret-4b1c
           RESEND_API_KEY: ci-canary-resend-key-8a6f
           GEMINI_API_KEY: ci-canary-gemini-key-2c7d
+          OWNER_PASSWORD: ci-canary-owner-password-5e9b
           CRON_SECRET: ci-canary-cron-secret-5e9b
         run: npm run build && npm run check:bundle

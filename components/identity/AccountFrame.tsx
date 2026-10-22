@@ -8,12 +8,14 @@ import { getTranslations } from "next-intl/server";
 import { signOutAction } from "@/lib/actions/identity";
 import { localeHref } from "@/lib/i18n/href";
 
-type Section = "overview" | "profile" | "security";
+type Section = "overview" | "orders" | "addresses" | "profile" | "security";
 
 export async function AccountFrame({ locale, current, title, staff, children }: { locale: "bn" | "en"; current: Section; title: string; staff: boolean; children: ReactNode }) {
   const t = await getTranslations({ locale, namespace: "account" });
   const items: { key: Section; href: string }[] = [
     { key: "overview", href: "/account" },
+    { key: "orders", href: "/account/orders" },
+    { key: "addresses", href: "/account/addresses" },
     { key: "profile", href: "/account/profile" },
     { key: "security", href: "/account/security" },
   ];

@@ -22,5 +22,10 @@ export default defineConfig({
     reuseExistingServer: false,
     timeout: 180_000,
   },
-  projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
+  // Commerce journeys (B6+) add zones, products and orders to the shared database, so they run after
+  // the catalogue and storefront journeys, which expect a store they set up themselves.
+  projects: [
+    { name: "chromium", use: { ...devices["Desktop Chrome"] }, testIgnore: "commerce/**" },
+    { name: "commerce", use: { ...devices["Desktop Chrome"] }, testMatch: "commerce/**/*.spec.ts", dependencies: ["chromium"] },
+  ],
 });

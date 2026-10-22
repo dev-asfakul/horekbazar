@@ -57,17 +57,21 @@ async function save(db: Db, actor: Actor, expectedVersion: number, next: Omit<Se
   return expectedVersion + 1;
 }
 
-const base = (s: Awaited<ReturnType<typeof getSettings>>) => ({ _id: s._id, store: s.store, theme: s.theme, locale: s.locale, delivery: s.delivery, pricing: s.pricing, features: s.features });
+// Every save writes the whole document, so each one carries the sections it does not edit unchanged
+// (including the optional `orders` section, B7).
+const base = (s: Awaited<ReturnType<typeof getSettings>>) => ({ _id: s._id, store: s.store, theme: s.theme, locale: s.locale, delivery: s.delivery, pricing: s.pricing, features: s.features, ...(s.orders ? { orders: s.orders } : {}) });
 
-export type GeneralSettingsInput = Pick<SettingsDoc, "store" | "theme" | "locale" | "pricing" | "features">;
+export type GeneralSettingsInput = Pick<SettingsDoc, "store" | "theme" | "locale" | "pricing" | "features"> & { orders?: SettingsDoc["orders"] };
 
 export async function updateGeneralSettings(db: Db, actor: Actor, expectedVersion: number, input: GeneralSettingsInput) {
   const current = await getSettings(db);
   if (current.version !== expectedVersion) throw new CatalogueError("version_conflict", { current: current.version });
   const accent = input.theme.accent.toUpperCase();
   if (!accentContrast(accent).ok) throw new CatalogueError("invalid", { field: "accent", ...accentContrast(accent) });
-  const { _id, store, theme, locale, pricing, features, delivery } = current;
-  return save(db, actor, expectedVersion, { _id, delivery, ...input, theme: { ...input.theme, accent } }, "settings.updated", { store, theme, locale, pricing, features }, { ...input, theme: { ...input.theme, accent } });
+  const { store, theme, locale, pricing, features } = current;
+  // Fields this form does not show (for example features.rewards) keep their stored values.
+  const next = { ...base(current), ...input, theme: { ...input.theme, accent }, pricing: { ...current.pricing, ...input.pricing }, features: { ...current.features, ...input.features }, ...(input.orders ?? current.orders ? { orders: input.orders ?? current.orders } : {}) };
+  return save(db, actor, expectedVersion, next, "settings.updated", { store, theme, locale, pricing, features, orders: current.orders }, { ...input, theme: { ...input.theme, accent } });
 }
 
 /** Adds or replaces the zone with the same `id`. */

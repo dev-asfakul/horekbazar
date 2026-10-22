@@ -1,0 +1,556 @@
+{
+  "$jsonSchema": {
+    "bsonType": "object",
+    "properties": {
+      "_id": {
+        "bsonType": "objectId"
+      },
+      "orderNumber": {
+        "bsonType": "string",
+        "pattern": "^[A-Z0-9]{2,6}-\\d{6}-[A-Z0-9]{6}$"
+      },
+      "userId": {
+        "bsonType": "string",
+        "minLength": 1,
+        "maxLength": 100
+      },
+      "customer": {
+        "bsonType": "object",
+        "properties": {
+          "name": {
+            "bsonType": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "email": {
+            "bsonType": "string",
+            "maxLength": 254
+          }
+        },
+        "required": [
+          "name",
+          "email"
+        ],
+        "additionalProperties": false
+      },
+      "status": {
+        "bsonType": "string",
+        "enum": [
+          "pending_confirmation",
+          "confirmed",
+          "processing",
+          "ready_to_ship",
+          "shipped",
+          "delivered",
+          "delivery_failed",
+          "returned_to_origin",
+          "completed",
+          "rejected",
+          "cancelled_by_customer",
+          "cancelled_by_store"
+        ]
+      },
+      "lines": {
+        "minItems": 1,
+        "maxItems": 50,
+        "bsonType": "array",
+        "items": {
+          "bsonType": "object",
+          "properties": {
+            "lineId": {
+              "bsonType": "string",
+              "pattern": "^[a-f0-9]{24}$"
+            },
+            "variantId": {
+              "bsonType": "objectId"
+            },
+            "productId": {
+              "bsonType": "objectId"
+            },
+            "sku": {
+              "bsonType": "string",
+              "minLength": 1,
+              "maxLength": 64
+            },
+            "slug": {
+              "bsonType": "string",
+              "minLength": 1,
+              "maxLength": 120
+            },
+            "name": {
+              "bsonType": "object",
+              "properties": {
+                "bn": {
+                  "bsonType": "string",
+                  "minLength": 1,
+                  "maxLength": 200
+                },
+                "en": {
+                  "bsonType": "string",
+                  "minLength": 1,
+                  "maxLength": 200
+                }
+              },
+              "required": [
+                "bn"
+              ],
+              "additionalProperties": false
+            },
+            "variantTitle": {
+              "bsonType": "object",
+              "properties": {
+                "bn": {
+                  "bsonType": "string",
+                  "minLength": 1,
+                  "maxLength": 120
+                },
+                "en": {
+                  "bsonType": "string",
+                  "minLength": 1,
+                  "maxLength": 120
+                }
+              },
+              "required": [
+                "bn"
+              ],
+              "additionalProperties": false
+            },
+            "options": {
+              "maxItems": 5,
+              "bsonType": "array",
+              "items": {
+                "bsonType": "object",
+                "properties": {
+                  "key": {
+                    "bsonType": "string",
+                    "minLength": 1,
+                    "maxLength": 40
+                  },
+                  "value": {
+                    "bsonType": "object",
+                    "properties": {
+                      "bn": {
+                        "bsonType": "string",
+                        "minLength": 1,
+                        "maxLength": 80
+                      },
+                      "en": {
+                        "bsonType": "string",
+                        "minLength": 1,
+                        "maxLength": 80
+                      }
+                    },
+                    "required": [
+                      "bn"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "required": [
+                  "key",
+                  "value"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "imagePublicId": {
+              "bsonType": "string",
+              "maxLength": 300
+            },
+            "basePrice": {
+              "bsonType": [
+                "int",
+                "long"
+              ],
+              "minimum": 0,
+              "maximum": 10000000000
+            },
+            "unitPrice": {
+              "bsonType": [
+                "int",
+                "long"
+              ],
+              "minimum": 0,
+              "maximum": 10000000000
+            },
+            "quantity": {
+              "bsonType": [
+                "int",
+                "long"
+              ],
+              "minimum": 1,
+              "maximum": 99
+            },
+            "lineTotal": {
+              "bsonType": [
+                "int",
+                "long"
+              ],
+              "minimum": 0,
+              "maximum": 10000000000
+            },
+            "couponShare": {
+              "bsonType": [
+                "int",
+                "long"
+              ],
+              "minimum": 0,
+              "maximum": 10000000000
+            },
+            "appliedPromotion": {
+              "bsonType": "object",
+              "properties": {
+                "id": {
+                  "bsonType": "objectId"
+                },
+                "kind": {
+                  "bsonType": "string",
+                  "enum": [
+                    "product",
+                    "flash_sale"
+                  ]
+                }
+              },
+              "required": [
+                "id",
+                "kind"
+              ],
+              "additionalProperties": false
+            },
+            "tierMinQty": {
+              "bsonType": [
+                "int",
+                "long"
+              ],
+              "minimum": 2
+            },
+            "status": {
+              "bsonType": "string",
+              "enum": [
+                "active",
+                "cancelled",
+                "shipped",
+                "delivered",
+                "returned"
+              ]
+            }
+          },
+          "required": [
+            "lineId",
+            "variantId",
+            "productId",
+            "sku",
+            "slug",
+            "name",
+            "variantTitle",
+            "options",
+            "basePrice",
+            "unitPrice",
+            "quantity",
+            "lineTotal",
+            "couponShare",
+            "status"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "address": {
+        "bsonType": "object",
+        "properties": {
+          "label": {
+            "bsonType": "string",
+            "enum": [
+              "home",
+              "office",
+              "other"
+            ]
+          },
+          "name": {
+            "bsonType": "string",
+            "minLength": 1,
+            "maxLength": 80
+          },
+          "phone": {
+            "bsonType": "string",
+            "pattern": "^\\+8801[3-9]\\d{8}$"
+          },
+          "zoneId": {
+            "bsonType": "string",
+            "minLength": 1,
+            "maxLength": 40
+          },
+          "zoneName": {
+            "bsonType": "object",
+            "properties": {
+              "bn": {
+                "bsonType": "string",
+                "minLength": 1,
+                "maxLength": 60
+              },
+              "en": {
+                "bsonType": "string",
+                "minLength": 1,
+                "maxLength": 60
+              }
+            },
+            "required": [
+              "bn"
+            ],
+            "additionalProperties": false
+          },
+          "district": {
+            "bsonType": "string",
+            "minLength": 1,
+            "maxLength": 60
+          },
+          "area": {
+            "bsonType": "string",
+            "minLength": 1,
+            "maxLength": 80
+          },
+          "line": {
+            "bsonType": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "landmark": {
+            "bsonType": "string",
+            "minLength": 1,
+            "maxLength": 120
+          }
+        },
+        "required": [
+          "label",
+          "name",
+          "phone",
+          "zoneId",
+          "zoneName",
+          "district",
+          "area",
+          "line"
+        ],
+        "additionalProperties": false
+      },
+      "delivery": {
+        "bsonType": "object",
+        "properties": {
+          "zoneId": {
+            "bsonType": "string",
+            "minLength": 1,
+            "maxLength": 40
+          },
+          "fee": {
+            "bsonType": [
+              "int",
+              "long"
+            ],
+            "minimum": 0,
+            "maximum": 10000000000
+          },
+          "baseFee": {
+            "bsonType": [
+              "int",
+              "long"
+            ],
+            "minimum": 0,
+            "maximum": 10000000000
+          },
+          "free": {
+            "bsonType": "string",
+            "enum": [
+              "threshold",
+              "products",
+              "coupon"
+            ]
+          },
+          "estimate": {
+            "bsonType": "object",
+            "properties": {
+              "bn": {
+                "bsonType": "string",
+                "minLength": 1,
+                "maxLength": 80
+              },
+              "en": {
+                "bsonType": "string",
+                "minLength": 1,
+                "maxLength": 80
+              }
+            },
+            "required": [
+              "bn"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "zoneId",
+          "fee",
+          "baseFee"
+        ],
+        "additionalProperties": false
+      },
+      "totals": {
+        "bsonType": "object",
+        "properties": {
+          "merchandise": {
+            "bsonType": [
+              "int",
+              "long"
+            ],
+            "minimum": 0,
+            "maximum": 10000000000
+          },
+          "savings": {
+            "bsonType": [
+              "int",
+              "long"
+            ],
+            "minimum": 0,
+            "maximum": 10000000000
+          },
+          "coupon": {
+            "bsonType": [
+              "int",
+              "long"
+            ],
+            "minimum": 0,
+            "maximum": 10000000000
+          },
+          "rewards": {
+            "bsonType": [
+              "int",
+              "long"
+            ],
+            "minimum": 0,
+            "maximum": 10000000000
+          },
+          "delivery": {
+            "bsonType": [
+              "int",
+              "long"
+            ],
+            "minimum": 0,
+            "maximum": 10000000000
+          },
+          "grandTotal": {
+            "bsonType": [
+              "int",
+              "long"
+            ],
+            "minimum": 0,
+            "maximum": 10000000000
+          }
+        },
+        "required": [
+          "merchandise",
+          "savings",
+          "coupon",
+          "rewards",
+          "delivery",
+          "grandTotal"
+        ],
+        "additionalProperties": false
+      },
+      "coupon": {
+        "bsonType": "object",
+        "properties": {
+          "couponId": {
+            "bsonType": "objectId"
+          },
+          "code": {
+            "bsonType": "string",
+            "maxLength": 30
+          },
+          "kind": {
+            "bsonType": "string",
+            "enum": [
+              "percent",
+              "fixed",
+              "free_delivery"
+            ]
+          },
+          "discount": {
+            "bsonType": [
+              "int",
+              "long"
+            ],
+            "minimum": 0,
+            "maximum": 10000000000
+          }
+        },
+        "required": [
+          "couponId",
+          "code",
+          "kind",
+          "discount"
+        ],
+        "additionalProperties": false
+      },
+      "paymentMethod": {
+        "bsonType": "string",
+        "enum": [
+          "cod"
+        ]
+      },
+      "note": {
+        "bsonType": "string",
+        "maxLength": 500
+      },
+      "locale": {
+        "bsonType": "string",
+        "enum": [
+          "bn",
+          "en"
+        ]
+      },
+      "checkoutKey": {
+        "bsonType": "string",
+        "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+      },
+      "statusReason": {
+        "bsonType": "string",
+        "maxLength": 500
+      },
+      "version": {
+        "bsonType": [
+          "int",
+          "long"
+        ],
+        "minimum": 1
+      },
+      "placedAt": {
+        "bsonType": "date"
+      },
+      "statusChangedAt": {
+        "bsonType": "date"
+      },
+      "createdAt": {
+        "bsonType": "date"
+      },
+      "updatedAt": {
+        "bsonType": "date"
+      }
+    },
+    "required": [
+      "_id",
+      "orderNumber",
+      "userId",
+      "customer",
+      "status",
+      "lines",
+      "address",
+      "delivery",
+      "totals",
+      "paymentMethod",
+      "locale",
+      "checkoutKey",
+      "version",
+      "placedAt",
+      "statusChangedAt",
+      "createdAt",
+      "updatedAt"
+    ],
+    "additionalProperties": false
+  }
+}

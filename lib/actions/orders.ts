@@ -1,0 +1,143 @@
+"use server";
+// B7 customer actions: addresses, order placement, self-cancel. Every one needs a signed-in
+// customer (getPrincipal on the server); ids from the form are re-checked against that customer.
+import { redirect } from "next/navigation";
+import { refresh } from "next/cache";
+import { headers } from "next/headers";
+import { ObjectId } from "mongodb";
+import type { FormState } from "@/lib/actions/form-state";
+import { fail, field, ok } from "@/lib/actions/staff-action";
+import { getClient, getDatabase, databaseConfig } from "@/lib/adapters/db/client";
+import { getPrincipal } from "@/lib/auth/server";
+import { localeHref } from "@/lib/i18n/href";
+import { checkLimits, clientIp, LIMITS } from "@/lib/modules/identity/limits";
+import { createAddress, deleteAddress, setDefaultAddress, updateAddress, type AddressInput } from "@/lib/modules/orders/addresses";
+import { placeOrder } from "@/lib/modules/orders/checkout";
+import { ORDERS, type OrderDoc } from "@/lib/modules/orders/schema";
+import { transitionOrder } from "@/lib/modules/orders/transitions";
+import { CommerceError } from "@/lib/modules/pricing/cart";
+import { getSetupStatus } from "@/lib/setup/status";
+
+const LABELS = ["home", "office", "other"] as const;
+
+async function customer() {
+  if (!(await getSetupStatus(process.env)).ready) return { error: fail("try_again") } as const;
+  const principal = await getPrincipal();
+  if (!principal) return { error: fail("signed_out") } as const;
+  return { principal, db: await getDatabase() } as const;
+}
+
+const commerceFail = (error: unknown, values?: Record<string, string>): FormState => {
+  if (error instanceof CommerceError) return fail(`commerce_${error.code}`, undefined, values);
+  console.error("order action failed", error instanceof Error ? error.name : "unknown");
+  return fail("try_again", undefined, values);
+};
+
+function readAddress(form: FormData): { input?: AddressInput; errors: Record<string, string>; values: Record<string, string> } {
+  const keys = ["label", "name", "phone", "zoneId", "district", "area", "line", "landmark"] as const;
+  const values = Object.fromEntries(keys.map((k) => [k, field(form, k)])) as Record<(typeof keys)[number], string>;
+  const errors: Record<string, string> = {};
+  const limits: Record<string, number> = { name: 80, district: 60, area: 80, line: 200, landmark: 120 };
+  for (const k of ["name", "district", "area", "line"] as const) if (!values[k].trim()) errors[k] = "required";
+  for (const [k, max] of Object.entries(limits)) if ((values as Record<string, string>)[k]!.trim().length > max) errors[k] = "too_long";
+  if (!values.phone.trim()) errors.phone = "required";
+  if (!values.zoneId) errors.zoneId = "required";
+  const label = LABELS.find((l) => l === values.label) ?? "home";
+  if (Object.keys(errors).length) return { errors, values };
+  return { input: { label, name: values.name, phone: values.phone, zoneId: values.zoneId, district: values.district, area: values.area, line: values.line, landmark: values.landmark, isDefault: form.get("isDefault") === "on" }, errors, values };
+}
+
+export async function saveAddressAction(_: FormState, form: FormData): Promise<FormState> {
+  const ctx = await customer();
+  if ("error" in ctx) return ctx.error;
+  const limit = await checkLimits([{ rule: LIMITS.accountChange, key: ctx.principal.user.id }]);
+  if (limit === "limited") return fail("rate_limited");
+  const { input, errors, values } = readAddress(form);
+  if (!input) return fail("fix_fields", errors, values);
+  const id = field(form, "id");
+  try {
+    if (id) await updateAddress(ctx.db, ctx.principal.user.id, id, Number(field(form, "version")), input);
+    else await createAddress(ctx.db, ctx.principal.user.id, input);
+  } catch (error) {
+    if (error instanceof CommerceError && error.code === "phone_invalid") return fail("fix_fields", { phone: "phone_format" }, values);
+    return commerceFail(error, values);
+  }
+  refresh();
+  return ok("address_saved");
+}
+
+export async function deleteAddressAction(_: FormState, form: FormData): Promise<FormState> {
+  const ctx = await customer();
+  if ("error" in ctx) return ctx.error;
+  try {
+    await deleteAddress(ctx.db, ctx.principal.user.id, field(form, "id"));
+  } catch (error) {
+    return commerceFail(error);
+  }
+  refresh();
+  return ok("address_deleted");
+}
+
+export async function defaultAddressAction(_: FormState, form: FormData): Promise<FormState> {
+  const ctx = await customer();
+  if ("error" in ctx) return ctx.error;
+  try {
+    await setDefaultAddress(ctx.db, ctx.principal.user.id, field(form, "id"));
+  } catch (error) {
+    return commerceFail(error);
+  }
+  refresh();
+  return ok("address_saved");
+}
+
+/**
+ * Places the order. The form carries the address, an optional note, the total the customer saw and
+ * the request key generated when the checkout page was rendered. On success: the success page.
+ */
+export async function placeOrderAction(_: FormState, form: FormData): Promise<FormState> {
+  const ctx = await customer();
+  if ("error" in ctx) return ctx.error;
+  const limit = await checkLimits([
+    { rule: LIMITS.checkoutUser, key: ctx.principal.user.id },
+    { rule: LIMITS.checkoutIp, key: clientIp(await headers()) },
+  ]);
+  if (limit === "limited") return fail("rate_limited");
+  if (limit === "unavailable") return fail("limits_unavailable");
+  const locale = field(form, "locale") === "en" ? "en" : "bn";
+  const expected = Number(field(form, "expectedTotal"));
+  const note = field(form, "note").slice(0, 500);
+  if (!field(form, "addressId")) return fail("commerce_address_required");
+  let orderNumber: string;
+  try {
+    const client = getClient(databaseConfig(process.env)!);
+    const r = await placeOrder(ctx.db, client, {
+      userId: ctx.principal.user.id,
+      customer: { name: ctx.principal.user.name, email: ctx.principal.user.email },
+      addressId: field(form, "addressId"),
+      note,
+      expectedTotal: Number.isSafeInteger(expected) ? expected : -1,
+      idempotencyKey: field(form, "idempotencyKey"),
+      locale,
+    });
+    orderNumber = r.orderNumber;
+  } catch (error) {
+    return commerceFail(error, { note });
+  }
+  redirect(localeHref(locale, `/checkout/success/${orderNumber}`));
+}
+
+/** Customer self-cancel (pending or confirmed only; the state machine checks ownership and state). */
+export async function cancelMyOrderAction(_: FormState, form: FormData): Promise<FormState> {
+  const ctx = await customer();
+  if ("error" in ctx) return ctx.error;
+  const order = await ctx.db.collection<OrderDoc>(ORDERS).findOne({ orderNumber: field(form, "orderNumber"), userId: ctx.principal.user.id }, { projection: { _id: 1, version: 1 } });
+  if (!order) return fail("commerce_not_found");
+  const reason = field(form, "reason").trim().slice(0, 300);
+  try {
+    await transitionOrder(ctx.db, getClient(databaseConfig(process.env)!), { orderId: new ObjectId(order._id), expectedVersion: Number(field(form, "version")), to: "cancelled_by_customer", actor: { type: "customer", id: ctx.principal.user.id }, reason: reason || undefined });
+  } catch (error) {
+    return commerceFail(error);
+  }
+  refresh();
+  return ok("order_cancelled");
+}

@@ -28,6 +28,7 @@ export default async function AdminDeliveryPage() {
     ...(z ? [] : [{ name: "zoneId", label: t("zoneId"), hint: t("zoneIdHint"), required: true, maxLength: 40, autoComplete: "off" } satisfies FieldSpec]),
     ...localizedFields(ct, "name", c("fields.name"), z?.name, { required: true, max: 60 }),
     { name: "fee", label: t("fee"), hint: t("feeHint"), type: "number", required: true, defaultValue: z ? takaText(z.fee.amountMinor) : "" },
+    { name: "freeThreshold", label: t("freeThreshold"), hint: t("freeThresholdHint"), type: "number", defaultValue: z?.freeThreshold ? takaText(z.freeThreshold.amountMinor) : "" },
     ...localizedFields(ct, "estimate", t("estimate"), z?.estimate, { required: true, max: 80, hint: t("estimateHint") }),
     { name: "enabled", label: t("enabled"), type: "checkbox", defaultValue: z ? (z.enabled ? "on" : "") : "on", wide: true },
   ];
