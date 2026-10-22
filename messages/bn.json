@@ -157,7 +157,8 @@
       "internal_path": "Use a path inside the store starting with /, e.g. /c/rice",
       "colour_invalid": "Enter a hex colour like #1E4E9C",
       "accent_contrast": "This colour is too light on the page background. Choose a darker one",
-      "zone_taken": "A zone already uses this code"
+      "zone_taken": "A zone already uses this code",
+      "password_mismatch": "দুটি পাসওয়ার্ড মেলেনি"
     },
     "success": {
       "check_inbox": "ইনবক্স চেক করুন। এই অ্যাড্রেসে ইমেইল গেলে একটি ভেরিফিকেশন লিংক আসছে; কখনো কয়েক মিনিট লাগে। অ্যাকাউন্ট চালু করতে লিংকটি খুলুন।",
@@ -268,7 +269,8 @@
       "missing": "অ্যাড্রেস ভেরিফাই করতে ভেরিফিকেশন ইমেইলের লিংকটি খুলুন।",
       "login": "লগইন করুন",
       "resendTitle": "নতুন লিংক পাঠান"
-    }
+    },
+    "passwordConfirm": "পাসওয়ার্ড আবার দিন"
   },
   "account": {
     "title": "আমার অ্যাকাউন্ট",
@@ -330,7 +332,8 @@
       "confirmPending": "চেক হচ্ছে…",
       "disableSubmit": "বন্ধ করুন",
       "disablePending": "বন্ধ হচ্ছে…",
-      "disablePassword": "পাসওয়ার্ড"
+      "disablePassword": "পাসওয়ার্ড",
+      "newPasswordConfirm": "নতুন পাসওয়ার্ড আবার দিন"
     }
   },
   "store": {

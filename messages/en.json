@@ -207,7 +207,8 @@
       },
       "done": "This store already has an owner.",
       "login": "Sign in",
-      "passwordHint": "10 to 128 characters. A long phrase is easiest to remember."
+      "passwordHint": "10 to 128 characters. A long phrase is easiest to remember.",
+      "passwordConfirm": "Confirm password"
     },
     "staff": {
       "title": "Staff",
@@ -693,7 +694,8 @@
       "internal_path": "Use a path inside the store starting with /, e.g. /c/rice",
       "colour_invalid": "Enter a hex colour like #1E4E9C",
       "accent_contrast": "This colour is too light on the page background. Choose a darker one",
-      "zone_taken": "A zone already uses this code"
+      "zone_taken": "A zone already uses this code",
+      "password_mismatch": "The two passwords do not match"
     },
     "success": {
       "check_inbox": "Check your inbox. If this address can receive email, a verification link is on its way; it can take a few minutes. Open it to activate your account.",
@@ -804,7 +806,8 @@
       "missing": "Open the link from your verification email to verify your address.",
       "login": "Sign in",
       "resendTitle": "Send a new link"
-    }
+    },
+    "passwordConfirm": "Confirm password"
   },
   "account": {
     "title": "Your account",
@@ -866,7 +869,8 @@
       "confirmPending": "Checking…",
       "disableSubmit": "Turn off",
       "disablePending": "Turning off…",
-      "disablePassword": "Password"
+      "disablePassword": "Password",
+      "newPasswordConfirm": "Confirm new password"
     }
   },
   "store": {

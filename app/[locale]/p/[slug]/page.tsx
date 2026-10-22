@@ -3,6 +3,7 @@
 // higher) and stock. Delivery charges come from the enabled delivery zones in settings (no area mapping
 // until D12). Ordering opens with the cart in B6, and the page says so; there is no inert buy button.
 // JSON-LD Product/Offer for real published data only, plus BreadcrumbList.
+import { productBySlug } from "@/lib/storefront/lookups";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
@@ -15,7 +16,7 @@ import { SetupRequired } from "@/components/states/SetupRequired";
 import { cloudinaryConfig, deliveryUrl } from "@/lib/adapters/media/cloudinary";
 import { formatMoney } from "@/lib/format/money";
 import { localeHref } from "@/lib/i18n/href";
-import { categoryPath, getPublishedProduct, listPublishedProducts } from "@/lib/modules/storefront/catalogue";
+import { categoryPath, listPublishedProducts } from "@/lib/modules/storefront/catalogue";
 import { loadStore, moneyFormat, shown, shownLang, siteOrigin } from "@/lib/storefront/context";
 import { categoryNames, localeOf, storeMetadata } from "@/lib/storefront/page";
 import { unitLabels } from "@/lib/storefront/units";
@@ -26,7 +27,7 @@ export async function generateMetadata({ params }: PageProps<"/[locale]/p/[slug]
   if (!locale) return {};
   const store = await loadStore();
   if (!store.ready) return storeMetadata(locale, "/", "");
-  const page = await getPublishedProduct(store.db, store.tree, slug);
+  const page = await productBySlug(slug);
   if (!page) return {};
   const p = page.product;
   return storeMetadata(locale, `/p/${p.slug}`, shown(p.seo?.title ?? p.name, locale), shown(p.seo?.description ?? p.shortDescription, locale) || undefined);
@@ -38,7 +39,7 @@ export default async function ProductPage({ params, searchParams }: PageProps<"/
   if (!locale) notFound();
   const store = await loadStore();
   if (!store.ready) return <SetupRequired locale={locale} status={store.status} />;
-  const page = await getPublishedProduct(store.db, store.tree, slug);
+  const page = await productBySlug(slug);
   if (!page) notFound();
   const sp = await searchParams;
   const t = await getTranslations({ locale, namespace: "store" });

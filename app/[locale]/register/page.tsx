@@ -49,6 +49,7 @@ export default async function RegisterPage({ params }: PageProps<"/[locale]/regi
             { name: "name", label: t("name"), autoComplete: "name", required: true },
             { name: "email", label: t("email"), type: "email", autoComplete: "email", required: true },
             { name: "password", label: t("password"), type: "password", autoComplete: "new-password", hint: t("passwordHint"), required: true },
+            { name: "passwordConfirm", label: t("passwordConfirm"), type: "password", autoComplete: "new-password", required: true },
           ]}
           submitLabel={t("register.submit")}
           pendingLabel={t("register.pending")}

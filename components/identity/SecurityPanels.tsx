@@ -78,6 +78,7 @@ export async function SecurityPanels({ locale, principal, identity }: { locale: 
             fields={[
               { name: "currentPassword", label: t("currentPassword"), type: "password", autoComplete: "current-password", required: true },
               { name: "newPassword", label: t("newPassword"), type: "password", autoComplete: "new-password", required: true },
+              { name: "newPasswordConfirm", label: t("newPasswordConfirm"), type: "password", autoComplete: "new-password", required: true },
             ]}
             submitLabel={t("passwordSubmit")}
             pendingLabel={t("passwordPending")}
