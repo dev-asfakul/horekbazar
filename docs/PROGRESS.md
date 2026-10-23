@@ -2,6 +2,13 @@
 
 Newest first. Each entry: date, phase, done, decided, open, next. Entries are snapshots of their date: "not merged", "open" or "next" describe that day; the current state is in `docs/STATUS.md` (first rows) and `docs/HANDOFF.md`.
 
+## 2026-10-23 — B10 part c: audit log viewer and customer lookup
+
+- **Done:** PR #33 (part a) merged as `e303ef6` (head `516e2f8`) after both CI runs passed; post-merge CI and Vercel succeeded. `/admin/audit` (platform.read, BUILD-PLAN Platform row): newest first, filters for action (exact or `prefix.`), actor, target type/id and Dhaka dates, 50 per page, at most 200 pages; before/after values re-redacted on read; read only. `/admin/customers` and `/admin/customers/[id]` (customers.read): shoppers only (staff excluded), literal search over name, e-mail and phone digits, order counts in one aggregate, addresses and the 20 latest orders; order links only with orders.read; never selects password hashes, sessions or 2FA secrets.
+- **Decided:** no new capability or role; no schema or index change (indexes for action/actor filters are a Phase C item if the log grows).
+- **Tests:** tests/unit/admin-records.test.ts (10), tests/integration/admin-records.test.ts (6), tests/e2e-db/admin-records.spec.ts (3: platform.read viewer with filter and redaction; support agent reads customers, refused audit, staff and malformed ids not found; customer refused both; signed-out redirected).
+- **Open:** B10 part b (`/account/privacy`) needs the `privacyRequests` collection (schema change) and retention rules **[L]**.
+
 ## 2026-10-23 — B10 part a: information and legal pages, offline fallback
 
 - **Done:** `/about`, `/contact`, `/faq`, `/terms`, `/privacy-policy`, `/delivery-policy`, `/return-policy` (Bengali default, English under `/en`), all owner text `[NEEDS COPY]` and `noindex`; `/contact` from `store.contact`; footer links; offline fallback in `public/sw.js`, registered on storefront pages.
