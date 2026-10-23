@@ -79,6 +79,11 @@ export const collections: CollectionSpec[] = [
     indexes: [
       { key: { at: -1 }, name: "at_desc" },
       { key: { "target.type": 1, "target.id": 1 }, name: "target" },
+      // /admin/audit sorts by { at: -1, _id: -1 }; these give that order without an in-memory sort
+      // (C-03, 2026-10-23). at_id_desc makes at_desc redundant; dropping it is a separate decision.
+      { key: { at: -1, _id: -1 }, name: "at_id_desc" },
+      { key: { action: 1, at: -1, _id: -1 }, name: "action_at_id" },
+      { key: { "actor.id": 1, at: -1, _id: -1 }, name: "actor_at_id" },
     ],
     serviceEnforced: ["before/after are redacted diffs and ip is truncated before insert (audit.ts)"],
   },
