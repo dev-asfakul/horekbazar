@@ -125,8 +125,9 @@ test("filters, sorting and invalid prices are handled on the server", async ({ p
 
 test("search finds whole words and prefixes, and says so when nothing matches", async ({ page }) => {
   await page.goto("/");
-  await page.getByRole("searchbox").first().fill("miniket");
-  await page.getByRole("searchbox").first().press("Enter");
+  // Redesign: the header field is a combobox with suggestions (#site-search); Enter still submits the form.
+  await page.locator("#site-search").fill("miniket");
+  await page.locator("#site-search").press("Enter");
   await expect(page).toHaveURL(/\/search\?q=miniket/);
   await expect(page.getByTestId("product-grid")).toContainText("মিনিকেট চাল");
   await page.goto("/search?q=mini");

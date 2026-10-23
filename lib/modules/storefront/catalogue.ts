@@ -6,6 +6,7 @@
 import { ObjectId, type Db, type Document } from "mongodb";
 import { CATEGORIES, PRODUCTS, STOCK, VARIANTS, type CategoryDoc, type LocalizedText, type ProductDoc, type VariantDoc } from "@/lib/modules/catalogue/schema";
 import { COLLECTIONS, HOME_SECTIONS, BANNERS, type BannerDoc, type CollectionDoc } from "@/lib/modules/merch/schema";
+import { catalogueIndex, matchIndex } from "@/lib/modules/storefront/search-index";
 
 export const PAGE_SIZE = 24;
 export const MAX_PAGE = 500;
@@ -107,6 +108,8 @@ export interface ListingItem {
   compareAt?: number;
   variantCount: number;
   available: number;
+  /** The only variant's id when the product has exactly one (the card can add it directly). */
+  variantId?: string;
   /** Verified net quantity of the lowest-priced variant (never an unverified one). */
   netQuantity?: { value: number; unit: string };
   publishedAt?: Date | undefined;
@@ -203,7 +206,7 @@ interface RawItem {
   primaryCategoryId: ObjectId;
   media: ProductDoc["media"];
   price: number;
-  cheapest: { price: number; compareAt?: number; netQuantity?: VariantDoc["netQuantity"] };
+  cheapest: { _id: ObjectId; price: number; compareAt?: number; netQuantity?: VariantDoc["netQuantity"] };
   available: number;
   variantCount: number;
   publishedAt?: Date;
@@ -222,6 +225,7 @@ function toItem(r: RawItem): ListingItem {
     ...(r.cheapest.compareAt && r.cheapest.compareAt > r.cheapest.price ? { compareAt: r.cheapest.compareAt } : {}),
     variantCount: r.variantCount,
     available: r.available,
+    ...(r.variantCount === 1 ? { variantId: String(r.cheapest._id) } : {}),
     ...(nq?.verified ? { netQuantity: { value: nq.value, unit: nq.unit } } : {}),
     publishedAt: r.publishedAt,
   };
@@ -242,7 +246,54 @@ export async function listPublishedProducts(db: Db, q: ListingQuery): Promise<Li
   // Full-word search first (text index, language "none", so Banglish and Bengali words are not stemmed);
   // when it finds nothing, word-prefix matching on names catches partial words like "mini".
   const byText = await run(db, q, "text");
-  return byText.total > 0 ? byText : run(db, q, "regex");
+  if (byText.total > 0) return byText;
+  const byPrefix = await run(db, q, "regex");
+  if (byPrefix.total > 0 || q.productIds) return byPrefix;
+  // Last: Banglish and typo tolerant matching (search-index.ts), best match first.
+  const ids = matchIndex(await catalogueIndex(db), normaliseQuery(q.text));
+  if (ids.length === 0) return byPrefix;
+  const rest: ListingQuery = { ...q };
+  delete rest.text;
+  const fuzzy = await run(db, { ...rest, productIds: ids, sort: q.sort && q.sort !== "relevance" ? q.sort : "new", page: 1, pageSize: ids.length }, "none");
+  const rank = new Map(ids.map((id, i) => [id, i]));
+  const ordered = q.sort && q.sort !== "relevance" ? fuzzy.items : [...fuzzy.items].sort((a, b) => (rank.get(a.id) ?? 0) - (rank.get(b.id) ?? 0));
+  const pageSize = q.pageSize ?? PAGE_SIZE;
+  const page = Math.min(MAX_PAGE, Math.max(1, Math.floor(q.page ?? 1)));
+  return { ...fuzzy, items: ordered.slice((page - 1) * pageSize, page * pageSize), page, pageSize, pages: Math.max(1, Math.ceil(fuzzy.total / pageSize)) };
+}
+
+/** Published banners for one placement, inside their visibility window, newest first. */
+export async function listPublishedBanners(db: Db, placement: BannerDoc["placement"], now = new Date(), limit = 4): Promise<BannerDoc[]> {
+  return db
+    .collection<BannerDoc>(BANNERS)
+    .find({ placement, status: "published", ...visibleNow(now) })
+    .sort({ updatedAt: -1 })
+    .limit(limit)
+    .toArray();
+}
+
+export interface CategoryShowcase {
+  id: string;
+  count: number;
+  image?: { publicId: string; alt: LocalizedText };
+}
+
+/** Per top-level category: how many published products it holds (sub-categories included) and one real product photo. */
+export async function categoryShowcase(db: Db, tree: CategoryTree): Promise<Map<string, CategoryShowcase>> {
+  const out = new Map<string, CategoryShowcase>();
+  await Promise.all(
+    tree.roots.map(async (root) => {
+      const ids = subtreeIds(root).map((id) => new ObjectId(id));
+      const match = { status: "published" as const, categoryIds: { $in: ids } };
+      const [count, withPhoto] = await Promise.all([
+        db.collection(PRODUCTS).countDocuments(match),
+        db.collection<ProductDoc>(PRODUCTS).findOne({ ...match, "media.0": { $exists: true } }, { sort: { publishedAt: 1, _id: 1 }, projection: { media: { $slice: 1 } } }),
+      ]);
+      const m = withPhoto?.media[0];
+      out.set(root.id, { id: root.id, count, ...(m ? { image: { publicId: m.publicId, alt: m.alt } } : {}) });
+    }),
+  );
+  return out;
 }
 
 export interface ProductPage {

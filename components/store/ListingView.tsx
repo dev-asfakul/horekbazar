@@ -12,6 +12,8 @@ import type { Locale } from "@/lib/i18n/locales";
 import type { Listing, Sort } from "@/lib/modules/storefront/catalogue";
 import { listingHref, type ParsedListing } from "@/lib/storefront/params";
 import { unitLabels } from "@/lib/storefront/units";
+import { cartSnapshot } from "@/lib/storefront/cart-snapshot";
+import { loadStore } from "@/lib/storefront/context";
 
 interface Props {
   locale: Locale;
@@ -33,6 +35,9 @@ interface Props {
 export async function ListingView({ locale, format, title, titleLang, intro, before, listing, parsed, base, q, sorts, categoryNames, emptyText }: Props) {
   const t = await getTranslations({ locale, namespace: "store" });
   const c = await getTranslations({ locale, namespace: "common" });
+  const store = await loadStore();
+  const cart = store.ready ? (await cartSnapshot(store.db)).quantities : undefined;
+  const quick = { add: t("card.add"), increase: t("card.increase"), decrease: t("card.decrease"), inCart: t("card.inCart"), added: t("card.added"), error: t("card.error") };
   const current = { ...parsed.form, ...(q ? { q } : {}) };
   const anyFilter = parsed.filtered || Boolean(parsed.form.sort);
   const clearHref = listingHref(base, { sort: "", stock: false, min: "", max: "", ...(q ? { q } : {}) });
@@ -119,6 +124,8 @@ export async function ListingView({ locale, format, title, titleLang, intro, bef
               format={format}
               categoryNames={categoryNames}
               labels={{ now: c("nowPrice"), was: c("wasPrice"), outOfStock: t("card.outOfStock"), options: (count) => t("card.options", { count }), units: unitLabels(t) }}
+              cart={cart}
+              quick={quick}
             />
           )}
           <StorePager

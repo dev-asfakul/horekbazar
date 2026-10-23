@@ -29,6 +29,7 @@ export default async function ForgotPasswordPage({ params }: PageProps<"/[locale
   const m = await formMessages(locale);
   return (
     <AuthFrame
+      icon="key"
       title={t("forgot.title")}
       intro={<p>{t("forgot.body")}</p>}
       aside={
