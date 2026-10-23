@@ -3,12 +3,13 @@
 // each new staff action checks.
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import { AiError, aiConfig, DEFAULT_GEMINI_MODEL, generateJson } from "@/lib/adapters/ai/gemini";
+import { AiError, aiConfig, DEFAULT_GEMINI_MODEL, generateJson, geminiOrigin, MAX_REPLY_BYTES } from "@/lib/adapters/ai/gemini";
 import { draftJsonSchema, draftPrompt, parseDraftAnswer } from "@/lib/modules/ai/drafts";
 import { AI_FIELDS } from "@/lib/modules/ai/schema";
 
 const KEY = "test-key-not-real-0123456789";
-const config = { apiKey: KEY, model: "gemini-3.5-flash-lite" };
+const GOOGLE = "https://generativelanguage.googleapis.com";
+const config = { apiKey: KEY, model: "gemini-3.5-flash-lite", origin: GOOGLE };
 
 function reply(status: number, body: unknown) {
   const calls: { url: string; init: RequestInit }[] = [];
@@ -25,9 +26,21 @@ describe("Gemini configuration", () => {
   it("is off without a key, uses the default model, and accepts only model-id-shaped overrides", () => {
     expect(aiConfig({})).toBeNull();
     expect(aiConfig({ GEMINI_API_KEY: "  " })).toBeNull();
-    expect(aiConfig({ GEMINI_API_KEY: KEY })).toEqual({ apiKey: KEY, model: DEFAULT_GEMINI_MODEL });
+    expect(aiConfig({ GEMINI_API_KEY: KEY })).toEqual({ apiKey: KEY, model: DEFAULT_GEMINI_MODEL, origin: GOOGLE });
     expect(aiConfig({ GEMINI_API_KEY: KEY, GEMINI_MODEL: "gemini-3.8-flash" })?.model).toBe("gemini-3.8-flash");
     expect(aiConfig({ GEMINI_API_KEY: KEY, GEMINI_MODEL: "../models/x?key=1" })?.model).toBe(DEFAULT_GEMINI_MODEL);
+  });
+});
+
+describe("Gemini test origin", () => {
+  it("is honoured only for a loopback stub, a loopback database and outside Vercel", () => {
+    const local = { GEMINI_LOCAL_TEST_ORIGIN: "http://127.0.0.1:4555", MONGODB_URI: "mongodb://127.0.0.1:27017/" };
+    expect(geminiOrigin(local)).toBe("http://127.0.0.1:4555");
+    expect(geminiOrigin({ ...local, VERCEL: "1" })).toBe(GOOGLE);
+    expect(geminiOrigin({ ...local, MONGODB_URI: "mongodb+srv://cluster.example.net/" })).toBe(GOOGLE);
+    expect(geminiOrigin({ ...local, GEMINI_LOCAL_TEST_ORIGIN: "https://attacker.example" })).toBe(GOOGLE);
+    expect(geminiOrigin({ ...local, GEMINI_LOCAL_TEST_ORIGIN: "http://127.0.0.1:4555@attacker.example" })).toBe(GOOGLE);
+    expect(geminiOrigin({})).toBe(GOOGLE);
   });
 });
 
@@ -42,6 +55,15 @@ describe("Gemini request", () => {
     const body = JSON.parse(String(calls[0]!.init.body));
     expect(body.generationConfig).toMatchObject({ responseMimeType: "application/json", responseJsonSchema: schema });
     expect(String(calls[0]!.init.body)).not.toContain(KEY);
+    expect(body.generationConfig.maxOutputTokens).toBe(4096);
+    expect(calls[0]!.init.redirect).toBe("error"); // the key never follows a redirect
+  });
+
+  it("refuses a reply larger than the cap instead of reading it all", async () => {
+    const big = answer(JSON.stringify({ name: { bn: "x".repeat(MAX_REPLY_BYTES), en: "y" } }));
+    expect(await codeOf(generateJson(config, "p", {}, reply(200, big) as never))).toBe("ai_bad_output");
+    const declared = (async () => new Response("{}", { status: 200, headers: { "content-length": String(MAX_REPLY_BYTES + 1) } })) as unknown as typeof fetch;
+    expect(await codeOf(generateJson(config, "p", {}, { fetchImpl: declared }))).toBe("ai_bad_output");
   });
 
   it("maps provider answers to editor-facing codes without quoting the key", async () => {

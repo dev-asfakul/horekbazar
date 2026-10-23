@@ -5,7 +5,7 @@
 import { ObjectId, type Db, type MongoClient } from "mongodb";
 import { AiError, generateJson, type AiConfig, type GenerateOptions } from "../../adapters/ai/gemini.ts";
 import { CatalogueError, inTransaction, toObjectId, type Actor } from "../catalogue/common.ts";
-import { CATEGORIES, PRODUCTS, VARIANTS, type CategoryDoc, type LocalizedText, type ProductDoc, type VariantDoc } from "../catalogue/schema.ts";
+import { CATEGORIES, PRODUCTS, VARIANTS, localizedText, type CategoryDoc, type LocalizedText, type ProductDoc, type VariantDoc } from "../catalogue/schema.ts";
 import { recordAudit } from "../platform/audit.ts";
 import { AI_DRAFTS, AI_FIELD_KEYS, AI_FIELDS, aiDraftFieldsSchema, type AiDraftDoc, type AiDraftFields, type AiField } from "./schema.ts";
 
@@ -149,8 +149,12 @@ export async function applyDraftField(db: Db, client: MongoClient, actor: Actor,
     const draft = await drafts(db).findOne({ _id: toObjectId(draftId) }, { session });
     if (!draft || draft.targetType !== "product") throw new CatalogueError("not_found");
     if (!OPEN.includes(draft.status) || draft.version !== draftVersion) throw new CatalogueError("version_conflict");
-    const value = draft.fields[field];
-    if (!value || draft.appliedFields.includes(field)) throw new CatalogueError("invalid", { reason: "field" });
+    if (!draft.fields[field] || draft.appliedFields.includes(field)) throw new CatalogueError("invalid", { reason: "field" });
+    // The same check a product field gets in the normal editor, so a stored draft cannot write
+    // anything the editor could not.
+    const checked = localizedText(AI_FIELDS[field]).safeParse(draft.fields[field]);
+    if (!checked.success) throw new CatalogueError("invalid", { reason: "field" });
+    const value = checked.data;
     const product = await products(db).findOne({ _id: draft.targetId }, { session });
     if (!product) throw new CatalogueError("not_found");
     if (product.version !== productVersion) throw new CatalogueError("version_conflict", { current: product.version });

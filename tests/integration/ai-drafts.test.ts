@@ -4,7 +4,7 @@
 // answer stores nothing. Gemini is replaced by a local fetch stub; no network call is made.
 import { randomUUID } from "node:crypto";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import type { Db, MongoClient } from "mongodb";
+import { ObjectId, type Db, type MongoClient } from "mongodb";
 import { runMigrations } from "@/lib/db/migrate";
 import {
   applyDraftField,
@@ -34,7 +34,7 @@ let db: Db;
 let cleanup: () => Promise<void>;
 let cat: string;
 const actor: Actor = { id: "editor-1", role: "catalogue_editor", ip: null };
-const config = { apiKey: "stub-key", model: "gemini-test" };
+const config = { apiKey: "stub-key", model: "gemini-test", origin: "https://generativelanguage.googleapis.com" };
 
 const DRAFT = {
   name: { bn: "মিনিকেট চাল ৫ কেজি", en: "Miniket Rice 5 kg" },
@@ -314,6 +314,17 @@ describe("AI drafts (B9 part 2b)", () => {
       ),
     ).toBe("version_conflict");
     expect(p.shortDescription).toEqual({ bn: "পুরনো লেখা", en: "Old text" });
+  });
+
+  it("Apply re-checks the stored text like the product editor, so an edited draft cannot write it", async () => {
+    const id = await publishedProduct();
+    const p = (await getProduct(db, id))!.product;
+    const draftId = String(await createProductDraft(db, actor, id, { fields: ["name"] }, config, { fetchImpl: gemini({ name: DRAFT.name }).fetchImpl }));
+    // Whitespace passes the collection validator (minLength 1) but not the editor's trimmed check.
+    await db.collection(AI_DRAFTS).updateOne({ _id: new ObjectId(draftId) }, { $set: { "fields.name": { bn: "   ", en: "x" } } });
+    expect(await code(applyDraftField(db, client, actor, draftId, "name", p.version, 1))).toBe("invalid");
+    expect((await getProduct(db, id))!.product).toMatchObject({ name: p.name, version: p.version });
+    expect(await db.collection("auditLog").countDocuments({ action: "product.ai_field_applied", "target.id": id })).toBe(0);
   });
 
   it("an incomplete or over-long answer stores nothing", async () => {
