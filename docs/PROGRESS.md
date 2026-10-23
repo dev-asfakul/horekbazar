@@ -2,6 +2,13 @@
 
 Newest first. Each entry: date, phase, done, decided, open, next. Entries are snapshots of their date: "not merged", "open" or "next" describe that day; the current state is in `docs/STATUS.md` (first rows) and `docs/HANDOFF.md`.
 
+## 2026-10-23 — C-03: auditLog indexes for /admin/audit
+
+- **Found:** `explain()` on `horekbazar_dev` (941 entries): the unfiltered, exact-action, action-prefix and actor queries of `/admin/audit` were `COLLSCAN` + in-memory `SORT` (941 documents examined for 50 rows). The date filter used `at_desc` but still sorted in memory, because the page orders by `{ at: -1, _id: -1 }` and `at_desc` has no `_id`.
+- **Changed:** three indexes in `lib/db/collections.ts` (SCHEMA.md updated): `at_id_desc {at:-1,_id:-1}`, `action_at_id {action:1,at:-1,_id:-1}`, `actor_at_id {"actor.id":1,at:-1,_id:-1}`. No index dropped; `at_desc` is now redundant (a prefix of `at_id_desc`) and is kept until the owner decides. Cost: three more index entries per audit insert (append-only, low write rate). Target filters keep the existing `target` index (small result sets; sorted in memory).
+- **Tests:** `tests/integration/audit-indexes.test.ts` (6) asserts index use with no `COLLSCAN` and no `SORT` for the default, action, actor and action+date queries, and an index for a namespace prefix; all 6 fail without the change.
+- **Open:** retention rule for `auditLog` (owner decision; nothing is deleted).
+
 ## 2026-10-23 — B11: hardening and documentation (in progress)
 
 - **Done (branch `feat/b11-hardening-docs`):** review of security headers and CSP (local and live), rate limits, dependency audit, JS budget and SEO; `og:image` for product pages that have a photo; `MEDIA.md`, `THIRD_PARTY_NOTICES.md` (draft inventory), `CHANGELOG.md`, `GATE.md` (draft), `CRITIQUE.md`, README status and setup notes, `load/k6/storefront-mix.js` (not run).
