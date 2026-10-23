@@ -18,8 +18,8 @@ the newest; older sections describe B4–B5 and are kept for their detail. Read 
 | B8 on `main` | yes: PR #25 (`e91afe2`); CI timeout fixed in PR #26 (`f3701cd`, push run success) |
 | B9 engagement (part 1) | branch `feat/b9-engagement`, PR into `main`, **not merged** (owner review); see "B9 record" |
 | B9 part 1 | merged to `main` (PR #27 `d47d451`); showcase population PR #29 (`4a0ef5b`) |
-| B9 part 2a notifications | branch `feat/b9-notifications`, PR into `main`, **not merged** (owner review); see "B9 part 2a record" |
-| B9 part 2b AI drafts | branch `feat/b9-ai-drafts`, stacked on `feat/b9-notifications`, PR **not merged** (owner review); see "B9 part 2b record" |
+| B9 part 2a notifications | merged to `main`: PR #30 (`d3e5a9a`, 2026-10-23), head `f8778f0`; see "B9 part 2a record" |
+| B9 part 2b AI drafts | PR #31 (`feat/b9-ai-drafts`), rebased onto `main` after #30; see "B9 part 2b record" |
 | B10 → B11 hardening | not started |
 
 Branch flow: feature branch → PR into `preview/horekbazar-v1` → merge after CI is green → PR into `main`,
@@ -114,8 +114,10 @@ Gate: FAIL (zero-variable `/` is the setup page; header search states; B6–B11 
 - **What:** Gemini drafts for product name, short description, description and SEO title/description, in Bengali and English, applied one field at a time. Code: `lib/adapters/ai/gemini.ts`, `lib/modules/ai/{schema,drafts}.ts`, `lib/actions/ai-drafts.ts`, `components/admin/AiDraftsPanel.tsx`.
 - **Switches:** `GEMINI_API_KEY` (panel hidden without it), `GEMINI_MODEL` (optional). Capability `catalogue.write`. Rate limit `ai-draft` 20/hour per staff user.
 - **Safety:** drafts never touch live fields; Apply is a version-checked transaction with an audit row; a draft made before a later product edit is shown with a stale note next to the current text, and Apply still needs the product version on screen, so a save by someone else after the page loaded makes Apply refuse with a conflict.
-- **Merge order:** PR A (notifications) first, then this PR (its base is `feat/b9-notifications`; after A merges, retarget it to `main`).
-- **Not done:** category/collection drafts (enum reserved); signed-in browser check of the panel.
+- **Review fixes:** Gemini reply capped (256 KB, 4096 output tokens, no redirects); Apply re-checks the stored text with the product editor's `localizedText` validator.
+- **Browser journeys:** `tests/e2e-db/commerce/ai-drafts.spec.ts` against a loopback Gemini stub (`GEMINI_LOCAL_TEST_ORIGIN`, honoured only with a loopback database outside Vercel): notice shown, draft changes nothing, one field applied with its audit row, busy/garbage answers store nothing, support 403, 21st draft in an hour refused.
+- **Real Gemini:** one draft with `gemini-3.5-flash-lite` against a `horekbazar_dev` product by a read-only script (nothing stored). The admin panel itself has only met the stub.
+- **Not done:** category/collection drafts (enum reserved).
 
 ## B9 part 2a record (2026-10-23)
 
@@ -129,8 +131,9 @@ Gate: FAIL (zero-variable `/` is the setup page; header search states; B6–B11 
 
 ### Not done, and why
 
-- **AI drafts** (B9 part 2b, next PR). **Scheduled campaigns** (`scheduled` status reserved, no scheduler). **Prompt after a meaningful action** (opt-in lives on the account page only).
+- **Scheduled campaigns** (`scheduled` status reserved, no scheduler). **Prompt after a meaningful action** (opt-in lives on the account page only).
 - Real delivery through a browser push service was not tested (no browser push service in the sandbox); the encryption and VAPID signature are verified independently in unit tests.
+- **Review fixes (PR #30, `f8778f0`):** consent and owner re-checked at send time (`topic_off`, `subscription_moved`); endpoints only on known push services and no redirects (SSRF); worker start fixed (`3857e35`); signed-in notification journeys added.
 - VAPID variables in Vercel: not checked (no Vercel access). Locally they are set and the right shape.
 
 ### Easy to break

@@ -10,7 +10,10 @@ Newest first. Each entry: date, phase, done, decided, open, next.
 - **Decided:** plain fetch instead of `@google/genai` (DESIGN.md Decision trace). Feature bullets live as "• " lines in `description` because products have no separate bullets field. Category and collection drafts are reserved in the enum, not built.
 - **Verified:** see STATUS. One real draft against a dev product (read-only script; nothing stored in `aiDrafts`, no product changed).
 - **Database:** `db:migrate` on `horekbazar_dev` created `aiDrafts` only.
-- **Open:** signed-in browser check of the panel; Gemini key in Vercel not checked (no Vercel access from the agent).
+- **Review fixes:** Gemini reply capped at 256 KB and 4096 output tokens, redirects refused; Apply re-checks the stored text with the editor's validator; restored the repository formatting of `migrate.test.ts` and `gemini.ts`.
+- **Browser journeys:** `tests/e2e-db/commerce/ai-drafts.spec.ts` with a loopback Gemini stub in `scripts/e2e-db-server.mjs`.
+- **Rebased** onto `main` after PR #30 merged (`d3e5a9a`).
+- **Open:** Gemini key in Vercel not checked (no Vercel access from the agent).
 ## 2026-10-23 — B9 part 2a review fixes (PR #30)
 
 - **Consent at send time:** the push job now re-reads the subscription's topics. A campaign message queued before the customer unticked "Offers and news" finishes as `topic_off` without contacting the push service; order updates likewise once "Order updates" is off.
