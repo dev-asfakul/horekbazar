@@ -3,7 +3,7 @@
 import type { Capability } from "@/lib/modules/identity/capabilities";
 import type { AdminPage } from "@/lib/modules/identity/paths";
 
-export type AdminSectionKey = "orders" | "shipments" | "returns" | "messages" | "reviews" | "rewards" | "notifications" | "products" | "categories" | "inventory" | "collections" | "homepage" | "banners" | "promotions" | "coupons" | "settings" | "delivery" | "staff" | "security" | "health";
+export type AdminSectionKey = "orders" | "shipments" | "returns" | "messages" | "reviews" | "rewards" | "notifications" | "products" | "categories" | "inventory" | "collections" | "homepage" | "banners" | "promotions" | "coupons" | "settings" | "delivery" | "customers" | "staff" | "security" | "health" | "audit";
 
 export interface AdminSection {
   href: AdminPage;
@@ -30,9 +30,11 @@ export const ADMIN_SECTIONS: AdminSection[] = [
   { href: "/admin/coupons", key: "coupons", capability: "promotions.write" },
   { href: "/admin/settings", key: "settings", capability: "settings.write" },
   { href: "/admin/settings/delivery", key: "delivery", capability: "delivery.write" },
+  { href: "/admin/customers", key: "customers", capability: "customers.read" },
   { href: "/admin/staff", key: "staff", capability: "staff.manage" },
   { href: "/admin/security", key: "security", capability: null },
   { href: "/admin/health", key: "health", capability: "platform.read" },
+  { href: "/admin/audit", key: "audit", capability: "platform.read" },
 ];
 
 export const sectionsFor = (capabilities: ReadonlySet<Capability> | undefined) => ADMIN_SECTIONS.filter((s) => s.capability === null || capabilities?.has(s.capability));

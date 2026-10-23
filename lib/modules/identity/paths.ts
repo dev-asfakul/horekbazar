@@ -14,6 +14,10 @@ export const ADMIN_PAGE_CAPABILITY = {
   "/admin/security": null,
   "/admin/staff": "staff.manage",
   "/admin/health": "platform.read",
+  // B10: the audit log is a platform record (BUILD-PLAN row Platform: platform.read); customer records
+  // are read with customers.read (support agents, operators, managers, Owner).
+  "/admin/audit": "platform.read",
+  "/admin/customers": "customers.read",
   // B4 catalogue administration. Sub-pages (/admin/products/new, /admin/products/<id>) use the
   // capability of their section; mutations check their own capability again in the server action.
   "/admin/products": "catalogue.write",

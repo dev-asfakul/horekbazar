@@ -28,6 +28,8 @@ export const LIMITS = {
   pushChange: { name: "push-change", limit: 30, windowSeconds: 600 },
   /** B9 part 2b: Gemini drafts per staff member (domain-rules §7 "rate-limited per staff user"). */
   aiDraft: { name: "ai-draft", limit: 20, windowSeconds: 3600 },
+  /** B10: privacy export/deletion requests per customer, wrong passwords included (password guessing). */
+  privacyRequest: { name: "privacy-request", limit: 5, windowSeconds: 3600 },
 } satisfies Record<string, LimitRule>;
 
 export type LimitOutcome = "ok" | "limited" | "unavailable";
