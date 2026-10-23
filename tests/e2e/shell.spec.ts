@@ -3,6 +3,12 @@
 import { expect, test, type Page } from "@playwright/test";
 import { overlaps, waitForHydration, watchCsp, type Rect } from "./helpers";
 
+/** Redesign: below 768 px the header search is an icon; open it when it is one. */
+async function openSearch(page: import("@playwright/test").Page) {
+  const toggle = page.locator(".header-search-toggle");
+  if (await toggle.isVisible()) await toggle.click();
+}
+
 const widths = [
   { name: "375", width: 375, height: 812, dock: true },
   { name: "768", width: 768, height: 1024, dock: false },
@@ -30,7 +36,11 @@ for (const vp of widths) {
           .map((el) => el.id || el.className.split(" ")[0] || el.tagName.toLowerCase()),
       );
       expect(order.slice(0, 5)).toEqual(["skip-link", "site-header", "main", "site-footer", "bottom-dock"]);
+      // Below 768 px the search is an icon that opens the field (redesign); from 768 px it is open.
+      await expect(page.locator(".header-search-toggle")).toBeVisible({ visible: vp.dock });
+      await openSearch(page);
       await expect(page.locator("#site-search")).toBeVisible();
+      if (vp.dock) await page.locator(".header-search-close").click();
       await expect(page.getByRole("link", { name: "ক্যাটাগরি" }).first()).toBeVisible();
       await expect(page.locator("#bottom-dock")).toBeVisible({ visible: vp.dock });
       // Account and cart live in the header from band M up, and in the dock below it.
@@ -101,6 +111,7 @@ for (const vp of widths) {
     if (vp.dock) test("focus entering the dock right after the search field is fully visible at once", async ({ page }) => {
       await page.goto("/");
       await waitForHydration(page);
+      await openSearch(page);
       await page.locator("#site-search").focus();
       await expect(page.locator("#bottom-dock")).toHaveAttribute("data-hidden", "true");
       const bottoms = await page.evaluate(async () => {
@@ -155,6 +166,7 @@ test.describe("band S interactions (375 px)", () => {
     await expect(page.locator("#bottom-dock [data-nav]")).toHaveCount(4);
     await expect(page.locator("#bottom-dock [data-nav='search']")).toHaveCount(0);
     await page.evaluate(() => window.scrollTo(0, 400));
+    await openSearch(page);
     await page.locator("#site-search").focus();
     await expect(page.locator("#site-search")).toBeFocused();
     const field = await rect(page, "#site-search");

@@ -1172,21 +1172,97 @@ html[data-store] .header-search-clear:focus-visible {
   outline-offset: -4px;
 }
 
-/* Phones: the whole placeholder ("চাল, তেল, সাবান সার্চ করুন") fits beside the store name at 360 px. */
+/* Header icons: search toggle and close (phones only), bell (all widths). */
+html[data-store] :is(.header-search-toggle, .header-search-close, .header-icon) {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  border: 0;
+  background: var(--raised);
+  color: var(--ink);
+  cursor: pointer;
+  text-decoration: none;
+}
+html[data-store] :is(.header-search-toggle, .header-icon):hover {
+  background: var(--surface);
+}
+html[data-store] .header-search-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Phones: search and bell are icons; the search opens over the header row. */
 @media (width < 768px) {
   html[data-store] .site-header-inner {
+    position: relative;
     gap: 8px;
   }
-  html[data-store] .wordmark {
-    font-size: 19px;
+  html[data-store] .header-search-row {
+    flex: none;
   }
-  html[data-store] .header-search-submit {
-    width: 40px;
+  html[data-store] .header-search-row > :is(.header-search, .header-search-close) {
+    display: none;
+  }
+  html[data-store] .wordmark {
+    flex: 1;
+    min-width: 0;
+    max-width: none;
+    font-size: 20px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  html[data-store] .header-actions {
+    gap: 0;
+  }
+  html[data-store] :is(.header-search-row[data-expanded], .header-search-row:target) {
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    padding-inline: max(16px, env(safe-area-inset-left, 0px)) max(16px, env(safe-area-inset-right, 0px));
+    background: var(--ground);
+  }
+  html[data-store] :is(.header-search-row[data-expanded], .header-search-row:target) > .header-search-toggle {
+    display: none;
+  }
+  html[data-store] :is(.header-search-row[data-expanded], .header-search-row:target) > :is(.header-search, .header-search-close) {
+    display: flex;
   }
   html[data-store] .header-search-input {
     font-size: 16px; /* 16 px keeps iOS from zooming on focus */
   }
-  html[data-store] .header-search-input::placeholder {
-    font-size: 14px;
+}
+@media (width < 768px) and (prefers-reduced-motion: no-preference) {
+  html[data-store] .header-search-row[data-expanded] > .header-search {
+    animation: hb-search-in 160ms var(--ease-out);
   }
+}
+@keyframes hb-search-in {
+  from {
+    opacity: 0;
+    transform: scaleX(0.96);
+    transform-origin: left center;
+  }
+}
+@media (width >= 768px) {
+  html[data-store] .header-search-row {
+    flex: 1;
+  }
+  html[data-store] :is(.header-search-toggle, .header-search-close) {
+    display: none;
+  }
+  html[data-store] .header-icon {
+    background: transparent;
+  }
+}
+html[data-store] .header-icon svg,
+html[data-store] .header-search-toggle svg {
+  width: 24px;
+  height: 24px;
+  flex: none;
 }

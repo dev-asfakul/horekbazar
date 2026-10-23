@@ -18,7 +18,9 @@
       "none": "No suggestions. Press Enter to see all results",
       "from": "from",
       "options": "{count} options",
-      "outOfStock": "Out of stock"
+      "outOfStock": "Out of stock",
+      "open": "Open search",
+      "close": "Close search"
     },
     "categories": "Categories",
     "account": "Account",
@@ -56,7 +58,8 @@
       "dark": "Dark",
       "hint": "Auto changes the colours for morning, day, evening and night."
     },
-    "cartCount": "Cart, {count} items"
+    "cartCount": "Cart, {count} items",
+    "bell": "Notifications"
   },
   "setup": {
     "title": "Setup required",

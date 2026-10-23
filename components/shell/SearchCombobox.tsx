@@ -74,7 +74,7 @@ const digits = (n: number, locale: string) => (locale === "bn" ? String(n).repla
 
 type Option = { id: string; kind: "term" | "category" | "product" | "history"; href: string; text: string };
 
-export function SearchCombobox({ action, locale, labels, initial = "" }: { action: string; locale: string; labels: SearchLabels; initial?: string }) {
+export function SearchCombobox({ action, locale, labels, initial = "", onEscapeEmpty }: { action: string; locale: string; labels: SearchLabels; initial?: string; onEscapeEmpty?: () => void }) {
   const uid = useId();
   const listId = `${uid}-list`;
   const [value, setValue] = useState(initial);
@@ -167,6 +167,9 @@ export function SearchCombobox({ action, locale, labels, initial = "" }: { actio
         e.preventDefault();
         setValue("");
         setData(null);
+      } else if (onEscapeEmpty) {
+        e.preventDefault();
+        onEscapeEmpty();
       }
     } else if (e.key === "Enter" && open && active >= 0 && options[active]) {
       e.preventDefault();
