@@ -2,6 +2,13 @@
 
 Newest first. Each entry: date, phase, done, decided, open, next. Entries are snapshots of their date: "not merged", "open" or "next" describe that day; the current state is in `docs/STATUS.md` (first rows) and `docs/HANDOFF.md`.
 
+## 2026-10-23 — C-02: Server Action redirects on Bangla paths (Next.js workaround)
+
+- **Cause (reproduced):** after `redirect()` in a Server Action, Next 16.4.2 fetches the destination with an empty `_rsc=`. `proxy.ts` rewrites `/x` to `/bn/x`; Next's proxy adapter re-attaches `_rsc` only when truthy, so the empty value is dropped, the destination's cache-busting check answers 307 → `/bn/x?_rsc`, our canonical rule answers 308 → `/x`, and the fetch loops until `redirect count exceeded` (`failed to get redirect response` in the server log). Users still arrived (the browser's fallback), at ~20 wasted requests per action. Upstream: [vercel/next.js#100398](https://github.com/vercel/next.js/issues/100398), open, no fix released.
+- **Changed (owner-approved "guarded Next patch"):** `scripts/patch-next-empty-rsc.mjs`, run as `postinstall` and `prebuild`, applies the upstream-proposed one-line fix (`rscHash` → `rscHash !== null`) to the CJS and ESM adapter of Next **16.4.2 only**; a different version, or the original line not found exactly once, stops the install/build. No dependency added; no other Next behaviour and no logging changed. An absent `_rsc` is still redirected (Next's cache-poisoning check unchanged).
+- **Tests:** `tests/e2e/rsc-rewrite.spec.ts` (8, Chromium: empty `_rsc` served on Bangla and English paths, ordinary HTML navigation, canonical 308s, missing/wrong `_rsc` still 307, client navigation with no 3xx); `tests/e2e-db/action-redirect.spec.ts` (3: Bangla sign-in redirect returns the destination payload in the action response with no follow-up fetch and no 3xx; English control; wrong password stays on the form); `tests/unit/patch-next.test.ts` (3, the guard). With the patch reverted and rebuilt, the 3 Bangla HTTP tests and the Bangla sign-in test fail and the server logs the error again; with it, all pass and the log is clean.
+- **Remove when:** a Next release contains the #100398 fix (STATUS → "Next.js workaround").
+
 ## 2026-10-23 — C-01: outbox drain scheduled by cron-job.org (code; schedule not yet configured)
 
 - **Decided (owner, 2026-10-23):** cron-job.org calls the existing `POST /api/jobs/drain` with `Authorization: Bearer <CRON_SECRET>`; `JOBS_TRIGGER=http`; no Vercel Pro, no Vercel Cron configuration, no QStash.
