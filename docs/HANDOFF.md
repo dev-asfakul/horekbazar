@@ -1,7 +1,7 @@
 # Handoff for the next developer or agent
 
-Last updated 2026-10-23 (Asia/Dhaka), after B9 part 2b (Gemini AI drafts). The "B9 part 2b record" below is
-the newest; older sections describe B4–B5 and are kept for their detail. Read this first, then `AGENTS.md`, `DESIGN.md` (Decision trace), `docs/BUILD-PLAN.md`
+Last updated 2026-10-23 (Asia/Dhaka), after PR #30 and PR #31 merged (B9 part 2). B9 is **not complete** (see "B9 open items" below); the next roadmap phase is **B10 Information, privacy, audit**. The "B9 open items" and "B9 part 2b record" sections below are
+the newest; dated sections further down are snapshots of their day; older sections describe B4–B5 and are kept for their detail. Read this first, then `AGENTS.md`, `DESIGN.md` (Decision trace), `docs/BUILD-PLAN.md`
 §11 (phases), `docs/STATUS.md` and the newest entries of `docs/PROGRESS.md`.
 
 ## Where the project is
@@ -12,18 +12,18 @@ the newest; older sections describe B4–B5 and are kept for their detail. Read 
 | Banglish storefront copy, English-only admin | PR #11 merged into `preview/horekbazar-v1` (merge `cbf8471`), CI green |
 | B4 bulk product status | PR #12 merged into `preview/horekbazar-v1` (`1468fb3`) |
 | B5 storefront catalogue | PR #13 merged into `preview/horekbazar-v1`; on `main` through PR #14 (merge `376decc`, owner-authorised), post-merge CI success, live on horekbazar-preview.vercel.app (shows the setup page until the Owner exists) |
-| Takeover audit docs | PR #10 (into `main`, open); its commits are also merged into `feat/b5-storefront` |
+| Takeover audit docs | PR #10 merged into `main` |
 | B6 cart and pricing, B7 checkout and orders | PR #22 into `preview/horekbazar-v1` (`77eb016`); on `main` through PR #23 (`4480140`) after `check` passed |
 | B8 fulfilment and returns | PR #24 (`feat/b8-fulfilment`) into `preview/horekbazar-v1`; see "B8 record" below |
 | B8 on `main` | yes: PR #25 (`e91afe2`); CI timeout fixed in PR #26 (`f3701cd`, push run success) |
-| B9 engagement (part 1) | branch `feat/b9-engagement`, PR into `main`, **not merged** (owner review); see "B9 record" |
-| B9 part 1 | merged to `main` (PR #27 `d47d451`); showcase population PR #29 (`4a0ef5b`) |
+| B9 part 1 (reviews, rewards ledger, messaging) | merged to `main`: PR #27 (`d47d451`, 2026-10-22), head `5947530`; `main` push run 39816729651 success; see "B9 record" |
+| Showcase population | merged to `main`: PR #29 (`4a0ef5b`, 2026-10-22) |
 | B9 part 2a notifications | merged to `main`: PR #30 (`d3e5a9a`, 2026-10-23), head `f8778f0`; see "B9 part 2a record" |
-| B9 part 2b AI drafts | PR #31 (`feat/b9-ai-drafts`), rebased onto `main` after #30; see "B9 part 2b record" |
-| B10 → B11 hardening | not started |
+| B9 part 2b AI drafts | merged to `main`: PR #31 (`789db3a`, 2026-10-23), head `89f4b34`, rebased onto `main` after #30; see "B9 part 2b record" |
+| B9 overall | **not complete**: five open items, each with a closure criterion, in "B9 open items" |
+| B10 → B11 hardening | not started; **B10 Information, privacy, audit** is next (BUILD-PLAN §11) |
 
-Branch flow: feature branch → PR into `preview/horekbazar-v1` → merge after CI is green → PR into `main`,
-merged by the agent after the required check passes (owner authorisation 2026-10-22, DESIGN.md Decision trace). `main` is protected (required check `check`).
+Branch flow (current, since B9): feature branch from `main` → PR into `main` → merged by the agent after the required check passes (owner authorisation 2026-10-22, DESIGN.md Decision trace). `main` is protected (required check `check`). Up to B8 the flow went through `preview/horekbazar-v1`, which is now fully contained in `main`.
 
 ## Session 2026-10-22: what was done, how, and what is left
 
@@ -107,7 +107,19 @@ Gate: FAIL (zero-variable `/` is the setup page; header search states; B6–B11 
    and `<details>` filters are used instead, no Radix in the project), `/preorder` (no pre-order field in
    the schema), Banglish synonyms in search ("chal" does not find "Rice"). The SEO and 404 e2e tests
    take ~20 s each (request-context connection delay in the sandbox, not investigated).
-6. **B6 cart and pricing → B11 hardening**, per BUILD-PLAN §11, each with its checkpoint.
+6. (Snapshot of 2026-10-22.) B6–B9 have since been merged; **B10 → B11** remain, per BUILD-PLAN §11, each with its checkpoint.
+
+## B9 open items (2026-10-23)
+
+B9 stays open until every row is closed by its criterion. Fake-service tests (loopback Gemini stub, throwaway VAPID keys, stubbed e-mail) do not close any of them.
+
+| Item | State | Who can close it | Closure criterion |
+|---|---|---|---|
+| Real browser push delivery | not verified (only RFC 8291 encryption and VAPID signature unit tests, and journeys without a push service) | an authorised live test: owner, or the agent with an owner-approved test account and browser | one order-update push from a deployed or local build reaches a real browser through its push service (FCM or Mozilla), shown by the service worker; no customer and no marketing message involved |
+| Real e-mail delivery | not verified; `emailLog` on `horekbazar_dev` is empty | owner (verify a Resend domain), then an authorised test | Resend domain verified, `EMAIL_FROM` on it; one verification or order e-mail to an owner-controlled inbox, with its `emailLog` row `sent` |
+| Live configuration (Gemini, VAPID, Resend in Vercel) | not checked (the agent has no Vercel access) | owner or an authorised dashboard operator | the variable **names** confirmed present per environment (values never shared), after rotation of the exposed development values |
+| Push prompt after a meaningful action | **not built**; opt-in only on `/account/notifications` | code, after an owner answer | DESIGN.md Scope ("push opt-in prompt after a meaningful action", requested) and BUILD-PLAN acceptance row 197 do not say which action. Proposed default for the owner to confirm: an in-page card on the order confirmation page offering order updates only (marketing stays unticked), browser permission only after the button is pressed, never on first load |
+| Scheduled campaigns | **not built**; `scheduled` status reserved (SCHEMA.md `campaigns`) | owner scope decision | no BUILD-PLAN B9 acceptance row requires scheduling; the owner decides whether it belongs to B9 (then: schedule, cancel and a scheduler-driven send with tests) or is dropped from B9 |
 
 ## B9 part 2b record (2026-10-23)
 
@@ -181,8 +193,8 @@ Gate: FAIL (zero-variable `/` is the setup page; header search states; B6–B11 
 
 - Rewards **redemption at checkout** and the **expiry job** (needs checkout pricing changes and a
   scheduled job; rewards stay off for a BD production store until legal review **[L]**).
-- **Push notifications** (D3 library fit check not done), **campaigns**, **order e-mails** (Resend
-  domain not verified), **AI drafts** (SCHEMA: B10), **review photos**, **AggregateRating JSON-LD**.
+- (Snapshot of 2026-10-22; push, campaigns, the order e-mail log and AI drafts were built later in B9 part 2a/2b, see their records.) **Push notifications**, **campaigns**, **order e-mails** (Resend
+  domain not verified), **AI drafts**, **review photos**, **AggregateRating JSON-LD**.
 - `store_reward` refunds remain refused: domain-rules §5.7 "never paid out as a refund".
 - No B9 seed data on `horekbazar_dev` (would be fabricated customer activity).
 
