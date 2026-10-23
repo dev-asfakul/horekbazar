@@ -69,3 +69,12 @@ test("a client-sent internal-rewrite header cannot bypass the /bn redirect", asy
   const r = await request.get("/bn", { maxRedirects: 0, headers: { "x-hb-internal-rewrite": "guess" } });
   expect(r.status()).toBe(308);
 });
+
+test("B10 information and legal pages show setup-required, not invented text, before setup", async ({ page }) => {
+  for (const path of ["/about", "/en/contact", "/faq", "/terms", "/en/privacy-policy", "/delivery-policy", "/return-policy"]) {
+    const response = await page.goto(path);
+    expect(response?.status(), path).toBe(200);
+    await expect(page.locator("main#main [data-state='setup-required']"), path).toHaveCount(1);
+    await expect(page.locator('meta[name="robots"]'), path).toHaveAttribute("content", /noindex/);
+  }
+});

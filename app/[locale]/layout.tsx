@@ -9,6 +9,7 @@ import { NextIntlClientProvider } from "next-intl";
 import { getMessages, getTranslations, setRequestLocale } from "next-intl/server";
 import { BottomDock } from "@/components/shell/BottomDock";
 import { BottomNav } from "@/components/shell/BottomNav";
+import { OfflineSupport } from "@/components/shell/OfflineSupport";
 import { SiteFooter } from "@/components/shell/SiteFooter";
 import { SiteHeader } from "@/components/shell/SiteHeader";
 import { freshInstallDefaults } from "@/config/defaults";
@@ -75,6 +76,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps<"/[
           />
         </BottomDock>
         <div id="live-region" className="sr-only" aria-live="polite" aria-atomic="true" />
+        <OfflineSupport />
       </body>
     </html>
   );

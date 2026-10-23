@@ -17,11 +17,27 @@ export async function SiteFooter({ locale }: { locale: Locale }) {
     ["delivery", shellPaths.delivery],
     ["returns", shellPaths.returns],
   ] as const;
+  const info = [
+    ["about", shellPaths.about],
+    ["contact", shellPaths.contact],
+    ["faq", shellPaths.faq],
+  ] as const;
   return (
     <footer id="site-footer" className="site-footer">
       <div className="site-footer-inner">
         <p className="footer-payment">{t("payment")}</p>
         <p className="footer-contact">{t("contactPending")}</p>
+        <nav aria-label={t("infoLabel")}>
+          <ul className="footer-links">
+            {info.map(([key, path]) => (
+              <li key={key}>
+                <Link href={localeHref(locale, path)} className="nav-link" prefetch={false}>
+                  {t(key)}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
         <nav aria-label={t("policiesLabel")}>
           <ul className="footer-links">
             {policies.map(([key, path]) => (

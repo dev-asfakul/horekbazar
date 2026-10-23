@@ -2,6 +2,14 @@
 
 Newest first. Each entry: date, phase, done, decided, open, next. Entries are snapshots of their date: "not merged", "open" or "next" describe that day; the current state is in `docs/STATUS.md` (first rows) and `docs/HANDOFF.md`.
 
+## 2026-10-23 — B10 part a: information and legal pages, offline fallback
+
+- **Done:** `/about`, `/contact`, `/faq`, `/terms`, `/privacy-policy`, `/delivery-policy`, `/return-policy` (Bengali default, English under `/en`), all owner text `[NEEDS COPY]` and `noindex`; `/contact` from `store.contact`; footer links; offline fallback in `public/sw.js`, registered on storefront pages.
+- **Decided:** placeholder pages are never indexed; the worker caches only the offline pages and their static files, never prices, carts, the API or the admin; the offline pages are fetched without cookies.
+- **Tests:** tests/unit/service-worker.test.ts (4); tests/e2e-db/info-pages.spec.ts (3: both locales of all seven pages, contact empty and filled, offline in both languages and not for the admin); tests/e2e/setup-required.spec.ts (pages before setup).
+- **Open:** owner copy (Bangla and English) for all seven pages and the complaint procedure **[L]**; a settings field for that text (SCHEMA route table); B10 parts b and c (HANDOFF "B10 record").
+- **Next:** B10 part b (`/account/privacy`), after a `privacyRequests` schema proposal.
+
 ## 2026-10-23 — B9 part 2 merged (PR #30, PR #31)
 
 - **Done:** PR #30 (notifications and campaigns) merged as `d3e5a9a` (head `f8778f0`); PR #31 (Gemini AI drafts) rebased onto `main` and merged as `789db3a` (head `89f4b34`). Both after `check` passed; no protections bypassed.
