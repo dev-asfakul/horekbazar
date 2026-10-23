@@ -20,7 +20,7 @@ function fakeNext(version: string, body: string) {
 
 function run(root: string) {
   try {
-    const out = execFileSync(process.execPath, ["scripts/patch-next-empty-rsc.mjs"], { env: { PATH: process.env.PATH, PATCH_NEXT_ROOT: root }, encoding: "utf8", stdio: "pipe" });
+    const out = execFileSync(process.execPath, ["scripts/patch-next-empty-rsc.mjs"], { env: { PATH: process.env.PATH ?? "", PATCH_NEXT_ROOT: root }, encoding: "utf8", stdio: "pipe" });
     return { code: 0, out };
   } catch (e) {
     const err = e as { status: number; stderr: string };
