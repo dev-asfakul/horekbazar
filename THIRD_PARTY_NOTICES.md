@@ -144,6 +144,15 @@ docs/LICENSING.md asks for permissive licences only and no bundled copyleft. The
 | `why-is-node-running` | 3.2.1 | MIT | https://github.com/mafintosh/why-is-node-running |
 | `zod` | 4.6.7 | MIT | https://github.com/colinhacks/zod |
 
+## Fonts added by the storefront redesign (2026-10, branch `feat/redesign-night-bazaar`)
+
+| Font | Files | Licence | Source |
+|---|---|---|---|
+| Google Sans (text face) | `public/fonts/v1/google-sans-{bengali,latin,latin-ext}.woff2` | SIL Open Font License 1.1, `public/fonts/OFL-GoogleSans.txt` | https://github.com/googlefonts/googlesans |
+| Alkatra (display face) | `public/fonts/v1/alkatra-{bengali,latin,latin-ext}.woff2` | SIL Open Font License 1.1, `public/fonts/OFL-Alkatra.txt` | https://github.com/suman51284/Alkatra |
+
+"Google Sans" is the font's name only; HorekBazar is not affiliated with or endorsed by Google, and the store must not suggest it is. The faces are served under the local family names "HB Google Sans" and "HB Alkatra". **(review)**
+
 ## Other material
 
 - Fonts: SIL OFL 1.1, see `MEDIA.md` and `public/fonts/OFL-*.txt`.

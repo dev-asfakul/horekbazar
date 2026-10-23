@@ -700,3 +700,30 @@ Checkpoint 4 of 6. Status: **approved by the owner 2026-10-21 with conditions** 
 | Listing columns (2 / 3 / 4–5) | Approved product contract, content density row |
 | Heuristics ignored or adapted | Heading line-height above the 1.05–1.2 range for Bengali (script requirement, r12a); no other heuristic overridden |
 
+
+## Storefront redesign: Night Bazaar Light (Checkpoints 3–4, 2026-10)
+
+Approved by the owner: Proposal 03 (layout), Proposal 04 (time-of-day themes), Proposal 04b (banner placements), build plan `docs/REDESIGN-BUILD-PLAN.md`. Admin is out of scope and unchanged: every new rule lives in `app/store.css`, scoped to `html[data-store]`, which only the storefront layout sets.
+
+- **Header:** search pill first (left), store name in Alkatra (right). From 768 px: categories, account, cart with count. Language switch moved to the footer.
+- **Home order:** carousel → ক্যাটাগরি tiles → the admin's sections in order (rails) → one home_mid banner after the second rail.
+- **Carousel slides (all from real data, any may be absent):** published home_top banners; the hero section's text; deals (only if a product has a compare-at price above its price); new arrivals (last 30 days); enabled delivery zones and cash on delivery. No autoplay, scroll-snap, buttons and a "১/৪" counter.
+- **Banner links:** shown only when they lead to a published category, collection, product or a storefront page (`lib/storefront/links.ts`); otherwise the banner shows without a link.
+- **Product card:** the existing KhataGrid markup and class names; photo on a white plate; a single-option, in-stock product gets "+" (existing `addToCartAction`), then − n + (`setCartQuantityAction`; 0 removes). Quantities come from the server cart; prices and stock are never taken from the browser. Products with options link to their page ("n অপশন").
+- **Themes:** morning 05–11, day 11–17, evening 17–20, night 20–24, midnight 00–05, by the phone's clock. The server renders "day"; an inline script with the CSP nonce sets the real theme before paint. অটো/লাইট/ডার্ক is saved in the browser only (`hb-theme`). Contrast: 90 token pairs checked with `contrast.mjs` (text 4.5:1, borders and focus 3:1), all pass.
+- **Type:** Google Sans (text, 400–700 variable) and Alkatra (display), self-hosted, Noto Sans Bengali kept as fallback. One preload per locale (Google Sans subset).
+- **Search:** unchanged text index and word-prefix stages run first; when both find nothing, a Banglish/typo stage (`lib/modules/storefront/search-index.ts`) matches against an in-memory index of published names, slugs, category names and short descriptions (rebuilt at most once a minute). On our 60 self-written test queries: 58/60 with the right product in the top three (misses: গুড়, ghori). These are our queries, not real shopper searches.
+- **Suggestions:** `GET /api/search/suggest?q=&l=`: public catalogue data only, `s-maxage=60`, 30 requests per 10 s per address. A suggestion list, not a recommendation system. History: browser only, max 8, deduplicated, clearable.
+
+**Measured (local production build, 375 px, unthrottled, median of 3; same method as `/tmp/perf-baseline.json` on `main`):**
+
+| Route | LCP before → after | CLS before → after | Notes |
+|---|---|---|---|
+| / | 1072 → 1564 ms | 0 → 0 | LCP is now the owner's home_top banner photo (before: a text line) |
+| /categories | 524 → 536 ms | 0 → 0 | |
+| /c/grocery | 936 → 1008 ms | 0 → 0 | |
+| /p/miniket-rice | 1376 → 1464 ms | 0 → 0 | |
+| /search?q=chal | 844 → 1996 ms | 0 → 0 | before: 0 results; after: 19 results with photos, so not like for like |
+| /cart | 500 → 540 ms | 0 → 0 | |
+
+Fonts went from 89 KB to 225 KB (Alkatra Bengali alone is 90 KB); JS from about 499 KB to 513 KB. These are sandbox numbers against a remote database; they are not field data and not a Vercel measurement.

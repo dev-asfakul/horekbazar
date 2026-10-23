@@ -4,6 +4,8 @@ HorekBazar has not had a release yet; there is no version number. This file list
 
 ## Unreleased (open pull requests)
 
+- Storefront redesign "Night Bazaar Light" (branch `feat/redesign-night-bazaar`, local, not pushed): header with the search first and the store name on the right; a home carousel (home_top banners, the hero text, real deals and new arrivals, real delivery zones; no autoplay); category tiles with a real product photo and count; product rails; quick add (+ / − n +) on single-option products; banner slots home_mid and category_top; five time-of-day themes with an অটো/লাইট/ডার্ক choice; Google Sans and Alkatra; a four-tab bottom bar with the cart count; Banglish and typo tolerant search with header suggestions (`/api/search/suggest`). Storefront copy: ক্যাটাগরি, সাবটোটাল, টোটাল, এরিয়া, স্টক আউট, অর্ডার কনফার্ম করুন. Admin unchanged.
+
 - #34 B10 part c: `/admin/audit` (read-only audit log, `platform.read`) and `/admin/customers` (customer list and detail, `customers.read`, staff excluded, redacted).
 - #35 B10 part b: `/account/privacy`, data export and deletion request. Adds the `privacyRequests` collection, a schema change that needs owner review. Nothing is erased.
 - B11 hardening and documentation (this branch): `MEDIA.md`, `THIRD_PARTY_NOTICES.md` draft, this changelog, `GATE.md` and `CRITIQUE.md` drafts, the k6 script, README update.

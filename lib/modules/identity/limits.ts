@@ -30,6 +30,8 @@ export const LIMITS = {
   aiDraft: { name: "ai-draft", limit: 20, windowSeconds: 3600 },
   /** B10: privacy export/deletion requests per customer, wrong passwords included (password guessing). */
   privacyRequest: { name: "privacy-request", limit: 5, windowSeconds: 3600 },
+  /** Redesign: header search suggestions, per address (docs/REDESIGN-BUILD-PLAN.md §6). */
+  searchSuggestIp: { name: "search-suggest-ip", limit: 30, windowSeconds: 10 },
 } satisfies Record<string, LimitRule>;
 
 export type LimitOutcome = "ok" | "limited" | "unavailable";

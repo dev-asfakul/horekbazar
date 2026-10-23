@@ -96,7 +96,7 @@ test("customer: closed checkout, address, place a COD order, see it, cancel it; 
   const form = page.getByTestId("checkout-address-form");
   await form.getByLabel("যিনি নেবেন তাঁর নাম").fill("রহিম উদ্দিন");
   await form.getByLabel("মোবাইল নম্বর").fill("0171234567"); // one digit short
-  await form.getByLabel("ডেলিভারি এলাকা").selectOption("checkout-zone");
+  await form.getByLabel("ডেলিভারি এরিয়া").selectOption("checkout-zone");
   await form.getByLabel("জেলা").fill("ঢাকা");
   await form.getByLabel("থানা / এলাকা").fill("মিরপুর");
   await form.getByLabel("বাসা, রোড, ব্লক").fill("বাসা ১২, রোড ৩");
@@ -118,7 +118,7 @@ test("customer: closed checkout, address, place a COD order, see it, cancel it; 
   await page.reload();
 
   const before = await stock();
-  await page.getByTestId("place-order-form").getByRole("button", { name: "অর্ডার দিন" }).click();
+  await page.getByTestId("place-order-form").getByRole("button", { name: "অর্ডার কনফার্ম করুন" }).click();
   await expect(page.getByTestId("checkout-success")).toBeVisible();
   const order = (await db.collection("orders").find({ "customer.email": CUSTOMER.email }).sort({ placedAt: -1 }).limit(1).next())!;
   expect(order).toMatchObject({ status: "pending_confirmation", paymentMethod: "cod", totals: { grandTotal: 92000 } });
@@ -142,7 +142,7 @@ test("operator confirms an order from the admin, with the customer's number to c
   await signIn(customer, CUSTOMER);
   await addToCart(cp, "1");
   await cp.goto("/checkout");
-  await cp.getByTestId("place-order-form").getByRole("button", { name: "অর্ডার দিন" }).click();
+  await cp.getByTestId("place-order-form").getByRole("button", { name: "অর্ডার কনফার্ম করুন" }).click();
   await expect(cp.getByTestId("checkout-success")).toBeVisible();
   const order = (await db.collection("orders").find({ "customer.email": CUSTOMER.email, status: "pending_confirmation" }).sort({ placedAt: -1 }).limit(1).next())!;
   await customer.close();
