@@ -31,7 +31,11 @@
       "terms": "Terms",
       "privacy": "Privacy",
       "delivery": "Delivery",
-      "returns": "Returns"
+      "returns": "Returns",
+      "infoLabel": "Information",
+      "about": "About",
+      "contact": "Contact",
+      "faq": "FAQ"
     }
   },
   "setup": {
@@ -1895,6 +1899,38 @@
       "stars": "{count, plural, one {# star} other {# stars}}",
       "verified": "Bought here",
       "storeReply": "Store reply"
+    },
+    "info": {
+      "needsCopy": "[NEEDS COPY] The store has not supplied this text yet.",
+      "about": {
+        "title": "About us"
+      },
+      "faq": {
+        "title": "Frequently asked questions"
+      },
+      "terms": {
+        "title": "Terms and conditions"
+      },
+      "privacy": {
+        "title": "Privacy policy"
+      },
+      "delivery": {
+        "title": "Delivery policy"
+      },
+      "returns": {
+        "title": "Return policy"
+      },
+      "contact": {
+        "title": "Contact",
+        "phone": "Phone",
+        "email": "E-mail",
+        "address": "Address",
+        "hours": "Opening hours",
+        "complaintsTitle": "Complaints",
+        "messagesTitle": "Message the store",
+        "messagesBody": "Signed-in customers can write to the store from their account, also about a specific order.",
+        "messagesLink": "Open messages"
+      }
     }
   }
 }

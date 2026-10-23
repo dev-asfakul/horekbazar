@@ -1791,6 +1791,42 @@ select[multiple].field-input {
   margin: 0;
 }
 
+/* B10 information and legal pages (components/store/InfoPage.tsx): reading width, the existing type scale. */
+.info-body {
+  display: grid;
+  gap: 24px;
+  max-width: 68ch;
+  padding-bottom: 32px;
+}
+.info-body p {
+  margin: 0;
+}
+.needs-copy {
+  color: var(--muted);
+  border-left: 3px solid var(--line);
+  padding-left: 12px;
+}
+.info-contact {
+  display: grid;
+  gap: 16px;
+  margin: 0;
+}
+.info-contact dt {
+  font-weight: 600;
+}
+.info-contact dd {
+  margin: 4px 0 0;
+}
+.info-section {
+  display: grid;
+  gap: 8px;
+}
+.info-section-title {
+  font-size: var(--text-step-1);
+  font-weight: 600;
+  margin: 0;
+}
+
 /* KhataGrid: ruled lines between entries, no card boxes (DESIGN.md → Checkpoint 3 item 3). */
 .khata-grid {
   list-style: none;
