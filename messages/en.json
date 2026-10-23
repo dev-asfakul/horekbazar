@@ -1067,7 +1067,7 @@
       "sent": "Sent",
       "noSent": "Nothing sent yet.",
       "recipients": "Queued for {n}",
-      "delivery": "Accepted {accepted} · removed {removed} · waiting {waiting} · failed {failed}",
+      "delivery": "Accepted {accepted} · not sent (browser gone or offers turned off) {removed} · waiting {waiting} · failed {failed}",
       "emails": "Order e-mail log",
       "emailsIntro": "The latest 50 order e-mails. Addresses are masked; search by full address.",
       "customerEmail": "Customer e-mail",

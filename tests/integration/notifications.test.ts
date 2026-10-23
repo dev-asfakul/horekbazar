@@ -62,7 +62,7 @@ function browser(locale: "bn" | "en" = "bn", topics = { orders: true, marketing:
   const { publicKey } = generateKeyPairSync("ec", { namedCurve: "P-256" });
   const jwk = publicKey.export({ format: "jwk" });
   const p256dh = Buffer.concat([Buffer.from([4]), Buffer.from(jwk.x!, "base64url"), Buffer.from(jwk.y!, "base64url")]).toString("base64url");
-  return { endpoint: `https://push.example.test/${randomUUID()}`, keys: { p256dh, auth: Buffer.from(randomUUID().slice(0, 16)).toString("base64url") }, topics, locale };
+  return { endpoint: `https://fcm.googleapis.com/fcm/send/${randomUUID()}`, keys: { p256dh, auth: Buffer.from(randomUUID().slice(0, 16)).toString("base64url") }, topics, locale };
 }
 
 const code = async (p: Promise<unknown>) => {
@@ -183,6 +183,7 @@ describe("order-update pushes", () => {
     for (const r of rows) {
       expect(String(r.payload.url)).toMatch(/^(\/en)?\/account\/orders\//);
       expect(r.payload).not.toHaveProperty("endpoint");
+      expect(r.payload.userId).toBe(user); // checked again at send time
     }
   });
 });
@@ -227,13 +228,70 @@ describe("push job", () => {
   it("sends, prunes a gone subscription, and finishes rows whose subscription was removed", async () => {
     const user = `u-${randomUUID()}`;
     const saved1 = await savePushSubscription(db, user, browser());
-    const payload = { subscriptionId: String(saved1._id), title: "t", body: "b", url: "/account" };
+    const payload = { subscriptionId: String(saved1._id), userId: user, title: "t", body: "b", url: "/account" };
     await expect(runPushJob(db, { payload }, { config, fetchImpl: fetchWith(201) })).resolves.toEqual({ providerRef: "accepted-201" });
     await expect(runPushJob(db, { payload }, { config, fetchImpl: fetchWith(500) })).rejects.toThrow("push rejected with 500");
     await expect(runPushJob(db, { payload }, { config: null })).rejects.toThrow(/not configured/);
     await expect(runPushJob(db, { payload }, { config, fetchImpl: fetchWith(410) })).resolves.toEqual({ providerRef: "gone" });
     expect(await db.collection(PUSH_SUBSCRIPTIONS).countDocuments({ _id: saved1._id })).toBe(0);
     await expect(runPushJob(db, { payload }, { config, fetchImpl: fetchWith(201) })).resolves.toEqual({ providerRef: "subscription_removed" });
+  });
+
+  // A fetch that records whether it was called; nothing may reach the push service in these cases.
+  const spy = () => {
+    const calls: string[] = [];
+    const impl = (async (url: string | URL) => {
+      calls.push(String(url));
+      return new Response(null, { status: 201 });
+    }) as unknown as typeof fetch;
+    return { calls, impl };
+  };
+
+  it("a queued campaign message is not sent once the customer turned offers off", async () => {
+    const user = `u-${randomUUID()}`;
+    const b = browser("en", { orders: true, marketing: true });
+    const sub = await savePushSubscription(db, user, b);
+    const id = String(await createCampaign(db, actor, { title: { bn: "অফার" }, body: { bn: "বার্তা" }, url: "/" }));
+    await sendCampaign(db, client, actor, id, 1, VAPID);
+    const row = (await pushRows(`campaign-${id}:`)).find((r) => r.payload.subscriptionId === String(sub._id))!;
+    expect(row).toBeDefined();
+    // Withdrawn after queueing, before the worker reached the row.
+    await savePushSubscription(db, user, { ...b, topics: { orders: true, marketing: false } });
+    const s = spy();
+    await expect(runPushJob(db, row, { config, fetchImpl: s.impl })).resolves.toEqual({ providerRef: "topic_off" });
+    expect(s.calls).toHaveLength(0);
+    // Ticked again before the row was retried: the message may go out, to this browser only.
+    await savePushSubscription(db, user, b);
+    await expect(runPushJob(db, row, { config, fetchImpl: s.impl })).resolves.toEqual({ providerRef: "accepted-201" });
+    expect(s.calls).toEqual([b.endpoint]);
+  });
+
+  it("an order update is not sent after order updates were turned off or the browser moved to another account", async () => {
+    const user = `u-${randomUUID()}`;
+    const b = browser("bn", { orders: true, marketing: false });
+    const sub = await savePushSubscription(db, user, b);
+    const payload = { subscriptionId: String(sub._id), userId: user, title: "অর্ডার", body: "পাঠানো হয়েছে", url: "/account/orders/HB-1" };
+    const s = spy();
+    await savePushSubscription(db, user, { ...b, topics: { orders: false, marketing: false } });
+    await expect(runPushJob(db, { payload }, { config, fetchImpl: s.impl })).resolves.toEqual({ providerRef: "topic_off" });
+    await savePushSubscription(db, `u-${randomUUID()}`, { ...b, topics: { orders: true, marketing: false } });
+    await expect(runPushJob(db, { payload }, { config, fetchImpl: s.impl })).resolves.toEqual({ providerRef: "subscription_moved" });
+    // A row without the owner (never written by the service) is not sent either.
+    await expect(runPushJob(db, { payload: { ...payload, userId: undefined } }, { config, fetchImpl: s.impl })).resolves.toEqual({ providerRef: "subscription_moved" });
+    expect(s.calls).toHaveLength(0);
+  });
+
+  it("only known push services are accepted, and a stored row on another host is never contacted", async () => {
+    const user = `u-${randomUUID()}`;
+    for (const endpoint of ["https://169.254.169.254/latest", "https://push.example.test/x", "https://fcm.googleapis.com:8443/x", "https://user:pw@fcm.googleapis.com/x", "https://fcm.googleapis.com.evil.test/x"]) {
+      expect(await code(savePushSubscription(db, user, { ...browser(), endpoint }))).toBe("invalid_subscription");
+    }
+    expect(await customerSubscriptions(db, user)).toHaveLength(0);
+    const sub = await savePushSubscription(db, user, browser());
+    await db.collection(PUSH_SUBSCRIPTIONS).updateOne({ _id: sub._id }, { $set: { endpoint: "https://internal.example.test/hook" } });
+    const s = spy();
+    await expect(runPushJob(db, { payload: { subscriptionId: String(sub._id), userId: user, title: "t", body: "b", url: "/" } }, { config, fetchImpl: s.impl })).resolves.toEqual({ providerRef: "endpoint_refused" });
+    expect(s.calls).toHaveLength(0);
   });
 
   it("delivery counts read the campaign's finished rows", async () => {

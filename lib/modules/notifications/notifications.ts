@@ -24,6 +24,7 @@ import {
   MAX_SUBSCRIPTIONS_PER_USER,
   PUSH_JOB,
   PUSH_SUBSCRIPTIONS,
+  isPushServiceEndpoint,
   pushSubscriptionSchema,
   type CampaignDoc,
   type EmailLogDoc,
@@ -65,7 +66,7 @@ export async function savePushSubscription(db: Db, userId: string, input: Subscr
     updatedAt: now,
   };
   const parsed = pushSubscriptionSchema.safeParse(doc);
-  if (!parsed.success) throw new CommerceError("invalid_subscription");
+  if (!parsed.success || !isPushServiceEndpoint(input.endpoint)) throw new CommerceError("invalid_subscription");
   await subs.replaceOne({ endpoint: input.endpoint }, parsed.data, { upsert: true });
   // Keep the newest few browsers per account.
   const extra = await subs.find({ userId }, { projection: { _id: 1 } }).sort({ updatedAt: -1 }).skip(MAX_SUBSCRIPTIONS_PER_USER).toArray();
@@ -105,13 +106,13 @@ export const marketingAudience = (db: Db) => db.collection<PushSubscriptionDoc>(
 export async function enqueueOrderPush(
   db: Db,
   session: ClientSession,
-  order: { _id: ObjectId; userId: string; orderNumber: string },
+  order: { _id: ObjectId; userId?: string | null; orderNumber: string },
   status: string,
   version: number,
   now: Date,
   env: Record<string, string | undefined> = process.env,
 ) {
-  if (!pushConfig(env)) return 0;
+  if (!pushConfig(env) || !order.userId) return 0;
   const subs = await db
     .collection<PushSubscriptionDoc>(PUSH_SUBSCRIPTIONS)
     .find({ userId: order.userId, "topics.orders": true }, { session, projection: { _id: 1, locale: 1 } })
@@ -125,7 +126,7 @@ export async function enqueueOrderPush(
       url: localePath(locale, `/account/orders/${encodeURIComponent(order.orderNumber)}`),
       tag: `order-${order.orderNumber}`,
     };
-    await enqueueOutbox(db, { type: PUSH_JOB, aggregateId: `order-${String(order._id)}-${String(sub._id)}`, seq: version, payload: { subscriptionId: String(sub._id), ...message } }, { session, now });
+    await enqueueOutbox(db, { type: PUSH_JOB, aggregateId: `order-${String(order._id)}-${String(sub._id)}`, seq: version, payload: { subscriptionId: String(sub._id), userId: order.userId, ...message } }, { session, now });
   }
   return subs.length;
 }
@@ -191,6 +192,9 @@ export async function sendCampaign(db: Db, client: MongoClient, actor: Actor, id
   });
 }
 
+/** Outbox outcomes where nothing was sent: browser gone or removed, offers turned off, host refused. */
+const NOT_SENT_REFS = ["gone", "subscription_removed", "topic_off", "subscription_moved", "endpoint_refused"];
+
 /** Delivery so far, read from the campaign's outbox rows (prefix match on the unique key index). */
 export async function campaignDelivery(db: Db, id: string) {
   const prefix = `${PUSH_JOB}:campaign-${id}:`;
@@ -198,7 +202,7 @@ export async function campaignDelivery(db: Db, id: string) {
     .collection<OutboxDoc>(OUTBOX)
     .aggregate<{ _id: { status: string; gone: boolean }; n: number }>([
       { $match: { idempotencyKey: { $regex: `^${prefix.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}` } } },
-      { $group: { _id: { status: "$status", gone: { $in: ["$providerRef", ["gone", "subscription_removed"]] } }, n: { $sum: 1 } } },
+      { $group: { _id: { status: "$status", gone: { $in: ["$providerRef", NOT_SENT_REFS] } }, n: { $sum: 1 } } },
     ])
     .toArray();
   const out = { accepted: 0, removed: 0, waiting: 0, failed: 0 };
@@ -218,6 +222,9 @@ const text = (v: unknown, max: number) => (typeof v === "string" ? v.slice(0, ma
  * Sends one queued push message. Done only when the push service accepted it; a subscription that
  * is gone is deleted and the row finishes with providerRef "gone"; a removed subscription finishes
  * with "subscription_removed"; anything else is thrown so the outbox retries, then dead-letters.
+ * The customer's choices are checked again at send time, so a message queued earlier is not sent
+ * ("topic_off") once they turned that topic off, and an order update is not sent ("subscription_moved")
+ * to a browser that now belongs to another account.
  */
 export async function runPushJob(db: Db, job: Pick<OutboxDoc, "payload">, options: { config?: PushConfig | null; fetchImpl?: typeof fetch } = {}): Promise<{ providerRef: string }> {
   const config = options.config === undefined ? pushConfig() : options.config;
@@ -227,6 +234,11 @@ export async function runPushJob(db: Db, job: Pick<OutboxDoc, "payload">, option
   const subs = db.collection<PushSubscriptionDoc>(PUSH_SUBSCRIPTIONS);
   const sub = await subs.findOne({ _id: new ObjectId(id) });
   if (!sub) return { providerRef: "subscription_removed" };
+  const isCampaign = typeof job.payload.campaignId === "string";
+  if (isCampaign ? !sub.topics.marketing : !sub.topics.orders) return { providerRef: "topic_off" };
+  if (!isCampaign && (typeof job.payload.userId !== "string" || sub.userId !== job.payload.userId)) return { providerRef: "subscription_moved" };
+  // Rows saved before the host check existed, or edited in the database, are never sent anywhere else.
+  if (!isPushServiceEndpoint(sub.endpoint)) return { providerRef: "endpoint_refused" };
   const url = text(job.payload.url, 300);
   const message: PushMessageData = { title: text(job.payload.title, 80), body: text(job.payload.body, 200), url: /^\/(?!\/)/.test(url) ? url : "/", ...(typeof job.payload.tag === "string" ? { tag: text(job.payload.tag, 64) } : {}) };
   try {

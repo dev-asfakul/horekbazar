@@ -12,6 +12,7 @@ import { getDatabase } from "@/lib/adapters/db/client";
 import { getPrincipal } from "@/lib/auth/server";
 import { checkLimits, LIMITS } from "@/lib/modules/identity/limits";
 import { removeAllPushSubscriptions, removePushSubscription, savePushSubscription } from "@/lib/modules/notifications/notifications";
+import { isPushServiceEndpoint } from "@/lib/modules/notifications/schema";
 import { getSetupStatus } from "@/lib/setup/status";
 
 export type PushActionResult = { ok: true } | { ok: false; error: "signed_out" | "rate_limited" | "limits_unavailable" | "not_available" | "invalid" | "try_again" };
@@ -19,7 +20,7 @@ export type PushActionResult = { ok: true } | { ok: false; error: "signed_out" |
 const b64 = (max: number) => z.string().regex(/^[A-Za-z0-9_-]+={0,2}$/).max(max);
 const subscriptionInput = z
   .object({
-    endpoint: z.string().url().max(1000).regex(/^https:\/\//),
+    endpoint: z.string().url().max(1000).refine(isPushServiceEndpoint),
     keys: z.object({ p256dh: b64(200), auth: b64(50) }),
     topics: z.object({ orders: z.boolean(), marketing: z.boolean() }).strict(),
     locale: z.enum(["bn", "en"]),

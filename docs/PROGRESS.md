@@ -2,6 +2,16 @@
 
 Newest first. Each entry: date, phase, done, decided, open, next.
 
+## 2026-10-23 — B9 part 2a review fixes (PR #30)
+
+- **Consent at send time:** the push job now re-reads the subscription's topics. A campaign message queued before the customer unticked "Offers and news" finishes as `topic_off` without contacting the push service; order updates likewise once "Order updates" is off.
+- **Browser changed hands:** order-update rows carry the customer's `userId`; a browser that now belongs to another account gets `subscription_moved` and nothing is sent.
+- **SSRF:** a subscription endpoint is accepted only on known push services (FCM, Mozilla, Apple, WNS; https, default port, no credentials), checked on save and again before sending; `fetch` uses `redirect: "error"`.
+- **Worker start:** `PushRejectedError` without a parameter property (commit `3857e35`), with a test that loads the outbox handlers in a plain Node process. That commit had also reformatted two files; the formatting is restored to the repository style.
+- **Browser journeys:** `tests/e2e-db/commerce/notifications.spec.ts` (the e2e server now makes throwaway VAPID keys): no permission prompt on load, offers unticked by default, a refused permission shows the blocked state, a campaign is queued only for the opted-in browser (with its audit row), support gets 403, signed out redirects to sign-in.
+- **Local results:** lint, typecheck OK; unit 171/171; integration 168/168; validators 37 OK; catalogue checks OK; zero-variable build OK; signed-in journeys (`test:e2e:db`, Chromium) 20 passed, 1 skipped (as on `main`).
+- **Not built (documented):** campaign editing, scheduling and cancelling. `scheduled` stays reserved; a draft can be deleted and a sent campaign cannot be recalled.
+
 ## 2026-10-23 — B9 part 2a: notifications (push, campaigns, e-mail log, account page)
 
 - **Owner:** "let finish the backend and development first, then the entire website will be redesignd again"; chose "B9 part 2" in a reviewable PR, not merged automatically. No visual redesign: new screens reuse existing classes.

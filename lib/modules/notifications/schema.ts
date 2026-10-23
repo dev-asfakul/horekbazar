@@ -25,6 +25,28 @@ export const zInternalPath = () =>
     .max(300)
     .regex(/^\/(?!\/)[A-Za-z0-9\-._~/?=&%]*$/, "a path on this site, starting with /");
 
+/**
+ * Push services the worker will POST to. A subscription endpoint is a URL the browser hands over, so
+ * without this list a customer could make the server send requests to any host (SSRF). These are the
+ * services of Chrome/Edge/Opera/Samsung (FCM), Firefox (Mozilla autopush), Safari (Apple) and
+ * Windows (WNS). A store that needs another service adds its host here.
+ */
+export const PUSH_SERVICE_HOSTS = ["fcm.googleapis.com", "updates.push.services.mozilla.com", "web.push.apple.com"] as const;
+export const PUSH_SERVICE_HOST_SUFFIXES = [".push.apple.com", ".notify.windows.com"] as const;
+
+/** True for an https URL on a known push service, on the default port, without credentials. */
+export function isPushServiceEndpoint(endpoint: string): boolean {
+  let url: URL;
+  try {
+    url = new URL(endpoint);
+  } catch {
+    return false;
+  }
+  if (url.protocol !== "https:" || url.port !== "" || url.username || url.password) return false;
+  const host = url.hostname.toLowerCase();
+  return (PUSH_SERVICE_HOSTS as readonly string[]).includes(host) || PUSH_SERVICE_HOST_SUFFIXES.some((s) => host.endsWith(s) && host.length > s.length);
+}
+
 const base64url = (max: number) => z.string().regex(/^[A-Za-z0-9_-]+={0,2}$/).max(max);
 
 export const pushTopicsSchema = z.object({ orders: z.boolean(), marketing: z.boolean() }).strict();

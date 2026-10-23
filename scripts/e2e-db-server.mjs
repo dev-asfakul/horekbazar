@@ -4,7 +4,7 @@
 // (a `_dev` name, so the sample rules behave as in development). Writes the URI for the test process
 // and its throwaway secret to test-results/e2e-db.json (gitignored) and removes it on exit.
 import { spawn } from "node:child_process";
-import { randomBytes } from "node:crypto";
+import { generateKeyPairSync, randomBytes } from "node:crypto";
 import { mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { MongoMemoryReplSet } from "mongodb-memory-server";
 
@@ -27,7 +27,16 @@ const env = {
   NEXT_PUBLIC_SITE_URL: `http://localhost:${port}`,
   // In-process rate limits for this loopback-only test server (lib/adapters/cache/rate-limit.ts).
   RATE_LIMIT_LOCAL_TEST: "1",
+  // Throwaway VAPID keys made for this run, so the notification pages render (B9 part 2). Nothing is
+  // ever delivered: this server runs no outbox worker.
+  ...vapidKeys(),
 };
+
+function vapidKeys() {
+  const jwk = generateKeyPairSync("ec", { namedCurve: "P-256" }).privateKey.export({ format: "jwk" });
+  const publicKey = Buffer.concat([Buffer.from([4]), Buffer.from(jwk.x, "base64url"), Buffer.from(jwk.y, "base64url")]).toString("base64url");
+  return { NEXT_PUBLIC_VAPID_PUBLIC_KEY: publicKey, VAPID_PRIVATE_KEY: jwk.d, VAPID_SUBJECT: "mailto:e2e@example.test" };
+}
 // Asynchronous on purpose: a synchronous child would block this process, which must keep reading
 // the in-memory mongod's output (a full pipe stalls mongod and the migration with it).
 const migrated = await new Promise((resolve) => {
