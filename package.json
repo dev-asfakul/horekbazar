@@ -10,6 +10,8 @@
   },
   "scripts": {
     "dev": "next dev",
+    "postinstall": "node scripts/patch-next-empty-rsc.mjs",
+    "prebuild": "node scripts/patch-next-empty-rsc.mjs",
     "build": "next build",
     "start": "node scripts/start-standalone.mjs",
     "lint": "eslint .",
