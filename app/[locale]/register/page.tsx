@@ -30,6 +30,7 @@ export default async function RegisterPage({ params }: PageProps<"/[locale]/regi
   const m = await formMessages(locale);
   return (
     <AuthFrame
+      icon="user"
       title={t("register.title")}
       intro={<p>{t("register.description")}</p>}
       aside={

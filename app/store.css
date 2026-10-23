@@ -1483,3 +1483,526 @@ html[data-store] .header-search-toggle svg {
   height: 24px;
   flex: none;
 }
+
+/* ════════════════════════════════════════════════════════════════════════════════════════════
+   Whole site (redesign, part 2): forms, sign-in pages, account, info pages, states and empty
+   states in the Night Bazaar Light language — raised white cards on the ground colour, 20–28 px
+   radii, a lime icon badge per page family, pills for actions. Presentation only.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+
+/* ── Forms ── */
+html[data-store] .form {
+  gap: 18px;
+}
+html[data-store] .field-label {
+  font-size: 14px;
+}
+html[data-store] .field-input {
+  min-height: 50px;
+  padding: 12px 16px;
+  border-width: 1.5px;
+}
+html[data-store] textarea.field-input {
+  min-height: 120px;
+}
+html[data-store] .field-input:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 1px;
+  border-color: var(--focus);
+}
+html[data-store] .field-toggle {
+  min-height: 50px;
+  border-radius: 14px;
+  border-width: 1.5px;
+  background: var(--surface);
+  border-color: var(--line);
+}
+html[data-store] :is(.form-summary, .form-summary-static, .form-success, .pdp-notice, .admin-notice) {
+  border-radius: 14px;
+}
+html[data-store] .field-check {
+  min-height: 44px;
+}
+
+/* ── Sign-in, sign-up, password and e-mail pages (AuthFrame) ── */
+html[data-store] .auth-page {
+  max-width: 28rem;
+  padding-block: 24px 48px;
+}
+html[data-store] .auth-card {
+  padding: 24px 20px 28px;
+  border: 1px solid var(--line);
+  border-radius: 28px;
+  background: var(--raised);
+}
+html[data-store] :is(.auth-badge, .state-badge) {
+  display: inline-grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+html[data-store] .auth-title {
+  margin-top: 14px;
+  font-size: var(--text-step-3);
+}
+html[data-store] .auth-intro {
+  margin-top: 6px;
+  line-height: 1.55;
+}
+html[data-store] .auth-body {
+  margin-top: 20px;
+  padding-top: 0;
+  border-top: 0;
+}
+html[data-store] .auth-body .form {
+  max-width: none;
+}
+html[data-store] .auth-body .form-actions .btn-primary {
+  flex: 1 1 100%;
+}
+html[data-store] .auth-alt-button {
+  max-width: none;
+}
+html[data-store] .auth-details {
+  margin-top: 20px;
+}
+html[data-store] .auth-details > summary {
+  color: var(--link);
+}
+html[data-store] .auth-aside {
+  margin-top: 16px;
+  padding: 8px 20px;
+  border-top: 0;
+  border-radius: 20px;
+  background: var(--surface);
+}
+html[data-store] .auth-links {
+  gap: 0;
+}
+@media (width >= 768px) {
+  html[data-store] .auth-page {
+    padding-top: 48px;
+  }
+  html[data-store] .auth-card {
+    padding: 32px 32px 36px;
+  }
+}
+
+/* ── Account (AccountFrame and the overview tiles) ── */
+html[data-store] .account-page {
+  gap: 20px;
+}
+html[data-store] .account-title {
+  font-size: var(--text-step-3);
+}
+html[data-store] .account-section {
+  max-width: 56rem;
+  margin-top: 20px;
+  padding: 20px;
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  background: var(--raised);
+}
+html[data-store] .account-section-title {
+  font-size: var(--text-step-1);
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+html[data-store] .account-section .cart-line {
+  background: var(--ground);
+}
+html[data-store] .account-hub {
+  padding: 0;
+  border: 0;
+  background: none;
+}
+html[data-store] .account-tiles {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+html[data-store] .account-tile {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 76px;
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: var(--raised);
+  color: var(--ink);
+  text-decoration: none;
+}
+html[data-store] .account-tile:hover {
+  border-color: var(--line-strong);
+}
+html[data-store] .account-tile-icon {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background: var(--surface);
+}
+html[data-store] .account-tile-text {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+html[data-store] .account-tile-title {
+  font-weight: 700;
+}
+html[data-store] .account-tile-hint {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.4;
+}
+html[data-store] .account-tile-go {
+  flex: none;
+  margin-inline-start: auto;
+  color: var(--muted);
+}
+@media (width >= 640px) {
+  html[data-store] .account-tiles {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+html[data-store] .account-avatar {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--accent-ink);
+  font-family: var(--font-family-display);
+  font-weight: 700;
+  font-size: 20px;
+}
+html[data-store] .account-who {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 8px 16px;
+}
+html[data-store] .account-who-text {
+  display: grid;
+  min-width: 0;
+}
+html[data-store] .account-who-name {
+  font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+html[data-store] .account-who-email {
+  color: var(--muted);
+  font-size: 13px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+html[data-store] .account-nav-link {
+  gap: 10px;
+  text-decoration: none;
+}
+html[data-store] .account-signout-btn {
+  gap: 10px;
+  color: var(--ink);
+  font-weight: 600;
+}
+/* Phones and tablets: one scrolling row of pills, sign-out last. */
+@media (width < 1024px) {
+  html[data-store] .account-nav {
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    gap: 8px;
+    margin-inline: calc(-1 * max(16px, env(safe-area-inset-left, 0px)));
+    padding: 2px max(16px, env(safe-area-inset-left, 0px)) 6px;
+    border-bottom: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  html[data-store] .account-nav::-webkit-scrollbar {
+    display: none;
+  }
+  html[data-store] .account-who {
+    display: none;
+  }
+  html[data-store] .account-nav ul {
+    flex-wrap: nowrap;
+    gap: 8px;
+  }
+  html[data-store] .account-nav li {
+    flex: none;
+  }
+  html[data-store] .account-nav-link,
+  html[data-store] .account-signout-btn {
+    min-height: 44px;
+    padding: 0 16px 0 12px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: var(--raised);
+    white-space: nowrap;
+    font-size: 14px;
+  }
+  html[data-store] .account-nav-link[aria-current="page"] {
+    border-color: var(--accent);
+    background: var(--accent);
+    color: var(--accent-ink);
+    font-weight: 700;
+  }
+  html[data-store] .account-signout {
+    flex: none;
+  }
+}
+/* From 1024 px: a sidebar card. */
+@media (width >= 1024px) {
+  html[data-store] .account-page {
+    grid-template-columns: 17rem minmax(0, 1fr);
+    gap: 40px;
+    align-items: start;
+  }
+  html[data-store] .account-nav {
+    position: sticky;
+    top: 96px;
+    padding: 12px;
+    border: 1px solid var(--line);
+    border-radius: 24px;
+    background: var(--raised);
+  }
+  html[data-store] .account-nav ul {
+    gap: 2px;
+  }
+  html[data-store] .account-nav-link {
+    min-height: 44px;
+    padding: 0 12px;
+    border: 0;
+    border-radius: 12px;
+    color: var(--ink);
+  }
+  html[data-store] .account-nav-link:hover {
+    background: var(--ground);
+  }
+  html[data-store] .account-nav-link[aria-current="page"] {
+    border: 0;
+    background: var(--surface);
+    font-weight: 700;
+  }
+  html[data-store] .account-nav-icon {
+    color: var(--muted);
+  }
+  html[data-store] .account-nav-link[aria-current="page"] .account-nav-icon {
+    color: var(--ink);
+  }
+  html[data-store] .account-signout {
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid var(--line);
+  }
+  html[data-store] .account-signout-btn {
+    width: 100%;
+    justify-content: flex-start;
+    min-height: 44px;
+    padding: 0 12px;
+    border-radius: 12px;
+  }
+  html[data-store] .account-signout-btn:hover {
+    background: var(--ground);
+    text-decoration: none;
+  }
+}
+
+/* ── Info pages: the text in a card, the help pages listed beside it ── */
+html[data-store] .info-layout {
+  max-width: 1240px;
+  margin-inline: auto;
+  display: grid;
+  gap: 8px;
+  padding-bottom: 24px;
+}
+html[data-store] .info-body {
+  padding: 20px;
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  background: var(--raised);
+  max-width: none;
+}
+html[data-store] .needs-copy {
+  padding: 12px 16px;
+  border-radius: 14px;
+  background: var(--surface);
+  color: var(--muted);
+}
+html[data-store] .info-nav {
+  margin-inline: max(16px, env(safe-area-inset-left, 0px));
+  padding: 8px;
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  background: var(--raised);
+}
+html[data-store] .info-nav-title {
+  padding: 8px 12px 4px;
+  font-size: 13px;
+  color: var(--muted);
+}
+html[data-store] .info-nav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+html[data-store] .info-nav-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 48px;
+  padding: 0 12px;
+  border-radius: 14px;
+  color: var(--ink);
+  text-decoration: none;
+}
+html[data-store] .info-nav-link svg {
+  color: var(--muted);
+}
+html[data-store] .info-nav-link:hover {
+  background: var(--ground);
+}
+html[data-store] .info-nav-link[aria-current="page"] {
+  background: var(--surface);
+  font-weight: 700;
+}
+html[data-store] .info-nav-link[aria-current="page"] svg {
+  color: var(--ink);
+}
+@media (width >= 1024px) {
+  html[data-store] .info-layout {
+    grid-template-columns: 17rem minmax(0, 1fr);
+    gap: 40px;
+    align-items: start;
+    padding: 0 32px 32px;
+  }
+  html[data-store] .info-layout > .info-page {
+    grid-column: 2;
+    grid-row: 1;
+    width: 100%;
+    max-width: 52rem;
+    margin: 0;
+    padding-inline: 0;
+  }
+  html[data-store] .info-nav {
+    grid-column: 1;
+    grid-row: 1;
+    position: sticky;
+    top: 96px;
+    margin: 76px 0 0;
+  }
+  html[data-store] .info-body {
+    padding: 28px 32px;
+  }
+}
+
+/* ── Full-page states (404, offline, error) ── */
+html[data-store] .state-page {
+  max-width: 32rem;
+  text-align: center;
+  padding-top: 56px;
+}
+html[data-store] .state-badge {
+  width: 72px;
+  height: 72px;
+}
+html[data-store] .state-title {
+  margin-top: 16px;
+  font-size: var(--text-step-3);
+}
+html[data-store] .state-body {
+  margin-inline: auto;
+  color: var(--muted);
+  line-height: 1.55;
+}
+html[data-store] .state-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+}
+
+/* ── Empty states inside pages (empty cart, no deals, no results, no orders) ── */
+html[data-store] .listing-empty {
+  padding: 32px 20px;
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  background: var(--raised);
+  text-align: center;
+}
+html[data-store] .listing-empty-title {
+  font-family: var(--font-family-display);
+  font-weight: 700;
+  font-size: var(--text-step-1);
+}
+html[data-store] .listing-empty .field-hint {
+  margin-inline: auto;
+}
+html[data-store] .listing-empty :is(.btn, .form-actions) {
+  margin-inline: auto;
+}
+
+/* ── Order detail and other ruled lists inside account cards ── */
+html[data-store] .account-section .ledger-row:last-child {
+  border-bottom: 0;
+}
+
+/* Every block of an account page is a card, whichever page built it (notifications, privacy,
+   reviews and the rest use plain sections). */
+html[data-store] .account-content > section:not(.account-hub, .account-section) {
+  max-width: 56rem;
+  margin-top: 20px;
+  padding: 20px;
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  background: var(--raised);
+}
+html[data-store] .account-content > :is(section, .account-section) > :is(h2, h3):first-child {
+  margin-top: 0;
+}
+html[data-store] .account-content > p {
+  max-width: 60ch;
+  line-height: 1.55;
+}
+html[data-store] .account-content .listing-empty-title {
+  font-size: var(--text-step-0);
+}
+html[data-store] .account-content .listing-empty {
+  border: 0;
+  padding: 8px 0;
+  text-align: start;
+}
+/* Checkout: the address and items column is a card like the summary beside it. */
+html[data-store] .cart-grid > section {
+  padding: 20px;
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  background: var(--raised);
+}
+html[data-store] .cart-grid > section .cart-line {
+  background: var(--ground);
+}
+html[data-store] .pdp-h2 {
+  border-bottom: 0;
+}
+html[data-store] .account-content > .listing-empty-title {
+  max-width: 56rem;
+  margin-top: 20px;
+  padding: 24px 20px;
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  background: var(--raised);
+  line-height: 1.5;
+}

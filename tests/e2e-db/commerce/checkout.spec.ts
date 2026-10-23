@@ -98,7 +98,7 @@ test("customer: closed checkout, address, place a COD order, see it, cancel it; 
   await form.getByLabel("মোবাইল নম্বর").fill("0171234567"); // one digit short
   await form.getByLabel("ডেলিভারি এরিয়া").selectOption("checkout-zone");
   await form.getByLabel("জেলা").fill("ঢাকা");
-  await form.getByLabel("থানা / এলাকা").fill("মিরপুর");
+  await form.getByLabel("থানা / এরিয়া").fill("মিরপুর");
   await form.getByLabel("বাসা, রোড, ব্লক").fill("বাসা ১২, রোড ৩");
   await form.getByRole("button", { name: "অ্যাড্রেস সেভ করুন" }).click();
   await expect(form.getByLabel("মোবাইল নম্বর")).toHaveAttribute("aria-invalid", "true");
