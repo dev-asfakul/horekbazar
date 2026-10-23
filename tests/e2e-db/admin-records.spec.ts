@@ -124,3 +124,77 @@ test("an ordinary customer is refused both pages; a signed-out visitor is sent t
   await expect(p2).toHaveURL(/\/login\?next=%2Fadmin%2Fcustomers/);
   await anon.close();
 });
+
+test("customer: wrong password refused; export downloads once; deletion request is idempotent, visible to support, and withdrawable", async ({ browser }) => {
+  const ctx = await browser.newContext({ acceptDownloads: true });
+  const page = await ctx.newPage();
+  const csp = await watchCsp(page);
+  await signIn(ctx, SHOPPER);
+  expect((await page.goto("/account/privacy"))?.status()).toBe(200);
+  await expect(page.locator("html")).toHaveAttribute("lang", "bn");
+  await expect(page.getByTestId("privacy-retention")).toContainText("[NEEDS COPY]");
+  await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", /noindex/);
+
+  // Wrong password: refused, nothing prepared.
+  const exportForm = page.getByTestId("privacy-export-form");
+  await exportForm.getByLabel("পাসওয়ার্ড").fill("not-the-password");
+  await exportForm.getByRole("button", { name: "ডাউনলোড তৈরি করুন" }).click();
+  await expect(exportForm.getByText("পাসওয়ার্ড ঠিক নয়").first()).toBeVisible();
+  await expect(page.getByTestId("privacy-export-ready")).toHaveCount(0);
+
+  // Right password: a single-use link.
+  await exportForm.getByLabel("পাসওয়ার্ড").fill(SHOPPER.password);
+  await exportForm.getByRole("button", { name: "ডাউনলোড তৈরি করুন" }).click();
+  await expect(page.getByTestId("privacy-export-ready")).toBeVisible();
+  const href = (await page.getByTestId("privacy-download").getAttribute("href"))!;
+  // Another signed-in customer cannot use it.
+  const other = await browser.newContext();
+  await signIn(other, SUPPORT);
+  const stolen = await other.request.get(href, { maxRedirects: 0 });
+  expect(stolen.status()).toBe(303);
+  expect(stolen.headers()["location"]).toContain("export=invalid");
+  await other.close();
+  // The owner downloads it once.
+  const [download] = await Promise.all([page.waitForEvent("download"), page.getByTestId("privacy-download").click()]);
+  const body = JSON.parse(await (await import("node:fs/promises")).readFile((await download.path())!, "utf8")) as { format: string; account: { email: string } };
+  expect(body.format).toBe("horekbazar-account-export");
+  expect(body.account.email).toBe(SHOPPER.email);
+  expect(JSON.stringify(body)).not.toMatch(/"password"|"token"/);
+  // Used: the same link now lands on the "no longer works" notice.
+  await page.goto(href);
+  await expect(page.getByTestId("privacy-export-invalid")).toBeVisible();
+
+  // Deletion request needs the tick and the password.
+  const del = page.getByTestId("privacy-deletion-form");
+  await del.getByLabel("পাসওয়ার্ড").fill(SHOPPER.password);
+  await del.getByLabel("আমি বুঝেছি, অনুরোধটি পাঠাতে চাই").check();
+  await del.getByRole("button", { name: "অনুরোধ পাঠান" }).click();
+  await expect(page.getByTestId("privacy-deletion-open")).toBeVisible();
+  const userId = String((await db.collection("user").findOne({ email: SHOPPER.email }))!._id);
+  expect(await db.collection("privacyRequests").countDocuments({ userId, kind: "deletion", status: "received" })).toBe(1);
+  expect(await db.collection("user").countDocuments({ email: SHOPPER.email })).toBe(1);
+
+  // Support sees it on /admin/customers.
+  const staff = await browser.newContext();
+  const sp = await staff.newPage();
+  await signIn(staff, SUPPORT);
+  await sp.goto("/admin/customers");
+  await expect(sp.getByTestId("customer-deletion").filter({ hasText: SHOPPER.email })).toHaveCount(1);
+  await staff.close();
+
+  // Withdraw.
+  await page.getByTestId("privacy-deletion-cancel").getByRole("button", { name: "অনুরোধ ফিরিয়ে নিন" }).click();
+  await expect(page.getByTestId("privacy-deletion-form")).toBeVisible();
+  expect(await db.collection("privacyRequests").countDocuments({ userId, kind: "deletion", status: "received" })).toBe(0);
+  expect(await csp()).toEqual([]);
+  await ctx.close();
+
+  // Signed out: sent to sign in; the download route gives nothing away.
+  const anon = await browser.newContext();
+  const ap = await anon.newPage();
+  await ap.goto("/account/privacy");
+  await expect(ap).toHaveURL(/\/login/);
+  const r = await anon.request.get(href, { maxRedirects: 0 });
+  expect(r.status()).toBe(303);
+  await anon.close();
+});

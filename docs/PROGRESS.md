@@ -2,6 +2,12 @@
 
 Newest first. Each entry: date, phase, done, decided, open, next. Entries are snapshots of their date: "not merged", "open" or "next" describe that day; the current state is in `docs/STATUS.md` (first rows) and `docs/HANDOFF.md`.
 
+## 2026-10-23 — B10 part b: /account/privacy (proposed; owner review required)
+
+- **Done (branch `feat/b10-account-privacy`, not merged):** `/account/privacy` asks for the password again (accounts without a password: sign-in within 15 minutes). Export: a single-use 10-minute link to `GET /api/account/export`, owner only, claimed atomically, `no-store`; the JSON holds profile, sessions (no tokens), addresses, orders, returns, reviews, conversations and messages, rewards, coupon use, carts, notification choices and privacy requests, with credentials, tokens, push keys, internal keys and staff ids removed. Deletion: an idempotent request (unique partial index), withdrawable by the customer, listed for customers.read on `/admin/customers`; **nothing is erased**. Audit: `privacy.export_prepared`, `privacy.export_downloaded`, `privacy.deletion_requested`, `privacy.deletion_cancelled`, without personal data. 5 requests an hour per customer, wrong passwords included.
+- **Needs the owner:** approve the new `privacyRequests` collection (SCHEMA.md); decide retention rules and deletion handling **[L]**; supply the Bangla copy marked [NEEDS COPY] on the page.
+- **Tests:** tests/unit/privacy.test.ts (2), tests/integration/privacy.test.ts (12; concurrency for both links and deletion requests), tests/e2e-db/admin-records.spec.ts (+1 customer journey).
+
 ## 2026-10-23 — B10 part c: audit log viewer and customer lookup
 
 - **Done:** PR #33 (part a) merged as `e303ef6` (head `516e2f8`) after both CI runs passed; post-merge CI and Vercel succeeded. `/admin/audit` (platform.read, BUILD-PLAN Platform row): newest first, filters for action (exact or `prefix.`), actor, target type/id and Dhaka dates, 50 per page, at most 200 pages; before/after values re-redacted on read; read only. `/admin/customers` and `/admin/customers/[id]` (customers.read): shoppers only (staff excluded), literal search over name, e-mail and phone digits, order counts in one aggregate, addresses and the 20 latest orders; order links only with orders.read; never selects password hashes, sessions or 2FA secrets.

@@ -58,6 +58,15 @@ export default async function AdminCustomerPage({ params }: PageProps<"/admin/cu
         </p>
       </section>
 
+      <section className="admin-section" aria-labelledby="cu-privacy">
+        <h2 id="cu-privacy" className="admin-section-title">
+          {t("privacyTitle")}
+        </h2>
+        <p className="field-hint" data-testid="customer-privacy">
+          {customer.deletionRequestedAt ? t("deletionOpen", { date: date.format(customer.deletionRequestedAt) }) : t("noPrivacy")}
+        </p>
+      </section>
+
       <section className="admin-section" aria-labelledby="cu-addresses">
         <h2 id="cu-addresses" className="admin-section-title">
           {t("addresses")}

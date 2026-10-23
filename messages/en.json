@@ -1174,7 +1174,14 @@
       "noOrders": "No orders yet.",
       "openOrder": "Open order {orderNumber}",
       "joinedLabel": "Joined",
-      "searchForm": "Find a customer"
+      "searchForm": "Find a customer",
+      "deletionTitle": "Open deletion requests",
+      "deletionIntro": "Customers who asked for their account to be deleted. Handling them waits for the owner's retention rules; nothing is deleted automatically.",
+      "deletionEmpty": "No open deletion requests.",
+      "deletionSince": "Requested {date}",
+      "privacyTitle": "Privacy requests",
+      "deletionOpen": "Deletion requested {date}",
+      "noPrivacy": "No open deletion request."
     }
   },
   "forms": {
@@ -1312,7 +1319,8 @@
       "ai_busy": "The AI service is busy or its free limit is used up. Try again later.",
       "ai_refused": "The AI service declined to write this. Change the note or the fields and try again.",
       "ai_bad_output": "The AI answer was incomplete or too long. Try again, perhaps with fewer fields.",
-      "ai_key_rejected": "The AI key was refused. Check GEMINI_API_KEY in the host settings."
+      "ai_key_rejected": "The AI key was refused. Check GEMINI_API_KEY in the host settings.",
+      "privacy_sign_in_again": "For your security, sign out and sign in again, then try again within 15 minutes."
     },
     "fieldErrors": {
       "email_invalid": "Enter an email address like name@example.com",
@@ -1419,7 +1427,11 @@
       "push_all_off": "Notifications are off on all your browsers.",
       "ai_draft_created": "Draft ready below. Nothing has changed on the product yet.",
       "ai_field_applied": "Field applied to the product.",
-      "ai_draft_discarded": "Draft discarded."
+      "ai_draft_discarded": "Draft discarded.",
+      "privacy_deletion_received": "Request sent. The store will review it.",
+      "privacy_deletion_already": "You already have a request waiting.",
+      "privacy_deletion_cancelled": "Request withdrawn.",
+      "privacy_deletion_none": "There is no request to withdraw."
     }
   },
   "auth": {
@@ -1509,7 +1521,8 @@
       "messages": "Messages",
       "reviews": "Reviews",
       "rewards": "Rewards",
-      "notifications": "Notifications"
+      "notifications": "Notifications",
+      "privacy": "Privacy"
     },
     "signedInAs": "Signed in as {email}",
     "signOut": "Sign out",
@@ -1771,6 +1784,40 @@
         "turnedOff": "Notifications are off on this browser.",
         "devices": "{count, plural, one {On for {n} browser.} other {On for {n} browsers.}}",
         "allOff": "Turn off on all browsers"
+      }
+    },
+    "privacy": {
+      "title": "Privacy and data",
+      "intro": "Download a copy of your account data, or ask the store to delete your account. Both ask for your password again first.",
+      "password": "Password",
+      "passwordHint": "Enter your current password to confirm it is you.",
+      "noPasswordHint": "Your account has no password. If you signed in within the last 15 minutes, continue; otherwise sign out and sign in again first.",
+      "working": "Please wait…",
+      "export": {
+        "title": "A copy of your data",
+        "body": "A JSON file with your profile, addresses, orders, returns, reviews, messages, rewards, notification choices and list of sign-in sessions. No passwords or security codes.",
+        "submit": "Prepare download",
+        "ready": "Your file is ready. The link works once, within 10 minutes.",
+        "download": "Download the file",
+        "invalid": "This download link no longer works: it was already used or 10 minutes have passed. Prepare a new one."
+      },
+      "deletion": {
+        "title": "Ask to delete your account",
+        "body": "The store will review your request. Nothing is deleted the moment you send it, and you can withdraw the request until the store acts on it.",
+        "retention": "[NEEDS COPY] Which data is deleted, which order and payment records are kept and for how long, and how soon the store replies: the store has not set these rules yet.",
+        "confirm": "I understand and want to send the request",
+        "submit": "Send request",
+        "open": "We received your deletion request on {date}. The store has not completed it yet.",
+        "cancel": "Withdraw request"
+      },
+      "history": {
+        "title": "Earlier requests",
+        "empty": "No requests yet.",
+        "export_ready": "Data copy: link prepared",
+        "export_completed": "Data copy: downloaded",
+        "deletion_received": "Deletion request: received",
+        "deletion_cancelled": "Deletion request: withdrawn",
+        "deletion_completed": "Deletion request: completed"
       }
     }
   },

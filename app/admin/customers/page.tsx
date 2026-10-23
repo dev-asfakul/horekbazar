@@ -6,7 +6,7 @@ import { getTranslations } from "next-intl/server";
 import { Pager, StatusChip } from "@/components/admin/RecordBits";
 import { adminPage, count, searchParam } from "@/lib/admin/page";
 import { getAdminLocale } from "@/lib/auth/server";
-import { listCustomers } from "@/lib/modules/identity/customers";
+import { listCustomers, pendingDeletions } from "@/lib/modules/identity/customers";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations({ locale: await getAdminLocale(), namespace: "admin.customers" });
@@ -21,7 +21,7 @@ export default async function AdminCustomersPage({ searchParams }: PageProps<"/a
   const c = await getTranslations({ locale, namespace: "admin.catalogue" });
   const sp = await searchParams;
   const q = searchParam(sp.q).trim().slice(0, 80);
-  const { customers, total, page, pages } = await listCustomers(db, q, Number(searchParam(sp.page)) || 1);
+  const [{ customers, total, page, pages }, deletions] = await Promise.all([listCustomers(db, q, Number(searchParam(sp.page)) || 1), pendingDeletions(db)]);
   const hrefFor = (p: number) => {
     const params = new URLSearchParams();
     if (q) params.set("q", q);
@@ -52,6 +52,30 @@ export default async function AdminCustomersPage({ searchParams }: PageProps<"/a
           ) : null}
         </div>
       </form>
+
+      <section className="admin-section" aria-labelledby="customers-deletions" data-testid="customers-deletions">
+        <h2 id="customers-deletions" className="admin-section-title">
+          {t("deletionTitle")}
+        </h2>
+        <p className="field-hint">{t("deletionIntro")}</p>
+        {deletions.length === 0 ? (
+          <p className="field-hint">{t("deletionEmpty")}</p>
+        ) : (
+          <ul className="staff-rows">
+            {deletions.map((d) => (
+              <li key={d.userId} className="staff-row" data-testid="customer-deletion">
+                <p className="staff-name">
+                  <Link href={`/admin/customers/${d.userId}`}>{d.name || d.email}</Link>
+                </p>
+                <p className="record-chips">
+                  <span className="record-sub">{d.email}</span>
+                  <span className="record-sub">{t("deletionSince", { date: date.format(d.requestedAt) })}</span>
+                </p>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
 
       <section className="admin-section" aria-labelledby="customers-list">
         <h2 id="customers-list" className="admin-section-title">
