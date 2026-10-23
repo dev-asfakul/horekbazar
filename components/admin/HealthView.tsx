@@ -95,6 +95,18 @@ export async function HealthView({ locale, report }: { locale: Locale; report: H
               <dt>{t("lastRun")}</dt>
               <dd>{outbox.lastRunAt ? formatTime(outbox.lastRunAt, locale) : t("never")}</dd>
             </div>
+            <div className="ledger-row">
+              <dt>{t("drainsAccepted")}</dt>
+              <dd>{n(outbox.accepted)}</dd>
+            </div>
+            <div className="ledger-row">
+              <dt>{t("drainsSkipped")}</dt>
+              <dd>{t("drainsSkippedValue", { locked: n(outbox.skippedLocked), interval: n(outbox.skippedInterval) })}</dd>
+            </div>
+            <div className="ledger-row">
+              <dt>{t("lastSkipped")}</dt>
+              <dd>{outbox.lastSkippedAt ? formatTime(outbox.lastSkippedAt, locale) : t("never")}</dd>
+            </div>
           </dl>
         ) : (
           <p className="health-reason">{t("outboxUnavailable")}</p>

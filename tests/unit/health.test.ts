@@ -3,7 +3,7 @@ import { getHealthReport, jobsState } from "@/lib/platform/health";
 import type { OutboxHealth } from "@/lib/modules/platform/outbox";
 
 const now = new Date("2026-10-21T12:00:00Z");
-const outbox = (o: Partial<OutboxHealth>): OutboxHealth => ({ pending: 0, processing: 0, dead: 0, oldestPendingAgeMs: null, lastRunAt: null, lastSuccessAt: null, lastResult: null, ...o });
+const outbox = (o: Partial<OutboxHealth>): OutboxHealth => ({ pending: 0, processing: 0, dead: 0, oldestPendingAgeMs: null, lastRunAt: null, lastSuccessAt: null, lastResult: null, accepted: 0, skippedLocked: 0, skippedInterval: 0, lastSkippedAt: null, ...o });
 
 describe("jobs health (domain-rules §13 monitoring)", () => {
   it("is not configured without JOBS_TRIGGER", () => {
@@ -13,6 +13,8 @@ describe("jobs health (domain-rules §13 monitoring)", () => {
     expect(jobsState("http", {}, null, now).state).toBe("failing");
     expect(jobsState("vercel-cron", {}, null, now).reason).toBe("jobs_cron_secret_missing");
     expect(jobsState("worker", {}, null, now).state).toBe("configured");
+    expect(jobsState("http", { CRON_SECRET: "x".repeat(31) }, null, now).reason).toBe("jobs_cron_secret_missing");
+    expect(jobsState("http", { CRON_SECRET: "x".repeat(32) }, null, now).state).toBe("configured");
   });
   it("fails when rows wait and the last successful drain is older than 5 minutes", () => {
     expect(jobsState("worker", {}, outbox({ pending: 2 }), now).reason).toBe("jobs_never_drained");

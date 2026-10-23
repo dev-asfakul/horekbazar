@@ -62,11 +62,21 @@ export const jobsSchema = z
   .object({
     _id: zObjectId(),
     name: z.string().regex(/^[a-z][a-z0-9_.-]*$/).max(64),
-    lastRunAt: zDate(),
-    lastResult: jobRunResultSchema,
+    /** Optional since C-01: the drain slot (below) can be taken before the first run has finished. */
+    lastRunAt: zDate().optional(),
+    lastResult: jobRunResultSchema.optional(),
     /** Proposed addition to SCHEMA.md `jobs`: health needs the last *successful* drain (domain-rules §13 monitoring). */
     lastSuccessAt: zDate().optional(),
+    // C-01 HTTP drain slot (outbox.ts acquireDrainSlot): one drain at a time, at most one accepted per
+    // interval. Operational metadata and counts only.
     lockUntil: zDate().optional(),
+    lockOwner: z.string().min(1).max(100).optional(),
+    lastAcceptedAt: zDate().optional(),
+    accepted: zInt().min(0).optional(),
+    skippedLocked: zInt().min(0).optional(),
+    skippedInterval: zInt().min(0).optional(),
+    lastSkippedAt: zDate().optional(),
+    lastSkipReason: z.enum(["locked", "interval"]).optional(),
   })
   .strict();
 export type JobsDoc = z.infer<typeof jobsSchema>;
