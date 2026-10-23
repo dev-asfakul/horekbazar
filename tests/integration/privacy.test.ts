@@ -127,6 +127,17 @@ describe("deletion requests", () => {
     expect(results.filter((r) => r.outcome === "already_received")).toHaveLength(4);
     expect(await db.collection(PRIVACY_REQUESTS).countDocuments({ userId: B, kind: "deletion", status: "received" })).toBe(1);
   });
+  it("repeat requests stay single even before db:migrate has created the indexes", async () => {
+    const bare = await freshDb();
+    try {
+      const results = [];
+      for (let i = 0; i < 3; i++) results.push((await requestDeletion(bare.db, B)).outcome);
+      expect(results).toEqual(["received", "already_received", "already_received"]);
+      expect(await bare.db.collection(PRIVACY_REQUESTS).countDocuments({ userId: B })).toBe(1);
+    } finally {
+      await bare.cleanup();
+    }
+  });
   it("show to the store, can be withdrawn by their owner only, and a new one can follow", async () => {
     expect((await pendingDeletions(db)).map((d) => d.email)).toEqual(["bob@example.test"]);
     expect(await cancelDeletion(db, A)).toBe(false);

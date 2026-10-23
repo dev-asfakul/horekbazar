@@ -114,11 +114,20 @@ export async function claimExport(db: Db, userId: string, token: string, options
 
 export type DeletionResult = { outcome: "received" } | { outcome: "already_received" };
 
-/** Records a deletion request. A second request while one is open is the same request (idempotent). */
+/**
+ * Records a deletion request. A second request while one is open is the same request (idempotent).
+ * An upsert, so repeats stay single even before `db:migrate` has created the unique partial index;
+ * that index is what makes concurrent first requests single (a losing upsert gets a duplicate key).
+ */
 export async function requestDeletion(db: Db, userId: string, options: { ip?: string | null; now?: Date } = {}): Promise<DeletionResult> {
   const now = options.now ?? new Date();
   try {
-    await requests(db).insertOne({ _id: new ObjectId(), userId, kind: "deletion", status: "received", createdAt: now, updatedAt: now });
+    const res = await requests(db).updateOne(
+      { userId, kind: "deletion", status: "received" },
+      { $setOnInsert: { _id: new ObjectId(), createdAt: now, updatedAt: now } },
+      { upsert: true },
+    );
+    if (res.upsertedCount === 0) return { outcome: "already_received" };
   } catch (error) {
     if (isDuplicateKey(error)) return { outcome: "already_received" };
     throw error;
