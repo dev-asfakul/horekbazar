@@ -156,6 +156,10 @@ const fixtures: Record<string, { valid: Record<string, unknown>; invalid: Record
     valid: { _id: new ObjectId(), targetType: "product", targetId: new ObjectId(), targetVersion: 3, fields: { name: { bn: "চাল ৫ কেজি", en: "Rice 5 kg" } }, model: "gemini-3.5-flash-lite", status: "partially_applied", appliedFields: ["name"], createdBy: "u1", version: 2, createdAt: now, updatedAt: now },
     invalid: { _id: new ObjectId(), targetType: "order", targetId: new ObjectId(), targetVersion: 0, fields: { price: { bn: "১০০" } }, model: "", status: "published", appliedFields: ["price"], createdBy: "u1", version: 1, createdAt: now, updatedAt: now },
   },
+  privacyRequests: {
+    valid: { _id: new ObjectId(), userId: "u1", kind: "export", status: "ready", token: "8f9c2b1e-0d4a-4c6b-9b7e-2f1a3c4d5e6f", expiresAt: now, createdAt: now, updatedAt: now },
+    invalid: { _id: new ObjectId(), userId: "u1", kind: "erase", status: "done", note: "free text", createdAt: now, updatedAt: now },
+  },
   pushSubscriptions: {
     valid: { _id: new ObjectId(), userId: "u1", endpoint: "https://push.example.test/abc", keys: { p256dh: "BAbc", auth: "xyz" }, topics: { orders: true, marketing: true }, consentAt: now, consentSource: "account", locale: "bn", createdAt: now, updatedAt: now },
     invalid: { _id: new ObjectId(), userId: "u1", endpoint: "http://push.example.test/abc", keys: { p256dh: "BAbc", auth: "xyz" }, topics: { orders: true, marketing: "yes" }, locale: "fr", createdAt: now, updatedAt: now },

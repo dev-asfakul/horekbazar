@@ -6,6 +6,7 @@ import { ObjectId, type Db, type Document } from "mongodb";
 import { ADDRESSES, ORDERS, type AddressDoc, type OrderDoc } from "../orders/schema.ts";
 import { idFilter } from "./principal.ts";
 import { AUTH_COLLECTIONS } from "./schema.ts";
+import { openDeletionRequest, openDeletionRequests } from "./privacy.ts";
 
 export const CUSTOMER_PAGE_SIZE = 50;
 export const CUSTOMER_MAX_PAGE = 200;
@@ -82,6 +83,8 @@ export interface CustomerDetail extends CustomerSummary {
   twoFactorEnabled: boolean;
   addresses: Pick<AddressDoc, "label" | "name" | "phone" | "district" | "area" | "line" | "landmark" | "isDefault">[];
   recentOrders: Pick<OrderDoc, "orderNumber" | "status" | "placedAt" | "totals">[];
+  /** When the customer asked for deletion (B10 part b), while the request is open. */
+  deletionRequestedAt?: Date;
 }
 
 export const isCustomerId = (id: string) => ObjectId.isValid(id) && String(new ObjectId(id)) === id;
@@ -91,7 +94,7 @@ export async function getCustomer(db: Db, id: string): Promise<CustomerDetail | 
   const u = await db.collection(AUTH_COLLECTIONS.user).findOne({ _id: idFilter(id) as never, ...NOT_STAFF }, { projection: PROJECTION });
   if (!u) return null;
   const userId = String(u._id);
-  const [addresses, recentOrders, counts] = await Promise.all([
+  const [addresses, recentOrders, counts, deletion] = await Promise.all([
     db
       .collection<AddressDoc>(ADDRESSES)
       .find({ userId }, { projection: { _id: 0, label: 1, name: 1, phone: 1, district: 1, area: 1, line: 1, landmark: 1, isDefault: 1 } })
@@ -105,6 +108,7 @@ export async function getCustomer(db: Db, id: string): Promise<CustomerDetail | 
       .limit(20)
       .toArray(),
     orderCounts(db, [userId]),
+    openDeletionRequest(db, userId),
   ]);
   return {
     ...summary(u, counts.get(userId) ?? 0),
@@ -112,5 +116,18 @@ export async function getCustomer(db: Db, id: string): Promise<CustomerDetail | 
     twoFactorEnabled: u.twoFactorEnabled === true,
     addresses,
     recentOrders,
+    ...(deletion ? { deletionRequestedAt: deletion.createdAt } : {}),
   };
+}
+
+/** Open deletion requests with the customer's name and e-mail, oldest first (customers.read). */
+export async function pendingDeletions(db: Db, limit = 50) {
+  const open = await openDeletionRequests(db, limit);
+  if (open.length === 0) return [];
+  const users = await db
+    .collection(AUTH_COLLECTIONS.user)
+    .find({ _id: { $in: open.flatMap((r) => (ObjectId.isValid(r.userId) ? [r.userId, new ObjectId(r.userId)] : [r.userId])) } as never }, { projection: { name: 1, email: 1 } })
+    .toArray();
+  const byId = new Map(users.map((u) => [String(u._id), u]));
+  return open.map((r) => ({ userId: r.userId, requestedAt: r.createdAt, name: String(byId.get(r.userId)?.name ?? ""), email: String(byId.get(r.userId)?.email ?? "") }));
 }

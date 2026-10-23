@@ -49,6 +49,7 @@ import { REVIEWS, reviewSchema } from "../modules/reviews/schema.ts";
 import { REWARD_LEDGER, REWARD_LOCKS, rewardEntrySchema, rewardLockSchema } from "../modules/rewards/schema.ts";
 import { CONVERSATIONS, conversationSchema, MESSAGES, messageSchema } from "../modules/messaging/schema.ts";
 import { AI_DRAFTS, aiDraftSchema } from "../modules/ai/schema.ts";
+import { PRIVACY_REQUESTS, privacyRequestSchema } from "../modules/identity/privacy.ts";
 import { CAMPAIGNS, campaignSchema, EMAIL_LOG, emailLogSchema, PUSH_SUBSCRIPTIONS, pushSubscriptionSchema } from "../modules/notifications/schema.ts";
 
 export interface CollectionSpec {
@@ -429,6 +430,21 @@ export const collections: CollectionSpec[] = [
     schema: aiDraftSchema,
     indexes: [{ key: { targetType: 1, targetId: 1, status: 1 }, name: "targetType_targetId_status" }],
     serviceEnforced: ["a field reaches the product only when an editor applies it, with the product version check; applying never changes status (ai/drafts.ts)"],
+  },
+  {
+    name: PRIVACY_REQUESTS,
+    module: "identity",
+    schema: privacyRequestSchema,
+    indexes: [
+      { key: { userId: 1, createdAt: -1 }, name: "userId_createdAt" },
+      // At most one open deletion request per customer: a repeat is the same request.
+      { key: { userId: 1 }, name: "userId_open_deletion", unique: true, partialFilterExpression: { kind: "deletion", status: "received" } },
+      { key: { kind: 1, status: 1, createdAt: 1 }, name: "kind_status_createdAt" },
+    ],
+    serviceEnforced: [
+      "fresh proof of identity (password, or a sign-in within 15 minutes) before a request; export links are single use, owner only, 10 minutes (identity/privacy.ts)",
+      "a deletion request never erases data by itself; completing one waits for the owner's retention rules [L]",
+    ],
   },
 ];
 
