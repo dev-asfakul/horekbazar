@@ -21,8 +21,8 @@ the newest; dated sections further down are snapshots of their day; older sectio
 | B9 part 2a notifications | merged to `main`: PR #30 (`d3e5a9a`, 2026-10-23), head `f8778f0`; see "B9 part 2a record" |
 | B9 part 2b AI drafts | merged to `main`: PR #31 (`789db3a`, 2026-10-23), head `89f4b34`, rebased onto `main` after #30; see "B9 part 2b record" |
 | B9 overall | **not complete**: five open items, each with a closure criterion, in "B9 open items" |
-| B10 Information, privacy, audit | **in progress, not complete**: part a (information and legal pages, offline fallback) on branch `feat/b10-info-pages`; parts b and c not started; see "B10 record" |
-| B11 hardening | not started |
+| B10 Information, privacy, audit | **in progress, not complete**: part a merged (PR #33, `e303ef6`); part c in PR #34 and part b in PR #35, both open; see "B10 record" |
+| B11 hardening | **in progress**: PR #36 (review results in `GATE.md` draft) |
 
 Branch flow (current, since B9): feature branch from `main` → PR into `main` → merged by the agent after the required check passes (owner authorisation 2026-10-22, DESIGN.md Decision trace). `main` is protected (required check `check`). Up to B8 the flow went through `preview/horekbazar-v1`, which is now fully contained in `main`.
 
@@ -110,7 +110,7 @@ Gate: FAIL (zero-variable `/` is the setup page; header search states; B6–B11 
    take ~20 s each (request-context connection delay in the sandbox, not investigated).
 6. (Snapshot of 2026-10-22.) B6–B9 have since been merged; **B10 → B11** remain, per BUILD-PLAN §11, each with its checkpoint.
 
-## B10 record (2026-10-23, in progress)
+## B10 record (2026-10-23, in progress; parts b and c in PRs #35 and #34)
 
 BUILD-PLAN §11 row B10 and its acceptance row ("legal pages are Bangla-first and show `[NEEDS COPY]` until the owner supplies text; privacy requests are recorded"), mapped to the code:
 
@@ -119,9 +119,9 @@ BUILD-PLAN §11 row B10 and its acceptance row ("legal pages are Bangla-first an
 | a | `/about`, `/contact`, `/faq`, `/terms`, `/privacy-policy`, `/delivery-policy`, `/return-policy` | built (PR, see STATUS) | `app/[locale]/<page>/page.tsx`, `components/store/InfoPage.tsx`, `lib/storefront/info.ts`; Bengali at `/…`, English at `/en/…`. Every owner text is `[NEEDS COPY]` (no invented legal, delivery, return or privacy commitments); those pages send `noindex` whatever `SITE_INDEXING` says. `/contact` shows `store.contact` from settings (each missing value `[NEEDS COPY]`), the complaint procedure as `[NEEDS COPY]`, and a link to `/account/messages`. Footer links added. Tests: tests/e2e-db/info-pages.spec.ts, tests/e2e/setup-required.spec.ts |
 | a | `/offline` + service worker | built | `public/sw.js` stores `/offline` and `/en/offline` (fetched without cookies) and the static files they link to; only a failed GET page navigation (not `/admin`, `/api`, form posts) gets the offline page. `components/shell/OfflineSupport.tsx` registers the worker on storefront pages in production builds (no permission prompt). Tests: tests/unit/service-worker.test.ts (4), the offline journey in tests/e2e-db/info-pages.spec.ts (Chromium) |
 | a (gap) | owner-editable page text | not built | SCHEMA.md route table names "Settings policy content" as the content source, but `settings` has no field for it. Until a follow-up adds one (schema change, needs review), the owner's text would go into `messages/*.json` |
-| b | `/account/privacy`: export and deletion requests | not started | SCHEMA.md §actions lists `privacy.requestExport` / `requestDeletion` ("request record", step-up re-auth) but **defines no collection** for the record. Needs: a proposed `privacyRequests` collection (SCHEMA change), and the owner's or a lawyer's retention rules **[L]** (domain-rules: Bangladesh personal data law "needs review"). Orders, ledgers, returns and the audit log are kept (financial and audit records); a deletion request would anonymise the account, not erase those |
-| c | `/admin/audit` | not started | `auditLog` exists (redacted diffs, truncated IP). No capability names the viewer yet: proposal Owner + `reports.read`, read-only, filters by target and actor |
-| c | `/admin/customers` | not started | capability `customers.read` exists (support, operator, manager); `customers.export` needs step-up (domain-rules §1). Phone and address only with the capability |
+| b | `/account/privacy`: export and deletion requests | **built, PR #35 (stacked on #34), not merged; needs owner approval (schema change)** — the notes below are the 2026-10-23 pre-build analysis | SCHEMA.md §actions lists `privacy.requestExport` / `requestDeletion` ("request record", step-up re-auth) but **defines no collection** for the record. Needs: a proposed `privacyRequests` collection (SCHEMA change), and the owner's or a lawyer's retention rules **[L]** (domain-rules: Bangladesh personal data law "needs review"). Orders, ledgers, returns and the audit log are kept (financial and audit records); a deletion request would anonymise the account, not erase those |
+| c | `/admin/audit` | **built, PR #34, not merged** (capability `platform.read`, per the BUILD-PLAN Platform row; same holders as the Owner + `reports.read` proposal) — notes below are the pre-build analysis | `auditLog` exists (redacted diffs, truncated IP). No capability names the viewer yet: proposal Owner + `reports.read`, read-only, filters by target and actor |
+| c | `/admin/customers` | **built, PR #34, not merged** (`customers.read`, staff excluded; `customers.export` not built) | capability `customers.read` exists (support, operator, manager); `customers.export` needs step-up (domain-rules §1). Phone and address only with the capability |
 
 B10 is complete only when parts b and c are built and tested and the acceptance row holds.
 
