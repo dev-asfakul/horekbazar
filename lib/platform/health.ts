@@ -72,7 +72,8 @@ export const DRAIN_STALE_AFTER_MS = 5 * 60_000;
 export function jobsState(trigger: JobsHealth["trigger"], env: Env, outbox: OutboxHealth | null, now: Date): Pick<JobsHealth, "state" | "reason"> {
   if (!trigger) return { state: "not_configured", reason: "jobs_trigger_not_set" };
   // vercel-cron is http called by Vercel Cron; Hobby runs once a day, which the staleness check catches.
-  if (trigger !== "worker" && !env.CRON_SECRET) return { state: "failing", reason: "jobs_cron_secret_missing" };
+  // Same minimum as POST /api/jobs/drain (C-01): a shorter secret leaves the endpoint closed.
+  if (trigger !== "worker" && (env.CRON_SECRET?.trim().length ?? 0) < 32) return { state: "failing", reason: "jobs_cron_secret_missing" };
   if (!outbox) return { state: "configured", reason: "jobs_database_unavailable" };
   const last = outbox.lastSuccessAt?.getTime() ?? null;
   const stale = last === null || now.getTime() - last > DRAIN_STALE_AFTER_MS;

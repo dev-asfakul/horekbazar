@@ -182,6 +182,57 @@ export async function drainOutbox(db: Db, handlers: Record<string, OutboxHandler
   return result;
 }
 
+/** HTTP drains (C-01): one at a time, and at most one accepted per interval (replay damping). */
+export const DRAIN_MIN_INTERVAL_MS = 30_000;
+/** Longer than the route's maxDuration (60 s), so a drain killed mid-run frees the slot afterwards. */
+export const DRAIN_LOCK_MS = 75_000;
+
+export type DrainSlot = { acquired: true } | { acquired: false; reason: "locked" | "interval" };
+
+/**
+ * Takes the HTTP drain slot in one atomic update: only when no unexpired lock is held *and* the last
+ * accepted drain is at least `minIntervalMs` old, so concurrent or replayed requests cannot both pass.
+ * The first ever call inserts the record; a concurrent insert loses on the unique `name` index and
+ * counts as skipped. A refused call only increments a skip counter.
+ */
+export async function acquireDrainSlot(
+  db: Db,
+  options: { owner: string; now?: Date; minIntervalMs?: number; lockMs?: number },
+): Promise<DrainSlot> {
+  const now = options.now ?? new Date();
+  const jobs = db.collection(JOBS);
+  const minInterval = options.minIntervalMs ?? DRAIN_MIN_INTERVAL_MS;
+  const free = {
+    name: DRAIN_JOB_NAME,
+    $and: [
+      { $or: [{ lockUntil: { $exists: false } }, { lockUntil: { $lte: now } }] },
+      { $or: [{ lastAcceptedAt: { $exists: false } }, { lastAcceptedAt: { $lte: new Date(now.getTime() - minInterval) } }] },
+    ],
+  };
+  try {
+    const taken = await jobs.findOneAndUpdate(
+      free,
+      { $set: { name: DRAIN_JOB_NAME, lockUntil: new Date(now.getTime() + (options.lockMs ?? DRAIN_LOCK_MS)), lockOwner: options.owner, lastAcceptedAt: now }, $inc: { accepted: 1 } },
+      { upsert: true, returnDocument: "after" },
+    );
+    if (taken?.lockOwner === options.owner) return { acquired: true };
+  } catch (error) {
+    if ((error as { code?: number }).code !== 11000) throw error;
+  }
+  const current = await jobs.findOne({ name: DRAIN_JOB_NAME }, { projection: { lockUntil: 1 } });
+  const reason = current?.lockUntil instanceof Date && current.lockUntil > now ? "locked" : "interval";
+  await jobs.updateOne(
+    { name: DRAIN_JOB_NAME },
+    { $inc: { [reason === "locked" ? "skippedLocked" : "skippedInterval"]: 1 }, $set: { lastSkippedAt: now, lastSkipReason: reason } },
+  );
+  return { acquired: false, reason };
+}
+
+/** Frees the slot taken by `owner` (no effect if it expired and someone else holds it now). */
+export async function releaseDrainSlot(db: Db, owner: string) {
+  await db.collection(JOBS).updateOne({ name: DRAIN_JOB_NAME, lockOwner: owner }, { $unset: { lockUntil: "", lockOwner: "" } });
+}
+
 export async function recordJobRun(db: Db, name: string, result: JobRunResult, now: Date = new Date()) {
   await db
     .collection(JOBS)
@@ -196,6 +247,11 @@ export interface OutboxHealth {
   lastRunAt: Date | null;
   lastSuccessAt: Date | null;
   lastResult: JobRunResult | null;
+  /** C-01 HTTP drain slot: accepted drains and refused (overlapping or too soon) calls. */
+  accepted: number;
+  skippedLocked: number;
+  skippedInterval: number;
+  lastSkippedAt: Date | null;
 }
 
 export async function outboxHealth(db: Db, now: Date = new Date()): Promise<OutboxHealth> {
@@ -215,5 +271,9 @@ export async function outboxHealth(db: Db, now: Date = new Date()): Promise<Outb
     lastRunAt: (job?.lastRunAt as Date | undefined) ?? null,
     lastSuccessAt: (job?.lastSuccessAt as Date | undefined) ?? null,
     lastResult: (job?.lastResult as JobRunResult | undefined) ?? null,
+    accepted: (job?.accepted as number | undefined) ?? 0,
+    skippedLocked: (job?.skippedLocked as number | undefined) ?? 0,
+    skippedInterval: (job?.skippedInterval as number | undefined) ?? 0,
+    lastSkippedAt: (job?.lastSkippedAt as Date | undefined) ?? null,
   };
 }
