@@ -28,6 +28,31 @@ test.afterAll(async () => {
   await client?.close();
 });
 
+/**
+ * Records the byte length of each Server Action response inside the page (a cloned stream, read in full),
+ * in sessionStorage so it survives a document change. Reading the body through the DevTools protocol
+ * after the client has navigated is racy (Chromium may already have dropped it: CI run 39934032455).
+ */
+async function recordActionBodies(page: Page) {
+  await page.addInitScript(() => {
+    const original = window.fetch.bind(window);
+    window.fetch = async (input, init) => {
+      const response = await original(input, init);
+      if (new Headers(init?.headers).has("next-action")) {
+        void response
+          .clone()
+          .arrayBuffer()
+          .then((body) => {
+            const list = JSON.parse(sessionStorage.getItem("e2e-action-bytes") ?? "[]") as number[];
+            sessionStorage.setItem("e2e-action-bytes", JSON.stringify([...list, body.byteLength]));
+          });
+      }
+      return response;
+    };
+  });
+}
+const actionBodyBytes = (page: Page) => page.evaluate(() => JSON.parse(sessionStorage.getItem("e2e-action-bytes") ?? "[]") as number[]);
+
 /** Watches every response after the form is submitted. */
 function watch(page: Page) {
   const seen: Response[] = [];
@@ -50,6 +75,7 @@ for (const [label, login, destination] of [
 ] as const) {
   test(`sign-in redirect, ${label}: the action response carries the destination; no extra request, no 3xx`, async ({ page, context }) => {
     await context.clearCookies();
+    await recordActionBodies(page);
     await page.goto(login);
     const seen = watch(page);
     const action = await submitSignIn(page, USER.password);
@@ -58,9 +84,9 @@ for (const [label, login, destination] of [
     expect(action.headers()["x-action-redirect"] ?? "").toContain(destination);
     expect(action.headers()["content-type"] ?? "").toContain("text/x-component");
     // Empty when Next's internal fetch of the destination failed (the C-02 symptom).
-    expect((await action.body()).length).toBeGreaterThan(200);
-
     await expect(page).toHaveURL(new RegExp(`${destination}$`));
+    await expect.poll(() => actionBodyBytes(page)).toHaveLength(1);
+    expect((await actionBodyBytes(page))[0]).toBeGreaterThan(200);
     await page.waitForLoadState("networkidle");
     const followUps = seen.filter((r) => r !== action && r.request().resourceType() === "fetch" && new URL(r.url()).pathname === destination);
     expect(followUps.map((r) => r.url())).toEqual([]);
