@@ -82,13 +82,50 @@
       },
       "lockUntil": {
         "bsonType": "date"
+      },
+      "lockOwner": {
+        "bsonType": "string",
+        "minLength": 1,
+        "maxLength": 100
+      },
+      "lastAcceptedAt": {
+        "bsonType": "date"
+      },
+      "accepted": {
+        "bsonType": [
+          "int",
+          "long"
+        ],
+        "minimum": 0
+      },
+      "skippedLocked": {
+        "bsonType": [
+          "int",
+          "long"
+        ],
+        "minimum": 0
+      },
+      "skippedInterval": {
+        "bsonType": [
+          "int",
+          "long"
+        ],
+        "minimum": 0
+      },
+      "lastSkippedAt": {
+        "bsonType": "date"
+      },
+      "lastSkipReason": {
+        "bsonType": "string",
+        "enum": [
+          "locked",
+          "interval"
+        ]
       }
     },
     "required": [
       "_id",
-      "name",
-      "lastRunAt",
-      "lastResult"
+      "name"
     ],
     "additionalProperties": false
   }

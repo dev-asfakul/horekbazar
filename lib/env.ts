@@ -60,6 +60,8 @@ export const serverEnvSchema = z.object({
   ABLY_API_KEY: optional(z.string()),
 
   JOBS_TRIGGER: z.preprocess((v) => (typeof v === "string" && v.trim() !== "" ? v.trim() : undefined), z.enum(["worker", "http", "vercel-cron"]).optional()),
+  // Kept at 16 so a short value never marks the whole site "setup required"; POST /api/jobs/drain and
+  // the jobs health check require at least 32 (C-01), so a shorter value only keeps the drain closed.
   CRON_SECRET: optional(z.string().min(16, "at least 16 characters")),
 });
 
