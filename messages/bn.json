@@ -49,7 +49,26 @@
       "infoLabel": "তথ্য",
       "about": "আমাদের সম্পর্কে",
       "contact": "যোগাযোগ",
-      "faq": "জিজ্ঞাসা"
+      "faq": "জিজ্ঞাসা",
+      "categoriesLabel": "ক্যাটাগরি",
+      "allCategories": "সব ক্যাটাগরি",
+      "shopLabel": "শপিং",
+      "new": "নতুন এসেছে",
+      "deals": "ডিল",
+      "search": "সার্চ",
+      "cart": "কার্ট",
+      "accountLabel": "অ্যাকাউন্ট",
+      "account": "আমার অ্যাকাউন্ট",
+      "orders": "আমার অর্ডার",
+      "notifications": "নোটিফিকেশন",
+      "helpLabel": "সাহায্য",
+      "phone": "ফোন",
+      "email": "ইমেইল",
+      "address": "ঠিকানা",
+      "hours": "খোলা থাকে",
+      "deliveryCharges": "ডেলিভারি চার্জ",
+      "freeOver": "{amount}-এর বেশি অর্ডারে ফ্রি",
+      "copyright": "© {year} {name}। সব অধিকার সংরক্ষিত।"
     },
     "theme": {
       "label": "থিম",
@@ -757,7 +776,8 @@
       "newCta": "দেখুন",
       "deliveryTag": "ডেলিভারি",
       "deliveryTitle": "ক্যাশ অন ডেলিভারি",
-      "productCount": "{count}টি প্রোডাক্ট"
+      "productCount": "{count}টি প্রোডাক্ট",
+      "allCategoriesCta": "সব ক্যাটাগরি দেখুন"
     },
     "categories": {
       "title": "ক্যাটাগরি",

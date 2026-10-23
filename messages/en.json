@@ -49,7 +49,26 @@
       "infoLabel": "Information",
       "about": "About",
       "contact": "Contact",
-      "faq": "FAQ"
+      "faq": "FAQ",
+      "categoriesLabel": "Categories",
+      "allCategories": "All categories",
+      "shopLabel": "Shopping",
+      "new": "New arrivals",
+      "deals": "Deals",
+      "search": "Search",
+      "cart": "Cart",
+      "accountLabel": "Account",
+      "account": "My account",
+      "orders": "My orders",
+      "notifications": "Notifications",
+      "helpLabel": "Help",
+      "phone": "Phone",
+      "email": "Email",
+      "address": "Address",
+      "hours": "Open",
+      "deliveryCharges": "Delivery charges",
+      "freeOver": "free over {amount}",
+      "copyright": "© {year} {name}. All rights reserved."
     },
     "theme": {
       "label": "Theme",
@@ -1869,7 +1888,8 @@
       "newCta": "See them",
       "deliveryTag": "Delivery",
       "deliveryTitle": "Cash on delivery",
-      "productCount": "{count} products"
+      "productCount": "{count} products",
+      "allCategoriesCta": "See all categories"
     },
     "categories": {
       "title": "Categories",

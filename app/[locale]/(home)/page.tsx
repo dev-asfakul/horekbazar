@@ -19,6 +19,7 @@ import { formatCount, formatMoney } from "@/lib/format/money";
 import { cartSnapshot } from "@/lib/storefront/cart-snapshot";
 import { resolvesInternal } from "@/lib/storefront/links";
 import { localeHref } from "@/lib/i18n/href";
+import { shellPaths } from "@/lib/routes";
 import type { Locale } from "@/lib/i18n/locales";
 import type { LocalizedText } from "@/lib/modules/catalogue/schema";
 import { categoryPath, categoryShowcase, collectionQuery, getPublishedBanner, listHomeSections, listPublishedBanners, listPublishedCollections, listPublishedProducts, newArrivalsSince, type StoreCategory } from "@/lib/modules/storefront/catalogue";
@@ -42,14 +43,19 @@ interface Tile {
   alt?: string;
 }
 
-function CategoryTiles({ tiles, locale, title, countText }: { tiles: Tile[]; locale: Locale; title: string; countText: (n: number) => string }) {
+/** The home page shows at most this many category tiles (4 × 2); the rest are one tap away on /categories. */
+const HOME_TILE_LIMIT = 8;
+
+function CategoryTiles({ tiles, locale, title, countText, allLabel }: { tiles: Tile[]; locale: Locale; title: string; countText: (n: number) => string; allLabel: string }) {
   if (tiles.length === 0) return null;
   return (
     <section className="home-section" aria-labelledby="home-cats">
-      <h2 id="home-cats" className="home-h2">
-        {title}
-      </h2>
-      <ul className="cat-tiles" data-testid="category-tiles" data-photos={tiles.some((x) => x.image) ? "yes" : undefined}>
+      <div className="home-section-head">
+        <h2 id="home-cats" className="home-h2">
+          {title}
+        </h2>
+      </div>
+      <ul className="cat-tiles" data-home="" data-testid="category-tiles" data-photos={tiles.some((x) => x.image) ? "yes" : undefined}>
         {tiles.map(({ category: c, count, image, alt }) => (
           <li key={c.id}>
             <Link className="cat-tile" href={localeHref(locale, categoryPath(c))}>
@@ -69,6 +75,12 @@ function CategoryTiles({ tiles, locale, title, countText }: { tiles: Tile[]; loc
           </li>
         ))}
       </ul>
+      <Link className="home-all-cats" href={localeHref(locale, shellPaths.categories)} data-testid="home-all-categories">
+        {allLabel}
+        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false">
+          <path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </Link>
     </section>
   );
 }
@@ -171,7 +183,7 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
   // ── Categories next (photo: a real product of that category; count: published products) ──
   const tileSection = sections.find((s) => s.type === "categoryTiles");
   const chosen = tileSection ? ((tileSection.data.categoryIds as unknown[]) ?? []).map((cid) => store.tree.byId.get(String(cid))).filter((c): c is StoreCategory => Boolean(c)) : [];
-  const tiles: Tile[] = (chosen.length ? chosen : store.tree.roots).map((c) => {
+  const tiles: Tile[] = (chosen.length ? chosen : store.tree.roots).slice(0, HOME_TILE_LIMIT).map((c) => {
     const sc = showcase.get(c.id);
     const src = sc?.image && cloud ? deliveryUrl(cloud.cloudName, sc.image.publicId, 160) : undefined;
     return { category: c, ...(sc ? { count: sc.count } : {}), ...(src ? { image: src, alt: "" } : {}) };
@@ -232,7 +244,7 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
       <HomeCarousel label={t("home.carouselLabel")} prev={t("home.prevSlide")} next={t("home.nextSlide")} counter={counter}>
         {slides}
       </HomeCarousel>
-      <CategoryTiles tiles={tiles} locale={locale} title={tileTitle} countText={(n) => t("home.productCount", { count: count(n) })} />
+      <CategoryTiles tiles={tiles} locale={locale} title={tileTitle} countText={(n) => t("home.productCount", { count: count(n) })} allLabel={t("home.allCategoriesCta")} />
       {rendered}
       {fallback}
       <JsonLd data={{ "@context": "https://schema.org", "@type": "Organization", name: storeName, url: `${origin}${localeHref(locale, "/")}`, ...(store.settings.store.contact.email ? { email: store.settings.store.contact.email } : {}), ...(store.settings.store.contact.phone ? { telephone: store.settings.store.contact.phone } : {}) }} />
