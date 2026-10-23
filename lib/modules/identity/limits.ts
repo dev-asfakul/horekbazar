@@ -26,6 +26,8 @@ export const LIMITS = {
   messagePost: { name: "message-post", limit: 20, windowSeconds: 3600 },
   // B9 part 2: turning browser notifications on/off or changing their topics.
   pushChange: { name: "push-change", limit: 30, windowSeconds: 600 },
+  /** B9 part 2b: Gemini drafts per staff member (domain-rules §7 "rate-limited per staff user"). */
+  aiDraft: { name: "ai-draft", limit: 20, windowSeconds: 3600 },
 } satisfies Record<string, LimitRule>;
 
 export type LimitOutcome = "ok" | "limited" | "unavailable";

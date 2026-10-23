@@ -1079,6 +1079,33 @@
         "sent": "Sent",
         "failed": "Failed"
       }
+    },
+    "aiDrafts": {
+      "title": "AI drafts",
+      "notice": "Drafts are written by Google Gemini ({model}) from this product's details. On Gemini's free tier, Google may use what is sent to improve its products, so do not add private information to the note. Nothing changes on the product until you apply a field, and applying never publishes.",
+      "chooseFields": "Fields to draft",
+      "instructions": "Note to the AI (optional)",
+      "instructionsHint": "For example: mention it is a 5 kg family pack. Up to 300 characters.",
+      "create": "Write draft",
+      "creating": "Writing…",
+      "none": "No open drafts.",
+      "draftFrom": "Draft of {date}",
+      "note": "Note: {note}",
+      "stale": "This product was edited after the draft was written. Compare carefully before applying.",
+      "current": "Now",
+      "proposed": "Draft",
+      "emptyField": "Empty",
+      "applied": "Applied",
+      "apply": "Apply {field}",
+      "applying": "Applying…",
+      "discard": "Discard draft",
+      "fields": {
+        "name": "Name",
+        "shortDescription": "Short description",
+        "description": "Description and feature lines",
+        "seoTitle": "Search title",
+        "seoDescription": "Search description"
+      }
     }
   },
   "forms": {
@@ -1210,7 +1237,13 @@
       "commerce_rewards_insufficient": "That would take the balance below zero.",
       "commerce_rewards_off": "Rewards are turned off for this store.",
       "commerce_push_not_configured": "Browser notifications are not set up for this store yet.",
-      "path_invalid": "Enter a path on this site that starts with /, for example /c/rice."
+      "path_invalid": "Enter a path on this site that starts with /, for example /c/rice.",
+      "ai_not_configured": "AI drafts are not set up for this store.",
+      "ai_unavailable": "The AI service did not answer. Try again in a minute.",
+      "ai_busy": "The AI service is busy or its free limit is used up. Try again later.",
+      "ai_refused": "The AI service declined to write this. Change the note or the fields and try again.",
+      "ai_bad_output": "The AI answer was incomplete or too long. Try again, perhaps with fewer fields.",
+      "ai_key_rejected": "The AI key was refused. Check GEMINI_API_KEY in the host settings."
     },
     "fieldErrors": {
       "email_invalid": "Enter an email address like name@example.com",
@@ -1314,7 +1347,10 @@
       "campaign_saved": "Draft saved.",
       "campaign_deleted": "Draft deleted.",
       "campaign_sent": "Campaign queued. Delivery counts update below.",
-      "push_all_off": "Notifications are off on all your browsers."
+      "push_all_off": "Notifications are off on all your browsers.",
+      "ai_draft_created": "Draft ready below. Nothing has changed on the product yet.",
+      "ai_field_applied": "Field applied to the product.",
+      "ai_draft_discarded": "Draft discarded."
     }
   },
   "auth": {

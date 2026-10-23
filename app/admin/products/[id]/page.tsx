@@ -6,6 +6,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { LabelTile } from "@/components/commerce/LabelTile";
+import { AiDraftsPanel } from "@/components/admin/AiDraftsPanel";
 import { MediaUploader } from "@/components/admin/MediaUploader";
 import { AdminImage, SampleBadge, StatusChip } from "@/components/admin/RecordBits";
 import { ActionForm } from "@/components/forms/ActionForm";
@@ -22,6 +23,7 @@ import {
 import { adminPage, count, lt, money } from "@/lib/admin/page";
 import { categoryOptions, localizedFields, productFields, variantFields } from "@/lib/admin/forms";
 import { getAdminLocale } from "@/lib/auth/server";
+import { aiConfig } from "@/lib/adapters/ai/gemini";
 import { cloudinaryConfig, deliveryUrl } from "@/lib/adapters/media/cloudinary";
 import { listCategories } from "@/lib/modules/catalogue/categories";
 import { isDevelopmentDatabase } from "@/lib/modules/catalogue/common";
@@ -50,6 +52,7 @@ export default async function AdminProductPage({ params, searchParams }: { param
   const options = categoryOptions(categories, locale);
   const primary = categories.find((cat) => String(cat._id) === String(product.primaryCategoryId));
   const cloud = cloudinaryConfig();
+  const ai = aiConfig();
   const hidden = { id, version: String(product.version) };
   const firstVerified = variants.find((v) => v.variant.status === "active" && v.variant.netQuantity?.verified)?.variant.netQuantity;
   const netText = firstVerified ? `${firstVerified.value} ${c(`units.${firstVerified.unit}`)}` : undefined;
@@ -111,6 +114,8 @@ export default async function AdminProductPage({ params, searchParams }: { param
         {product.publishedAt ? <p className="field-hint">{t("slugFrozen")}</p> : null}
         <ActionForm action={updateProductAction} testId="product-edit-form" layout="grid" hidden={hidden} messages={messages} submitLabel={c("save")} pendingLabel={c("saving")} fields={productFields(ct, options, product)} />
       </section>
+
+      {ai ? <AiDraftsPanel db={db} product={product} config={ai} messages={messages} locale={locale} /> : null}
 
       <section className="admin-section" aria-labelledby="variants-title">
         <h2 id="variants-title" className="admin-section-title">
