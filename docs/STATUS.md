@@ -73,7 +73,7 @@ verified), **Partial**, **Missing**, **Blocked** (by an owner decision or creden
 | robots.txt, sitemap.xml | Verified (local; updated 2026-10-23) | `app/robots.ts`, `app/sitemap.ts`; crawling allowed only with `SITE_INDEXING=on` (off for the showcase); same test as SEO |
 | Accessibility | Partial | Shell: focus, targets, reflow, contrast, forced colours via gate and e2e; no axe or screen-reader pass yet |
 | Performance | Unverified | No production measurement yet; gate perf on the dev server is not representative |
-| Production readiness | Missing | B11, and the open owner decisions below |
+| Production readiness | Missing (updated 2026-10-23) | B11 in progress on `feat/b11-hardening-docs`: results in `GATE.md` (draft) and `CRITIQUE.md`. Blocking launch: D12 location dataset, courier credentials, legal copy [L], store contact details, owner media, no `LICENSE` (legal review), a data-backed gate run, Vercel environment check, real push and e-mail checks, k6 on staging (not run), and the open owner decisions below |
 
 ## Blockers and owner decisions
 

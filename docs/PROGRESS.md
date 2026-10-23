@@ -2,6 +2,12 @@
 
 Newest first. Each entry: date, phase, done, decided, open, next. Entries are snapshots of their date: "not merged", "open" or "next" describe that day; the current state is in `docs/STATUS.md` (first rows) and `docs/HANDOFF.md`.
 
+## 2026-10-23 — B11: hardening and documentation (in progress)
+
+- **Done (branch `feat/b11-hardening-docs`):** review of security headers and CSP (local and live), rate limits, dependency audit, JS budget and SEO; `og:image` for product pages that have a photo; `MEDIA.md`, `THIRD_PARTY_NOTICES.md` (draft inventory), `CHANGELOG.md`, `GATE.md` (draft), `CRITIQUE.md`, README status and setup notes, `load/k6/storefront-mix.js` (not run).
+- **Results:** in `GATE.md`. The gate passes every visual and accessibility axis on the zero-env setup page; it fails only on SEO rules that are intended for the setup page. The data-backed gate run did not finish in the sandbox.
+- **Open:** `LICENSE` text (lawyer); LGPL/MPL/CC-BY items in THIRD_PARTY_NOTICES; Lighthouse and screen-reader checks; axe-core (new dependency, needs approval); k6 on staging; Vercel environment check (no access).
+
 ## 2026-10-23 — B10 part a: information and legal pages, offline fallback
 
 - **Done:** `/about`, `/contact`, `/faq`, `/terms`, `/privacy-policy`, `/delivery-policy`, `/return-policy` (Bengali default, English under `/en`), all owner text `[NEEDS COPY]` and `noindex`; `/contact` from `store.contact`; footer links; offline fallback in `public/sw.js`, registered on storefront pages.

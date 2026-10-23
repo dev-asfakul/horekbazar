@@ -146,6 +146,8 @@ test("SEO: canonical, hreflang, JSON-LD, sitemap and robots", async ({ page, req
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute("href", `${origin}/en/p/e2e-miniket-rice`);
   await expect(page.locator('link[rel="alternate"][hreflang="bn"]')).toHaveAttribute("href", `${origin}/p/e2e-miniket-rice`);
   await expect(page.locator('link[rel="alternate"][hreflang="x-default"]')).toHaveAttribute("href", `${origin}/p/e2e-miniket-rice`);
+  // B11: the share image is the product's first Cloudinary photo; without Cloudinary there is none (never a broken URL).
+  await expect(page.locator('meta[property="og:image"]')).toHaveCount(0);
   const ld = (await page.locator('script[type="application/ld+json"]').allTextContents()).map((s) => JSON.parse(s) as { "@type": string; offers?: { price: string; availability: string }[] });
   const productLd = ld.find((d) => d["@type"] === "Product")!;
   expect(productLd.offers?.map((o) => [o.price, o.availability])).toEqual([
