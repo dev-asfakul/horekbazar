@@ -1171,3 +1171,22 @@ html[data-store] .header-search :is(.header-search-input, .header-search-submit)
 html[data-store] .header-search-clear:focus-visible {
   outline-offset: -4px;
 }
+
+/* Phones: the whole placeholder ("চাল, তেল, সাবান সার্চ করুন") fits beside the store name at 360 px. */
+@media (width < 768px) {
+  html[data-store] .site-header-inner {
+    gap: 8px;
+  }
+  html[data-store] .wordmark {
+    font-size: 19px;
+  }
+  html[data-store] .header-search-submit {
+    width: 40px;
+  }
+  html[data-store] .header-search-input {
+    font-size: 16px; /* 16 px keeps iOS from zooming on focus */
+  }
+  html[data-store] .header-search-input::placeholder {
+    font-size: 14px;
+  }
+}
