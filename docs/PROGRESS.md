@@ -1,13 +1,14 @@
 # Progress log
 
-Newest first. Each entry: date, phase, done, decided, open, next.
+Newest first. Each entry: date, phase, done, decided, open, next. Entries are snapshots of their date: "not merged", "open" or "next" describe that day; the current state is in `docs/STATUS.md` (first rows) and `docs/HANDOFF.md`.
 
 ## 2026-10-23 — B9 part 2 merged (PR #30, PR #31)
 
 - **Done:** PR #30 (notifications and campaigns) merged as `d3e5a9a` (head `f8778f0`); PR #31 (Gemini AI drafts) rebased onto `main` and merged as `789db3a` (head `89f4b34`). Both after `check` passed; no protections bypassed.
 - **Database:** `horekbazar_dev` checked read-only after the merges: 144 products, 235 variants and stock rows, 1 owner record, settings unchanged; 0 orders, reviews, AI drafts, push subscriptions and campaigns.
-- **Open (B9 not complete):** real push to a browser and real e-mail delivery not verified; Gemini, VAPID and Resend values in Vercel not checked (no Vercel access from the agent); prompt after a meaningful action (BUILD-PLAN acceptance row); scheduled campaigns.
-- **Next:** **B10 Information, privacy, audit** (BUILD-PLAN §11), after the owner's approval; the B9 open items can be closed alongside.
+- **Open (B9 not complete):** real push to a browser and real e-mail delivery not verified; Gemini, VAPID and Resend values in Vercel not checked (no Vercel access from the agent); prompt after a meaningful action (BUILD-PLAN acceptance row; which action is not defined); scheduled campaigns (not in a B9 acceptance row; owner scope decision). Closure criteria: HANDOFF "B9 open items".
+- **Docs reconciled (PR #32):** STATUS rows that still read "not merged" or "Missing" for merged work are relabelled as dated snapshots or updated with evidence re-read from the GitHub API; the B9 part 1 merge record (formerly only in open PR #28) is included here.
+- **Next:** **B10 Information, privacy, audit** (BUILD-PLAN §11); the B9 open items are closed alongside when the owner provides access or answers.
 
 ## 2026-10-23 — B9 part 2b: AI drafts (Gemini) with per-field approval
 
@@ -21,6 +22,7 @@ Newest first. Each entry: date, phase, done, decided, open, next.
 - **Browser journeys:** `tests/e2e-db/commerce/ai-drafts.spec.ts` with a loopback Gemini stub in `scripts/e2e-db-server.mjs`.
 - **Rebased** onto `main` after PR #30 merged (`d3e5a9a`).
 - **Open:** Gemini key in Vercel not checked (no Vercel access from the agent).
+
 ## 2026-10-23 — B9 part 2a review fixes (PR #30)
 
 - **Consent at send time:** the push job now re-reads the subscription's topics. A campaign message queued before the customer unticked "Offers and news" finishes as `topic_off` without contacting the push service; order updates likewise once "Order updates" is off.
@@ -50,6 +52,10 @@ Newest first. Each entry: date, phase, done, decided, open, next.
 - **Verified:** reruns write nothing; integrity query clean; 91/91 media ids in Cloudinary and served by the CDN; local production build shows images, prices and stock on `/`, `/new`, `/c/grocery`, `/collections/*`, `/search`, `/p/*`; admin edit persisted and appeared on the storefront, then reverted.
 - **Later the same day:** the Owner signed in through the normal password-reset and verification flow, enabled two-step verification and published one banner (audit log; no bootstrap or manual change).
 - **Open:** 53 products without a photo; store contact; banner not yet placed on `/` (`/admin/homepage`); B10–B11.
+
+## 2026-10-22 — B9 part 1 merged (PR #27)
+
+- PR #27 head `5947530` (SCHEMA.md `features` defaults off; review schema comment) passed push run 39813187246 and PR run 39813195029; merged as `d47d451`; `main` push run 39816729651 success; Vercel status success on `d47d451` (re-read from the GitHub API 2026-10-23). This record was first written in PR #28, which was never merged.
 
 ## 2026-10-22 — PR #27 review corrections (B9 part 1)
 
