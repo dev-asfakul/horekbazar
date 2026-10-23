@@ -14,8 +14,11 @@ export function categoryNames(store: ReadyStore, locale: Locale): Map<string, st
   return new Map([...store.tree.byId.values()].map((c) => [c.id, shown(c.name, locale)]));
 }
 
-/** Metadata for a storefront page: title, description, canonical, hreflang; noindex until indexing is on. */
-export async function storeMetadata(locale: Locale, path: string, title: string, description?: string): Promise<Metadata> {
+/**
+ * Metadata for a storefront page: title, description, canonical, hreflang, and an optional share
+ * image (an absolute URL, e.g. the product's first photo); noindex until indexing is on.
+ */
+export async function storeMetadata(locale: Locale, path: string, title: string, description?: string, image?: string): Promise<Metadata> {
   const store = await loadStore();
   if (!store.ready) {
     const t = await getTranslations({ locale, namespace: "setup" });
@@ -25,7 +28,7 @@ export async function storeMetadata(locale: Locale, path: string, title: string,
     title,
     ...(description ? { description: description.slice(0, 160) } : {}),
     alternates: await alternates(locale, path),
-    openGraph: { title, ...(description ? { description: description.slice(0, 160) } : {}), type: "website" },
+    openGraph: { title, ...(description ? { description: description.slice(0, 160) } : {}), type: "website", ...(image ? { images: [{ url: image }] } : {}) },
     ...(indexingAllowed() ? {} : { robots: { index: false, follow: true } }),
   };
 }

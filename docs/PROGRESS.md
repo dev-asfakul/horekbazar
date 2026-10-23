@@ -2,11 +2,18 @@
 
 Newest first. Each entry: date, phase, done, decided, open, next. Entries are snapshots of their date: "not merged", "open" or "next" describe that day; the current state is in `docs/STATUS.md` (first rows) and `docs/HANDOFF.md`.
 
-## 2026-10-23 — B10 part b: /account/privacy (proposed; owner review required)
+## 2026-10-23 — B11: hardening and documentation (in progress)
 
-- **Done (branch `feat/b10-account-privacy`, not merged):** `/account/privacy` asks for the password again (accounts without a password: sign-in within 15 minutes). Export: a single-use 10-minute link to `GET /api/account/export`, owner only, claimed atomically, `no-store`; the JSON holds profile, sessions (no tokens), addresses, orders, returns, reviews, conversations and messages, rewards, coupon use, carts, notification choices and privacy requests, with credentials, tokens, push keys, internal keys and staff ids removed. Deletion: an idempotent request (unique partial index), withdrawable by the customer, listed for customers.read on `/admin/customers`; **nothing is erased**. Audit: `privacy.export_prepared`, `privacy.export_downloaded`, `privacy.deletion_requested`, `privacy.deletion_cancelled`, without personal data. 5 requests an hour per customer, wrong passwords included.
-- **Needs the owner:** approve the new `privacyRequests` collection (SCHEMA.md); decide retention rules and deletion handling **[L]**; supply the Bangla copy marked [NEEDS COPY] on the page.
-- **Tests:** tests/unit/privacy.test.ts (2), tests/integration/privacy.test.ts (12; concurrency for both links and deletion requests), tests/e2e-db/admin-records.spec.ts (+1 customer journey).
+- **Done (branch `feat/b11-hardening-docs`):** review of security headers and CSP (local and live), rate limits, dependency audit, JS budget and SEO; `og:image` for product pages that have a photo; `MEDIA.md`, `THIRD_PARTY_NOTICES.md` (draft inventory), `CHANGELOG.md`, `GATE.md` (draft), `CRITIQUE.md`, README status and setup notes, `load/k6/storefront-mix.js` (not run).
+- **Results:** in `GATE.md`. The gate passes every visual and accessibility axis on the zero-env setup page; it fails only on SEO rules that are intended for the setup page. The data-backed gate run did not finish in the sandbox.
+- **Open:** `LICENSE` text (lawyer); LGPL/MPL/CC-BY items in THIRD_PARTY_NOTICES; Lighthouse and screen-reader checks; axe-core (new dependency, needs approval); k6 on staging; Vercel environment check (no access).
+
+## 2026-10-23 — B10 part b: /account/privacy (merged; deletion processing disabled)
+
+- **Merged:** PR #35 as `ab3a9cd` (head `9fdfec5`) after the owner approved `privacyRequests` for the request workflow only (2026-10-23); `db:migrate` run on `horekbazar_dev` (collection, strict validator, 3 indexes). Deletion requests are an upsert, so repeats stay single even before the indexes exist. Nothing is deleted; retention policy is an owner/legal blocker **[L]** (STATUS).
+- **Built:** `/account/privacy` asks for the password again (accounts without a password: sign-in within 15 minutes). Export: a single-use 10-minute link to `GET /api/account/export`, owner only, claimed atomically, `no-store`; the JSON holds profile, sessions (no tokens), addresses, orders, returns, reviews, conversations and messages, rewards, coupon use, carts, notification choices and privacy requests, with credentials, tokens, push keys, internal keys and staff ids removed. Deletion: an idempotent request (unique partial index), withdrawable by the customer, listed for customers.read on `/admin/customers`; **nothing is erased**. Audit: `privacy.export_prepared`, `privacy.export_downloaded`, `privacy.deletion_requested`, `privacy.deletion_cancelled`, without personal data. 5 requests an hour per customer, wrong passwords included.
+- **Needs the owner:** decide retention rules and deletion handling **[L]**; supply the Bangla copy marked [NEEDS COPY] on the page.
+- **Tests:** tests/unit/privacy.test.ts (2), tests/integration/privacy.test.ts (13; concurrency for both links and deletion requests), tests/e2e-db/admin-records.spec.ts (+1 customer journey).
 
 ## 2026-10-23 — B10 part c: audit log viewer and customer lookup
 

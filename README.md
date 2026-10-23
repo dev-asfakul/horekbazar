@@ -2,11 +2,17 @@
 
 A reusable, self-hosted single-store e-commerce template. HorekBazar is the flagship demo shop.
 
-Status: **Phase B2 (data platform)** under review; B0 and B1 are merged to `main`. Checkpoints 1 (stack) and 3 (the amended "Khata" direction) are approved; Checkpoints 2 (product contract) and 4 (build plan, `docs/BUILD-PLAN.md`) are approved with conditions. The app is a toolchain skeleton that shows a setup-required page; there is no store functionality, no database import and no deployment. Open decisions: D11 (generated catalogue pending owner review and approval), D12 (location dataset, open), D5 (hosting, deferred). The architecture is being decided through the Motomation Design checkpoints:
+Status (2026-10-23): phases B0–B9 and B10 part a are merged to `main` and deployed to the development preview, https://horekbazar-preview.vercel.app (which database it uses cannot be verified without Vercel access). B10 parts b and c are in open pull requests. B11 (hardening and documentation) is in progress. **It is not production-ready.** See [`docs/STATUS.md`](./docs/STATUS.md) for what is verified, and for the blockers: location dataset (D12, blocks checkout addresses), courier credentials, legal copy (`[NEEDS COPY]`), store contact details, product images and banners, real push and e-mail delivery.
 
-- [`DESIGN.md`](./DESIGN.md): audit, stack, product contract and scope
+Documents:
+
+- [`DESIGN.md`](./DESIGN.md): audit, stack, product contract, scope and the decision trace
 - [`docs/domain-rules.md`](./docs/domain-rules.md): roles, order lifecycle, inventory, pricing, integrations, configuration, security, acceptance criteria
-- [`docs/LICENSING.md`](./docs/LICENSING.md): provisional licensing plan
+- [`docs/BUILD-PLAN.md`](./docs/BUILD-PLAN.md): phases, verification matrix, risks and owner decisions
+- [`SCHEMA.md`](./SCHEMA.md), [`DATA.md`](./DATA.md), [`MOTION.md`](./MOTION.md): data contract, data policy, motion
+- [`MEDIA.md`](./MEDIA.md): every font and image with its source and licence
+- [`docs/LICENSING.md`](./docs/LICENSING.md) and [`THIRD_PARTY_NOTICES.md`](./THIRD_PARTY_NOTICES.md): provisional licensing plan and the dependency licence inventory (draft). There is **no `LICENSE` file yet**: the licence text must be written or reviewed by a lawyer before the template is sold
+- [`CHANGELOG.md`](./CHANGELOG.md), [`GATE.md`](./GATE.md), [`CRITIQUE.md`](./CRITIQUE.md): history, the latest design-gate run, the advisory critique
 
 ## Data policy
 
@@ -74,4 +80,8 @@ The design workflow skill is not vendored. Install it locally:
 npx skills add asfakulsiam/asfakulsiam-motomation-design
 ```
 
-Copy `.env.example` to `.env.local` for local configuration. Never commit `.env` files.
+Copy `.env.example` to `.env.local` for local configuration. It lists every variable with a comment saying which feature needs it; the app starts with none of them and shows what is missing, by name only, at `/admin/setup` and `/admin/health`. Never commit `.env` files, and use separate credentials for each environment.
+
+### Load testing
+
+`load/k6/storefront-mix.js` implements the read-only part of the k6 plan (docs/BUILD-PLAN.md §12). It has **not been run**: it needs a staging deployment equal to production, its own database and an approved budget. Never run it against production, the development preview or a free Atlas cluster. k6 is an external AGPL tool; install it separately.

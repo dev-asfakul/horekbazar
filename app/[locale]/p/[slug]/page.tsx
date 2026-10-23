@@ -36,7 +36,9 @@ export async function generateMetadata({ params }: PageProps<"/[locale]/p/[slug]
   const page = await productBySlug(slug);
   if (!page) return {};
   const p = page.product;
-  return storeMetadata(locale, `/p/${p.slug}`, shown(p.seo?.title ?? p.name, locale), shown(p.seo?.description ?? p.shortDescription, locale) || undefined);
+  const cloud = cloudinaryConfig();
+  const image = cloud && p.media[0] ? deliveryUrl(cloud.cloudName, p.media[0].publicId, 960) : undefined;
+  return storeMetadata(locale, `/p/${p.slug}`, shown(p.seo?.title ?? p.name, locale), shown(p.seo?.description ?? p.shortDescription, locale) || undefined, image);
 }
 
 export default async function ProductPage({ params, searchParams }: PageProps<"/[locale]/p/[slug]">) {
