@@ -10,7 +10,7 @@ Skill source: https://github.com/asfakulsiam/asfakulsiam-motomation-design (the 
 |---|---|---|---|
 | `http://localhost:3400/` | local standalone production build, **no environment variables** (shows "setup required") | **FAIL** (rules only) | `gate: c0 o0 w0 rm0 a0 n0 q0 k0 · rules: C0 S4 P0 K0 · gate/4 · faa9bb496e · skipped 1/21@768`. All 26 journey pages load. Contrast, overflow, wording, motion, names, numbers, quality, access (focus 15/15, targets, zoom, reflow, forced colours, no keyboard trap) and the security rules pass. SEO fails: seo-03 noindex, seo-04 no canonical, seo-06 no description, seo-18 no og:image. The setup page is noindex and has no canonical **by design** (it must not be indexed). Target warning: the footer link "রিটার্ন" is 32×44 px |
 | `http://localhost:3300/` and other pages | same build, with the `horekbazar_dev` showcase data (read-only browsing) | **NOT VERIFIED** | Two runs stopped making progress: CPU load near 0, connections to the server held open, timed out after 600 s in both footprints. The pages answer in under 1 s in a separate Playwright probe (load 547 ms, network idle 720 ms). Cause not found; to be investigated in Phase C/D with the skill author's tooling |
-| `http://localhost:3300/p/ballpoint-pens-pack-of-10` | same, light footprint | see "Late result" below | |
+| `http://localhost:3300/p/ballpoint-pens-pack-of-10` | same build and data, light then standard footprint | **NOT VERIFIED** | stalled both times; see "Late result" |
 
 Smoothness (Q) is not judged on a 2-CPU sandbox (the gate says "sandbox: 2 CPUs").
 
@@ -34,4 +34,4 @@ Smoothness (Q) is not judged on a 2-CPU sandbox (the gate says "sandbox: 2 CPUs"
 
 ## Late result
 
-(Filled in when the data-backed product-page run finishes. If this section is still empty, the run did not finish.)
+The data-backed product-page run (`/p/ballpoint-pens-pack-of-10`) was tried twice more, in the light footprint and then in the standard footprint with `--timeout 1400`. Both stalled the same way: no output, CPU idle, about 15 minutes each. Both were stopped. **The data-backed gate is NOT VERIFIED** (Phase C finding C-06).
