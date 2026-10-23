@@ -105,4 +105,5 @@ jobs:
           GEMINI_API_KEY: ci-canary-gemini-key-2c7d
           OWNER_PASSWORD: ci-canary-owner-password-5e9b
           CRON_SECRET: ci-canary-cron-secret-5e9b
+          VAPID_PRIVATE_KEY: ci-canary-vapid-private-3f8e
         run: npm run build && npm run check:bundle

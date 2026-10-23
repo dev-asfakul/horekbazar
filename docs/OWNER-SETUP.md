@@ -37,6 +37,23 @@ environment (Production / Preview / Development) for each. Then redeploy. Names 
 Other variables in `.env.example` (Cloudinary, VAPID, courier, Gemini, Ably) are not needed to
 create the Owner.
 
+### Browser notifications (optional, B9 part 2)
+
+Browser notifications stay hidden until all three VAPID variables are set. Generate one key pair
+per environment on your own computer (Node only, nothing to install) and paste the two printed
+lines into the host's environment settings, never into chat or a commit:
+
+```sh
+node -e 'const k=require("crypto").generateKeyPairSync("ec",{namedCurve:"P-256"}).privateKey.export({format:"jwk"});console.log("NEXT_PUBLIC_VAPID_PUBLIC_KEY="+Buffer.concat([Buffer.from([4]),Buffer.from(k.x,"base64url"),Buffer.from(k.y,"base64url")]).toString("base64url"));console.log("VAPID_PRIVATE_KEY="+k.d)'
+```
+
+Set `VAPID_SUBJECT` to `mailto:<store contact address>` or `https://<store site>`, then redeploy.
+Customers turn notifications on at `/account/notifications`; "Offers and news" is a separate,
+unticked choice. Campaigns (`/admin/notifications`, `campaigns.send`) reach only browsers that
+ticked it. Replacing the key pair stops every existing subscription. The order e-mail log hashes
+addresses with `AUTH_SECRET`, so a new `AUTH_SECRET` also makes older log entries unsearchable by
+address (they stay listed, masked).
+
 ## Steps
 
 1. Set the variables above and redeploy.

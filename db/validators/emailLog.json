@@ -1,0 +1,69 @@
+{
+  "$jsonSchema": {
+    "bsonType": "object",
+    "properties": {
+      "_id": {
+        "bsonType": "objectId"
+      },
+      "outboxKey": {
+        "bsonType": "string",
+        "minLength": 1,
+        "maxLength": 300
+      },
+      "toHash": {
+        "bsonType": "string",
+        "pattern": "^[a-f0-9]{64}$"
+      },
+      "toMasked": {
+        "bsonType": "string",
+        "maxLength": 200
+      },
+      "template": {
+        "bsonType": "string",
+        "minLength": 1,
+        "maxLength": 60
+      },
+      "providerId": {
+        "bsonType": "string",
+        "maxLength": 200
+      },
+      "status": {
+        "bsonType": "string",
+        "enum": [
+          "queued",
+          "sent",
+          "failed"
+        ]
+      },
+      "error": {
+        "bsonType": "string",
+        "maxLength": 300
+      },
+      "attempts": {
+        "bsonType": [
+          "int",
+          "long"
+        ],
+        "minimum": 1
+      },
+      "createdAt": {
+        "bsonType": "date"
+      },
+      "updatedAt": {
+        "bsonType": "date"
+      }
+    },
+    "required": [
+      "_id",
+      "outboxKey",
+      "toHash",
+      "toMasked",
+      "template",
+      "status",
+      "attempts",
+      "createdAt",
+      "updatedAt"
+    ],
+    "additionalProperties": false
+  }
+}

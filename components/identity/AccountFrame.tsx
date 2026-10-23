@@ -10,7 +10,7 @@ import { getIdentity } from "@/lib/auth/server";
 import { localeHref } from "@/lib/i18n/href";
 import { getSettings } from "@/lib/modules/settings/settings";
 
-type Section = "overview" | "orders" | "messages" | "reviews" | "rewards" | "addresses" | "profile" | "security";
+type Section = "overview" | "orders" | "messages" | "notifications" | "reviews" | "rewards" | "addresses" | "profile" | "security";
 
 /** B9: reviews and rewards appear only while the store has them on; messages always. */
 async function engagementFlags() {
@@ -27,6 +27,7 @@ export async function AccountFrame({ locale, current, title, staff, children }: 
     { key: "overview", href: "/account" },
     { key: "orders", href: "/account/orders" },
     { key: "messages", href: "/account/messages" },
+    { key: "notifications", href: "/account/notifications" },
     ...(flags.reviews ? [{ key: "reviews" as const, href: "/account/reviews" }] : []),
     ...(flags.rewards ? [{ key: "rewards" as const, href: "/account/rewards" }] : []),
     { key: "addresses", href: "/account/addresses" },

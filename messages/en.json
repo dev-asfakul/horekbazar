@@ -175,7 +175,8 @@
       "returns": "Returns",
       "messages": "Messages",
       "reviews": "Reviews",
-      "rewards": "Rewards"
+      "rewards": "Rewards",
+      "notifications": "Notifications"
     },
     "home": {
       "title": "Admin",
@@ -200,7 +201,8 @@
       "returnsDesc": "Customer return requests, inspection and refunds.",
       "messagesDesc": "Customer questions and your replies.",
       "reviewsDesc": "Publish, reject or reply to customer reviews.",
-      "rewardsDesc": "Loyalty points rules, balances and adjustments."
+      "rewardsDesc": "Loyalty points rules, balances and adjustments.",
+      "notificationsDesc": "Browser notification campaigns and the order e-mail log."
     },
     "setup": {
       "title": "Set up the store owner",
@@ -1039,6 +1041,44 @@
         "expire": "Expired"
       },
       "expires": "expires {date}"
+    },
+    "notifications": {
+      "title": "Notifications",
+      "intro": "Send a browser notification to customers who ticked \"Offers and news\". Order updates go out automatically.",
+      "push": "Browser notifications",
+      "email": "Order e-mails",
+      "configured": "Configured",
+      "notConfigured": "Not configured ({names})",
+      "newCampaign": "New campaign",
+      "audience": "{count, plural, =0 {No customers have opted in to offers yet.} one {{n} browser has opted in to offers.} other {{n} browsers have opted in to offers.}}",
+      "titleBn": "Title (Bangla)",
+      "titleEn": "Title (English)",
+      "bodyBn": "Message (Bangla)",
+      "bodyEn": "Message (English)",
+      "url": "Opens",
+      "urlHint": "A path on this site, for example /c/rice. Leave / for the home page.",
+      "saveDraft": "Save draft",
+      "drafts": "Drafts",
+      "noDrafts": "No drafts.",
+      "send": "{count, plural, one {Send to {n} browser} other {Send to {n} browsers}}",
+      "sending": "Sending…",
+      "sendNeedsPush": "Set up browser notifications to send.",
+      "delete": "Delete draft",
+      "sent": "Sent",
+      "noSent": "Nothing sent yet.",
+      "recipients": "Queued for {n}",
+      "delivery": "Accepted {accepted} · not sent (browser gone or offers turned off) {removed} · waiting {waiting} · failed {failed}",
+      "emails": "Order e-mail log",
+      "emailsIntro": "The latest 50 order e-mails. Addresses are masked; search by full address.",
+      "customerEmail": "Customer e-mail",
+      "find": "Find",
+      "noEmails": "No e-mails logged.",
+      "attempts": "attempts: {n}",
+      "emailStatus": {
+        "queued": "Queued",
+        "sent": "Sent",
+        "failed": "Failed"
+      }
     }
   },
   "forms": {
@@ -1168,7 +1208,9 @@
       "commerce_conversation_closed": "This conversation is closed. Reopen it to reply.",
       "commerce_conversation_full": "This conversation is full. Start a new one.",
       "commerce_rewards_insufficient": "That would take the balance below zero.",
-      "commerce_rewards_off": "Rewards are turned off for this store."
+      "commerce_rewards_off": "Rewards are turned off for this store.",
+      "commerce_push_not_configured": "Browser notifications are not set up for this store yet.",
+      "path_invalid": "Enter a path on this site that starts with /, for example /c/rice."
     },
     "fieldErrors": {
       "email_invalid": "Enter an email address like name@example.com",
@@ -1207,7 +1249,8 @@
       "flash_only": "Only a flash sale can have a quantity cap.",
       "coupon_code": "Use 3–30 capital letters, digits, - or _ (for example EID10).",
       "tier_line": "Write each line as quantity = price, for example 5 = 80.",
-      "order_prefix": "Use 2–6 capital letters or digits."
+      "order_prefix": "Use 2–6 capital letters or digits.",
+      "path_invalid": "Enter a path on this site that starts with /."
     },
     "success": {
       "check_inbox": "Check your inbox. If this address can receive email, a verification link is on its way; it can take a few minutes. Open it to activate your account.",
@@ -1267,7 +1310,11 @@
       "message_sent": "Message sent.",
       "conversation_closed": "Conversation closed.",
       "conversation_reopened": "Conversation reopened.",
-      "rewards_adjusted": "Points adjusted."
+      "rewards_adjusted": "Points adjusted.",
+      "campaign_saved": "Draft saved.",
+      "campaign_deleted": "Draft deleted.",
+      "campaign_sent": "Campaign queued. Delivery counts update below.",
+      "push_all_off": "Notifications are off on all your browsers."
     }
   },
   "auth": {
@@ -1356,7 +1403,8 @@
       "orders": "Orders",
       "messages": "Messages",
       "reviews": "Reviews",
-      "rewards": "Rewards"
+      "rewards": "Rewards",
+      "notifications": "Notifications"
     },
     "signedInAs": "Signed in as {email}",
     "signOut": "Sign out",
@@ -1591,6 +1639,33 @@
         "reverse": "Taken back (return)",
         "adjust": "Adjusted by the store",
         "expire": "Expired"
+      }
+    },
+    "notifications": {
+      "title": "Notifications",
+      "email": {
+        "title": "Order e-mails",
+        "body": "We e-mail {email} when you place an order and when its status changes. These are part of your order and cannot be turned off."
+      },
+      "push": {
+        "title": "Browser notifications",
+        "notAvailable": "Browser notifications are not available in this store yet.",
+        "unsupported": "This browser does not support notifications. Try a current version of Chrome, Edge, Firefox or Safari.",
+        "blocked": "Notifications are blocked for this site. Allow them in your browser's site settings, then reload this page.",
+        "off": "Off on this browser.",
+        "on": "On for this browser.",
+        "orders": "Order updates",
+        "ordersHint": "When your order is confirmed, shipped, delivered or cancelled.",
+        "marketing": "Offers and news",
+        "marketingHint": "Occasional offers from the store. Optional, and separate from order updates.",
+        "turnOn": "Turn on notifications",
+        "save": "Save choices",
+        "turnOff": "Turn off on this browser",
+        "working": "Please wait…",
+        "saved": "Your choices are saved.",
+        "turnedOff": "Notifications are off on this browser.",
+        "devices": "{count, plural, one {On for {n} browser.} other {On for {n} browsers.}}",
+        "allOff": "Turn off on all browsers"
       }
     }
   },

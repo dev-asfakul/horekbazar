@@ -2,6 +2,26 @@
 
 Newest first. Each entry: date, phase, done, decided, open, next.
 
+## 2026-10-23 — B9 part 2a review fixes (PR #30)
+
+- **Consent at send time:** the push job now re-reads the subscription's topics. A campaign message queued before the customer unticked "Offers and news" finishes as `topic_off` without contacting the push service; order updates likewise once "Order updates" is off.
+- **Browser changed hands:** order-update rows carry the customer's `userId`; a browser that now belongs to another account gets `subscription_moved` and nothing is sent.
+- **SSRF:** a subscription endpoint is accepted only on known push services (FCM, Mozilla, Apple, WNS; https, default port, no credentials), checked on save and again before sending; `fetch` uses `redirect: "error"`.
+- **Worker start:** `PushRejectedError` without a parameter property (commit `3857e35`), with a test that loads the outbox handlers in a plain Node process. That commit had also reformatted two files; the formatting is restored to the repository style.
+- **Browser journeys:** `tests/e2e-db/commerce/notifications.spec.ts` (the e2e server now makes throwaway VAPID keys): no permission prompt on load, offers unticked by default, a refused permission shows the blocked state, a campaign is queued only for the opted-in browser (with its audit row), support gets 403, signed out redirects to sign-in.
+- **Local results:** lint, typecheck OK; unit 171/171; integration 168/168; validators 37 OK; catalogue checks OK; zero-variable build OK; signed-in journeys (`test:e2e:db`, Chromium) 20 passed, 1 skipped (as on `main`).
+- **Not built (documented):** campaign editing, scheduling and cancelling. `scheduled` stays reserved; a draft can be deleted and a sent campaign cannot be recalled.
+
+## 2026-10-23 — B9 part 2a: notifications (push, campaigns, e-mail log, account page)
+
+- **Owner:** "let finish the backend and development first, then the entire website will be redesignd again"; chose "B9 part 2" in a reviewable PR, not merged automatically. No visual redesign: new screens reuse existing classes.
+- **D3 decided:** `@block65/webcrypto-web-push` 2.0.0 (exact pin, server only) after the fit check against `@pushforge/builder` and in-house (DESIGN.md Decision trace, 2026-10-23).
+- **Done:** `pushSubscriptions`, `campaigns`, `emailLog` collections with validators (37) and indexes; push adapter (`lib/adapters/push/webpush.ts`, bounded request, 404/410 = gone); service worker `public/sw.js` (push + notification click only, same-site links, no caching; own CSP, `no-cache`; `worker-src 'self'` in the site CSP); `/account/notifications` (order e-mails explained; browser opt-in with separate "Offers and news", unticked by default; turn off here or on all browsers); order-update pushes queued in the order transition (same statuses as the e-mails, orders topic only, only when VAPID is configured); `/admin/notifications` (`campaigns.send`): configuration by variable name, audience count, drafts, send once (version-checked) to offers subscribers only, delivery counts from the outbox; order e-mail log (masked address, keyed hash search, attempts; shown only with `customers.read`). Rate limit `push-change` 30/10 min.
+- **Defaults:** nothing switches on by itself. Without VAPID variables the browser section says it is not available and campaigns cannot be sent. No campaign or subscription was created on `horekbazar_dev`.
+- **Verified (local, Node 24.22.1):** see STATUS. Push encryption checked independently (RFC 8291 decrypt with `node:crypto`, VAPID ES256 signature verified). Local production server: `/sw.js` 200 with `Cache-Control: no-cache` and its CSP; site CSP has `worker-src 'self'`; `/account/notifications`, `/en/account/notifications`, `/admin/notifications` 307 to sign-in when signed out. Real delivery to a browser push service: **not run** (sandbox has no browser push service).
+- **Database:** `db:migrate` on `horekbazar_dev` created `pushSubscriptions`, `campaigns`, `emailLog`; nothing else updated; no data migrations.
+- **Open:** VAPID variables in Vercel not checked (no Vercel access from the agent); emailLog retention waits for **[L]**; PR B (AI drafts).
+
 ## 2026-10-22 — Development shop population (images, collections, homepage)
 
 - **Owner:** make HorekBazar "look and behave like a properly stocked, believable Bangladeshi online marketplace, using persistent database records rather than hardcoded demo content"; no fabricated customer activity; gated features stay off.

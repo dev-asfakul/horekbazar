@@ -31,6 +31,7 @@ export const ADMIN_PAGE_CAPABILITY = {
   "/admin/reviews": "reviews.moderate",
   "/admin/messages": "messages.reply",
   "/admin/rewards": "rewards.write",
+  "/admin/notifications": "campaigns.send",
   // B6 pricing.
   "/admin/promotions": "promotions.write",
   "/admin/coupons": "promotions.write",

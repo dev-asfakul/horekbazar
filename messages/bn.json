@@ -199,7 +199,9 @@
       "commerce_conversation_closed": "এই কথোপকথন বন্ধ করা হয়েছে।",
       "commerce_conversation_full": "এই কথোপকথনে আর মেসেজ যোগ করা যাবে না। নতুন একটা শুরু করুন।",
       "commerce_rewards_insufficient": "ব্যালেন্স শূন্যের নিচে নামানো যাবে না।",
-      "commerce_rewards_off": "এই স্টোরে রিওয়ার্ড পয়েন্ট এখন বন্ধ।"
+      "commerce_rewards_off": "এই স্টোরে রিওয়ার্ড পয়েন্ট এখন বন্ধ।",
+      "commerce_push_not_configured": "এই স্টোরে ব্রাউজার নোটিফিকেশন এখনো চালু করা হয়নি।",
+      "path_invalid": "এই সাইটের একটি পাথ দিন, যা / দিয়ে শুরু, যেমন /c/rice।"
     },
     "fieldErrors": {
       "email_invalid": "name@example.com-এর মতো ইমেইল অ্যাড্রেস দিন",
@@ -238,7 +240,8 @@
       "flash_only": "Only a flash sale can have a quantity cap.",
       "coupon_code": "Use 3–30 capital letters, digits, - or _ (for example EID10).",
       "tier_line": "Write each line as quantity = price, for example 5 = 80.",
-      "order_prefix": "Use 2–6 capital letters or digits."
+      "order_prefix": "Use 2–6 capital letters or digits.",
+      "path_invalid": "এই সাইটের একটি পাথ দিন, যা / দিয়ে শুরু।"
     },
     "success": {
       "check_inbox": "ইনবক্স চেক করুন। এই অ্যাড্রেসে ইমেইল গেলে একটি ভেরিফিকেশন লিংক আসছে; কখনো কয়েক মিনিট লাগে। অ্যাকাউন্ট চালু করতে লিংকটি খুলুন।",
@@ -298,7 +301,11 @@
       "message_sent": "মেসেজ পাঠানো হয়েছে।",
       "conversation_closed": "কথোপকথন বন্ধ হয়েছে।",
       "conversation_reopened": "কথোপকথন আবার খোলা হয়েছে।",
-      "rewards_adjusted": "পয়েন্ট ঠিক করা হয়েছে।"
+      "rewards_adjusted": "পয়েন্ট ঠিক করা হয়েছে।",
+      "campaign_saved": "ড্রাফট সেভ হয়েছে।",
+      "campaign_deleted": "ড্রাফট মুছে ফেলা হয়েছে।",
+      "campaign_sent": "ক্যাম্পেইন পাঠানোর জন্য সারিতে রাখা হয়েছে। নিচে ডেলিভারির হিসাব আপডেট হবে।",
+      "push_all_off": "আপনার সব ব্রাউজারে নোটিফিকেশন বন্ধ।"
     }
   },
   "auth": {
@@ -387,7 +394,8 @@
       "orders": "অর্ডার",
       "messages": "মেসেজ",
       "reviews": "রিভিউ",
-      "rewards": "রিওয়ার্ড"
+      "rewards": "রিওয়ার্ড",
+      "notifications": "নোটিফিকেশন"
     },
     "signedInAs": "{email} হিসেবে লগইন করা",
     "signOut": "লগআউট",
@@ -622,6 +630,33 @@
         "reverse": "বাদ গেছে (রিটার্ন)",
         "adjust": "স্টোর ঠিক করেছে",
         "expire": "মেয়াদ শেষ"
+      }
+    },
+    "notifications": {
+      "title": "নোটিফিকেশন",
+      "email": {
+        "title": "অর্ডারের ইমেইল",
+        "body": "অর্ডার করলে এবং অর্ডারের অবস্থা বদলালে আমরা {email} ঠিকানায় ইমেইল পাঠাই। এগুলো অর্ডারের অংশ, বন্ধ করা যায় না।"
+      },
+      "push": {
+        "title": "ব্রাউজার নোটিফিকেশন",
+        "notAvailable": "এই স্টোরে ব্রাউজার নোটিফিকেশন এখনো চালু নেই।",
+        "unsupported": "এই ব্রাউজারে নোটিফিকেশন চলে না। Chrome, Edge, Firefox বা Safari-এর নতুন সংস্করণ ব্যবহার করুন।",
+        "blocked": "এই সাইটের নোটিফিকেশন ব্লক করা আছে। ব্রাউজারের সাইট সেটিংসে অনুমতি দিন, তারপর পেজটি রিলোড করুন।",
+        "off": "এই ব্রাউজারে বন্ধ।",
+        "on": "এই ব্রাউজারে চালু।",
+        "orders": "অর্ডারের আপডেট",
+        "ordersHint": "অর্ডার কনফার্ম, পাঠানো, ডেলিভারি বা বাতিল হলে।",
+        "marketing": "অফার ও খবর",
+        "marketingHint": "স্টোরের মাঝে মাঝে অফার। ঐচ্ছিক, অর্ডারের আপডেট থেকে আলাদা।",
+        "turnOn": "নোটিফিকেশন চালু করুন",
+        "save": "পছন্দ সেভ করুন",
+        "turnOff": "এই ব্রাউজারে বন্ধ করুন",
+        "working": "অপেক্ষা করুন…",
+        "saved": "আপনার পছন্দ সেভ হয়েছে।",
+        "turnedOff": "এই ব্রাউজারে নোটিফিকেশন বন্ধ।",
+        "devices": "{count, plural, other {{n}টি ব্রাউজারে চালু।}}",
+        "allOff": "সব ব্রাউজারে বন্ধ করুন"
       }
     }
   },
