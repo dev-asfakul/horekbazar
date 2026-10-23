@@ -2357,3 +2357,17 @@ select[multiple].field-input {
 .ai-compare { display: grid; gap: 0.75rem; }
 @media (min-width: 768px) { .ai-compare { grid-template-columns: 1fr 1fr; } }
 .ai-text { margin: 0.25rem 0 0.5rem; max-width: 68ch; white-space: pre-line; overflow-wrap: anywhere; }
+
+/* B10 audit log: redacted before/after values, readable on a phone. */
+.audit-diff { margin-top: 8px; }
+.audit-diff summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; }
+.audit-diff pre {
+  max-width: 100%;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  padding: 8px 12px;
+  background: var(--surface);
+  border-radius: 6px;
+  font-size: var(--text-step--1);
+}
