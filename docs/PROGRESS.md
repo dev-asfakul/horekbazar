@@ -2,6 +2,13 @@
 
 Newest first. Each entry: date, phase, done, decided, open, next.
 
+## 2026-10-23 — B9 part 2 merged (PR #30, PR #31)
+
+- **Done:** PR #30 (notifications and campaigns) merged as `d3e5a9a` (head `f8778f0`); PR #31 (Gemini AI drafts) rebased onto `main` and merged as `789db3a` (head `89f4b34`). Both after `check` passed; no protections bypassed.
+- **Database:** `horekbazar_dev` checked read-only after the merges: 144 products, 235 variants and stock rows, 1 owner record, settings unchanged; 0 orders, reviews, AI drafts, push subscriptions and campaigns.
+- **Open (B9 not complete):** real push to a browser and real e-mail delivery not verified; Gemini, VAPID and Resend values in Vercel not checked (no Vercel access from the agent); prompt after a meaningful action (BUILD-PLAN acceptance row); scheduled campaigns.
+- **Next:** **B10 Information, privacy, audit** (BUILD-PLAN §11), after the owner's approval; the B9 open items can be closed alongside.
+
 ## 2026-10-23 — B9 part 2b: AI drafts (Gemini) with per-field approval
 
 - **Done:** `aiDrafts` collection (validator 38, index `targetType, targetId, status`); Gemini adapter on plain `fetch` (`lib/adapters/ai/gemini.ts`), no SDK; draft module (`lib/modules/ai/drafts.ts`): the prompt lists only the product's own facts (name, category, attributes, active variant titles, current texts) and forbids invented claims, prices, stock or delivery promises; the answer is checked against the schema and length limits; Apply writes one field (`name`, `shortDescription`, `description`, `seo.title`, `seo.description`) in a transaction that checks both the product and draft versions, bumps the product version and writes `product.ai_field_applied` to the audit log; Discard is audited too. Admin panel on `/admin/products/[id]` with the free-tier notice, current-vs-draft comparison and a stale-draft note.

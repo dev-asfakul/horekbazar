@@ -1,6 +1,6 @@
 # Handoff for the next developer or agent
 
-Last updated 2026-10-23 (Asia/Dhaka), after B9 part 2b (Gemini AI drafts). The "B9 part 2b record" below is
+Last updated 2026-10-23 (Asia/Dhaka), after PR #30 and PR #31 merged (B9 part 2). B9 is **not complete** (open items in the "B9 part 2b record"); the next roadmap phase is **B10 Information, privacy, audit**. The "B9 part 2b record" below is
 the newest; older sections describe B4–B5 and are kept for their detail. Read this first, then `AGENTS.md`, `DESIGN.md` (Decision trace), `docs/BUILD-PLAN.md`
 §11 (phases), `docs/STATUS.md` and the newest entries of `docs/PROGRESS.md`.
 
@@ -19,8 +19,9 @@ the newest; older sections describe B4–B5 and are kept for their detail. Read 
 | B9 engagement (part 1) | branch `feat/b9-engagement`, PR into `main`, **not merged** (owner review); see "B9 record" |
 | B9 part 1 | merged to `main` (PR #27 `d47d451`); showcase population PR #29 (`4a0ef5b`) |
 | B9 part 2a notifications | merged to `main`: PR #30 (`d3e5a9a`, 2026-10-23), head `f8778f0`; see "B9 part 2a record" |
-| B9 part 2b AI drafts | PR #31 (`feat/b9-ai-drafts`), rebased onto `main` after #30; see "B9 part 2b record" |
-| B10 → B11 hardening | not started |
+| B9 part 2b AI drafts | merged to `main`: PR #31 (`789db3a`, 2026-10-23), head `89f4b34`, rebased onto `main` after #30; see "B9 part 2b record" |
+| B9 still open | real push to a browser and real e-mail delivery not verified; Gemini, VAPID and Resend values in Vercel not checked (no Vercel access); prompt after a meaningful action; scheduled campaigns |
+| B10 → B11 hardening | not started; **B10 Information, privacy, audit** is next (BUILD-PLAN §11) |
 
 Branch flow: feature branch → PR into `preview/horekbazar-v1` → merge after CI is green → PR into `main`,
 merged by the agent after the required check passes (owner authorisation 2026-10-22, DESIGN.md Decision trace). `main` is protected (required check `check`).
