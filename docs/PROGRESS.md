@@ -2,6 +2,14 @@
 
 Newest first. Each entry: date, phase, done, decided, open, next. Entries are snapshots of their date: "not merged", "open" or "next" describe that day; the current state is in `docs/STATUS.md` (first rows) and `docs/HANDOFF.md`.
 
+## 2026-10-25 — Phase F part 3: guest checkout (PR, merged after CI)
+
+- **Done:** customers can order without an account (D28). The checkout page states the choice plainly with the benefits of an account, takes contact and delivery details, and places the order through the same pricing, stock, delivery-fee, request-key and transaction code as signed-in checkout (COD). Each guest order gets a private 180-day link (`/order-status/<token>`, only a hash stored, never reachable by order number, 404 for unknown links, no-store, noindex, no referrer). An account with the same verified email can add the order explicitly; nothing is merged automatically. Phase F part 2 merged as `552bfbf` (PR #52). Phase F is complete with this PR.
+- **Schema:** `orders.userId` optional, new `orders.guest`, validator regenerated, new unique index `guest_tokenHash_unique`; no data migration.
+- **Checks run locally (Node 24):** lint, typecheck, unit 296, integration 235, build, zero-env Playwright (Chromium) 85 passed and 19 skipped, full e2e-db suite: 46 passed, 1 skipped, 1 failed (`engagement.spec.ts` support thread, intermittent inline-style CSP violation on `/account/messages`, same kind as the Phase F2 notifications failure; that spec passed 34/34 on re-run). Guest pages checked in screenshots at 375 and 1440 px.
+- **Open:** the intermittent CSP inline-style violation still needs its source found; guest checkout toggle and "resend my link" are proposed only; email (Resend) and `NEXT_PUBLIC_SITE_URL` are needed for emailed links.
+- **Next:** owner review of Phases B–F.
+
 ## 2026-10-25 — Phase F part 2: configurable default language (PR, merged after CI)
 
 - **Done:** the existing admin setting "Default language" now applies (D31). A browser's entry visit to an unprefixed URL opens in the visitor's explicit choice (language switch cookie), else the store default. Crawlers, links inside the site and `/en/…` URLs are never redirected. Invalid values fall back to Bengali, and the choice is made before render so nothing flashes. Phase F part 1 merged as `0a467a9` (PR #51).

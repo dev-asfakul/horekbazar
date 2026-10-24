@@ -1400,7 +1400,12 @@
       "ai_refused": "The AI service declined to write this. Change the note or the fields and try again.",
       "ai_bad_output": "The AI answer was incomplete or too long. Try again, perhaps with fewer fields.",
       "ai_key_rejected": "The AI key was refused. Check GEMINI_API_KEY in the host settings.",
-      "privacy_sign_in_again": "For your security, sign out and sign in again, then try again within 15 minutes."
+      "privacy_sign_in_again": "For your security, sign out and sign in again, then try again within 15 minutes.",
+      "commerce_coupon_account_required": "This coupon needs an account. Sign in to use it, or remove it from the cart.",
+      "commerce_guest_signed_in": "You are signed in. Reload this page to check out with your account.",
+      "commerce_checkout_unavailable": "Checkout is not available right now. Please try again later.",
+      "commerce_claim_not_allowed": "This order cannot be added to this account. It can only go to the account with the order's verified email.",
+      "commerce_claim_email_unverified": "Verify your account's email first."
     },
     "fieldErrors": {
       "email_invalid": "Enter an email address like name@example.com",
@@ -2075,7 +2080,8 @@
         "not_eligible": "This coupon does not apply to the products in your cart.",
         "min_not_met": "Add {missing} more to use this coupon.",
         "zone_not_covered": "This coupon does not cover your delivery area.",
-        "not_needed": "Delivery is already free; no coupon needed."
+        "not_needed": "Delivery is already free; no coupon needed.",
+        "account_required": "This coupon needs an account. Sign in to use it."
       },
       "zone": "Delivery area",
       "zoneChoose": "Choose an area",
@@ -2131,7 +2137,28 @@
       "updatesOn": "Order updates are on for this browser.",
       "updatesBlocked": "Notifications are blocked in this browser's settings.",
       "updatesSettings": "Notification settings",
-      "updatesError": "Could not turn them on. Please try again."
+      "updatesError": "Could not turn them on. Please try again.",
+      "guest": {
+        "choiceTitle": "Checkout as a guest or create an account for more benefits.",
+        "benefitsLead": "You can order now without an account. An account adds:",
+        "benefits": {
+          "addresses": "Saved delivery addresses",
+          "history": "Your order history in one place",
+          "rewards": "Reward points on your orders, when the store offers them",
+          "messages": "Messages with the store about an order",
+          "devices": "Your cart and orders on any device"
+        },
+        "signIn": "Sign in",
+        "register": "Create an account",
+        "guestNote": "As a guest you get a private link to follow your order. You can add the order to an account later with the same verified email.",
+        "zoneTitle": "Delivery area",
+        "chooseZone": "Choose your area",
+        "useZone": "Use this area",
+        "detailsTitle": "Contact and delivery details",
+        "zoneFirst": "Choose your delivery area first, so we can show the delivery fee and the total.",
+        "email": "Email",
+        "emailHint": "We send the order confirmation and your order link here."
+      }
     },
     "reviews": {
       "title": "Reviews",
@@ -2173,6 +2200,30 @@
         "messagesBody": "Signed-in customers can write to the store from their account, also about a specific order.",
         "messagesLink": "Open messages"
       }
+    },
+    "guestOrder": {
+      "title": "Your order",
+      "placedTitle": "Order placed",
+      "placedText": "Thank you. Your order number is {number}. We will call you to check it before confirming.",
+      "placedEmail": "We are sending a confirmation with this page's link to {email}.",
+      "keepLink": "Keep this page's link: it is the only way to see this order without an account. Anyone with the link can see the order, so do not share it.",
+      "number": "Order number",
+      "status": "Status",
+      "help": "A question about this order?",
+      "contact": "Contact us",
+      "claimTitle": "Add this order to an account",
+      "claimText": "Your account's verified email matches this order. Add it to see it with your other orders.",
+      "claim": "Add to my account",
+      "claiming": "Adding…",
+      "claimUnverified": "Verify your account's email first. Then you can add this order to your account from this page.",
+      "claimMismatch": "This order was placed with a different email. It can only be added to the account with that email, once it is verified.",
+      "claimSignedOut": "Sign in, or create an account with the email used for this order, to keep it with your other orders.",
+      "register": "Create an account",
+      "signIn": "Sign in",
+      "claimedTitle": "This order is now in an account",
+      "claimedText": "Sign in to that account to see it.",
+      "expiredTitle": "This link has expired",
+      "expiredText": "Order links work for 180 days. Contact us with your order number and phone number and we will help."
     }
   }
 }

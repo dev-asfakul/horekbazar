@@ -3,10 +3,11 @@
 import { formatMoney } from "../../format/money.ts";
 import type { SettingsDoc } from "../settings/schema.ts";
 
-export function orderEmailExtras(settings: Pick<SettingsDoc, "store">, locale: "bn" | "en", orderNumber: string, total?: number) {
+/** `orderPath` overrides the account order page (a guest order's secret link, Phase F D28). */
+export function orderEmailExtras(settings: Pick<SettingsDoc, "store">, locale: "bn" | "en", orderNumber: string, total?: number, orderPath?: string) {
   const site = (process.env.NEXT_PUBLIC_SITE_URL ?? "").replace(/\/$/, "");
   const name = locale === "en" ? (settings.store.name.en ?? settings.store.name.bn) : settings.store.name.bn;
-  const path = `${locale === "en" ? "/en" : ""}/account/orders/${orderNumber}`;
+  const path = orderPath ?? `${locale === "en" ? "/en" : ""}/account/orders/${orderNumber}`;
   return {
     storeName: name,
     ...(site.startsWith("http") ? { url: `${site}${path}` } : {}),

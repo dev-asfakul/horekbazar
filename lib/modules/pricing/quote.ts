@@ -71,7 +71,7 @@ export function toPromotionRule(p: PromotionDoc): PromotionRule {
   };
 }
 
-export function toCouponRule(c: CouponDoc, customer: { used: number; hasOrders: boolean }): CouponRule {
+export function toCouponRule(c: CouponDoc, customer: { used: number; hasOrders: boolean; guest?: boolean }): CouponRule {
   return {
     id: String(c._id),
     code: c.code,
@@ -89,6 +89,7 @@ export function toCouponRule(c: CouponDoc, customer: { used: number; hasOrders: 
     customerUsed: customer.used,
     firstOrderOnly: c.eligibility.firstOrderOnly,
     customerHasOrders: customer.hasOrders,
+    ...(customer.guest ? { guest: true } : {}),
     include: { categoryIds: c.eligibility.categoryIds.map(String), productIds: c.eligibility.productIds.map(String) },
     exclude: { categoryIds: c.eligibility.excludeCategoryIds.map(String), productIds: c.eligibility.excludeProductIds.map(String) },
     zoneIds: c.eligibility.zoneIds,
@@ -161,7 +162,7 @@ export async function quoteLines(db: Db, cartLines: { variantId: ObjectId; quant
       used = (await db.collection<{ count: number }>(COUPON_CUSTOMER_USAGE).findOne({ couponId: doc._id, userId: options.userId }, s))?.count ?? 0;
       hasOrders = (await db.collection(ORDERS).countDocuments({ userId: options.userId, status: COUNTING_ORDER_STATES }, { ...s, limit: 1 })) > 0;
     }
-    coupon = { code: options.couponCode, rule: doc ? toCouponRule(doc, { used, hasOrders }) : null };
+    coupon = { code: options.couponCode, rule: doc ? toCouponRule(doc, { used, hasOrders, guest: !options.userId }) : null };
   }
 
   const zone = options.zoneId ? settings.delivery.zones.find((z) => z.id === options.zoneId && z.enabled) : undefined;

@@ -100,7 +100,7 @@ export async function requestReturn(db: Db, input: RequestReturnInput): Promise<
       _id: new ObjectId(),
       orderId: order._id,
       orderNumber: order.orderNumber,
-      userId: order.userId,
+      userId: input.userId,
       lines: docLines,
       reason: reason.slice(0, 500),
       status: "requested",

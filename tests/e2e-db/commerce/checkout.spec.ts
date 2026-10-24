@@ -190,3 +190,79 @@ test("operator confirms an order from the admin, with the customer's number to c
   expect(await csp()).toEqual([]);
   await staff.close();
 });
+
+test("guest: order without an account, private status link, no access by order number, explicit claim (D28)", async ({ browser, request }) => {
+  const { createHash } = await import("node:crypto");
+  await setCheckout(true);
+  const context = await browser.newContext();
+  const page = await context.newPage();
+  const csp = await watchCsp(page);
+  await addToCart(page, "1");
+  await page.goto("/cart");
+  await page.getByTestId("checkout-link").click();
+  const checkout = page.getByTestId("checkout");
+  await expect(checkout).toHaveAttribute("data-mode", "guest");
+  // The choice is stated plainly, with what an account adds; nothing is pre-selected or hidden.
+  const choice = page.getByTestId("guest-choice");
+  await expect(choice.getByRole("heading", { level: 2 })).toHaveText("গেস্ট হিসেবে অর্ডার করুন, অথবা আরও সুবিধার জন্য অ্যাকাউন্ট খুলুন।");
+  await expect(choice.getByRole("listitem")).toHaveCount(5);
+  await expect(choice.getByTestId("guest-sign-in")).toHaveAttribute("href", "/login?next=%2Fcheckout");
+
+  // The area decides the delivery fee, so it comes first.
+  await page.getByTestId("guest-zone-form").getByLabel("ডেলিভারি এরিয়া").selectOption("checkout-zone");
+  await page.getByTestId("guest-zone-form").getByRole("button", { name: "এই এলাকা" }).click();
+  await expect(page).toHaveURL(/zone=checkout-zone/);
+  await expect(page.getByTestId("checkout-total")).toContainText("৫০০"); // 420 + 80
+  const form = page.getByTestId("guest-order-form");
+  await form.getByLabel("যিনি নেবেন তাঁর নাম").fill("রহিম উদ্দিন");
+  // An email that matches an existing account: still a guest order, nothing is merged.
+  await form.getByLabel("ইমেইল").fill("rahim@example"); // accepted by the browser, refused by the server
+  await form.getByLabel("মোবাইল নম্বর").fill("01712-345678");
+  await form.getByLabel("জেলা").fill("ঢাকা");
+  await form.getByLabel("থানা / এরিয়া").fill("মিরপুর");
+  await form.getByLabel("বাসা, রোড, ব্লক").fill("বাসা ১২, রোড ৩");
+  await form.getByRole("button", { name: "অর্ডার কনফার্ম করুন" }).click();
+  await expect(form.getByLabel("ইমেইল")).toHaveAttribute("aria-invalid", "true");
+  await form.getByLabel("ইমেইল").fill(CUSTOMER.email);
+  const before = await stock();
+  await form.getByRole("button", { name: "অর্ডার কনফার্ম করুন" }).click();
+  await expect(page).toHaveURL(/\/order-status\/[A-Za-z0-9_-]{43}\?placed=1$/);
+  const token = new URL(page.url()).pathname.split("/").pop()!;
+  const order = (await db.collection("orders").findOne({ "guest.tokenHash": createHash("sha256").update(token).digest("hex") }))!;
+  expect(order.userId).toBeUndefined();
+  expect(order).toMatchObject({ status: "pending_confirmation", customer: { email: CUSTOMER.email }, totals: { grandTotal: 50000 }, address: { phone: "+8801712345678" } });
+  expect((await stock()).reserved).toBe(before.reserved + 1);
+  await expect(page.getByTestId("guest-order")).toHaveAttribute("data-state", "open");
+  await expect(page.getByTestId("guest-order-number")).toHaveText(order.orderNumber);
+  await expect(page.getByTestId("order-status")).toHaveAttribute("data-status", "pending_confirmation");
+  await expect(page.locator('meta[name="referrer"]')).toHaveAttribute("content", "no-referrer");
+  await expect(page.locator('meta[name="robots"]').first()).toHaveAttribute("content", /noindex/);
+
+  // Private: never cached, never reachable by order number or a made-up link.
+  const raw = await request.get(`/order-status/${token}`);
+  expect(raw.status()).toBe(200);
+  expect(raw.headers()["cache-control"]).toMatch(/^private, no-cache, no-store/);
+  expect((await request.get(`/order-status/${order.orderNumber}`)).status()).toBe(404);
+  expect((await request.get(`/order-status/${"A".repeat(43)}`)).status()).toBe(404);
+  expect((await request.get(`/account/orders/${order.orderNumber}`, { maxRedirects: 0 })).status()).toBe(307);
+
+  // Signing in to the account with that (verified) email offers the claim; nothing happened before.
+  expect((await db.collection("orders").findOne({ _id: order._id }))!.userId).toBeUndefined();
+  await signIn(context, CUSTOMER);
+  await page.goto(`/order-status/${token}`);
+  await page.getByTestId("guest-claim-form").getByRole("button", { name: "আমার অ্যাকাউন্টে যোগ করুন" }).click();
+  await expect(page).toHaveURL(new RegExp(`/account/orders/${order.orderNumber}$`));
+  await expect(page.getByTestId("order-status")).toHaveAttribute("data-status", "pending_confirmation");
+  const user = (await db.collection("user").findOne({ email: CUSTOMER.email }))!;
+  expect((await db.collection("orders").findOne({ _id: order._id }))!.userId).toBe(String(user._id));
+  expect(await csp()).toEqual([]);
+  await context.close();
+
+  // After the claim the link shows no order details to anyone else.
+  const other = await browser.newContext();
+  const op = await other.newPage();
+  await op.goto(`/order-status/${token}`);
+  await expect(op.getByTestId("guest-order")).toHaveAttribute("data-state", "claimed");
+  await expect(op.getByText(order.orderNumber)).toHaveCount(0);
+  await other.close();
+});

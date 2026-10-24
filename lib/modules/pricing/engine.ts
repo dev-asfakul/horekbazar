@@ -53,6 +53,11 @@ export interface CouponRule {
   firstOrderOnly: boolean;
   /** Whether the customer already has an order (first-order coupons). */
   customerHasOrders: boolean;
+  /**
+   * Phase F (D28): the buyer has no account (guest checkout, or a cart not signed in). A coupon with a
+   * per-customer limit or for a first order only cannot be checked without one, so it asks for an account.
+   */
+  guest?: boolean | undefined;
   include: { categoryIds: string[]; productIds: string[] };
   exclude: { categoryIds: string[]; productIds: string[] };
   /** Free delivery: the zones it covers; empty = all zones. */
@@ -80,6 +85,7 @@ export type CouponProblem =
   | "limit_reached"
   | "already_used"
   | "first_order_only"
+  | "account_required"
   | "not_eligible"
   | "min_not_met"
   | "zone_not_covered"
@@ -207,6 +213,7 @@ export function couponStateProblem(c: CouponRule, now: Date): CouponProblem | nu
   if (c.startsAt > now) return "not_started";
   if (c.endsAt && c.endsAt <= now) return "expired";
   if (c.usageLimit !== undefined && c.used >= c.usageLimit) return "limit_reached";
+  if (c.guest && (c.perCustomerLimit !== undefined || c.firstOrderOnly)) return "account_required";
   if (c.perCustomerLimit !== undefined && c.customerUsed >= c.perCustomerLimit) return "already_used";
   if (c.firstOrderOnly && c.customerHasOrders) return "first_order_only";
   return null;

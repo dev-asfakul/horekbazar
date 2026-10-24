@@ -89,7 +89,11 @@ describe("redirect safety", () => {
   it("proxy sign-in redirect only for private pages without a session cookie", () => {
     expect(signInRedirect("/account", "", false)).toBe("/login?next=%2Faccount");
     expect(signInRedirect("/en/account/security", "", false)).toBe("/en/login?next=%2Fen%2Faccount%2Fsecurity");
-    expect(signInRedirect("/checkout", "?a=1", false)).toBe("/login?next=%2Fcheckout%3Fa%3D1");
+    // Phase F (D28): guests may check out; the signed-in success page still asks for an account.
+    expect(signInRedirect("/checkout", "?a=1", false)).toBeNull();
+    expect(signInRedirect("/en/checkout", "", false)).toBeNull();
+    expect(signInRedirect("/checkout/success/HB-261025-ABC123", "", false)).toBe("/login?next=%2Fcheckout%2Fsuccess%2FHB-261025-ABC123");
+    expect(signInRedirect("/order-status/x", "", false)).toBeNull();
     expect(signInRedirect("/admin/staff", "", false)).toBe("/login?next=%2Fadmin%2Fstaff");
     expect(signInRedirect("/admin/setup", "", false)).toBeNull();
     expect(signInRedirect("/account", "", true)).toBeNull();

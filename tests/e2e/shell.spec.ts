@@ -301,8 +301,8 @@ test.describe("states", () => {
   }
 
   test("known storefront routes show setup-required, not invented content", async ({ page }) => {
-    // /checkout now redirects to sign-in first (tests/e2e/identity.spec.ts).
-    for (const path of ["/cart", "/en/search", "/c/kitchen/cookware/pots", "/p/steel-pot-5l"]) {
+    // Phase F (D28): /checkout is open to guests too, so it shows setup-required like the rest.
+    for (const path of ["/cart", "/checkout", "/en/search", "/c/kitchen/cookware/pots", "/p/steel-pot-5l"]) {
       const response = await page.goto(path);
       expect(response?.status(), path).toBe(200);
       await expect(page.locator("#setup-required")).toHaveCount(1);

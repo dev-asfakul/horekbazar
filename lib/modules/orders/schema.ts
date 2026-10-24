@@ -91,8 +91,21 @@ export const orderSchema = z
     _id: zObjectId(),
     /** Human-readable, random part: never exposes the database id or the store's volume. */
     orderNumber: z.string().regex(/^[A-Z0-9]{2,6}-\d{6}-[A-Z0-9]{6}$/),
-    userId: z.string().min(1).max(100),
+    /** The customer's account. Absent on a guest order until it is claimed (Phase F, D28). */
+    userId: z.string().min(1).max(100).optional(),
     customer: z.object({ name: text(120), email: z.string().max(254) }).strict(),
+    /**
+     * Guest checkout (D28): only the SHA-256 of the secret link token (orders/guest.ts), when the link
+     * stops working, and when a verified account claimed the order. Never the token itself.
+     */
+    guest: z
+      .object({
+        tokenHash: z.string().regex(/^[a-f0-9]{64}$/),
+        expiresAt: zDate(),
+        claimedAt: zDate().optional(),
+      })
+      .strict()
+      .optional(),
     status: z.enum(ORDER_STATUSES),
     lines: z.array(orderLineSchema).min(1).max(50),
     address: z
