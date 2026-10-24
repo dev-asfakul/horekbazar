@@ -85,7 +85,7 @@ describe("cachedRead", () => {
     expect(await cachedRead("listing", "db1", ["k"], load)).toBe(200);
   });
 
-  it("serves at most one stale value between TTL and 2 × TTL, then refreshes in the background", async () => {
+  it("serves the stale value between TTL and 2 × TTL until a background refresh is stored", async () => {
     let v = 1;
     const load = async () => v;
     const ttl = POLICIES.listing.ttl * 1000;
@@ -95,6 +95,38 @@ describe("cachedRead", () => {
     expect(await cachedRead("listing", "db1", ["k"], load)).toBe(1); // stale-while-revalidate
     await settle();
     expect(await cachedRead("listing", "db1", ["k"], load)).toBe(2);
+  });
+
+  it("keeps serving the stale value while refreshes store nothing, never past 2 × TTL", async () => {
+    let doc: { slug: string } | null = { slug: "rice" };
+    const load = vi.fn(async () => doc);
+    const keep = (d: unknown) => d !== null;
+    const ttl = POLICIES.product.ttl * 1000;
+    const start = now;
+    await cachedRead("product", "db1", ["core", "rice"], load, keep);
+    doc = null; // unpublished outside the app: nothing invalidates
+    for (const t of [ttl + 1, ttl * 1.5, ttl * 2 - 1]) {
+      now = start + t;
+      expect(await cachedRead("product", "db1", ["core", "rice"], load, keep)).toEqual({ slug: "rice" });
+      await settle();
+    }
+    now = start + ttl * 2 + 1;
+    expect(await cachedRead("product", "db1", ["core", "rice"], load, keep)).toBeNull();
+  });
+
+  it("counts a stale read as a hit even when its background refresh runs", async () => {
+    let v = 1;
+    const load = async () => v;
+    const before = { ...(cacheStats().listing ?? { hit: 0, miss: 0 }) };
+    await cachedRead("listing", "db1", ["stats"], load);
+    v = 2;
+    now += POLICIES.listing.ttl * 1000 + 1;
+    await cachedRead("listing", "db1", ["stats"], load);
+    await settle();
+    await cachedRead("listing", "db1", ["stats"], load);
+    const s = cacheStats().listing!;
+    expect(s.miss - before.miss).toBe(1); // the first read
+    expect(s.hit - before.hit).toBe(2); // the stale read and the refreshed read
   });
 
   it("never serves an entry older than 2 × TTL (writers that cannot invalidate)", async () => {
@@ -124,6 +156,8 @@ describe("test-server switch", () => {
     expect(publicCacheLocalTestOff({ PUBLIC_CACHE_LOCAL_TEST_OFF: "1", MONGODB_URI: "mongodb+srv://u:p@cluster0.example.mongodb.net/db" })).toBe(false);
     expect(publicCacheLocalTestOff({ PUBLIC_CACHE_LOCAL_TEST_OFF: "1", MONGODB_URI: "mongodb://127.0.0.1.evil.example:27017/" })).toBe(false);
     expect(publicCacheLocalTestOff({ PUBLIC_CACHE_LOCAL_TEST_OFF: "1" })).toBe(false);
+    expect(publicCacheLocalTestOff({ PUBLIC_CACHE_LOCAL_TEST_OFF: "1", MONGODB_URI: "mongodb://127.0.0.1:27017,db.example.net:27017/?replicaSet=rs0" })).toBe(false);
+    expect(publicCacheLocalTestOff({ PUBLIC_CACHE_LOCAL_TEST_OFF: "1", MONGODB_URI: "mongodb://localhost:27017/" })).toBe(false);
   });
 });
 

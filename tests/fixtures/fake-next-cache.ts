@@ -1,8 +1,10 @@
 // Test double for `next/cache` as the Phase A public-data cache uses it (BUILD-PLAN D25). It follows
 // the documented `unstable_cache` behaviour: results are stored as JSON under the key parts; a fresh
-// entry is served; an entry past `revalidate` seconds is served once more while it refreshes in the
-// background; an entry whose tag was cleared with `updateTag`/`revalidateTag` is not served; a loader
-// that throws stores nothing. Time comes from `Date.now()`, so tests can move the clock.
+// entry is served; an entry past `revalidate` seconds is served while it refreshes in the background,
+// on every read until a refresh is stored (a failed refresh keeps the old entry, as
+// next/dist/server/web/spec-extension/unstable-cache.js does); an entry whose tag was cleared with
+// `updateTag`/`revalidateTag` is not served; a loader that throws stores nothing. Time comes from
+// `Date.now()`, so tests can move the clock.
 interface Stored {
   json: string;
   at: number;

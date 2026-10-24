@@ -9,7 +9,7 @@ Evidence labels as in BUILD-PLAN: **[C]** read from the code, **[M]** measured, 
 2. Cached functions take no request input apart from public keys: database name, locale-free query shape and slug. They never call `cookies()`, `headers()`, `getPrincipal()` or `connection()`. This is enforced in `lib/storefront/public-cache.ts` and tested in `tests/unit/public-cache.test.ts`.
 3. Storefront HTML stays `private, no-cache, no-store` with a per-request CSP nonce (D17a). Partial Prerendering and Cache Components stay off.
 4. The cache never decides correctness. Add-to-cart (`sellable()`), cart pricing (`quote.ts`, which reads settings live) and order placement (`checkout.ts`) read MongoDB directly and are unchanged.
-5. Each cached read stores the time it was loaded. `unstable_cache` serves an expired entry once while it refreshes in the background. To bound that, an entry older than **2 × TTL** is not served: the reader goes to MongoDB for that request. Maximum staleness is therefore 2 × TTL for writers that cannot invalidate.
+5. Each cached read stores the time it was loaded. `unstable_cache` serves an expired entry while it refreshes in the background, on every request until a refresh is stored; a refresh that stores nothing (not found, loader error) leaves the old entry in place (`next/dist/server/web/spec-extension/unstable-cache.js`, Next 16.4.2). To bound that, an entry older than **2 × TTL** is not served: the reader goes to MongoDB for that request. Maximum staleness is therefore 2 × TTL for writers that cannot invalidate.
 6. Invalidation follows D24:
    - Admin Server Actions call `updateTag` **after** the write has succeeded (read-your-own-writes).
    - No Route Handler writes cached public data (§4), so `revalidateTag(tag, { expire: 0 })` is not needed yet. Any future Route Handler that writes public price or stock data must use it. `"max"` is not used.
@@ -79,11 +79,13 @@ These run in another process, or outside the app entirely, so `updateTag` / `rev
 ## 5. Where the cache lives
 
 - **Self-hosted standalone (`next start`, this sandbox):** Next's default incremental cache: in memory (50 MB LRU) plus a file copy under `.next/standalone/.next/cache/fetch-cache`, **per instance**. Measured on the mirror: 31 entries, 224 KB after the benchmark, public catalogue data only. Each stored value carries its own write time, so an entry older than 2 × TTL is never served, also after a restart (measured: the first requests after a restart read MongoDB). A new build starts empty. `updateTag` clears the instance that ran the action; other instances catch up within the hard max. A shared `cacheHandler` (for example Redis) would be needed for instant cross-instance invalidation; it is not part of Phase A.
-- **Vercel:** the data cache and tag invalidation are shared by all instances, per Next's documentation. This is **not verified** here (there is no deployment). Verify it after the first deploy (D5).
+- **Vercel:** the data cache and tag invalidation are shared by all instances, per Next's documentation. This is **not verified**: the Vercel preview builds and reports Ready, but it is behind Vercel deployment protection and no cache behaviour has been measured on it. Verify it after the first deploy (D5).
 - The in-process search index (60 s) is cleared by the catalogue actions on the instance that ran them. Other instances catch up within 60 s.
 
 ## 6. Known limits
 
-- Listing availability and the "in stock" filter can be up to 120 s behind customer orders, by design (D26). Measured miss rates are in the Phase A PR.
+- Listing availability and the "in stock" filter can be up to 120 s behind customer orders, by design (D26). Miss rates in the Phase A PR were counted before a counter fix: a stale read whose background refresh finished first was counted as a miss, so those rates may be overstated. Stale reads now count as hits.
+- When a product is unpublished or deleted outside the app, its old entry is never replaced (the refresh finds nothing to store). Past 2 × TTL each request for that slug reads MongoDB twice (the background refresh and the request itself), and Next logs a `revalidating cache with key` error each time, until the entry is evicted or the cache is rebuilt. Correctness is unaffected. Admin writes do not have this cost: `updateTag` expires the entry, so the next read is a single blocking load.
+- No CI test exercises the real `unstable_cache`/`updateTag`: unit and integration tests use `tests/fixtures/fake-next-cache.ts`, and the browser DB suite runs with the cache off. Real-cache evidence comes from the Phase A mirror run only.
 - `unstable_cache` is marked as superseded by `"use cache"` in Next 16. It is kept because Cache Components are excluded (D25). Revisit at the next Next.js upgrade.
 - Browser search suggestions (Phase D) cannot detect catalogue changes. They expire by TTL and are cleared on navigation (D27).

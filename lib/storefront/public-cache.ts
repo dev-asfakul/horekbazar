@@ -7,9 +7,10 @@ import "server-only";
 // - A cached loader receives no request input. Keys are the database name plus public values
 //   (slug, normalised listing shape); never cookies, headers, sessions, carts or env values.
 // - Values are stored as Extended JSON, so ObjectId and Date come back as themselves.
-// - `unstable_cache` serves an expired entry once while it refreshes in the background. An entry
-//   older than 2 × TTL is not served: that request reads MongoDB. Staleness is bounded at 2 × TTL
-//   for writers that cannot invalidate (worker, scripts, direct Atlas edits).
+// - `unstable_cache` serves an expired entry while it refreshes in the background, on every request
+//   until a refresh is stored. A refresh that stores nothing (not found, loader error) leaves the old
+//   entry in place. An entry older than 2 × TTL is not served: that request reads MongoDB. Staleness
+//   is bounded at 2 × TTL for writers that cannot invalidate (worker, scripts, direct Atlas edits).
 // - Stock on the product page is never cached. Add-to-cart, quotes and checkout never read here.
 import { createHash } from "node:crypto";
 import { unstable_cache } from "next/cache";
@@ -102,13 +103,16 @@ export async function cachedRead<T>(name: PolicyName, scope: string, key: readon
     count(name, "bypass");
     return load();
   }
-  let loaded = false;
+  // Entries produced by this call's loader. A stale read returns a parsed copy instead (and a
+  // background refresh may also run this loader), so only an identical object is a miss.
+  const produced = new Set<Entry>();
   const run = unstable_cache(
     async (): Promise<Entry> => {
       const value = await load();
-      loaded = true;
       if (!keep(value)) throw new NotStored(value);
-      return { at: Date.now(), v: encode(value) };
+      const fresh = { at: Date.now(), v: encode(value) };
+      produced.add(fresh);
+      return fresh;
     },
     [KEY_VERSION, name, scope, ...key],
     { revalidate: policy.ttl, tags: [...policy.tags] },
@@ -127,7 +131,7 @@ export async function cachedRead<T>(name: PolicyName, scope: string, key: readon
     count(name, "tooOld");
     return load();
   }
-  count(name, loaded ? "miss" : "hit");
+  count(name, produced.has(entry) ? "miss" : "hit");
   return decode<T>(entry.v);
 }
 
