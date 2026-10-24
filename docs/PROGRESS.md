@@ -18,6 +18,14 @@ Newest first. Each entry: date, phase, done, decided, open, next. Entries are sn
 - **Open:** Checkpoint 4 build plan (`docs/ADMIN-REDESIGN-A1.md`) waits for owner approval. No code changed.
 - **Next:** on approval, build on `feat/admin-a1` in 6 increments, then Checkpoint 5 screenshots (375/768/1440).
 
+## 2026-10-23 — Redesign Checkpoint A: audit approved; Motomation installed
+
+- **Owner:** approved the audit as the working baseline; Khata direction retired for the redesign, its live code, classes, `KhataGrid`, font preset, settings enum, data and tests kept until an approved checkpoint; follow Motomation's six checkpoints in order; no implementation before design and build-plan approval.
+- **Done:** `docs/REDESIGN-AUDIT.md`. Motomation 3.0.2 installed into `.agents/` by `npx skills experimental_install`; folder hash equals the lockfile `computedHash`; lockfile unchanged.
+- **Decided:** audit findings approved. Archive list, scope and checkpoint mapping stay proposed.
+- **Open:** the five-screen reference image needs to be attached again; Checkpoint 2 contract delta.
+- **Next:** Motomation Checkpoint 2 (product contract delta), then Checkpoint 3 (research, direction, proposal image).
+
 ## 2026-10-23 — C-02: Server Action redirects on Bangla paths (Next.js workaround)
 
 - **Cause (reproduced):** after `redirect()` in a Server Action, Next 16.4.2 fetches the destination with an empty `_rsc=`. `proxy.ts` rewrites `/x` to `/bn/x`; Next's proxy adapter re-attaches `_rsc` only when truthy, so the empty value is dropped, the destination's cache-busting check answers 307 → `/bn/x?_rsc`, our canonical rule answers 308 → `/x`, and the fetch loops until `redirect count exceeded` (`failed to get redirect response` in the server log). Users still arrived (the browser's fallback), at ~20 wasted requests per action. Upstream: [vercel/next.js#100398](https://github.com/vercel/next.js/issues/100398), open, no fix released.
