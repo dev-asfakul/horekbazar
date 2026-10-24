@@ -279,8 +279,10 @@ export const collections: CollectionSpec[] = [
       { key: { userId: 1, checkoutKey: 1 }, name: "userId_checkoutKey_unique", unique: true },
       { key: { userId: 1, placedAt: -1 }, name: "userId_placedAt" },
       { key: { status: 1, placedAt: -1 }, name: "status_placedAt" },
+      // Phase F (D28): a guest order's secret link resolves through the hash of its token.
+      { key: { "guest.tokenHash": 1 }, name: "guest_tokenHash_unique", unique: true, partialFilterExpression: { "guest.tokenHash": { $exists: true } } },
     ],
-    serviceEnforced: ["status changes only through transitionOrder (compare-and-set on version, §3 table); totals equal the server quote at placement (orders/checkout.ts)"],
+    serviceEnforced: ["every order has userId or guest (orders/checkout.ts); a guest order is read only through its secret link (orders/guest.ts)", "status changes only through transitionOrder (compare-and-set on version, §3 table); totals equal the server quote at placement (orders/checkout.ts)"],
   },
   {
     name: RESERVATIONS,

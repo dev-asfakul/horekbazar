@@ -66,14 +66,16 @@ async function keptBasis(db: Db, order: Pick<OrderDoc, "_id" | "lines">, session
 
 /** Called inside the order transition transaction when an order becomes `completed`. Idempotent. */
 export async function accrueForOrder(db: Db, session: ClientSession, order: Pick<OrderDoc, "_id" | "userId" | "lines">, settings: RewardSettings, now: Date) {
-  if (!rewardsOn(settings)) return null;
-  await lockAccount(db, session, order.userId, now);
+  // A guest order earns nothing: points belong to an account (D28). A claimed order has a userId.
+  if (!rewardsOn(settings) || !order.userId) return null;
+  const userId = order.userId;
+  await lockAccount(db, session, userId, now);
   const basis = await keptBasis(db, order, session);
   const points = pointsFor(basis, settings.rewards!.pointsPer100Taka);
   if (points <= 0) return null;
   const { entry } = await insertEntry(
     db,
-    { userId: order.userId, kind: "accrue", points, orderId: order._id, basisMinor: basis, expiresAt: new Date(now.getTime() + settings.rewards!.expiryDays * DAY), actor: { type: "system", id: "order.completed" }, idempotencyKey: `order:${String(order._id)}:accrue`, createdAt: now },
+    { userId, kind: "accrue", points, orderId: order._id, basisMinor: basis, expiresAt: new Date(now.getTime() + settings.rewards!.expiryDays * DAY), actor: { type: "system", id: "order.completed" }, idempotencyKey: `order:${String(order._id)}:accrue`, createdAt: now },
     session,
   );
   return entry;

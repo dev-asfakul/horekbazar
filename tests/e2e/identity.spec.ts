@@ -21,7 +21,8 @@ for (const [path, login] of [
   ["/account", "/login?next=%2Faccount"],
   ["/account/security", "/login?next=%2Faccount%2Fsecurity"],
   ["/en/account", "/en/login?next=%2Fen%2Faccount"],
-  ["/checkout", "/login?next=%2Fcheckout"],
+  // Phase F (D28): /checkout is open to guests; the signed-in success page still asks for an account.
+  ["/checkout/success/HB-261025-ABC123", "/login?next=%2Fcheckout%2Fsuccess%2FHB-261025-ABC123"],
 ] as const) {
   test(`${path} without a session redirects to ${login}`, async ({ request }) => {
     const r = await request.get(path, { maxRedirects: 0 });

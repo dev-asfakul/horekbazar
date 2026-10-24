@@ -106,7 +106,7 @@ export const marketingAudience = (db: Db) => db.collection<PushSubscriptionDoc>(
 export async function enqueueOrderPush(
   db: Db,
   session: ClientSession,
-  order: { _id: ObjectId; userId?: string | null; orderNumber: string },
+  order: { _id: ObjectId; userId?: string | null | undefined; orderNumber: string },
   status: string,
   version: number,
   now: Date,

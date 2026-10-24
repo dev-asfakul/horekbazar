@@ -3,7 +3,7 @@
 // customer (getPrincipal on the server); ids from the form are re-checked against that customer.
 import { redirect } from "next/navigation";
 import { refresh } from "next/cache";
-import { headers } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { ObjectId } from "mongodb";
 import type { FormState } from "@/lib/actions/form-state";
 import { fail, field, normaliseDigits, ok } from "@/lib/actions/staff-action";
@@ -11,8 +11,10 @@ import { getClient, getDatabase, databaseConfig } from "@/lib/adapters/db/client
 import { getPrincipal } from "@/lib/auth/server";
 import { localeHref } from "@/lib/i18n/href";
 import { checkLimits, clientIp, LIMITS } from "@/lib/modules/identity/limits";
-import { createAddress, deleteAddress, setDefaultAddress, updateAddress, type AddressInput } from "@/lib/modules/orders/addresses";
+import { cleanAddress, createAddress, deleteAddress, setDefaultAddress, updateAddress, type AddressInput } from "@/lib/modules/orders/addresses";
 import { placeOrder } from "@/lib/modules/orders/checkout";
+import { claimGuestOrder, guestOrderToken, isGuestToken } from "@/lib/modules/orders/guest";
+import { CART_COOKIE } from "@/lib/storefront/cart-owner";
 import { ORDERS, type OrderDoc } from "@/lib/modules/orders/schema";
 import { transitionOrder } from "@/lib/modules/orders/transitions";
 import { requestReturn } from "@/lib/modules/fulfilment/returns";
@@ -125,6 +127,81 @@ export async function placeOrderAction(_: FormState, form: FormData): Promise<Fo
     return commerceFail(error, { note });
   }
   redirect(localeHref(locale, `/checkout/success/${orderNumber}`));
+}
+
+const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+/**
+ * Guest checkout (Phase F, D28): no account. The device cart, contact details and the delivery address
+ * typed at checkout; the same server pricing, stock, zone and request-key checks as a customer's order.
+ * On success: the order's secret status page, which is also the confirmation page.
+ */
+export async function placeGuestOrderAction(_: FormState, form: FormData): Promise<FormState> {
+  if (!(await getSetupStatus(process.env)).ready) return fail("try_again");
+  // Signed in: the account checkout (saved addresses) is the only one, so orders land in the account.
+  if (await getPrincipal()) return fail("commerce_guest_signed_in");
+  const raw = (await cookies()).get(CART_COOKIE)?.value ?? "";
+  if (!/^[a-f0-9]{32}$/.test(raw)) return fail("commerce_cart_empty");
+  const limit = await checkLimits([
+    { rule: LIMITS.checkoutDevice, key: raw },
+    { rule: LIMITS.checkoutIp, key: clientIp(await headers()) },
+  ]);
+  if (limit === "limited") return fail("rate_limited");
+  if (limit === "unavailable") return fail("limits_unavailable");
+  const db = await getDatabase();
+  const { input, errors, values } = readAddress(form);
+  const email = field(form, "email").trim();
+  const note = field(form, "note").slice(0, 500);
+  Object.assign(values, { email, note });
+  if (!email) errors.email = "required";
+  else if (email.length > 254 || !EMAIL.test(email)) errors.email = "email_invalid";
+  if (!input || Object.keys(errors).length) return fail("fix_fields", errors, values);
+  let address;
+  try {
+    address = await cleanAddress(db, input);
+  } catch (error) {
+    if (error instanceof CommerceError && error.code === "phone_invalid") return fail("fix_fields", { phone: "phone_format" }, values);
+    return commerceFail(error, values);
+  }
+  const locale = field(form, "locale") === "en" ? "en" : "bn";
+  const expected = Number(field(form, "expectedTotal"));
+  let orderId: string;
+  try {
+    const r = await placeOrder(db, getClient(databaseConfig(process.env)!), {
+      guest: { deviceId: raw, address },
+      customer: { name: address.name, email },
+      note,
+      expectedTotal: Number.isSafeInteger(expected) ? expected : -1,
+      idempotencyKey: field(form, "idempotencyKey"),
+      locale,
+    });
+    orderId = r.orderId;
+  } catch (error) {
+    return commerceFail(error, values);
+  }
+  redirect(localeHref(locale, `/order-status/${guestOrderToken(orderId)}?placed=1`));
+}
+
+/**
+ * Adds a guest order to the signed-in customer's account, from the order's secret link only, when the
+ * account's email is verified and equal to the order's (D28). Never by email alone.
+ */
+export async function claimGuestOrderAction(_: FormState, form: FormData): Promise<FormState> {
+  const ctx = await customer();
+  if ("error" in ctx) return ctx.error;
+  const limit = await checkLimits([{ rule: LIMITS.guestClaim, key: ctx.principal.user.id }]);
+  if (limit === "limited") return fail("rate_limited");
+  if (limit === "unavailable") return fail("limits_unavailable");
+  const token = field(form, "token");
+  if (!isGuestToken(token)) return fail("commerce_not_found");
+  const locale = field(form, "locale") === "en" ? "en" : "bn";
+  let orderNumber: string;
+  try {
+    ({ orderNumber } = await claimGuestOrder(ctx.db, token, ctx.principal.user));
+  } catch (error) {
+    return commerceFail(error);
+  }
+  redirect(localeHref(locale, `/account/orders/${orderNumber}`));
 }
 
 /** Customer self-cancel (pending or confirmed only; the state machine checks ownership and state). */

@@ -33,6 +33,26 @@
         ],
         "additionalProperties": false
       },
+      "guest": {
+        "bsonType": "object",
+        "properties": {
+          "tokenHash": {
+            "bsonType": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "expiresAt": {
+            "bsonType": "date"
+          },
+          "claimedAt": {
+            "bsonType": "date"
+          }
+        },
+        "required": [
+          "tokenHash",
+          "expiresAt"
+        ],
+        "additionalProperties": false
+      },
       "status": {
         "bsonType": "string",
         "enum": [
@@ -535,7 +555,6 @@
     "required": [
       "_id",
       "orderNumber",
-      "userId",
       "customer",
       "status",
       "lines",

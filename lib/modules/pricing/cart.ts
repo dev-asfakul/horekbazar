@@ -141,7 +141,7 @@ export async function applyCoupon(db: Db, owner: CartOwner, text: string, now = 
     used = (await db.collection<{ count: number }>("couponCustomerUsage").findOne({ couponId: doc._id, userId }))?.count ?? 0;
     hasOrders = (await db.collection("orders").countDocuments({ userId, status: { $nin: ["rejected", "cancelled_by_customer", "cancelled_by_store"] } }, { limit: 1 })) > 0;
   }
-  const problem = couponStateProblem(toCouponRule(doc, { used, hasOrders }), now);
+  const problem = couponStateProblem(toCouponRule(doc, { used, hasOrders, guest: !userId }), now);
   if (problem) throw new CommerceError(`coupon_${problem}`);
   return mutate(db, owner, (cart) => {
     if (cart.lines.length === 0) throw new CommerceError("not_found");

@@ -44,7 +44,8 @@ export async function getAddress(db: Db, userId: string, id: string): Promise<Ad
   return addresses(db).findOne({ _id: oid(id), userId });
 }
 
-async function clean(db: Db, input: AddressInput) {
+/** Normalised fields of an address, with the phone and the delivery zone checked (also for guest checkout). */
+export async function cleanAddress(db: Db, input: AddressInput) {
   const phone = normaliseBdPhone(input.phone);
   if (!phone) throw new CommerceError("phone_invalid");
   const zones = (await loadSettingsFor(db)).delivery.zones.filter((z) => z.enabled);
@@ -54,7 +55,7 @@ async function clean(db: Db, input: AddressInput) {
 }
 
 export async function createAddress(db: Db, userId: string, input: AddressInput): Promise<ObjectId> {
-  const fields = await clean(db, input);
+  const fields = await cleanAddress(db, input);
   const count = await addresses(db).countDocuments({ userId });
   if (count >= MAX_ADDRESSES) throw new CommerceError("address_limit");
   const now = new Date();
@@ -66,7 +67,7 @@ export async function createAddress(db: Db, userId: string, input: AddressInput)
 }
 
 export async function updateAddress(db: Db, userId: string, id: string, version: number, input: AddressInput) {
-  const fields = await clean(db, input);
+  const fields = await cleanAddress(db, input);
   const now = new Date();
   const unset = fields.landmark ? {} : { $unset: { landmark: "" as const } };
   const res = await addresses(db).updateOne({ _id: oid(id), userId, version }, { $set: { ...fields, updatedAt: now }, $inc: { version: 1 }, ...unset });

@@ -85,7 +85,8 @@ export function signInRedirect(pathname: string, search: string, hasSessionCooki
   const en = pathname === "/en" || pathname.startsWith("/en/");
   const rest = en ? pathname.slice(3) || "/" : pathname;
   const admin = /^\/admin(\/|$)/.test(pathname) && !/^\/admin\/setup(\/|$)/.test(pathname);
-  const customer = /^\/(account|checkout)(\/|$)/.test(rest);
+  // Phase F (D28): /checkout itself is open to guests; its success page stays for signed-in customers.
+  const customer = /^\/(account(\/|$)|checkout\/success(\/|$))/.test(rest);
   if (!admin && !customer) return null;
   const login = en && !admin ? "/en/login" : "/login";
   return `${login}?next=${encodeURIComponent(`${pathname}${search}`)}`;

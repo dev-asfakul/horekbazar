@@ -17,6 +17,9 @@ export const LIMITS = {
   // checkout.place: 5 per minute per customer (SCHEMA.md API surface), and per address.
   checkoutUser: { name: "checkout-user", limit: 5, windowSeconds: 60 },
   checkoutIp: { name: "checkout-ip", limit: 20, windowSeconds: 60 },
+  // Phase F (D28): guest checkout per device cart, and claiming a guest order per customer.
+  checkoutDevice: { name: "checkout-device", limit: 5, windowSeconds: 60 },
+  guestClaim: { name: "guest-claim", limit: 10, windowSeconds: 600 },
   // Coupon guessing: a few tries per device and address.
   couponIp: { name: "coupon-ip", limit: 20, windowSeconds: 600 },
   // returns.request: 5 per hour per customer (SCHEMA.md API surface).

@@ -12,7 +12,7 @@ Authentication is Better Auth (Checkpoint 1). Authorisation is enforced on the s
 
 | Role | Who | Can |
 |---|---|---|
-| Guest | anyone | browse, search, build a device cart, read policies, contact page |
+| Guest | anyone | browse, search, build a device cart, read policies, contact page, check out as a guest and follow that order through its private link (D28) |
 | Customer | registered shopper | everything a guest can, plus checkout, orders, addresses, reviews, rewards, messages, notification preferences, privacy requests |
 | Support agent | staff | read customers and orders; reply to messages; add order notes; request cancellation (needs operator) |
 | Order operator | staff | confirm/reject orders, partial cancel, book couriers, update shipment status, process returns and inspections |
@@ -85,7 +85,7 @@ placed ──► pending_confirmation ──► confirmed ──► processing �
 
 Rules:
 - Transitions are enforced by a single state-machine function; any other transition is rejected with `409`. Every transition writes an `orderEvents` row (who, when, from, to, reason) in the same transaction as the stock effect.
-- **Customer verification for COD (D13, approved at Checkpoint 2):** checkout requires a signed-in account and a **format-valid Bangladeshi mobile number** (`01[3-9]` followed by 8 digits, stored in E.164 as `+8801…`) on the delivery address. A valid format is not proof of ownership; ownership is checked by the **mandatory admin confirmation** step (`pending_confirmation → confirmed`) before any processing. Customer email verification is optional; **no phone OTP** until an SMS provider is explicitly approved (D14).
+- **Customer verification for COD (D13, approved at Checkpoint 2):** checkout requires a signed-in account (since D28, or a guest order with an email and a private status link) and a **format-valid Bangladeshi mobile number** (`01[3-9]` followed by 8 digits, stored in E.164 as `+8801…`) on the delivery address. A valid format is not proof of ownership; ownership is checked by the **mandatory admin confirmation** step (`pending_confirmation → confirmed`) before any processing. Customer email verification is optional; **no phone OTP** until an SMS provider is explicitly approved (D14).
 - Customer self-cancel is allowed only in `pending_confirmation` or `confirmed` **[A]**; later, the customer can request cancellation and an operator decides.
 - **Partial cancellation**: lines carry their own status and are identified by their `lineId` (§4.1, `SCHEMA.md` → OrderLine); cancelling a line releases (before shipping) or creates a return-to-stock task (after shipping) for that line only; order totals, coupon eligibility and delivery fee are recalculated and the customer is shown the change.
 - **Auto-cancel**: `pending_confirmation` older than a configurable window (default 48 h, in line with the reported guideline's 48-hour notice for unavailable products **[L]**) is flagged to operators; auto-cancel is configurable and off by default **[A]**.
@@ -349,7 +349,7 @@ Three layers, so buyers customise without editing core code:
 | Catalogue | Category, collection, search, deals, new and preorder listings paginate, filter and sort on the server; results match the database. |
 | Product | Selecting a variant updates price, stock and images; out-of-stock variants cannot be added. |
 | Cart | Cart re-prices on every view; changes (price, stock, sale ended) are shown with a reason. |
-| Checkout | Placing an order requires a signed-in customer and a format-valid BD mobile number; no order is processed before admin confirmation; fees and totals equal the server calculation; a double submit creates one order. |
+| Checkout | Placing an order requires a signed-in customer or guest details (D28) and a format-valid BD mobile number; no order is processed before admin confirmation; fees and totals equal the server calculation; a double submit creates one order. |
 | Inventory | **Concurrency proof:** 100 simultaneous reservation attempts for a variant with 10 available units yield **exactly 10 successes and 90 rejections** with the error `INSUFFICIENT_STOCK` and a clear message; afterwards `available = 0`, `reserved = 10`, exactly 10 `reserve` ledger rows exist, and `available` was never negative (asserted at the end and enforced by the collection validator `available ≥ 0`). Runs on a real replica set (§12), repeated 20 times in CI without a flake. |
 | Inventory | Replaying any movement with the same key changes nothing. Cancel before ship releases; ship commits; delivered stays deducted; restock only after inspection. |
 | Orders | Invalid transitions return 409; every valid transition writes one event and its stock effect atomically. |

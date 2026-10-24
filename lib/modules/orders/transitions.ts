@@ -16,6 +16,14 @@ import { EMAIL_JOB } from "../../adapters/jobs/handlers.ts";
 import { loadSettingsFor } from "../pricing/quote.ts";
 import { accrueForOrder } from "../rewards/rewards.ts";
 import { orderEmailExtras } from "./notify.ts";
+import { guestLinkFor, guestOrderPath } from "./guest.ts";
+
+/** An unclaimed guest order's emails link to its secret page (D28); an account order to the account page. */
+function guestEmailPath(order: OrderDoc): string | undefined {
+  if (order.userId) return undefined;
+  const token = guestLinkFor(order);
+  return token ? guestOrderPath(order.locale, token) : `${order.locale === "en" ? "/en" : ""}/`;
+}
 import { ORDER_EVENTS, ORDERS, RESERVATIONS, type OrderDoc, type OrderStatus, type ReservationDoc } from "./schema.ts";
 
 export const TRANSITIONS: Record<OrderStatus, readonly OrderStatus[]> = {
@@ -139,7 +147,8 @@ export async function applyOrderTransition(db: Db, session: ClientSession, input
       const redemption = await db.collection(COUPON_REDEMPTIONS).findOneAndUpdate({ orderId: order._id, status: "held" }, { $set: { status: "released", updatedAt: now } }, { session });
       if (redemption) {
         await db.collection(COUPONS).updateOne({ _id: redemption.couponId, used: { $gt: 0 } }, { $inc: { used: -1 } }, { session });
-        await db.collection(COUPON_CUSTOMER_USAGE).updateOne({ couponId: redemption.couponId, userId: order.userId, count: { $gt: 0 } }, { $inc: { count: -1 }, $set: { updatedAt: now } }, { session });
+        // Only a use counted against an account (a guest redemption counted none; D28).
+        if (order.userId && redemption.userId === order.userId) await db.collection(COUPON_CUSTOMER_USAGE).updateOne({ couponId: redemption.couponId, userId: order.userId, count: { $gt: 0 } }, { $inc: { count: -1 }, $set: { updatedAt: now } }, { session });
       }
       for (const l of order.lines) {
         if (l.appliedPromotion?.kind === "flash_sale") await db.collection(PROMOTIONS).updateOne({ _id: l.appliedPromotion.id, sold: { $gte: l.quantity } }, { $inc: { sold: -l.quantity } }, { session });
@@ -151,7 +160,7 @@ export async function applyOrderTransition(db: Db, session: ClientSession, input
 
     if (NOTIFY.includes(input.to) && order.customer.email) {
       const settings = await loadSettingsFor(db, session);
-      await enqueueOutbox(db, { type: EMAIL_JOB, aggregateId: `order-${String(order._id)}`, seq: version, payload: { template: "order-status", to: order.customer.email, locale: order.locale, name: order.customer.name, orderNumber: order.orderNumber, status: input.to, ...(reason ? { reason } : {}), ...orderEmailExtras(settings, order.locale, order.orderNumber) } }, { session, now });
+      await enqueueOutbox(db, { type: EMAIL_JOB, aggregateId: `order-${String(order._id)}`, seq: version, payload: { template: "order-status", to: order.customer.email, locale: order.locale, name: order.customer.name, orderNumber: order.orderNumber, status: input.to, ...(reason ? { reason } : {}), ...orderEmailExtras(settings, order.locale, order.orderNumber, undefined, guestEmailPath(order)) } }, { session, now });
     }
     // B9: the same update as a browser notification, to the customer's browsers with order updates on.
     if (NOTIFY.includes(input.to)) await enqueueOrderPush(db, session, order, input.to, version, now);

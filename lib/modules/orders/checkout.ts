@@ -20,12 +20,20 @@ import { loadSettingsFor, quoteLines } from "../pricing/quote.ts";
 import { CARTS, COUPON_CUSTOMER_USAGE, COUPON_REDEMPTIONS, COUPONS, PROMOTIONS, type CartDoc, type CouponDoc } from "../pricing/schema.ts";
 import { EMAIL_JOB } from "../../adapters/jobs/handlers.ts";
 import { orderEmailExtras } from "./notify.ts";
+import { GUEST_LINK_DAYS, guestOrderPath, guestOrderToken, hashGuestToken } from "./guest.ts";
 import { ADDRESSES, IDEMPOTENCY_KEYS, ORDER_EVENTS, ORDERS, RESERVATIONS, type AddressDoc, type IdempotencyKeyDoc, type OrderDoc, type OrderLine } from "./schema.ts";
 
+/** A guest's delivery address, already cleaned by orders/addresses.ts `cleanAddress`. */
+export type GuestAddress = Omit<OrderDoc["address"], "zoneName">;
+
 export interface PlaceOrderInput {
-  userId: string;
+  /** A signed-in customer. Exactly one of `userId` and `guest` (Phase F, D28). */
+  userId?: string | undefined;
+  /** Guest checkout: the device cart and the address typed at checkout. */
+  guest?: { deviceId: string; address: GuestAddress } | undefined;
   customer: { name: string; email: string };
-  addressId: string;
+  /** The signed-in customer's saved address. */
+  addressId?: string | undefined;
   note?: string | undefined;
   expectedTotal: number;
   idempotencyKey: string;
@@ -54,33 +62,48 @@ export const orderPrefix = (raw: string | undefined) => {
   return p.length >= 2 ? p : "ORD";
 };
 
-const fingerprint = (input: PlaceOrderInput) => createHash("sha256").update(JSON.stringify({ a: input.addressId, n: input.note?.trim() ?? "", t: input.expectedTotal })).digest("hex");
+const fingerprint = (input: PlaceOrderInput) =>
+  createHash("sha256")
+    .update(JSON.stringify({ a: input.addressId ?? input.guest?.address ?? null, e: input.guest ? input.customer.email.toLowerCase() : undefined, n: input.note?.trim() ?? "", t: input.expectedTotal }))
+    .digest("hex");
+
+/** The request-key owner: the customer, or the guest's device (hashed: the device id is a cart bearer). */
+const principalOf = (input: PlaceOrderInput) => input.userId ?? `guest:${createHash("sha256").update(input.guest!.deviceId).digest("hex").slice(0, 40)}`;
 
 const transient = (error: unknown) =>
   error instanceof MongoServerError && (error.hasErrorLabel("TransientTransactionError") || error.hasErrorLabel("UnknownTransactionCommitResult") || error.code === 112);
 
 async function existing(db: Db, input: PlaceOrderInput): Promise<PlaceOrderResult | null> {
-  const key = await db.collection<IdempotencyKeyDoc>(IDEMPOTENCY_KEYS).findOne({ scope: "checkout", principalId: input.userId, key: input.idempotencyKey });
+  const key = await db.collection<IdempotencyKeyDoc>(IDEMPOTENCY_KEYS).findOne({ scope: "checkout", principalId: principalOf(input), key: input.idempotencyKey });
   if (key && key.fingerprint !== fingerprint(input)) throw new CommerceError("idempotency_key_reused");
-  const order = await db.collection<OrderDoc>(ORDERS).findOne({ userId: input.userId, checkoutKey: input.idempotencyKey }, { projection: { orderNumber: 1 } });
+  // A guest's request key is committed with the order in one transaction, so its result names the order.
+  const filter = input.userId ? { userId: input.userId, checkoutKey: input.idempotencyKey } : key?.resultRef && ObjectId.isValid(key.resultRef) ? { _id: new ObjectId(key.resultRef), userId: { $exists: false }, checkoutKey: input.idempotencyKey } : null;
+  if (!filter) return null;
+  const order = await db.collection<OrderDoc>(ORDERS).findOne(filter, { projection: { orderNumber: 1 } });
   return order ? { orderNumber: order.orderNumber, orderId: String(order._id), replayed: true } : null;
 }
 
 async function placeOnce(db: Db, session: ClientSession, input: PlaceOrderInput, now: Date): Promise<PlaceOrderResult> {
   const settings = await loadSettingsFor(db, session);
   await db.collection(IDEMPOTENCY_KEYS).insertOne(
-    { _id: new ObjectId(), scope: "checkout", principalId: input.userId, key: input.idempotencyKey, fingerprint: fingerprint(input), expiresAt: new Date(now.getTime() + KEY_TTL_MS), createdAt: now },
+    { _id: new ObjectId(), scope: "checkout", principalId: principalOf(input), key: input.idempotencyKey, fingerprint: fingerprint(input), expiresAt: new Date(now.getTime() + KEY_TTL_MS), createdAt: now },
     { session },
   );
-  const cart = await db.collection<CartDoc>(CARTS).findOne({ userId: input.userId, status: "active" }, { session });
+  const cart = await db.collection<CartDoc>(CARTS).findOne(input.userId ? { userId: input.userId, status: "active" } : { deviceId: input.guest!.deviceId, status: "active" }, { session });
   if (!cart || cart.lines.length === 0) throw new CommerceError("cart_empty");
-  if (!ObjectId.isValid(input.addressId)) throw new CommerceError("address_required");
-  const address = await db.collection<AddressDoc>(ADDRESSES).findOne({ _id: new ObjectId(input.addressId), userId: input.userId }, { session });
-  if (!address) throw new CommerceError("address_required");
+  let address: GuestAddress | AddressDoc;
+  if (input.userId) {
+    if (!input.addressId || !ObjectId.isValid(input.addressId)) throw new CommerceError("address_required");
+    const saved = await db.collection<AddressDoc>(ADDRESSES).findOne({ _id: new ObjectId(input.addressId), userId: input.userId }, { session });
+    if (!saved) throw new CommerceError("address_required");
+    address = saved;
+  } else {
+    address = input.guest!.address;
+  }
   const zone = settings.delivery.zones.find((z) => z.id === address.zoneId && z.enabled);
   if (!zone) throw new CommerceError("zone_unavailable");
 
-  const quote = await quoteLines(db, cart.lines, { userId: input.userId, couponCode: cart.couponCode, zoneId: zone.id, now, session });
+  const quote = await quoteLines(db, cart.lines, { ...(input.userId ? { userId: input.userId } : {}), couponCode: cart.couponCode, zoneId: zone.id, now, session });
   if (quote.unavailable.length) throw new CommerceError("lines_unavailable", { lines: quote.unavailable.map((l) => l.variantId) });
   if (quote.lines.some((l) => l.product.sample)) throw new CommerceError("sample_not_for_sale");
   const short = quote.lines.filter((l) => l.available < l.quantity);
@@ -91,6 +114,9 @@ async function placeOnce(db: Db, session: ClientSession, input: PlaceOrderInput,
   if (priced.total !== input.expectedTotal) throw new CommerceError("price_changed", { total: priced.total });
 
   const orderId = new ObjectId();
+  // Who acted, in the ledger and order events: the customer, or this guest order.
+  const actorId = input.userId ?? `guest:${String(orderId)}`;
+  const guestToken = input.userId ? null : guestOrderToken(orderId);
   const lines: OrderLine[] = [];
   for (const [i, ql] of quote.lines.entries()) {
     const pl = priced.lines[i]!;
@@ -108,7 +134,7 @@ async function placeOnce(db: Db, session: ClientSession, input: PlaceOrderInput,
       qty: ql.quantity,
       onHandAfter: after.onHand,
       reservedAfter: after.reserved,
-      actor: { type: "customer", id: input.userId },
+      actor: { type: "customer", id: actorId },
       refType: "order",
       refId: String(orderId),
       lineRef: lineId,
@@ -154,7 +180,11 @@ async function placeOnce(db: Db, session: ClientSession, input: PlaceOrderInput,
     );
     if (!doc) throw new CommerceError("coupon_limit_reached");
     const usage = db.collection(COUPON_CUSTOMER_USAGE);
-    if (doc.perCustomerLimit !== undefined) {
+    // A guest never reaches here with a per-customer or first-order coupon (pricing "account_required"),
+    // and has no account to count usage against.
+    if (!input.userId) {
+      if (doc.perCustomerLimit !== undefined || doc.eligibility.firstOrderOnly) throw new CommerceError("coupon_account_required");
+    } else if (doc.perCustomerLimit !== undefined) {
       try {
         await usage.updateOne({ couponId: doc._id, userId: input.userId, count: { $lt: doc.perCustomerLimit } }, { $inc: { count: 1 }, $set: { updatedAt: now } }, { session, upsert: true });
       } catch (error) {
@@ -165,7 +195,7 @@ async function placeOnce(db: Db, session: ClientSession, input: PlaceOrderInput,
     } else {
       await usage.updateOne({ couponId: doc._id, userId: input.userId }, { $inc: { count: 1 }, $set: { updatedAt: now } }, { session, upsert: true });
     }
-    await db.collection(COUPON_REDEMPTIONS).insertOne({ _id: new ObjectId(), couponId: doc._id, userId: input.userId, orderId, amount: priced.coupon.discount + priced.coupon.deliveryCovered, status: "held", createdAt: now, updatedAt: now }, { session });
+    await db.collection(COUPON_REDEMPTIONS).insertOne({ _id: new ObjectId(), couponId: doc._id, userId: actorId, orderId, amount: priced.coupon.discount + priced.coupon.deliveryCovered, status: "held", createdAt: now, updatedAt: now }, { session });
     coupon = { couponId: doc._id, code: doc.code, kind: doc.kind, discount: priced.coupon.discount };
   }
 
@@ -174,7 +204,7 @@ async function placeOnce(db: Db, session: ClientSession, input: PlaceOrderInput,
   const order: OrderDoc = {
     _id: orderId,
     orderNumber,
-    userId: input.userId,
+    ...(input.userId ? { userId: input.userId } : { guest: { tokenHash: hashGuestToken(guestToken!), expiresAt: new Date(now.getTime() + GUEST_LINK_DAYS * 24 * 3600_000) } }),
     customer: { name: input.customer.name.slice(0, 120) || "—", email: input.customer.email },
     status: "pending_confirmation",
     lines,
@@ -193,16 +223,18 @@ async function placeOnce(db: Db, session: ClientSession, input: PlaceOrderInput,
     updatedAt: now,
   };
   await db.collection<OrderDoc>(ORDERS).insertOne(order, { session });
-  await db.collection(ORDER_EVENTS).insertOne({ _id: new ObjectId(), orderId, seq: 1, from: "placed", to: "pending_confirmation", actor: { type: "customer", id: input.userId }, createdAt: now }, { session });
+  await db.collection(ORDER_EVENTS).insertOne({ _id: new ObjectId(), orderId, seq: 1, from: "placed", to: "pending_confirmation", actor: { type: "customer", id: actorId }, createdAt: now }, { session });
   const converted = await db.collection<CartDoc>(CARTS).updateOne({ _id: cart._id, version: cart.version, status: "active" }, { $set: { status: "converted", convertedOrderId: orderId, updatedAt: now }, $inc: { version: 1 } }, { session });
   if (converted.matchedCount === 0) throw new CommerceError("cart_changed");
-  await db.collection(IDEMPOTENCY_KEYS).updateOne({ scope: "checkout", principalId: input.userId, key: input.idempotencyKey }, { $set: { resultRef: String(orderId), result: { orderNumber } } }, { session });
-  await enqueueOutbox(db, { type: EMAIL_JOB, aggregateId: `order-${String(orderId)}`, seq: 1, payload: { template: "order-placed", to: input.customer.email, locale: input.locale, name: input.customer.name, orderNumber, ...orderEmailExtras(settings, input.locale, orderNumber, priced.total) } }, { session, now });
+  await db.collection(IDEMPOTENCY_KEYS).updateOne({ scope: "checkout", principalId: principalOf(input), key: input.idempotencyKey }, { $set: { resultRef: String(orderId), result: { orderNumber } } }, { session });
+  await enqueueOutbox(db, { type: EMAIL_JOB, aggregateId: `order-${String(orderId)}`, seq: 1, payload: { template: "order-placed", to: input.customer.email, locale: input.locale, name: input.customer.name, orderNumber, ...orderEmailExtras(settings, input.locale, orderNumber, priced.total, guestToken ? guestOrderPath(input.locale, guestToken) : undefined) } }, { session, now });
   return { orderNumber, orderId: String(orderId), replayed: false };
 }
 
 export async function placeOrder(db: Db, client: MongoClient, input: PlaceOrderInput): Promise<PlaceOrderResult> {
   if (!UUID.test(input.idempotencyKey)) throw new CommerceError("idempotency_key_invalid");
+  if (Boolean(input.userId) === Boolean(input.guest)) throw new CommerceError("address_required");
+  if (input.guest && !/^[a-f0-9]{32}$/.test(input.guest.deviceId)) throw new CommerceError("cart_empty");
   if (!Number.isInteger(input.expectedTotal) || input.expectedTotal < 0) throw new CommerceError("price_changed");
   const settings = await loadSettingsFor(db);
   if (!settings.features.checkout) throw new CommerceError("checkout_disabled");
