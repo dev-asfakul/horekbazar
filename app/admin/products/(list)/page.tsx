@@ -146,7 +146,7 @@ export default async function AdminProductsPage({ searchParams }: { searchParams
             messages={messages}
             options={CATALOGUE_STATUSES.map((st) => ({ value: st, label: c(`statuses.${st}`) }))}
             names={Object.fromEntries(list.items.map(({ product: p }) => [String(p._id), lt(p.name, locale)]))}
-            labels={{ legend: t("bulkLabel"), status: t("bulkStatus"), apply: t("bulkApply"), pending: t("bulkPending"), selectAll: t("bulkSelectAll"), clear: t("bulkClear"), selected: t("bulkSelected", { count: "{count}" }), done: t("bulkDone", { done: "{done}", total: "{total}" }), failed: t("bulkFailed"), hint: t("bulkHint") }}
+            labels={{ legend: t("bulkLabel"), status: t("bulkStatus"), apply: t("bulkApply"), pending: t("bulkPending"), selectAll: t("bulkSelectAll"), clear: t("bulkClear"), selected: t("bulkSelected", { count: "{count}" }), done: t("bulkDone", { done: "{done}", total: "{total}" }), failed: t("bulkFailed"), hint: t("bulkHint"), toggle: t("selectProducts") }}
           />
           <table className="record-table" data-testid="products-table">
             <caption className="sr-only">{t("tableCaption")}</caption>

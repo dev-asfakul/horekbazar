@@ -3,6 +3,8 @@
 // Rows carry <input type="checkbox" form={formId} name="item" value="id:version">, so the selection
 // posts with the form even without JavaScript; with JavaScript "select all" and a live count work too.
 // Result: a status line with the count changed and a list of products not changed, with the reason.
+// The controls sit behind a "Select products" disclosure (Proposal A1); it opens by itself once a row
+// is ticked, and the result line stays outside it so it is always seen.
 import { useActionState, useEffect, useRef, useState } from "react";
 import type { FormState } from "@/lib/actions/form-state";
 import { idle } from "@/lib/actions/form-state";
@@ -19,6 +21,8 @@ interface Labels {
   done: string;
   failed: string;
   hint: string;
+  /** Disclosure summary, e.g. "Select products". */
+  toggle: string;
 }
 
 interface Props {
@@ -37,6 +41,7 @@ export function BulkStatusForm({ formId, action, options, labels, messages, name
   const [state, formAction, pending] = useActionState(action, idle);
   const [count, setCount] = useState(0);
   const resultRef = useRef<HTMLDivElement>(null);
+  const detailsRef = useRef<HTMLDetailsElement>(null);
   // Only the visible layout's checkboxes count (the hidden layout's boxes are display: none).
   const boxes = () => Array.from(document.querySelectorAll<HTMLInputElement>(`input[type=checkbox][form="${formId}"]`)).filter((b) => b.offsetParent !== null);
 
@@ -46,6 +51,10 @@ export function BulkStatusForm({ formId, action, options, labels, messages, name
     update();
     return () => document.removeEventListener("change", update);
   });
+
+  useEffect(() => {
+    if (count > 0 && detailsRef.current) detailsRef.current.open = true;
+  }, [count]);
 
   useEffect(() => {
     if (state.status !== "idle") resultRef.current?.focus();
@@ -60,34 +69,37 @@ export function BulkStatusForm({ formId, action, options, labels, messages, name
 
   return (
     <form id={formId} action={formAction} className="bulk-bar" data-testid="bulk-status-form" aria-busy={pending || undefined}>
-      <fieldset className="bulk-fieldset">
-        <legend className="field-label">{labels.legend}</legend>
-        <p className="field-hint">{labels.hint}</p>
-        <div className="bulk-row">
-          <button type="button" className="btn btn-secondary" onClick={() => setAll(true)}>
-            {labels.selectAll}
-          </button>
-          <button type="button" className="btn btn-secondary" onClick={() => setAll(false)} disabled={count === 0}>
-            {labels.clear}
-          </button>
-          <span className="admin-meta" aria-live="polite" data-testid="bulk-count">
-            {fill(labels.selected, { count })}
-          </span>
-          <label className="sr-only" htmlFor={`${formId}-status`}>
-            {labels.status}
-          </label>
-          <select id={`${formId}-status`} name="status" className="field-input bulk-select" defaultValue="published">
-            {options.map((o) => (
-              <option key={o.value} value={o.value}>
-                {o.label}
-              </option>
-            ))}
-          </select>
-          <button type="submit" className="btn btn-primary" disabled={pending}>
-            {pending ? labels.pending : labels.apply}
-          </button>
-        </div>
-      </fieldset>
+      <details ref={detailsRef} className="bulk-details">
+        <summary data-testid="bulk-toggle">{labels.toggle}</summary>
+        <fieldset className="bulk-fieldset">
+          <legend className="field-label">{labels.legend}</legend>
+          <p className="field-hint">{labels.hint}</p>
+          <div className="bulk-row">
+            <button type="button" className="btn btn-secondary" onClick={() => setAll(true)}>
+              {labels.selectAll}
+            </button>
+            <button type="button" className="btn btn-secondary" onClick={() => setAll(false)} disabled={count === 0}>
+              {labels.clear}
+            </button>
+            <span className="admin-meta" aria-live="polite" data-testid="bulk-count">
+              {fill(labels.selected, { count })}
+            </span>
+            <label className="sr-only" htmlFor={`${formId}-status`}>
+              {labels.status}
+            </label>
+            <select id={`${formId}-status`} name="status" className="field-input bulk-select" defaultValue="published">
+              {options.map((o) => (
+                <option key={o.value} value={o.value}>
+                  {o.label}
+                </option>
+              ))}
+            </select>
+            <button type="submit" className="btn btn-primary" disabled={pending}>
+              {pending ? labels.pending : labels.apply}
+            </button>
+          </div>
+        </fieldset>
+      </details>
       <div ref={resultRef} tabIndex={-1} data-testid="bulk-result">
         {state.status === "error" ? (
           <p role="alert" className="form-error">
