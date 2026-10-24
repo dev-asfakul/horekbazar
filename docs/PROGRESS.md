@@ -2,7 +2,7 @@
 
 Newest first. Each entry: date, phase, done, decided, open, next. Entries are snapshots of their date: "not merged", "open" or "next" describe that day; the current state is in `docs/STATUS.md` (first rows) and `docs/HANDOFF.md`.
 
-## 2026-10-25 — Phase F part 3: guest checkout (PR, merged after CI)
+## 2026-10-25 — Phase F part 3: guest checkout (PR #53, merged as `d07d142` after CI)
 
 - **Done:** customers can order without an account (D28). The checkout page states the choice plainly with the benefits of an account, takes contact and delivery details, and places the order through the same pricing, stock, delivery-fee, request-key and transaction code as signed-in checkout (COD). Each guest order gets a private 180-day link (`/order-status/<token>`, only a hash stored, never reachable by order number, 404 for unknown links, no-store, noindex, no referrer). An account with the same verified email can add the order explicitly; nothing is merged automatically. Phase F part 2 merged as `552bfbf` (PR #52). Phase F is complete with this PR.
 - **Schema:** `orders.userId` optional, new `orders.guest`, validator regenerated, new unique index `guest_tokenHash_unique`; no data migration.

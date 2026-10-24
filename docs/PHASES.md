@@ -10,7 +10,7 @@ Tracker for the phases after Performance Phase A (PR #46, merged as `1a6496d`). 
 | C. Navigation feedback | Subtle progress indicator for client navigations (customer and admin), the missing admin `loading.tsx` files, no full-screen loaders, no artificial delays, reduced motion. (= Phase F item 5) | **Done** (PR #48, merged as `94dac8f`) |
 | D. Search | 30 s browser cache for search suggestions, cleared on navigation (D27; also named as Phase D in `docs/CACHE-INVENTORY.md`). | **Done** (PR #49, merged as `d2ddd36`) |
 | E. Notification UX | Push opt-in offered after a meaningful action (order placed) with the existing `PushOptIn`, hidden when VAPID is not configured (B9 acceptance row). | **Done** (PR #50, merged as `e5599f7`) |
-| F. Remaining UX items | Home banner carousel, account navigation without the duplicate horizontal nav, guest checkout with secure order access and claim flow (new decision D28), configurable default language, dynamic footer category links. Built in three PRs: F1 carousel + account navigation + footer; F2 default language; F3 guest checkout. | **Done:** F1 (PR #51, merged as `0a467a9`), F2 (PR #52, merged as `552bfbf`), F3 guest checkout (this PR) |
+| F. Remaining UX items | Home banner carousel, account navigation without the duplicate horizontal nav, guest checkout with secure order access and claim flow (new decision D28), configurable default language, dynamic footer category links. Built in three PRs: F1 carousel + account navigation + footer; F2 default language; F3 guest checkout. | **Done:** F1 (PR #51, merged as `0a467a9`), F2 (PR #52, merged as `552bfbf`), F3 guest checkout (PR #53, merged as `d07d142`) |
 
 ## Phase B record (2026-10-25)
 
