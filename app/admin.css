@@ -896,3 +896,160 @@ html[data-admin] .admin-filters select[multiple].field-input {
 html[data-admin] .record-table td > .record-sub {
   display: block;
 }
+
+/* ── Every-page pass (Checkpoint 5, all 32 routes at 375/768/1440) ── */
+
+/* Long values (e-mails, addresses) wrap inside ledger rows instead of being clipped on phones. */
+html[data-admin] .ledger-row > * {
+  min-width: 0;
+}
+html[data-admin] .ledger-row dd {
+  overflow-wrap: anywhere;
+}
+
+/* A step that needs a reason gets its own row under the one-click steps, not squeezed beside them. */
+html[data-admin] .admin-actions:has(> .form[data-layout="stack"]) {
+  flex-direction: column;
+  align-items: stretch;
+}
+html[data-admin] .admin-actions > .form[data-layout="inline"] {
+  align-self: start;
+}
+html[data-admin] .admin-actions > .form[data-layout="stack"] {
+  max-width: 32rem;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+}
+
+/* Two-column forms: each field keeps its natural height, so inputs on one row match. */
+html[data-admin] .form[data-layout="grid"] > .field {
+  align-content: start;
+}
+
+/* Record sub-lines read as separate facts (items · date) rather than one run-on line. */
+html[data-admin] .record-chips {
+  align-items: center;
+}
+html[data-admin] .record-chips > .record-sub + .record-sub::before {
+  content: "·" / "";
+  margin-inline-end: 6px;
+  color: var(--muted);
+}
+
+/* Product preview: the title spans the card; the tile sits left, status buttons and rule right. */
+@media (width >= 768px) {
+  html[data-admin] .product-overview {
+    grid-template-rows: auto auto 1fr;
+    row-gap: 12px;
+  }
+  html[data-admin] .product-overview > .admin-section-title {
+    grid-column: 1 / -1;
+  }
+  html[data-admin] .product-overview > .product-preview {
+    grid-row: 2 / span 2;
+  }
+  html[data-admin] .product-overview > .status-actions {
+    grid-column: 2;
+    margin-top: 0;
+  }
+  html[data-admin] .product-overview > .field-hint {
+    grid-column: 2;
+    margin-top: 0;
+  }
+}
+
+/* Audit "Changes" opens like the other disclosures (+ / −, link colour). */
+html[data-admin] .audit-diff > summary {
+  list-style: none;
+  display: inline-flex;
+  gap: 8px;
+  font-weight: 600;
+  color: var(--link);
+}
+html[data-admin] .audit-diff > summary::-webkit-details-marker {
+  display: none;
+}
+html[data-admin] .audit-diff > summary::before {
+  content: "+";
+  display: inline-grid;
+  place-items: center;
+  width: 1.25em;
+  height: 1.25em;
+  border: 1px solid currentColor;
+  border-radius: 4px;
+  line-height: 1;
+}
+html[data-admin] .audit-diff[open] > summary::before {
+  content: "−";
+}
+
+/* Plain paragraphs and status rows directly on a page get the same rhythm as the intro. */
+html[data-admin] .admin-page > p:not([class]) {
+  margin-top: 12px;
+}
+html[data-admin] .admin-page > .staff-rows {
+  margin-top: 16px;
+}
+
+/* Full-page states (404, 403) follow the storefront's state page: centred, lime badge. */
+html[data-admin] .state-page {
+  max-width: 32rem;
+  text-align: center;
+  padding-top: 56px;
+}
+html[data-admin] .state-badge {
+  display: inline-grid;
+  place-items: center;
+  width: 72px;
+  height: 72px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+html[data-admin] .state-title {
+  margin-top: 16px;
+  font-size: var(--text-step-3);
+}
+html[data-admin] .state-body {
+  margin-inline: auto;
+  color: var(--muted);
+  line-height: 1.55;
+}
+html[data-admin] .state-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+}
+
+/* Count badges: a rounded tag rather than a full pill, so the ink ground fills the whole label box. */
+html[data-admin] .admin-badge {
+  border-radius: 6px;
+}
+
+/* Record names in list rows are full-size touch targets on phones and at least 24px everywhere. */
+html[data-admin] .staff-name > a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+}
+@media (pointer: coarse) {
+  html[data-admin] .staff-name > a {
+    min-height: 44px;
+  }
+}
+
+/* The sidebar holds every section. It stays pinned with its own scroll only where the whole list
+   fits; on shorter desktop screens it is part of the page, so every link is on screen when scrolled to. */
+@media (width >= 1024px) and (height < 1200px) {
+  html[data-admin] .admin-sidebar {
+    position: static;
+    height: auto;
+    min-height: 100dvh;
+    overflow: visible;
+  }
+  html[data-admin] .admin-sidebar .admin-navlist {
+    overflow: visible;
+    flex: none;
+  }
+}

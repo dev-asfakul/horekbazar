@@ -182,15 +182,15 @@ Evidence (file#pattern) is filled in during the build; Notes describe intent. Ma
 | legal | /return-policy | required |  | backend | return, refund and cancellation conditions |
 | legal | /cookies | not required for this brief, reason: only strictly necessary cookies are used; disclosed in /privacy-policy |  |  |  |
 | state | every database-backed route: setup required | requested | components/states/SetupRequired.tsx#setup-required, app/[locale]/[...rest]/page.tsx#SetupRequired | interface | owner decision D2 |
-| state | every listing: loading, empty, error, filled | required |  | backend |  |
-| state | /search: zero results with recovery | required |  | backend |  |
-| state | /c/[...slug]: filters produce no results | required |  | backend |  |
+| state | every listing: loading, empty, error, filled | required | app/[locale]/c/[...slug]/loading.tsx#ListingSkeleton, components/store/ListingView.tsx#listing-empty-title, app/[locale]/error.tsx#retry, tests/integration/storefront.test.ts#lists published products of a subtree | backend |  |
+| state | /search: zero results with recovery | required | app/[locale]/search/page.tsx#search.emptyHint, tests/e2e-db/storefront.spec.ts#says so when nothing matches | backend |  |
+| state | /c/[...slug]: filters produce no results | required | components/store/ListingView.tsx#listing.emptyFiltered, components/store/ListingView.tsx#listing.clearFilters | backend |  |
 | state | /p/[slug]: out of stock, preorder, flash sale ended mid-view, variant unavailable | required |  | backend |  |
-| state | /cart: empty, item went out of stock, price changed, coupon invalid | required |  | backend |  |
-| state | /checkout: zone not deliverable, stock lost at placement, duplicate submit, server error, missing or invalid phone number | required |  | backend |  |
-| state | storefront listings with an empty database (no approved catalogue yet) | required |  | backend | honest empty state, no placeholder products (D11) |
-| state | /account/orders: empty | required |  | backend |  |
-| state | integration unavailable (email, push, courier, AI, chat) | requested |  | interface |  |
+| state | /cart: empty, item went out of stock, price changed, coupon invalid | required | app/[locale]/cart/page.tsx#cart-empty, tests/integration/cart.test.ts#flags lines that went out of stock, tests/integration/cart.test.ts#its end raises the price with a notice, tests/integration/cart.test.ts#refuses unknown. expired and exhausted codes | backend |  |
+| state | /checkout: zone not deliverable, stock lost at placement, duplicate submit, server error, missing or invalid phone number | required | messages/en.json#commerce_zone_unavailable, tests/integration/orders.test.ts#I4: two customers racing for the last unit, tests/integration/orders.test.ts#I2: a double submit with the same key creates one order, messages/en.json#commerce_checkout_busy, messages/en.json#commerce_phone_invalid | backend |  |
+| state | storefront listings with an empty database (no approved catalogue yet) | required | app/[locale]/(home)/page.tsx#home-empty, components/store/ListingView.tsx#listing-empty-title, tests/e2e/shell.spec.ts#known storefront routes show setup-required. not invented content | backend | honest empty state, no placeholder products (D11) |
+| state | /account/orders: empty | required | app/[locale]/account/orders/page.tsx#orders-empty | backend |  |
+| state | integration unavailable (email, push, courier, AI, chat) | requested | messages/en.json#Email is not configured, messages/en.json#commerce_push_not_configured, tests/integration/fulfilment.test.ts#is refused when the courier is not configured, messages/en.json#ai_not_configured, app/[locale]/account/messages/[conversationId]/page.tsx#AutoRefresh | interface |  |
 | state | 404, 500, maintenance | required | app/[locale]/not-found.tsx#notFound, app/[locale]/error.tsx#retry, app/global-error.tsx#Something went wrong, lib/maintenance.ts#503 | interface |  |
 | journey | browse and buy | requested | / → /c/[...slug] → /p/[slug] → /cart → /login → /checkout → /checkout/success/[orderNumber] | backend |  |
 | journey | search and buy | requested | / → /search → /p/[slug] → /cart → /checkout → /checkout/success/[orderNumber] | backend |  |
@@ -205,26 +205,26 @@ Evidence (file#pattern) is filled in during the build; Notes describe intent. Ma
 | journey | admin adds a product with AI draft | requested | /admin/products → /admin/products/new → /admin/products/[id] → /p/[slug] | integration |  |
 | journey | buyer configures a new shop | requested | /admin/setup → /admin/settings → /admin/settings/integrations → / | backend |  |
 | function | /p/[slug]: variant pickers update price, stock, images | requested |  | backend |  |
-| function | /p/[slug]: delivery fee and estimate by zone | requested |  | backend |  |
+| function | /p/[slug]: delivery fee and estimate by zone | requested | app/[locale]/p/[slug]/page.tsx#z.estimate, tests/e2e-db/storefront.spec.ts#delivery-zones | backend |  |
 | function | /p/[slug]: quantity-tier pricing table | requested |  | backend |  |
-| function | /cart: change quantity, remove, live re-price | requested |  | backend |  |
-| function | /cart: apply/remove coupon with reason | requested |  | backend |  |
+| function | /cart: change quantity, remove, live re-price | requested | tests/e2e-db/commerce/cart.spec.ts#add. refuse over stock. update.*remove, tests/integration/cart.test.ts#re-prices on every read | backend |  |
+| function | /cart: apply/remove coupon with reason | requested | tests/integration/cart.test.ts#with their reason. and applies a valid one, lib/actions/cart.ts#removeCouponAction, tests/e2e-db/commerce/cart.spec.ts#coupon totals | backend |  |
 | function | /checkout: redeem rewards | requested |  | backend |  |
-| function | /checkout: payment method step (COD only in v1) | requested |  | backend | provider port for later (D15) |
+| function | /checkout: payment method step (COD only in v1) | requested | messages/en.json#Payment: cash on delivery, tests/e2e-db/commerce/checkout.spec.ts#place a COD order | backend | provider port for later (D15) |
 | function | push opt-in prompt after a meaningful action | requested |  | integration |  |
 | function | live chat (realtime) | optional |  | integration | polling fallback ships |
 | function | wishlist | not required for this brief, reason: disabled in v1 unless separately approved by the owner (D16) |  |  |  |
 | function | brands as a facet and index | optional |  | backend | flag off; decided with the real catalogue (D11) |
-| edge | concurrent orders for the last unit | required |  | backend | atomic guarded decrement |
-| edge | repeated checkout submit / network retry | required |  | backend | idempotency key |
-| edge | flash sale ends between cart and placement | required |  | backend | re-price at placement, show change |
-| edge | coupon limit reached by another shopper | required |  | backend | atomic usage counter |
+| edge | concurrent orders for the last unit | required | tests/integration/orders.test.ts#I4: two customers racing for the last unit | backend | atomic guarded decrement |
+| edge | repeated checkout submit / network retry | required | tests/integration/orders.test.ts#I2: a double submit with the same key creates one order | backend | idempotency key |
+| edge | flash sale ends between cart and placement | required | tests/integration/orders.test.ts#I6: a price change since the customer looked is refused with the new total, lib/modules/orders/checkout.ts#flash_sale_sold_out | backend | re-price at placement, show change |
+| edge | coupon limit reached by another shopper | required | tests/integration/orders.test.ts#I5: a coupon limited to 2 uses holds under 5 concurrent customers | backend | atomic usage counter |
 | edge | courier webhook delivered twice or out of order | required | tests/integration/fulfilment.test.ts#a duplicate delivery is recorded once; tests/integration/fulfilment.test.ts#cannot regress the status | integration | event id dedupe, monotonic status |
 | edge | partial cancellation of one line | requested |  | backend |  |
 | edge | failed delivery and returned parcel | requested | tests/integration/fulfilment.test.ts#a failed delivery can go out again | backend |  |
-| edge | price or product edited after an order | required |  | backend | order lines snapshot |
-| edge | product deleted that appears in past orders | required |  | backend | archive, never hard delete |
-| edge | admin approves AI text while another admin edits | required |  | backend | version check |
+| edge | price or product edited after an order | required | lib/modules/orders/schema.ts#Orders keep a snapshot, tests/integration/orders.test.ts#unitPrice: 8500 | backend | order lines snapshot |
+| edge | product deleted that appears in past orders | required | lib/modules/catalogue/products.ts#only never-published products without stock movements can be deleted, tests/integration/catalogue.test.ts#deletes a never-published draft | backend | archive, never hard delete |
+| edge | admin approves AI text while another admin edits | required | tests/integration/ai-drafts.test.ts#Another editor saves the product meanwhile | backend | version check |
 | admin | /admin | requested |  | backend | dashboard: today’s orders to confirm, revenue, low stock, failed deliveries |
 | admin | /admin/orders | requested |  | backend | queues by status, search, bulk confirm |
 | admin | /admin/orders/[orderNumber] | requested |  | integration | confirm, reject, partial cancel, dispatch, tracking link, notes, timeline |
@@ -254,12 +254,12 @@ Evidence (file#pattern) is filled in during the build; Notes describe intent. Ma
 | admin | /admin/health | required |  | backend | database topology check, job trigger, outbox lag, dead letters, integration status |
 | admin | /admin/audit | required |  | backend | audit log |
 | admin | /admin/setup | requested |  | backend | first-run checklist |
-| skeleton | product grid | required |  |  |  |
-| skeleton | product detail | required |  |  |  |
-| skeleton | search results | required |  |  |  |
-| skeleton | cart and checkout summary | required |  |  |  |
-| skeleton | account order list and detail | required |  |  |  |
-| skeleton | admin tables and order detail | required |  |  |  |
+| skeleton | product grid | required | app/[locale]/c/[...slug]/loading.tsx#ListingSkeleton |  |  |
+| skeleton | product detail | required | app/[locale]/p/[slug]/loading.tsx#ProductSkeleton |  |  |
+| skeleton | search results | required | app/[locale]/search/loading.tsx#ListingSkeleton |  |  |
+| skeleton | cart and checkout summary | required | app/[locale]/cart/loading.tsx#Skeleton, app/[locale]/checkout/loading.tsx#Skeleton |  |  |
+| skeleton | account order list and detail | required | app/[locale]/account/orders/loading.tsx#Skeleton, app/[locale]/account/orders/[orderNumber]/loading.tsx#Skeleton |  |  |
+| skeleton | admin tables and order detail | required | app/admin/orders/loading.tsx#AdminTableSkeleton, app/admin/orders/[orderNumber]/loading.tsx#AdminTableSkeleton |  |  |
 | template | middleware.ts | required | proxy.ts#export function proxy |  | auth gate, locale routing, rate limiting, security headers. **Checkpoint 4 note:** Next.js 16 renamed `middleware` to `proxy`, so this is built as `proxy.ts`; the skill's completeness check will report `middleware.ts` missing, and that is recorded as an exception in `GATE.md` (`docs/BUILD-PLAN.md` §0, C2) |
 | template | data/ with schema.json | required |  |  | seed input only, owner-supplied or approved content, may be empty (D2, D11); draft review package in `catalogue/horekbazar/` is separate and never read at runtime |
 | template | README demo line | not required for this brief, reason: owner decision D2 (no mock data); README instead states that data/ holds only owner-supplied or approved catalogue content for a development database and may be empty |  |  |  |

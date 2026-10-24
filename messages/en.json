@@ -126,6 +126,7 @@
       "closeMenu": "Close menu",
       "menu": "Menu",
       "home": "Home",
+      "backHome": "Go to admin home",
       "twoFactorOn": "2-step verification on",
       "twoFactorOff": "2-step verification off"
     },
