@@ -2117,7 +2117,16 @@
       "successText": "Your order number is {number}. The store will contact your number to confirm it.",
       "successEmail": "The details are also on their way by email.",
       "viewOrder": "View order",
-      "keepShopping": "Keep shopping"
+      "keepShopping": "Keep shopping",
+      "updatesTitle": "Get updates about this order",
+      "updatesBody": "Get a notification in this browser when your order is confirmed, sent and delivered. Offers stay off.",
+      "updatesTurnOn": "Turn on order updates",
+      "updatesNotNow": "Not now",
+      "updatesWorking": "Turning on…",
+      "updatesOn": "Order updates are on for this browser.",
+      "updatesBlocked": "Notifications are blocked in this browser's settings.",
+      "updatesSettings": "Notification settings",
+      "updatesError": "Could not turn them on. Please try again."
     },
     "reviews": {
       "title": "Reviews",

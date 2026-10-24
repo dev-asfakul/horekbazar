@@ -2,6 +2,13 @@
 
 Newest first. Each entry: date, phase, done, decided, open, next. Entries are snapshots of their date: "not merged", "open" or "next" describe that day; the current state is in `docs/STATUS.md` (first rows) and `docs/HANDOFF.md`.
 
+## 2026-10-25 — Phase E: order-updates prompt after an order (PR, merged after CI)
+
+- **Done:** the order success page offers browser notifications for order updates when push is configured, only from a button, only once per browser ("Not now" remembered), offers off. Shared push helpers extracted from `PushOptIn`. Phase D merged as `d2ddd36` (PR #49).
+- **External setup:** push needs `NEXT_PUBLIC_VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY` and `VAPID_SUBJECT` in the deployment; without them the prompt is not rendered.
+- **Checks run locally (Node 24):** lint, typecheck, unit (incl. 2 new), build, Playwright `commerce/checkout.spec.ts` + `commerce/notifications.spec.ts` 5 passed (Chromium).
+- **Next:** Phase F (carousel, account navigation, footer, default language, guest checkout), split into several PRs.
+
 ## 2026-10-25 — Phase D: search suggestion cache (PR, merged after CI)
 
 - **Done (D27):** suggestion answers are kept 30 s in this tab's memory per locale and term (at most 40), shown at once on a repeat term without a request, and cleared on every navigation. Server route, its headers and live product rows unchanged. Phase C merged as `94dac8f` (PR #48).

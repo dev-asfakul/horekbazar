@@ -83,6 +83,16 @@ async function addToCart(page: import("@playwright/test").Page, qty: string) {
 
 test("customer: closed checkout, address, place a COD order, see it, cancel it; sample blocks checkout", async ({ page, context }) => {
   const csp = await watchCsp(page);
+  // Phase E: count browser permission requests and refuse them, as a customer pressing "Block" would.
+  await context.addInitScript(() => {
+    const w = window as unknown as { __permissionAsks: number };
+    w.__permissionAsks = 0;
+    Object.defineProperty(Notification, "permission", { configurable: true, get: () => "default" });
+    Notification.requestPermission = async () => {
+      w.__permissionAsks++;
+      return "denied";
+    };
+  });
   await setCheckout(false);
   await signIn(context, CUSTOMER);
   await addToCart(page, "2");
@@ -124,6 +134,23 @@ test("customer: closed checkout, address, place a COD order, see it, cancel it; 
   expect(order).toMatchObject({ status: "pending_confirmation", paymentMethod: "cod", totals: { grandTotal: 92000 } });
   await expect(page.getByTestId("checkout-success")).toContainText(order.orderNumber);
   expect((await stock()).reserved).toBe(before.reserved + 2);
+
+  // Phase E: order updates are offered after the order, never asked for on load; "Not now" sticks.
+  const asks = () => page.evaluate(() => (window as unknown as { __permissionAsks: number }).__permissionAsks);
+  const prompt = page.getByTestId("order-updates");
+  await expect(prompt).toBeVisible();
+  expect(await asks()).toBe(0);
+  await prompt.getByRole("button", { name: "অর্ডারের নোটিফিকেশন চালু করুন" }).click();
+  await expect(page.getByTestId("order-updates-result")).toContainText("নোটিফিকেশন বন্ধ করা আছে");
+  expect(await asks()).toBe(1);
+  expect(await db.collection("pushSubscriptions").countDocuments({ userId: order.userId })).toBe(0);
+  await page.reload();
+  await page.getByTestId("order-updates").getByRole("button", { name: "এখন না" }).click();
+  await expect(page.getByTestId("order-updates")).toHaveCount(0);
+  await page.reload();
+  await expect(page.getByTestId("checkout-success")).toBeVisible();
+  await page.waitForTimeout(300);
+  await expect(page.getByTestId("order-updates")).toHaveCount(0);
 
   await page.goto("/account/orders");
   await expect(page.getByTestId("order-row").filter({ hasText: order.orderNumber })).toBeVisible();

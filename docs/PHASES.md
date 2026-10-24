@@ -8,8 +8,8 @@ Tracker for the phases after Performance Phase A (PR #46, merged as `1a6496d`). 
 |---|---|---|
 | B. Cart interaction | One reusable quantity stepper ("− n +") on the product page and the cart. Cart changes show at once, are sent as an absolute quantity after a 350 ms pause (rapid clicks become one write), totals stay the server's and are marked "updating" while a change is on its way. Stock and `MAX_LINE_QTY` limits, minimum 1, keyboard and screen-reader support, no-JS fallback. (= Phase F item 1) | **Done** (PR #47, merged as `7f116b4`) |
 | C. Navigation feedback | Subtle progress indicator for client navigations (customer and admin), the missing admin `loading.tsx` files, no full-screen loaders, no artificial delays, reduced motion. (= Phase F item 5) | **Done** (PR #48, merged as `94dac8f`) |
-| D. Search | 30 s browser cache for search suggestions, cleared on navigation (D27; also named as Phase D in `docs/CACHE-INVENTORY.md`). | **Done** (this PR) |
-| E. Notification UX | Push opt-in offered after a meaningful action (order placed) with the existing `PushOptIn`, hidden when VAPID is not configured (B9 acceptance row). | Not started |
+| D. Search | 30 s browser cache for search suggestions, cleared on navigation (D27; also named as Phase D in `docs/CACHE-INVENTORY.md`). | **Done** (PR #49, merged as `d2ddd36`) |
+| E. Notification UX | Push opt-in offered after a meaningful action (order placed) with the existing `PushOptIn`, hidden when VAPID is not configured (B9 acceptance row). | **Done** (this PR) |
 | F. Remaining UX items | Home banner carousel, account navigation without the duplicate horizontal nav, guest checkout with secure order access and claim flow (new decision D28), configurable default language, dynamic footer category links. | Not started |
 
 ## Phase B record (2026-10-25)
@@ -32,3 +32,10 @@ Tracker for the phases after Performance Phase A (PR #46, merged as `1a6496d`). 
 - **Unchanged (D27):** `/api/search/suggest` behaviour, its `s-maxage=60` header and live product rows; the plain GET form to `/search`; history in local storage.
 - **Known limit (D27, accepted):** within 30 s on one page, suggestions do not notice catalogue changes; the search results page itself is always live.
 - **Tests:** `tests/unit/suggest-cache.test.ts` (4); `tests/e2e-db/storefront.spec.ts` new journey: "mini", "min", "mini" asks the server twice, and after an in-app navigation "mini" is asked again.
+
+## Phase E record (2026-10-25)
+
+- **New:** `components/notifications/OrderUpdatesPrompt.tsx` on the order success page (`/checkout/success/[orderNumber]`), rendered only when the store has push configured (`pushConfig()`; only the public key reaches the browser). It appears only if this browser supports push, has not blocked notifications, has no subscription yet and has not chosen "Not now" before (`localStorage` key `hb-order-updates-prompt`). One button asks for permission (never on load) and saves a subscription for order updates only; offers and news stay off (choosable in Account › Notifications). Blocked permission and failures are stated in words with a link to the settings.
+- **Refactor (no behaviour change):** the browser push helpers (`keyBytes`, support check, current subscription, subscribe, payload) moved from `PushOptIn` to `components/notifications/push-client.ts`, shared by both.
+- **Unchanged:** `savePushSubscriptionAction` (signed-in customer, rate limits, validation), subscription storage, outbox delivery, the account notifications page.
+- **Tests:** `tests/unit/push-client.test.ts` (2); `tests/e2e-db/commerce/checkout.spec.ts` checks the prompt after a COD order: no permission request on load, one request on the button, refused permission shows the blocked text and saves nothing, "Not now" survives a reload. `notifications.spec.ts` still passes.
