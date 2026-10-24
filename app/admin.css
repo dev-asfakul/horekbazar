@@ -611,6 +611,11 @@ html[data-admin] .record-thumb,
 html[data-admin] .record-thumb > * {
   border-radius: 12px;
 }
+/* A 48 px tile is too small for a category name (it was clipped mid-word); the row already shows the
+   category beside it and the tile keeps its accessible name (role=img, aria-label). */
+html[data-admin] .record-thumb .label-tile-category {
+  display: none;
+}
 html[data-admin] .record-table {
   border-collapse: separate;
   border-spacing: 0;
@@ -707,6 +712,15 @@ html[data-admin] .media-row {
 html[data-admin] .product-preview-image,
 html[data-admin] .media-row img {
   border-radius: 14px;
+}
+/* Image rows never widen the page: a long alt text or rights URL wraps inside the row (375 px). */
+html[data-admin] .media-rows {
+  grid-template-columns: minmax(0, 1fr);
+}
+html[data-admin] .media-row > div {
+  flex: 1 1 12rem;
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 /* ── Admin home ────────────────────────────────────────────────────────────────────────────── */
