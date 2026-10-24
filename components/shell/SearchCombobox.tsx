@@ -6,8 +6,12 @@
 // asks /api/search/suggest after 150 ms; a newer request aborts the older one and a counter drops
 // any late answer. Search history lives in this browser only: at most 8, no duplicates, no empty
 // entries, each removable, all clearable; when storage is blocked there is simply no history.
+// Phase D: answers are kept for 30 s in memory (suggest-cache.ts, D27), shown at once on a repeat
+// term without asking the server, and dropped whenever the page changes.
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
 import type { Suggestions } from "@/app/api/search/suggest/route";
+import { usePathname } from "next/navigation";
+import { clearSuggestions, readSuggestions, storeSuggestions } from "@/components/shell/suggest-cache";
 import { notifyStored, useStoredString } from "@/components/shell/use-browser-state";
 
 const HISTORY_KEY = "hb-search-history";
@@ -110,6 +114,18 @@ export function SearchCombobox({ action, locale, labels, initial = "", onEscapeE
         setData(null);
         return;
       }
+      const show = (body: Suggestions) => {
+        setData(body);
+        setActive(-1);
+        const n = body.terms.length + body.categories.length + body.products.length;
+        setStatus(n ? labels.count.replace("{count}", digits(n, locale)) : labels.none);
+      };
+      const cached = readSuggestions(locale, term);
+      if (cached) {
+        ++seq.current; // any older request still on its way is now stale
+        show(cached);
+        return;
+      }
       timer.current = window.setTimeout(async () => {
         const mine = ++seq.current;
         const ctrl = new AbortController();
@@ -118,11 +134,9 @@ export function SearchCombobox({ action, locale, labels, initial = "", onEscapeE
           const res = await fetch(`/api/search/suggest?q=${encodeURIComponent(term)}&l=${locale}`, { signal: ctrl.signal, headers: { Accept: "application/json" } });
           if (!res.ok) return; // 429 or an outage: keep whatever is shown, the form still submits.
           const body = (await res.json()) as Suggestions;
+          storeSuggestions(locale, term, body);
           if (mine !== seq.current) return; // a newer request has started
-          setData(body);
-          setActive(-1);
-          const n = body.terms.length + body.categories.length + body.products.length;
-          setStatus(n ? labels.count.replace("{count}", digits(n, locale)) : labels.none);
+          show(body);
         } catch {
           // Aborted or offline: nothing to do.
         }
@@ -130,6 +144,13 @@ export function SearchCombobox({ action, locale, labels, initial = "", onEscapeE
     },
     [locale, labels],
   );
+
+  // A new page: suggestions start fresh (D27). Also runs once on mount, which only empties an
+  // already empty cache on a full page load.
+  const pathname = usePathname();
+  useEffect(() => {
+    clearSuggestions();
+  }, [pathname]);
 
   useEffect(() => {
     const onDown = (e: PointerEvent) => {
