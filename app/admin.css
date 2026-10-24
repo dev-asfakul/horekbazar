@@ -533,6 +533,15 @@ html[data-admin] .admin-title {
 }
 html[data-admin] .admin-breadcrumb a {
   color: var(--link);
+  /* A breadcrumb link stands alone (not inline in prose), so it keeps a 24px target (44px on touch). */
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+}
+@media (pointer: coarse) {
+  html[data-admin] .admin-breadcrumb a {
+    min-height: 44px;
+  }
 }
 html[data-admin] .admin-section {
   margin-top: 32px;
