@@ -11,8 +11,10 @@ import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { LabelTile } from "@/components/commerce/LabelTile";
 import { PriceTag } from "@/components/commerce/PriceTag";
+import { ProductQuantity } from "@/components/commerce/ProductQuantity";
 import { ActionForm } from "@/components/forms/ActionForm";
 import { addToCartAction } from "@/lib/actions/cart";
+import { MAX_LINE_QTY } from "@/lib/modules/pricing/limits";
 import { formMessages } from "@/lib/i18n/form-messages";
 import { Breadcrumbs } from "@/components/store/Breadcrumbs";
 import { JsonLd } from "@/components/store/JsonLd";
@@ -132,12 +134,14 @@ export default async function ProductPage({ params, searchParams }: PageProps<"/
               <ActionForm
                 action={addToCartAction}
                 hidden={{ variantId: String(variant._id) }}
-                fields={[{ name: "quantity", label: t("product.quantity"), inputMode: "numeric", defaultValue: "1", required: true, maxLength: 2, autoComplete: "off" }]}
+                fields={[]}
                 messages={await formMessages(locale)}
                 submitLabel={t("product.addToCart")}
                 pendingLabel={t("product.adding")}
                 layout="inline"
-              />
+              >
+                <ProductQuantity max={Math.min(variant.available, MAX_LINE_QTY)} labels={{ quantity: t("product.quantity"), decrease: t("product.decrease"), increase: t("product.increase") }} />
+              </ActionForm>
               <Link className="prose-link pdp-cart-link" href={localeHref(locale, "/cart")} prefetch={false}>
                 {t("product.viewCart")}
               </Link>

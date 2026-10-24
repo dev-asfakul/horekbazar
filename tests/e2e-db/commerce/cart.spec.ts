@@ -66,9 +66,28 @@ test("cart: add, refuse over stock, update, promotion and coupon totals, zone ch
   await expect(page.getByTestId("checkout-link")).toHaveCount(0);
 
   const line = page.getByTestId("cart-line");
-  await line.getByLabel("পরিমাণ").fill("3");
-  await line.getByRole("button", { name: "আপডেট" }).click();
+  // The shared stepper: "−" stops at 1, "+" sends the new quantity after a short pause and the
+  // server's totals follow; the no-JS Update button is gone once the page is interactive.
+  await expect(line.getByRole("button", { name: "আপডেট" })).toHaveCount(0);
+  await line.getByRole("button", { name: "পরিমাণ ১টি বাড়ান" }).click();
+  await expect(line.getByLabel("পরিমাণ")).toHaveValue("3");
   await expect(page.getByTestId("cart-subtotal")).toContainText("৭৫০");
+  // Typing past the stock (6) is clamped to it; the stepper then offers no further "+".
+  await line.getByLabel("পরিমাণ").fill("9");
+  await line.getByLabel("পরিমাণ").press("Enter");
+  await expect(line.getByLabel("পরিমাণ")).toHaveValue("6");
+  await expect(line.getByRole("button", { name: "পরিমাণ ১টি বাড়ান" })).toBeDisabled();
+  await expect(page.getByTestId("cart-subtotal")).toContainText("১,৫০০");
+  // Rapid clicks: three quick "−" become one absolute write of 3, never a lost or doubled step.
+  const minus = line.getByRole("button", { name: "পরিমাণ ১টি কমান" });
+  await minus.click();
+  await minus.click();
+  await minus.click();
+  await expect(line.getByLabel("পরিমাণ")).toHaveValue("3");
+  await expect(page.getByTestId("cart-subtotal")).toContainText("৭৫০");
+  await expect(line.getByTestId("cart-qty")).not.toHaveAttribute("data-pending");
+  await page.reload();
+  await expect(line.getByLabel("পরিমাণ")).toHaveValue("3");
 
   // A 10% promotion on the product and a coupon set on this device's cart (coupon tries need the
   // rate-limit store, which this server does not have; the integration suite covers applying codes).

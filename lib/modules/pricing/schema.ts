@@ -3,6 +3,7 @@
 import { z } from "zod";
 import { zDate, zInt, zObjectId } from "../../db/bson-zod.ts";
 import { localizedText } from "../catalogue/schema.ts";
+import { MAX_CART_LINES, MAX_LINE_QTY } from "./limits.ts";
 
 export const PROMOTIONS = "promotions";
 export const COUPONS = "coupons";
@@ -90,8 +91,7 @@ export const couponCustomerUsageSchema = z
   .object({ _id: zObjectId(), couponId: zObjectId(), userId: z.string().min(1).max(100), count: zInt().min(0), updatedAt: zDate() })
   .strict();
 
-export const MAX_CART_LINES = 50;
-export const MAX_LINE_QTY = 99;
+export { MAX_CART_LINES, MAX_LINE_QTY };
 
 export const cartSchema = z
   .object({

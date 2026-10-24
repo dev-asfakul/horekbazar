@@ -2,15 +2,18 @@
 // quantity tiers, coupon and the delivery charge for the chosen zone. Lines that changed since the
 // customer last looked carry a notice (price up/down, stock low or gone, no longer sold). Every
 // control is a plain form post. Checkout opens only when the store turns ordering on and the cart
-// has nothing to fix; until then the page says ordering is not open.
+// has nothing to fix; until then the page says ordering is not open. Phase B: quantities use the
+// shared stepper (CartLineQuantity); totals stay the server's and are marked while a change is sent.
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
+import { CartBusy, CartPendingProvider } from "@/components/commerce/CartPending";
+import { CartLineQuantity } from "@/components/commerce/CartLineQuantity";
 import { PriceTag } from "@/components/commerce/PriceTag";
 import { ActionForm } from "@/components/forms/ActionForm";
 import { SetupRequired } from "@/components/states/SetupRequired";
-import { applyCouponAction, removeCartLineAction, removeCouponAction, setCartQuantityAction } from "@/lib/actions/cart";
+import { applyCouponAction, removeCartLineAction, removeCouponAction } from "@/lib/actions/cart";
 import { formatMoney } from "@/lib/format/money";
 import { formMessages } from "@/lib/i18n/form-messages";
 import { localeHref } from "@/lib/i18n/href";
@@ -75,6 +78,8 @@ export default async function CartPage({ params, searchParams }: PageProps<"/[lo
     return t(`notices.${n}`);
   };
 
+  const stepLabels = { quantity: t("quantity"), decrease: t("decrease"), increase: t("increase"), update: t("update"), updating: t("updating") };
+
   const lineRow = (l: QuotedLine, available: boolean) => {
     const p = pricedBy.get(l.variantId);
     return (
@@ -88,14 +93,14 @@ export default async function CartPage({ params, searchParams }: PageProps<"/[lo
           </p>
         </div>
         {p ? (
-          <div className="cart-line-price">
+          <CartBusy only={l.variantId} label={t("updating")} className="cart-line-price">
             <PriceTag amountMinor={p.unitPrice} compareAtMinor={p.unitPrice < p.basePrice ? p.basePrice : p.compareAt} format={format} labels={{ now: common("nowPrice"), was: common("wasPrice") }} />
             {p.appliedPromotion ? <span className="cart-chip">{p.appliedPromotion.kind === "flash_sale" ? t("flash") : t("sale")}</span> : null}
             {p.tierMinQty ? <span className="cart-chip">{t("tier", { qty: p.tierMinQty })}</span> : null}
             <p className="cart-line-total">
               {t("lineTotal")}: <strong>{money(p.lineTotal)}</strong>
             </p>
-          </div>
+          </CartBusy>
         ) : null}
         {l.notices.length ? (
           <ul className="cart-notices" role="note">
@@ -108,16 +113,7 @@ export default async function CartPage({ params, searchParams }: PageProps<"/[lo
         ) : null}
         <div className="cart-line-actions">
           {available ? (
-            <ActionForm
-              action={setCartQuantityAction}
-              hidden={{ variantId: l.variantId }}
-              fields={[{ name: "quantity", label: t("quantity"), inputMode: "numeric", defaultValue: String(l.quantity), required: true, maxLength: 2, autoComplete: "off" }]}
-              messages={messages}
-              submitLabel={t("update")}
-              pendingLabel={t("update")}
-              variant="secondary"
-              layout="inline"
-            />
+            <CartLineQuantity variantId={l.variantId} quantity={l.quantity} available={l.available} labels={stepLabels} errors={messages.errors} />
           ) : null}
           <ActionForm action={removeCartLineAction} hidden={{ variantId: l.variantId }} fields={[]} messages={messages} submitLabel={t("remove")} pendingLabel={t("remove")} variant="secondary" layout="inline" />
         </div>
@@ -129,6 +125,7 @@ export default async function CartPage({ params, searchParams }: PageProps<"/[lo
     <div className="listing cart-page" data-testid="cart" data-state="items">
       <h1 className="font-display listing-title">{t("title")}</h1>
       <p className="listing-intro">{t("items", { count: view.count })}</p>
+      <CartPendingProvider>
       <div className="cart-grid">
         <div>
           <ul className="cart-lines">{quote.lines.map((l) => lineRow(l, true))}</ul>
@@ -179,6 +176,7 @@ export default async function CartPage({ params, searchParams }: PageProps<"/[lo
               </button>
             </form>
           ) : null}
+          <CartBusy label={t("updating")}>
           <dl className="cart-totals">
             <div>
               <dt>{t("subtotal")}</dt>
@@ -205,6 +203,7 @@ export default async function CartPage({ params, searchParams }: PageProps<"/[lo
               <dd data-testid="cart-total">{money(priced.total)}</dd>
             </div>
           </dl>
+          </CartBusy>
           {priced.delivery?.missingForFree ? <p className="field-hint">{t("freeMissing", { amount: money(priced.delivery.missingForFree) })}</p> : null}
           {!store.settings.features.checkout ? (
             <p className="pdp-notice" role="note" data-testid="checkout-off">
@@ -229,6 +228,7 @@ export default async function CartPage({ params, searchParams }: PageProps<"/[lo
           ) : null}
         </aside>
       </div>
+      </CartPendingProvider>
     </div>
   );
 }
