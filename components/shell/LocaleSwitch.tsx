@@ -2,11 +2,12 @@
 // Tier: build. Use-when: the header language switch. Avoid-when: in-page translations of a single string.
 // Reduced-motion: no motion. Touch: 44 x 44 px minimum.
 // Language switch (BUILD-PLAN §8: keeps path and query; sets a preference cookie; no
-// Accept-Language redirect on "/"). The cookie is only remembered for later use; nothing
-// redirects on it in v1.
+// Accept-Language redirect on "/"). The cookie is the visitor's explicit preference: on a later entry
+// visit to an unprefixed URL it wins over the store's default language (D31, lib/i18n/entry-locale.ts).
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { localeHref, stripLocalePrefix } from "@/lib/i18n/href";
+import { LOCALE_COOKIE } from "@/lib/i18n/entry-locale";
 import { htmlLang, type Locale } from "@/lib/i18n/locales";
 
 interface Props {
@@ -28,7 +29,7 @@ export function LocaleSwitch({ target, label, ariaLabel }: Props) {
       className="nav-link header-action"
       prefetch={false}
       onClick={() => {
-        document.cookie = `hb-locale=${target}; Path=/; Max-Age=31536000; SameSite=Lax${location.protocol === "https:" ? "; Secure" : ""}`;
+        document.cookie = `${LOCALE_COOKIE}=${target}; Path=/; Max-Age=31536000; SameSite=Lax${location.protocol === "https:" ? "; Secure" : ""}`;
       }}
     >
       {label}

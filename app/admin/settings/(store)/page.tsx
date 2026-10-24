@@ -52,7 +52,7 @@ export default async function AdminSettingsPage() {
             ...localizedFields(ct, "hours", t("hours"), s.store.contact.hours, { max: 120 }),
             { name: "fontPreset", label: t("fontPreset"), type: "select", defaultValue: s.theme.fontPreset, options: [{ value: "khata", label: t("fontKhata") }, { value: "plain", label: t("fontPlain") }] },
             { name: "accent", label: t("accent"), hint: t("accentHint", { ratio: String(MIN_ACCENT_CONTRAST) }), defaultValue: s.theme.accent, maxLength: 7, autoComplete: "off" },
-            { name: "defaultLocale", label: t("defaultLocale"), type: "select", defaultValue: s.locale.default, options: [{ value: "bn", label: "বাংলা (Banglish)" }, { value: "en", label: "English" }] },
+            { name: "defaultLocale", label: t("defaultLocale"), hint: t("defaultLocaleHint"), type: "select", defaultValue: s.locale.default, options: [{ value: "bn", label: "বাংলা (Banglish)" }, { value: "en", label: "English" }] },
             { name: "numerals", label: t("numerals"), type: "select", defaultValue: s.locale.numerals, options: [{ value: "bengali", label: t("numeralsBengali") }, { value: "latin", label: t("numeralsLatin") }] },
             { name: "grouping", label: t("grouping"), type: "select", defaultValue: s.locale.grouping, options: [{ value: "south_asian", label: t("groupingSouthAsian") }, { value: "western", label: t("groupingWestern") }] },
             { name: "roundingUnit", label: t("roundingUnit"), hint: t("roundingHint"), type: "number", inputMode: "numeric", defaultValue: String(s.pricing.roundingUnit) },

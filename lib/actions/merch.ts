@@ -4,6 +4,7 @@
 // the server in staffContext for every action.
 import { refresh } from "next/cache";
 import { afterPublicWrite } from "@/lib/storefront/invalidate";
+import { forgetStoreDefaultLocale } from "@/lib/i18n/store-default-locale";
 import { ObjectId } from "mongodb";
 import { isOwnPublicId } from "@/lib/adapters/media/cloudinary";
 import {
@@ -386,6 +387,7 @@ export async function updateGeneralSettingsAction(_: FormState, form: FormData):
     const detail = (error as { detail?: { field?: string } }).detail;
     return code === "catalogue_invalid" && detail?.field === "accent" ? fail("fix_fields", { accent: "accent_contrast" }, values) : fail(code, undefined, values);
   }
+  forgetStoreDefaultLocale();
   afterPublicWrite("settings");
   refresh();
   return ok("settings_saved");

@@ -62,7 +62,7 @@ Labels used throughout:
 
 ## 1. Route and page inventory
 
-Every storefront route exists at `/…` (Bengali, default) and `/en/…` (English) with the **same Latin slug** (D10). next-intl uses a `[locale]` segment. **B1 (measured):** routing stays in `proxy.ts` (rewrite `/…` to the internal `bn` segment, `/bn/…` → 308, nonce CSP); next-intl's middleware and `localePrefix` are not used; the request locale comes from `next/root-params` in `i18n/request.ts` (proposed implementation detail). `/` is never auto-redirected by `Accept-Language` (domain-rules §10).
+Every storefront route exists at `/…` (Bengali, default) and `/en/…` (English) with the **same Latin slug** (D10). next-intl uses a `[locale]` segment. **B1 (measured):** routing stays in `proxy.ts` (rewrite `/…` to the internal `bn` segment, `/bn/…` → 308, nonce CSP); next-intl's middleware and `localePrefix` are not used; the request locale comes from `next/root-params` in `i18n/request.ts` (proposed implementation detail). `/` is never auto-redirected by `Accept-Language` (domain-rules §10). **Phase F (D31):** an entry visit from a browser to an unprefixed URL opens in the visitor's explicit language (the `hb-locale` cookie) or else the store's default language setting; crawlers and links inside the site are never redirected.
 
 "Index" means whether the page appears in search engines: `idx` = indexable; `noidx` = `noindex`. Rendering options: `cache` (**D17 decided, option (a): HTML is rendered per request**; only server data reads are cached, §9.1. The label marks pages whose data reads are cached), `dyn` (rendered per request) and `static`.
 
@@ -302,7 +302,7 @@ Below 1024 px, `RecordCards` (one card per record, priority fields, actions in a
 | robots | per environment: staging and preview disallow everything; production allows storefront and disallows `/account`, `/checkout`, `/cart`, `/admin`, `/api`, `/search` |
 | Slugs | stable lowercase Latin, shared by both locales; editing a name never changes the slug; slug changes write a 301 redirect record |
 | Open Graph | 1200 × 630 `og:image`: the product image when rights are cleared, otherwise a generated typographic image from tokens and the wordmark (`app/opengraph-image.tsx`) |
-| Locale switch | keeps path and query; sets a preference cookie; no `Accept-Language` redirect on `/` |
+| Locale switch | keeps path and query; sets a preference cookie that wins over the store default on later entry visits (D31); no `Accept-Language` redirect on `/` |
 
 Verification: gate `S` rules (seo-03 … seo-18); a JSON-LD parse test; a canonical and hreflang test per route type; a sitemap test that every URL returns 200 and is indexable **[NV]**.
 
@@ -530,6 +530,7 @@ All run against a disposable real replica set, with the parallel requests launch
 | **D28** | Guest checkout (Phase F) | **owner 2026-10-25 (Phase F brief), supersedes D13's signed-in-only checkout:** customers may order without an account; guest orders are reached only through an unguessable secret link (hashed at rest), never by order number alone; a signed-in customer with a verified email equal to the order email may claim it explicitly; no automatic merge by email | B7 behaviour | built in Phase F part 3 |
 | **D29** | Home carousel motion (Phase F) | **owner 2026-10-25:** the home carousel advances on its own every 6 s (previously never), with a visible pause/play button, holding on hover, focus, hidden tab and after interaction; no automatic advance under reduced motion unless the shopper presses Play (WCAG 2.2.2) | — | built in Phase F part 1 |
 | **D30** | Account navigation below 1024 px (Phase F) | **owner 2026-10-25:** the row of section pills is removed on account pages (it repeated the overview tiles); nested pages show one "Back to your account" link; the sidebar from 1024 px is unchanged | — | built in Phase F part 1 |
+| **D31** | Default language (Phase F) | **owner 2026-10-25 (Phase F brief):** the existing admin setting `locale.default` takes effect. URLs do not change (D10: Bengali at `/…`, English at `/en/…`). A browser entry visit (Fetch Metadata: top-level navigation from outside the site) to an unprefixed URL gets a private 307 to `/en/…` when the visitor's explicit choice (`hb-locale` cookie) is English, or when there is no valid choice and the store default is English. Prefixed URLs, links inside the site, prefetches and clients without Fetch Metadata (crawlers) are never redirected, and `Accept-Language` is never read. Invalid stored values fall back to Bengali. Decided before render, so the server-rendered `lang` always matches the URL (no flash) | B1 routing | built in Phase F part 2 |
 | Coupon on cancel **[A]** | Whether a cancelled or rejected order restores coupon usage (domain-rules §4.1, case 7) | restore (proposed) / do not restore | B6 | the proposed behaviour (restore) is built |
 | Checkpoint 3 | explicit approval of the "Khata" direction as amended | approve / redirect | B1 (design basis) and every later phase | no design work starts |
 | Checkpoint 4 | approval of this plan | approve / amend | B0 and all implementation | nothing is built |

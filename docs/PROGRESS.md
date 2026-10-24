@@ -2,6 +2,12 @@
 
 Newest first. Each entry: date, phase, done, decided, open, next. Entries are snapshots of their date: "not merged", "open" or "next" describe that day; the current state is in `docs/STATUS.md` (first rows) and `docs/HANDOFF.md`.
 
+## 2026-10-25 — Phase F part 2: configurable default language (PR, merged after CI)
+
+- **Done:** the existing admin setting "Default language" now applies (D31). A browser's entry visit to an unprefixed URL opens in the visitor's explicit choice (language switch cookie), else the store default. Crawlers, links inside the site and `/en/…` URLs are never redirected. Invalid values fall back to Bengali, and the choice is made before render so nothing flashes. Phase F part 1 merged as `0a467a9` (PR #51).
+- **Checks run locally (Node 24):** lint, typecheck, unit 290, integration 228, build, zero-env Playwright (Chromium) 85 passed and 19 skipped, and the full e2e-db suite. In the e2e-db suite one notifications test failed once with an inline-style CSP violation; it passed on two re-runs. That failure is recorded as intermittent and still needs investigating.
+- **Next:** Phase F part 3 (guest checkout).
+
 ## 2026-10-25 — Phase F part 1: carousel, account navigation, footer (PR, merged after CI)
 
 - **Done:** home carousel advances every 6 s with pause/play, indicators, hover/focus/interaction holds and reduced-motion off (D29); account pages lose the duplicate section pills below 1024 px, nested pages get a back link (D30); footer lists up to 8 published categories, deterministic and from the cached tree. Decisions D28–D30 recorded in `docs/BUILD-PLAN.md` §13. Phase E merged as `e5599f7` (PR #50; one CI job hit a transient `ECONNRESET` in the test server's proxy and passed on re-run).
