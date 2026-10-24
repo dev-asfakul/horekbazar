@@ -66,6 +66,13 @@ test.describe("phone width", () => {
     await expect(menu.getByTestId("admin-identity")).toContainText("Catalogue editor");
     // Current page is marked.
     await expect(menu.getByRole("link", { name: "Products" })).toHaveAttribute("aria-current", "page");
+    // The page behind the modal menu is inert: Tab never reaches it. (After the last control the
+    // browser may move focus to its own UI, reported as <body>; the next Tab returns to the dialog.)
+    for (let i = 0; i < 40; i++) {
+      await page.keyboard.press("Tab");
+      const where = await page.evaluate(() => (document.activeElement?.closest("dialog[open]") ? "dialog" : document.activeElement === document.body ? "browser" : "page"));
+      expect(where, `tab ${i}`).not.toBe("page");
+    }
     await page.keyboard.press("Escape");
     await expect(menu).toBeHidden();
     await expect(open).toBeFocused();

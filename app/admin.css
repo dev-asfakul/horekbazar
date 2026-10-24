@@ -869,7 +869,11 @@ html[data-admin] .admin-panel-actions[data-variant="sidebar"] .btn {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
     gap: 12px;
-    align-items: end;
+    align-items: start;
+  }
+  /* Labels and inputs line up even when a field has a hint below it; the button sits on the inputs' line. */
+  html[data-admin] .admin-filters > :is(.form-actions, .btn) {
+    align-self: end;
   }
   html[data-admin] .admin-filters > * {
     margin-top: 0;

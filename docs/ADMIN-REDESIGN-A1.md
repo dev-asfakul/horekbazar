@@ -121,7 +121,7 @@ Without JavaScript, the menu button does nothing. The wordmark still goes to /ad
 
 ### Motion
 
-Tier 1 only: colour and background transitions of 150 ms on `--ease-out` for hover and focus. The dialog fades in over 160 ms, and only under `prefers-reduced-motion: no-preference`. Nothing else moves.
+Tier 1 only: colour and background transitions of 150 ms on `--ease-out` for hover and focus. The dialog fades in over 150 ms, and only under `prefers-reduced-motion: no-preference`. Nothing else moves.
 
 ## 5. Files
 

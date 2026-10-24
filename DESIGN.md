@@ -730,3 +730,15 @@ Approved by the owner: Proposal 03 (layout), Proposal 04 (time-of-day themes), P
 | /cart | 500 → 540 ms | 0 → 0 | |
 
 Fonts went from 89 KB to 225 KB (Alkatra Bengali alone is 90 KB); JS from about 499 KB to 513 KB. These are sandbox numbers against a remote database; they are not field data and not a Vercel measurement.
+
+## Admin redesign: Proposal A1 (Checkpoints 3–5, 2026-10-24)
+
+Approved by the owner: Proposal A1 (mockups in `docs/proposals/admin-a1/`) and the build plan `docs/ADMIN-REDESIGN-A1.md`. The storefront is the visual source of truth; no new visual direction. Every admin rule lives in `app/admin.css`, imported only by `app/admin/layout.tsx` and scoped to `html[data-admin]`; `app/store.css`, `app/globals.css` and storefront components are unchanged.
+
+- **Tokens:** the storefront base (light) values: ground #f6f9ef, surface #e9f0da, raised #fff, ink #121a0f, muted #56604f, line #dfe6d2 / #7d8a6f, accent #c6f432 on ink text, link and focus #3b6300, success/warning/danger as the storefront. Google Sans (text) and Alkatra (display), same self-hosted files. Light only: no dark mode, no time-of-day themes.
+- **Accent rule:** lime is a fill (primary buttons, the current-page pill, waiting counts, avatar), never text or a focus ring. Every place `globals.css` used `--accent` for a link, focus ring or checkbox is moved to `--link` / `--focus` in `admin.css`.
+- **Shell:** below 1024 px a 56 px top bar (menu button, current section, wordmark to /admin) and a full-screen menu (native modal `<dialog>`: focus to Close, Tab stays inside, Escape closes, focus returns to the menu button, closes on navigation; identity card; sticky View store / Sign out). From 1024 px a fixed 272 px sidebar on surface; the list scrolls, identity and actions stay at its foot. Seven groups: Sales, Customers, Catalogue, Storefront, Marketing, Settings, System. The current page is the longest matching href (`lib/admin/active-section.ts`).
+- **Permissions:** navigation shows only `sectionsFor(role)`, grouped (`lib/admin/sections.ts`); groups and icons are presentation only. Every page and action still checks its capability on the server; the 2FA-pending shell still shows only Security.
+- **Admin home:** "Work waiting" (pending orders, open conversations, requested returns, low-stock variants), each shown only when the role holds the linked page's capability, capped at 100 ("99+"), streamed per card, "Couldn't load" on error (`lib/admin/work-counts.ts`). Quick actions (New product, Find a customer) and grouped section tiles.
+- **Lists and forms:** existing class names re-skinned: white plates and rounded tables, filters as a surface panel (grid from 768 px), pill buttons 48 px, fields 14 px radius / 1.5 px border, sections holding a form read as white cards. Products bulk status sits behind "Select products". Order detail: status and shipment beside the details from 1024 px (wrappers only).
+- **Motion:** colour transitions of 150 ms; the menu fades in only under `prefers-reduced-motion: no-preference`.

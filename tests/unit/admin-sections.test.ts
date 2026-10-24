@@ -3,6 +3,8 @@
 import { describe, expect, it } from "vitest";
 import { activeHref } from "@/lib/admin/active-section";
 import { ADMIN_GROUPS, ADMIN_SECTIONS, groupSections, sectionsFor } from "@/lib/admin/sections";
+import { WORK_COUNTS } from "@/lib/admin/work-counts";
+import { decideAccess, type Principal } from "@/lib/modules/identity/principal";
 import { BUILT_IN_ROLES } from "@/lib/modules/identity/capabilities";
 import { ADMIN_PAGE_CAPABILITY } from "@/lib/modules/identity/paths";
 import en from "@/messages/en.json";
@@ -61,5 +63,36 @@ describe("activeHref", () => {
     expect(activeHref("/admin/ordersx", hrefs)).toBe(null);
     expect(activeHref("/admin/unknown", hrefs)).toBe(null);
     expect(activeHref("/admin/orders", ["/admin"])).toBe(null);
+  });
+});
+
+describe("work counts follow the linked section's capability", () => {
+  const NOW = new Date("2026-10-24T10:00:00Z");
+  const principal = (roleKey: string): Principal => {
+    const role = BUILT_IN_ROLES.find((r) => r.key === roleKey)!;
+    return {
+      user: { id: "u1", email: "a@example.test", name: "A", emailVerified: true, twoFactorEnabled: true, locale: "en", phone: null, staffRoleKey: roleKey },
+      session: { id: "s1", token: "t1", createdAt: NOW, expiresAt: new Date(NOW.getTime() + 86_400_000), stepUpAt: null, secondFactorAt: NOW },
+      role: { key: roleKey, name: role.name, capabilities: new Set(role.capabilities), twoFactorRequired: role.twoFactorRequired },
+    } as Principal;
+  };
+  const visible = (roleKey: string) => WORK_COUNTS.filter((d) => decideAccess(principal(roleKey), d.capability, { now: NOW }).result === "allowed").map((d) => d.key);
+
+  it("each count's capability is the one its linked page checks", () => {
+    for (const d of WORK_COUNTS) {
+      const page = d.href.split("?")[0] as keyof typeof ADMIN_PAGE_CAPABILITY;
+      expect(ADMIN_PAGE_CAPABILITY[page], d.key).toBe(d.capability);
+    }
+  });
+
+  it.each(BUILT_IN_ROLES.map((r) => r.key))("%s sees exactly the counts its role allows", (key) => {
+    const caps = new Set(BUILT_IN_ROLES.find((r) => r.key === key)!.capabilities);
+    expect(visible(key)).toEqual(WORK_COUNTS.filter((d) => caps.has(d.capability)).map((d) => d.key));
+  });
+
+  it("a catalogue editor sees no order, message or return counts", () => {
+    expect(visible("catalogue_editor")).not.toContain("orders");
+    expect(visible("catalogue_editor")).not.toContain("messages");
+    expect(visible("catalogue_editor")).not.toContain("returns");
   });
 });
