@@ -123,3 +123,25 @@ test("signed out: the notifications page redirects to sign-in", async ({ page })
   await page.goto("/en/account/notifications");
   await expect(page).toHaveURL(/\/en\/login\?next=%2Fen%2Faccount%2Fnotifications$/);
 });
+
+test("account navigation: the sidebar from 1024 px; below it no section pills, a back link on nested pages (Phase F)", async ({ browser }) => {
+  const context = await browser.newContext({ viewport: { width: 375, height: 800 } });
+  const page = await context.newPage();
+  await signIn(context, CAROL);
+  const nav = page.locator("nav.account-nav");
+  await page.goto("/en/account/notifications");
+  await expect(nav.getByRole("link", { name: "Back to your account" })).toBeVisible();
+  await expect(nav.getByRole("link", { name: "Orders", exact: true })).toBeHidden();
+  await expect(nav.getByRole("button", { name: "Sign out" })).toBeVisible();
+  await nav.getByRole("link", { name: "Back to your account" }).click();
+  await expect(page).toHaveURL(/\/en\/account$/);
+  await expect(page.getByTestId("account-tiles").getByRole("link", { name: /Orders/ })).toBeVisible();
+  await expect(nav.getByRole("link", { name: "Back to your account" })).toHaveCount(0);
+  await expect(nav.getByRole("link", { name: "Orders", exact: true })).toBeHidden();
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/en/account/notifications");
+  await expect(nav.getByRole("link", { name: "Orders", exact: true })).toBeVisible();
+  await expect(nav.getByRole("link", { name: "Notifications", exact: true })).toHaveAttribute("aria-current", "page");
+  await expect(nav.getByRole("link", { name: "Back to your account" })).toBeHidden();
+  await context.close();
+});

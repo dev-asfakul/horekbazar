@@ -242,7 +242,9 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
   return (
     <div className="home" data-testid="home">
       <h1 className="sr-only">{storeName}</h1>
-      <HomeCarousel label={t("home.carouselLabel")} prev={t("home.prevSlide")} next={t("home.nextSlide")} counter={counter}>
+      <HomeCarousel
+        labels={{ label: t("home.carouselLabel"), prev: t("home.prevSlide"), next: t("home.nextSlide"), pause: t("home.pauseSlides"), play: t("home.playSlides"), goTo: slides.map((_, i) => t("home.goToSlide", { n: count(i + 1) })), counter, bengali: format.numerals === "bengali" }}
+      >
         {slides}
       </HomeCarousel>
       <CategoryTiles tiles={tiles} locale={locale} title={tileTitle} countText={(n) => t("home.productCount", { count: count(n) })} allLabel={t("home.allCategoriesCta")} />

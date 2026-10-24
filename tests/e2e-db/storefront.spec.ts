@@ -171,6 +171,45 @@ test("search suggestions: a repeated term within 30 s is not asked again; a new 
   expect(asked).toEqual(["mini", "min", "mini"]);
 });
 
+test("home carousel advances on its own, pauses on hover, focus and the button, and not under reduced motion (Phase F)", async ({ browser }) => {
+  const context = await browser.newContext({ viewport: { width: 375, height: 800 } });
+  const page = await context.newPage();
+  await page.goto("/en");
+  const carousel = page.getByTestId("home-carousel");
+  const slides = await carousel.locator(".home-carousel-slide").count();
+  test.skip(slides < 2, "needs two or more slides");
+  await expect(carousel).toHaveAttribute("data-autoplay", "on");
+  await expect(page.getByTestId("carousel-count")).toHaveText(`1/${slides}`);
+  await expect(page.getByTestId("carousel-count")).toHaveText(`2/${slides}`, { timeout: 9000 });
+  await expect(carousel.getByRole("button", { name: "Slide 2" })).toHaveAttribute("aria-current", "true");
+  // Keyboard focus inside holds it; the button pauses it and says Play.
+  await carousel.getByRole("button", { name: "Next slide" }).focus();
+  await expect(carousel).toHaveAttribute("data-autoplay", "off");
+  await carousel.getByRole("button", { name: "Pause slides" }).click();
+  await expect(carousel.getByRole("button", { name: "Play slides" })).toBeVisible();
+  await carousel.getByRole("button", { name: "Slide 1" }).click();
+  await expect(page.getByTestId("carousel-count")).toHaveText(`1/${slides}`);
+  await context.close();
+
+  const still = await browser.newContext({ viewport: { width: 375, height: 800 }, reducedMotion: "reduce" });
+  const p2 = await still.newPage();
+  await p2.goto("/en");
+  await expect(p2.getByTestId("home-carousel").getByRole("button", { name: "Play slides" })).toBeEnabled();
+  await expect(p2.getByTestId("home-carousel")).toHaveAttribute("data-autoplay", "off");
+  await still.close();
+});
+
+test("footer lists up to 8 published categories, top level first (Phase F)", async ({ page }) => {
+  await page.goto("/en");
+  const group = page.getByRole("contentinfo").getByRole("navigation", { name: "Categories", exact: true });
+  const links = group.getByRole("link");
+  const n = await links.count();
+  expect(n).toBeGreaterThan(1);
+  expect(n).toBeLessThanOrEqual(9); // 8 categories + All categories
+  await expect(links.last()).toHaveText("All categories");
+  for (const href of await links.evaluateAll((as) => as.map((a) => a.getAttribute("href")))) expect(href).toMatch(/^\/en\/(c\/|categories$)/);
+});
+
 test("SEO: canonical, hreflang, JSON-LD, sitemap and robots", async ({ page, request }) => {
   await page.goto("/en/p/e2e-miniket-rice");
   const origin = new URL(page.url()).origin;

@@ -2,6 +2,12 @@
 
 Newest first. Each entry: date, phase, done, decided, open, next. Entries are snapshots of their date: "not merged", "open" or "next" describe that day; the current state is in `docs/STATUS.md` (first rows) and `docs/HANDOFF.md`.
 
+## 2026-10-25 — Phase F part 1: carousel, account navigation, footer (PR, merged after CI)
+
+- **Done:** home carousel advances every 6 s with pause/play, indicators, hover/focus/interaction holds and reduced-motion off (D29); account pages lose the duplicate section pills below 1024 px, nested pages get a back link (D30); footer lists up to 8 published categories, deterministic and from the cached tree. Decisions D28–D30 recorded in `docs/BUILD-PLAN.md` §13. Phase E merged as `e5599f7` (PR #50; one CI job hit a transient `ECONNRESET` in the test server's proxy and passed on re-run).
+- **Checks run locally (Node 24):** lint, typecheck, unit 282, build, Playwright `storefront.spec.ts` + `commerce/notifications.spec.ts` (Chromium) green; screenshots of the carousel at 375 and 1440 px reviewed.
+- **Next:** Phase F part 2 (configurable default language), then part 3 (guest checkout).
+
 ## 2026-10-25 — Phase E: order-updates prompt after an order (PR, merged after CI)
 
 - **Done:** the order success page offers browser notifications for order updates when push is configured, only from a button, only once per browser ("Not now" remembered), offers off. Shared push helpers extracted from `PushOptIn`. Phase D merged as `d2ddd36` (PR #49).

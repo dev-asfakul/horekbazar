@@ -4,7 +4,8 @@
 // (name, COD statement, contact), ক্যাটাগরি, শপিং, অ্যাকাউন্ট and সাহায্য — then the delivery
 // charges, the theme and language switches and a copyright line.
 // Everything shown comes from the store: contact details only when saved in settings (B4; otherwise
-// the footer says they are coming), categories from the published tree, charges from the enabled
+// the footer says they are coming), categories from the published tree (lib/modules/storefront/
+// footer-links.ts: up to 8, top level first, deterministic, no extra query), charges from the enabled
 // delivery zones. Every link goes to a page that exists. No social links (settings have none), no
 // payment logos (D15), no invented hotline or address.
 import Link from "next/link";
@@ -16,11 +17,10 @@ import { formatMoney, toBengaliDigits } from "@/lib/format/money";
 import { localeHref } from "@/lib/i18n/href";
 import type { Locale } from "@/lib/i18n/locales";
 import { categoryPath } from "@/lib/modules/storefront/catalogue";
+import { footerCategories } from "@/lib/modules/storefront/footer-links";
 import { shellPaths } from "@/lib/routes";
 import { loadStore, moneyFormat, shown, shownLang } from "@/lib/storefront/context";
 
-/** Top-level categories listed in the footer; the rest are behind "সব ক্যাটাগরি". */
-const FOOTER_CATEGORY_LIMIT = 6;
 
 type FooterLink = { key: string; href: string; label: string; lang?: string };
 
@@ -56,10 +56,12 @@ export async function SiteFooter({ locale }: { locale: Locale }) {
   const contact = store.ready ? store.settings.store.contact : {};
   const format = store.ready ? moneyFormat(store, locale) : { numerals: locale === "bn" ? ("bengali" as const) : ("latin" as const), grouping: "south_asian" as const };
   const zones = store.ready ? store.settings.delivery.zones.filter((z) => z.enabled) : [];
-  const roots = store.ready ? store.tree.roots : [];
+  const picked = store.ready ? footerCategories(store.tree) : [];
 
-  const categories: FooterLink[] = roots.slice(0, FOOTER_CATEGORY_LIMIT).map((c) => ({ key: c.id, href: href(categoryPath(c)), label: shown(c.name, locale), lang: shownLang(c.name, locale) }));
-  if (roots.length > 0) categories.push({ key: "all", href: href(shellPaths.categories), label: t("allCategories") });
+  // Phase F: up to 8 published categories (top level first, then subcategories), the rest behind
+  // "All categories"; with the 4 fixed shopping links about two-thirds of shopping links are categories.
+  const categories: FooterLink[] = picked.map((c) => ({ key: c.id, href: href(categoryPath(c)), label: shown(c.name, locale), lang: shownLang(c.name, locale) }));
+  if (picked.length > 0) categories.push({ key: "all", href: href(shellPaths.categories), label: t("allCategories") });
   const shopping: FooterLink[] = [
     { key: "new", href: href("/new"), label: t("new") },
     { key: "deals", href: href("/deals"), label: t("deals") },

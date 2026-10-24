@@ -4,6 +4,9 @@
 // section is marked with aria-current and a ruled underline, never colour alone.
 // Redesign: a sidebar card from 1024 px (who is signed in, then the sections with icons, then sign
 // out); on phones one scrolling row of pills. accountSections() is shared with the overview tiles.
+// Phase F (owner 2026-10-25): below 1024 px the row of section pills is gone on every account page,
+// because it repeated the overview's section tiles. Nested pages show one "Back to your account"
+// link instead; the staff admin link and sign-out stay. From 1024 px the sidebar is unchanged.
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { getTranslations } from "next-intl/server";
@@ -62,9 +65,15 @@ export async function AccountFrame({ locale, current, title, staff, children }: 
             </span>
           </div>
         ) : null}
+        {current !== "overview" ? (
+          <Link href={localeHref(locale, "/account")} className="account-back" data-testid="account-back">
+            <Icon name="chevron" size={18} className="account-back-icon" />
+            {t("nav.back")}
+          </Link>
+        ) : null}
         <ul>
           {items.map((item) => (
-            <li key={item.key}>
+            <li key={item.key} className="account-nav-section">
               <Link href={localeHref(locale, item.href)} className="account-nav-link" aria-current={item.key === current ? "page" : undefined}>
                 <Icon name={item.icon} size={20} className="account-nav-icon" />
                 <span>{t(`nav.${item.key}`)}</span>
