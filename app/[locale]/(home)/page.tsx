@@ -22,7 +22,8 @@ import { localeHref } from "@/lib/i18n/href";
 import { shellPaths } from "@/lib/routes";
 import type { Locale } from "@/lib/i18n/locales";
 import type { LocalizedText } from "@/lib/modules/catalogue/schema";
-import { categoryPath, categoryShowcase, collectionQuery, getPublishedBanner, listHomeSections, listPublishedBanners, listPublishedCollections, listPublishedProducts, newArrivalsSince, type StoreCategory } from "@/lib/modules/storefront/catalogue";
+import { categoryPath, collectionQuery, newArrivalsSince, type StoreCategory } from "@/lib/modules/storefront/catalogue";
+import { cachedBanner, cachedBanners, cachedCategoryShowcase, cachedCollections, cachedHomeSections, cachedListing } from "@/lib/storefront/public-cache";
 import { loadStore, moneyFormat, shown, shownLang, siteOrigin } from "@/lib/storefront/context";
 import { categoryNames, localeOf, storeMetadata, type ReadyStore } from "@/lib/storefront/page";
 import { unitLabels } from "@/lib/storefront/units";
@@ -101,12 +102,12 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
   const now = new Date();
   const [cart, sections, topBanners, midBanners, deals, fresh, showcase] = await Promise.all([
     cartSnapshot(store.db),
-    listHomeSections(store.db),
-    listPublishedBanners(store.db, "home_top", now, 4),
-    listPublishedBanners(store.db, "home_mid", now, 1),
-    listPublishedProducts(store.db, { deals: true, pageSize: 3 }),
-    listPublishedProducts(store.db, { publishedSince: newArrivalsSince(now), sort: "new", pageSize: 3 }),
-    categoryShowcase(store.db, store.tree),
+    cachedHomeSections(store.db),
+    cachedBanners(store.db, "home_top", now, 4),
+    cachedBanners(store.db, "home_mid", now, 1),
+    cachedListing(store.db, { deals: true, pageSize: 3 }),
+    cachedListing(store.db, { publishedSince: newArrivalsSince(now), sort: "new", pageSize: 3 }),
+    cachedCategoryShowcase(store.db, store.tree),
   ]);
   const ctx: SectionCtx = { labels, cart: cart.quantities, quick: { add: t("card.add"), increase: t("card.increase"), decrease: t("card.decrease"), inCart: t("card.inCart"), added: t("card.added"), error: t("card.error") } };
   const rest = sections.filter((s) => s.type !== "hero" && s.type !== "categoryTiles");
@@ -208,7 +209,7 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
 
   let fallback: React.ReactNode = null;
   if (rendered.length === 0) {
-    const newest = await listPublishedProducts(store.db, { sort: "new", pageSize: 10 });
+    const newest = await cachedListing(store.db, { sort: "new", pageSize: 10 });
     fallback =
       store.tree.roots.length === 0 && newest.total === 0 ? (
         <div className="listing-empty" data-testid="home-empty">
@@ -277,10 +278,10 @@ async function renderSection(store: ReadyStore, locale: Locale, id: string, type
   const t = await getTranslations({ locale, namespace: "store" });
   switch (type) {
     case "productRail": {
-      const all = await listPublishedCollections(store.db);
+      const all = await cachedCollections(store.db);
       const collection = all.find((c) => String(c._id) === String(data.collectionId));
       if (!collection) return null;
-      const list = await listPublishedProducts(store.db, { ...collectionQuery(collection, store.tree), sort: "new", pageSize: 10 });
+      const list = await cachedListing(store.db, { ...collectionQuery(collection, store.tree), sort: "new", pageSize: 10 });
       if (list.items.length === 0) return null;
       return (
         <section key={id} className="home-section" aria-labelledby={`h-${id}`}>
@@ -297,14 +298,14 @@ async function renderSection(store: ReadyStore, locale: Locale, id: string, type
       );
     }
     case "banner": {
-      const banner = await getPublishedBanner(store.db, String(data.bannerId));
+      const banner = await cachedBanner(store.db, String(data.bannerId));
       if (!banner) return null;
       const [w, h] = banner.placement === "home_top" ? [1280, 704] : banner.placement === "home_mid" ? [1280, 560] : [1280, 400];
       return <PlacementBanner key={id} store={store} banner={banner} locale={locale} width={w} height={h} className="home-banner" />;
     }
     case "collectionGrid": {
       const ids = ((data.collectionIds as unknown[]) ?? []).map(String);
-      const found = (await listPublishedCollections(store.db)).filter((c) => ids.includes(String(c._id)));
+      const found = (await cachedCollections(store.db)).filter((c) => ids.includes(String(c._id)));
       if (found.length === 0) return null;
       return (
         <section key={id} className="home-section" aria-labelledby={`h-${id}`}>

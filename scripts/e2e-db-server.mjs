@@ -30,6 +30,11 @@ const env = {
   NEXT_PUBLIC_SITE_URL: `http://localhost:${port}`,
   // In-process rate limits for this loopback-only test server (lib/adapters/cache/rate-limit.ts).
   RATE_LIMIT_LOCAL_TEST: "1",
+  // The specs seed this database from the test process, which cannot clear the server's public-data
+  // cache (docs/CACHE-INVENTORY.md §4), so this loopback-only server reads public data live
+  // (lib/storefront/cache-switch.ts). Cache behaviour is covered by tests/unit and tests/integration
+  // public-cache tests.
+  PUBLIC_CACHE_LOCAL_TEST_OFF: "1",
   // Throwaway VAPID keys made for this run, so the notification pages render (B9 part 2). Nothing is
   // ever delivered: this server runs no outbox worker.
   ...vapidKeys(),

@@ -5,6 +5,7 @@
 // as trusted values. Optimistic concurrency: every edit posts the version it was rendered with.
 import { redirect } from "next/navigation";
 import { refresh } from "next/cache";
+import { afterPublicWrite } from "@/lib/storefront/invalidate";
 import { isOwnPublicId } from "@/lib/adapters/media/cloudinary";
 import {
   checked,
@@ -170,6 +171,7 @@ export async function createProductAction(_: FormState, form: FormData): Promise
   } catch (error) {
     return fail(serviceErrorCode(error), undefined, values);
   }
+  afterPublicWrite("product");
   redirect(`/admin/products/${id}?created=1`);
 }
 
@@ -183,6 +185,7 @@ export async function updateProductAction(_: FormState, form: FormData): Promise
   } catch (error) {
     return fail(serviceErrorCode(error), undefined, values);
   }
+  afterPublicWrite("product");
   refresh();
   return ok("catalogue_saved");
 }
@@ -197,6 +200,7 @@ export async function setProductStatusAction(_: FormState, form: FormData): Prom
   } catch (error) {
     return fail(serviceErrorCode(error));
   }
+  afterPublicWrite("product");
   refresh();
   return ok(`catalogue_status_${status}`);
 }
@@ -230,6 +234,7 @@ export async function bulkProductStatusAction(_: FormState, form: FormData): Pro
       failures.push({ id, code: serviceErrorCode(error) });
     }
   }
+  afterPublicWrite("product");
   refresh();
   return { status: "success", code: "catalogue_bulk_done", data: { done, total: items.length, failures } };
 }
@@ -245,6 +250,7 @@ export async function deleteProductAction(_: FormState, form: FormData): Promise
   } catch (error) {
     return fail(serviceErrorCode(error));
   }
+  afterPublicWrite("product");
   redirect("/admin/products?deleted=1");
 }
 
@@ -266,6 +272,7 @@ export async function addProductMediaAction(_: FormState, form: FormData): Promi
   } catch (error) {
     return fail(serviceErrorCode(error), undefined, values);
   }
+  afterPublicWrite("product");
   refresh();
   return ok("catalogue_media_added");
 }
@@ -278,6 +285,7 @@ export async function removeProductMediaAction(_: FormState, form: FormData): Pr
   } catch (error) {
     return fail(serviceErrorCode(error));
   }
+  afterPublicWrite("product");
   refresh();
   return ok("catalogue_media_removed");
 }
@@ -294,6 +302,7 @@ export async function createVariantAction(_: FormState, form: FormData): Promise
   } catch (error) {
     return fail(serviceErrorCode(error), undefined, values);
   }
+  afterPublicWrite("product");
   refresh();
   return ok("catalogue_variant_added");
 }
@@ -308,6 +317,7 @@ export async function updateVariantAction(_: FormState, form: FormData): Promise
   } catch (error) {
     return fail(serviceErrorCode(error), undefined, values);
   }
+  afterPublicWrite("product");
   refresh();
   return ok("catalogue_saved");
 }
@@ -322,6 +332,7 @@ export async function setVariantStatusAction(_: FormState, form: FormData): Prom
   } catch (error) {
     return fail(serviceErrorCode(error));
   }
+  afterPublicWrite("product");
   refresh();
   return ok(status === "active" ? "catalogue_variant_restored" : "catalogue_variant_archived");
 }
@@ -355,6 +366,7 @@ export async function createCategoryAction(_: FormState, form: FormData): Promis
   } catch (error) {
     return fail(serviceErrorCode(error), undefined, values);
   }
+  afterPublicWrite("category");
   refresh();
   return ok("catalogue_category_created");
 }
@@ -369,6 +381,7 @@ export async function updateCategoryAction(_: FormState, form: FormData): Promis
   } catch (error) {
     return fail(serviceErrorCode(error), undefined, values);
   }
+  afterPublicWrite("category");
   refresh();
   return ok("catalogue_saved");
 }
@@ -383,6 +396,7 @@ export async function moveCategoryAction(_: FormState, form: FormData): Promise<
   } catch (error) {
     return fail(serviceErrorCode(error));
   }
+  afterPublicWrite("category");
   refresh();
   return ok("catalogue_category_moved");
 }
@@ -397,6 +411,7 @@ export async function setCategoryStatusAction(_: FormState, form: FormData): Pro
   } catch (error) {
     return fail(serviceErrorCode(error));
   }
+  afterPublicWrite("category");
   refresh();
   return ok(`catalogue_status_${status}`);
 }
@@ -410,6 +425,7 @@ export async function deleteCategoryAction(_: FormState, form: FormData): Promis
   } catch (error) {
     return fail(serviceErrorCode(error));
   }
+  afterPublicWrite("category");
   refresh();
   return ok("catalogue_deleted");
 }
@@ -433,6 +449,7 @@ export async function moveStockAction(_: FormState, form: FormData): Promise<For
   if (Object.keys(errors).length || qty === null) return fail("fix_fields", errors, values);
   try {
     const result = await moveStock(ctx.db, ctx.client, ctx.actor, { adjustmentId, kind: kind as "receive" | "adjust", reason: reason || undefined, lines: [{ variantId: field(form, "variantId"), qty }] });
+    afterPublicWrite("stock");
     refresh();
     return ok(result.replayed ? "inventory_replayed" : kind === "receive" ? "inventory_received" : "inventory_adjusted");
   } catch (error) {
@@ -450,6 +467,7 @@ export async function setThresholdAction(_: FormState, form: FormData): Promise<
   } catch (error) {
     return fail(serviceErrorCode(error));
   }
+  afterPublicWrite("stock");
   refresh();
   return ok("inventory_threshold_saved");
 }

@@ -3,6 +3,7 @@
 // (`messages.reply`), reward adjustments (`rewards.write`, Idempotency-Key) and the rewards switch
 // (`settings.write`). Capability and step-up are checked on the server by staffContext.
 import { refresh } from "next/cache";
+import { afterPublicWrite } from "@/lib/storefront/invalidate";
 import type { FormState } from "@/lib/actions/form-state";
 import { fail, field, normaliseDigits, ok, parseInteger, serviceErrorCode, staffContext, versionOf } from "@/lib/actions/staff-action";
 import { postMessage, setConversationStatus } from "@/lib/modules/messaging/messaging";
@@ -101,6 +102,7 @@ export async function rewardSettingsAction(_: FormState, form: FormData): Promis
   } catch (error) {
     return failed(error, values);
   }
+  afterPublicWrite("settings");
   refresh();
   return ok("settings_saved");
 }

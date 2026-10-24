@@ -4,6 +4,7 @@
 // untouched), or discard a draft. Every action refuses when GEMINI_API_KEY is unset, so the feature
 // cannot be reached by posting the form directly. Drafting is limited to 20 per staff member per hour.
 import { refresh } from "next/cache";
+import { afterPublicWrite } from "@/lib/storefront/invalidate";
 import type { FormState } from "@/lib/actions/form-state";
 import { fail, field, fields, ok, parseInteger, serviceErrorCode, staffContext, versionOf } from "@/lib/actions/staff-action";
 import { AiError, aiConfig } from "@/lib/adapters/ai/gemini";
@@ -51,6 +52,7 @@ export async function applyAiFieldAction(_: FormState, form: FormData): Promise<
   } catch (error) {
     return fail(serviceErrorCode(error));
   }
+  afterPublicWrite("product", "category");
   refresh();
   return ok("ai_field_applied");
 }
