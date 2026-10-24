@@ -1,10 +1,14 @@
 // /checkout/success/[orderNumber] (B7; noindex). Shown only to the customer who placed the order.
+// Phase E: when the store has push configured, offers order-update notifications here, after the
+// order, from a button (never on page load).
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { OrderSummary } from "@/components/commerce/OrderSummary";
+import { OrderUpdatesPrompt } from "@/components/notifications/OrderUpdatesPrompt";
 import { SetupRequired } from "@/components/states/SetupRequired";
+import { pushConfig } from "@/lib/adapters/push/webpush";
 import { requireCustomer } from "@/lib/auth/server";
 import { localeHref } from "@/lib/i18n/href";
 import { isLocale } from "@/lib/i18n/locales";
@@ -29,6 +33,7 @@ export default async function CheckoutSuccessPage({ params }: PageProps<"/[local
   if (!order) notFound();
   const t = await getTranslations({ locale, namespace: "store.checkout" });
   const o = await getTranslations({ locale, namespace: "account.orders" });
+  const push = pushConfig();
   return (
     <div className="listing cart-page" data-testid="checkout-success">
       <h1 className="font-display listing-title">{t("successTitle")}</h1>
@@ -45,6 +50,14 @@ export default async function CheckoutSuccessPage({ params }: PageProps<"/[local
           {t("keepShopping")}
         </Link>
       </p>
+      {push ? (
+        <OrderUpdatesPrompt
+          vapidPublicKey={push.publicKey}
+          locale={locale}
+          settingsHref={localeHref(locale, "/account/notifications")}
+          labels={{ title: t("updatesTitle"), body: t("updatesBody"), turnOn: t("updatesTurnOn"), notNow: t("updatesNotNow"), working: t("updatesWorking"), on: t("updatesOn"), blocked: t("updatesBlocked"), settings: t("updatesSettings"), error: t("updatesError") }}
+        />
+      ) : null}
     </div>
   );
 }

@@ -5,6 +5,7 @@
 // presses the button. "Order updates" and "Offers and news" are separate choices; offers start
 // unticked. States are written out in words (never colour alone) and announced via role="status".
 import { useEffect, useId, useState } from "react";
+import { currentSubscription, pushSupported as supported, subscribeThisBrowser, subscriptionPayload } from "@/components/notifications/push-client";
 import { removePushSubscriptionAction, savePushSubscriptionAction, type PushActionResult } from "@/lib/actions/notifications";
 
 export interface PushOptInLabels {
@@ -27,16 +28,6 @@ export interface PushOptInLabels {
 
 type State = "checking" | "unsupported" | "blocked" | "off" | "on";
 
-function keyBytes(base64url: string): Uint8Array<ArrayBuffer> {
-  const b64 = base64url.replace(/-/g, "+").replace(/_/g, "/").padEnd(Math.ceil(base64url.length / 4) * 4, "=");
-  const raw = atob(b64);
-  const out = new Uint8Array(new ArrayBuffer(raw.length));
-  for (let i = 0; i < raw.length; i++) out[i] = raw.charCodeAt(i);
-  return out;
-}
-
-const supported = () => typeof window !== "undefined" && "serviceWorker" in navigator && "PushManager" in window && "Notification" in window;
-
 export function PushOptIn({ vapidPublicKey, locale, initialTopics, labels }: { vapidPublicKey: string; locale: "bn" | "en"; initialTopics: { orders: boolean; marketing: boolean } | null; labels: PushOptInLabels }) {
   const id = useId();
   const [state, setState] = useState<State>("checking");
@@ -50,8 +41,7 @@ export function PushOptIn({ vapidPublicKey, locale, initialTopics, labels }: { v
     (async () => {
       if (!supported()) return setState("unsupported");
       if (Notification.permission === "denied") return setState("blocked");
-      const reg = await navigator.serviceWorker.getRegistration("/");
-      const sub = reg ? await reg.pushManager.getSubscription() : null;
+      const sub = await currentSubscription();
       if (!cancelled) setState(sub ? "on" : "off");
     })().catch(() => !cancelled && setState("off"));
     return () => {
@@ -62,22 +52,19 @@ export function PushOptIn({ vapidPublicKey, locale, initialTopics, labels }: { v
   const report = (r: PushActionResult, okText: string) => setMessage(r.ok ? { kind: "ok", text: okText } : { kind: "error", text: labels.errors[r.error] ?? labels.errors.try_again ?? "" });
 
   async function save(subscription: PushSubscription) {
-    const json = subscription.toJSON();
-    return savePushSubscriptionAction({ endpoint: subscription.endpoint, keys: { p256dh: json.keys?.p256dh ?? "", auth: json.keys?.auth ?? "" }, topics: { orders, marketing }, locale });
+    return savePushSubscriptionAction(subscriptionPayload(subscription, { orders, marketing }, locale));
   }
 
   async function turnOn() {
     setBusy(true);
     setMessage(null);
     try {
-      const permission = await Notification.requestPermission();
-      if (permission !== "granted") {
-        setState(permission === "denied" ? "blocked" : "off");
+      const result = await subscribeThisBrowser(vapidPublicKey);
+      if (!result.ok) {
+        setState(result.permission === "denied" ? "blocked" : "off");
         return;
       }
-      const reg = await navigator.serviceWorker.register("/sw.js", { scope: "/" });
-      await navigator.serviceWorker.ready;
-      const sub = (await reg.pushManager.getSubscription()) ?? (await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: keyBytes(vapidPublicKey) }));
+      const sub = result.subscription;
       const r = await save(sub);
       if (r.ok) setState("on");
       else await sub.unsubscribe().catch(() => undefined);
@@ -93,8 +80,7 @@ export function PushOptIn({ vapidPublicKey, locale, initialTopics, labels }: { v
     setBusy(true);
     setMessage(null);
     try {
-      const reg = await navigator.serviceWorker.getRegistration("/");
-      const sub = reg ? await reg.pushManager.getSubscription() : null;
+      const sub = await currentSubscription();
       if (!sub) {
         setState("off");
         return;
@@ -111,8 +97,7 @@ export function PushOptIn({ vapidPublicKey, locale, initialTopics, labels }: { v
     setBusy(true);
     setMessage(null);
     try {
-      const reg = await navigator.serviceWorker.getRegistration("/");
-      const sub = reg ? await reg.pushManager.getSubscription() : null;
+      const sub = await currentSubscription();
       if (sub) {
         const endpoint = sub.endpoint;
         await sub.unsubscribe();
