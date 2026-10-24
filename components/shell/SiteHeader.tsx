@@ -1,11 +1,12 @@
 // Tier: build (contract). Use-when: every storefront page, once, from the locale layout. Avoid-when: admin (own shell).
 // Reduced-motion: no motion. Touch: every control at least 44 px tall.
-// SiteHeader (#site-header), redesign Proposal 03: the search pill first (left), the store name
-// in Alkatra on the right. Below 768 px there is nothing else; the bottom bar carries home,
-// categories, cart and account. From 768 px, categories, account and cart (with the server's
-// item count) appear beside the search. The language switch moved to the footer. The search is a
+// SiteHeader (#site-header), redesign Proposal 03 as amended by the owner (2026-10-24): the store
+// name in Alkatra sits top left at every width, in DOM order and visual order alike. Below 768 px the
+// row is name, then the search icon, then the bell; the bottom bar carries home, categories, cart
+// and account. From 768 px the search pill follows the name and categories, account and cart (with
+// the server's item count) appear after it. The language switch moved to the footer. The search is a
 // plain GET form to /search, so it works without JavaScript; SearchCombobox adds suggestions.
-// Below 768 px the search is an icon that expands (HeaderSearch); a bell icon sits on the right.
+// Below 768 px the search is an icon just before the bell that expands over the row (HeaderSearch).
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { HeaderSearch } from "@/components/shell/HeaderSearch";
@@ -22,6 +23,9 @@ export async function SiteHeader({ locale, storeName, cartCount = 0, format }: {
   return (
     <header id="site-header" className="site-header">
       <div className="site-header-inner">
+        <Link href={localeHref(locale, shellPaths.home)} className="wordmark font-display" prefetch={false}>
+          {storeName ?? t("wordmarkUnconfigured")}
+        </Link>
         <HeaderSearch
           action={action}
           locale={locale}
@@ -45,9 +49,6 @@ export async function SiteHeader({ locale, storeName, cartCount = 0, format }: {
             none: t("search.none"),
           }}
         />
-        <Link href={localeHref(locale, shellPaths.home)} className="wordmark font-display" prefetch={false}>
-          {storeName ?? t("wordmarkUnconfigured")}
-        </Link>
         <nav aria-label={t("headerNavLabel")} className="header-actions">
           <Link href={localeHref(locale, shellPaths.categories)} className="nav-link header-action header-action-wide" prefetch={false}>
             {t("categories")}
