@@ -1601,7 +1601,8 @@
       "reviews": "Reviews",
       "rewards": "Rewards",
       "notifications": "Notifications",
-      "privacy": "Privacy"
+      "privacy": "Privacy",
+      "back": "Back to your account"
     },
     "signedInAs": "Signed in as {email}",
     "signOut": "Sign out",
@@ -1925,6 +1926,9 @@
       "slideOf": "{n}/{total}",
       "prevSlide": "Previous slide",
       "nextSlide": "Next slide",
+      "pauseSlides": "Pause slides",
+      "playSlides": "Play slides",
+      "goToSlide": "Slide {n}",
       "dealTag": "Latest deals",
       "dealTitle": "Price drops on {count} products",
       "dealCta": "See all deals",
