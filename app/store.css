@@ -1,0 +1,2008 @@
+/* Storefront redesign (Proposal 03 "Night Bazaar Light", Proposal 04 time-of-day themes,
+   Proposal 04b banners). Imported only by app/[locale]/layout.tsx; every rule is scoped to
+   html[data-store], so the admin keeps globals.css unchanged. Existing class names and test ids
+   are kept; only their look changes. No inline styles (CSP). */
+
+/* Fonts: Google Sans (text) and Alkatra (display), OFL, self-hosted; licences in /public/fonts. */
+@font-face {
+  font-family: "HB Google Sans";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("/fonts/v1/google-sans-bengali.woff2") format("woff2");
+  unicode-range: U+0951-0952, U+0964-0965, U+0980-09FE, U+1CD0, U+1CD2, U+1CD5-1CD6, U+1CD8, U+1CE1, U+1CEA, U+1CED, U+1CF2, U+1CF5-1CF7, U+200C-200D, U+20B9, U+25CC, U+A8F1, U+11DF0-11DF1;
+}
+@font-face {
+  font-family: "HB Google Sans";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("/fonts/v1/google-sans-latin-ext.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: "HB Google Sans";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("/fonts/v1/google-sans-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "HB Alkatra";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("/fonts/v1/alkatra-bengali.woff2") format("woff2");
+  unicode-range: U+0951-0952, U+0964-0965, U+0980-09FE, U+1CD0, U+1CD2, U+1CD5-1CD6, U+1CD8, U+1CE1, U+1CEA, U+1CED, U+1CF2, U+1CF5-1CF7, U+200C-200D, U+20B9, U+25CC, U+A8F1, U+11DF0-11DF1;
+}
+@font-face {
+  font-family: "HB Alkatra";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("/fonts/v1/alkatra-latin-ext.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: "HB Alkatra";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("/fonts/v1/alkatra-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* ── Tokens: five time-of-day themes (Proposal 04). The same names as globals.css, so every
+   existing component follows; new: --link, --focus, --plate, --on-ink, --chip. ─────────────── */
+html[data-store] {
+  --ground: #f6f9ef;
+  --surface: #e9f0da;
+  --raised: #ffffff;
+  --ink: #121a0f;
+  --muted: #56604f;
+  --line: #dfe6d2;
+  --line-strong: #7d8a6f;
+  --accent: #c6f432;
+  --accent-ink: #121a0f;
+  --link: #3b6300;
+  --focus: #3b6300;
+  --plate: #ffffff;
+  --on-ink: #f6f9ef;
+  --success: #2a6b1f;
+  --warning: #8a5a00;
+  --danger: #b3261e;
+  --img-filter: none;
+  --radius-card: 20px;
+  --radius-plate: 18px;
+  --font-family-text: "HB Google Sans", "HB Noto Sans Bengali", "Noto Sans Bengali", "HB Fallback Latin", "Kohinoor Bangla", "Vrinda", system-ui, sans-serif;
+  --font-family-display: "HB Alkatra", var(--font-family-text);
+  --header-h: 64px;
+  --sticky-top: var(--header-h);
+  color-scheme: light;
+}
+html[data-store][data-theme="morning"] {
+  --ground: #ffebd6;
+  --surface: #ffe0c2;
+  --raised: #ffffff;
+  --ink: #1a1408;
+  --muted: #5e5240;
+  --line: #f0d5b8;
+  --line-strong: #9a7d5c;
+  --link: #7a3e00;
+  --focus: #7a3e00;
+  --on-ink: #fff6ec;
+}
+html[data-store][data-theme="evening"] {
+  --ground: #f3ecf8;
+  --surface: #e8ddf2;
+  --raised: #ffffff;
+  --ink: #1b1426;
+  --muted: #5c5268;
+  --line: #e0d4eb;
+  --line-strong: #83729a;
+  --link: #6a2e8c;
+  --focus: #6a2e8c;
+  --on-ink: #f7f2fb;
+}
+html[data-store][data-theme="night"] {
+  --ground: #0e1311;
+  --surface: #242c28;
+  --raised: #1a211e;
+  --ink: #f2f4ef;
+  --muted: #a3aba6;
+  --line: #2e3833;
+  --line-strong: #6b7771;
+  --link: #c6f432;
+  --focus: #c6f432;
+  --plate: #ffffff;
+  --on-ink: #121a0f;
+  --success: #8fd77a;
+  --warning: #f2c14e;
+  --danger: #ff8a80;
+  color-scheme: dark;
+}
+html[data-store][data-theme="midnight"] {
+  --ground: #05070b;
+  --surface: #1a1f28;
+  --raised: #11151c;
+  --ink: #d6dce4;
+  --muted: #8a94a3;
+  --line: #232a35;
+  --line-strong: #647083;
+  --accent: #9fc92a;
+  --link: #9fc92a;
+  --focus: #9fc92a;
+  --plate: #e9ecef;
+  --on-ink: #05070b;
+  --success: #7cc46a;
+  --warning: #e0b040;
+  --danger: #f28b82;
+  --img-filter: brightness(0.86);
+  color-scheme: dark;
+}
+/* Colours fade only while the theme is switching (ThemeController sets this for 450 ms), and only
+   when the visitor has not asked for reduced motion. */
+@media (prefers-reduced-motion: no-preference) {
+  html[data-store][data-theme-changing] *,
+  html[data-store][data-theme-changing] {
+    transition:
+      background-color 400ms var(--ease-in-out),
+      color 400ms var(--ease-in-out),
+      border-color 400ms var(--ease-in-out) !important;
+  }
+}
+
+/* ── Base ── */
+html[data-store] body {
+  -webkit-font-smoothing: antialiased;
+}
+html[data-store] :is(h1, h2, h3, h4) {
+  font-weight: 700;
+}
+html[data-store] .font-display {
+  font-weight: 700;
+  line-height: 1.15;
+}
+html[data-store] .prose-link {
+  color: var(--link);
+  font-weight: 500;
+}
+html[data-store] :focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+html[data-store] .skip-link {
+  border-color: var(--focus);
+  border-radius: 999px;
+}
+html[data-store] img {
+  filter: var(--img-filter);
+}
+
+/* Buttons: pills; primary is lime with ink text in every theme (contrast 14:1 and up). */
+html[data-store] .btn {
+  border-radius: 999px;
+  min-height: 48px;
+  padding-inline: 20px;
+  font-weight: 700;
+}
+html[data-store] .btn-primary {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+html[data-store] .btn-primary:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--accent) 88%, #121a0f);
+}
+html[data-store] .btn-secondary {
+  background: var(--raised);
+  border-color: var(--line-strong);
+}
+html[data-store] .btn-quiet {
+  color: var(--link);
+}
+html[data-store] .field-input {
+  border-radius: 14px;
+  background: var(--raised);
+  border-color: var(--line-strong);
+  color: var(--ink);
+}
+html[data-store] .field-check input {
+  accent-color: var(--link);
+}
+
+/* ── Header: search pill first, store name on the right (Proposal 03) ── */
+html[data-store] .site-header {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background: var(--ground);
+  border-bottom: 0;
+}
+html[data-store] .site-header-inner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: var(--header-h);
+  padding-block: 8px;
+}
+html[data-store] .header-search-row {
+  flex: 1;
+  min-width: 0;
+  height: auto;
+  background: transparent;
+}
+html[data-store] .header-search {
+  flex: 1;
+  position: relative;
+  border-radius: 999px;
+  background: var(--raised);
+  border: 1.5px solid var(--line);
+}
+html[data-store] .header-search:focus-within {
+  outline: 3px solid var(--focus);
+  outline-offset: 1px;
+  border-color: var(--raised);
+}
+html[data-store] .search-combobox {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 0;
+}
+html[data-store] .header-search-submit {
+  order: -1;
+  width: 48px;
+  min-height: 46px;
+  border-radius: 999px 0 0 999px;
+  color: var(--ink);
+}
+html[data-store] .header-search-input {
+  min-height: 46px;
+  padding-inline: 0 8px;
+}
+html[data-store] .header-search-input::-webkit-search-cancel-button {
+  display: none;
+}
+html[data-store] .header-search-clear {
+  flex: none;
+  width: 44px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  border-radius: 999px;
+  cursor: pointer;
+}
+html[data-store] .wordmark {
+  flex: none;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--ink);
+  max-width: 40vw;
+}
+html[data-store] .header-actions {
+  height: auto;
+  gap: 4px;
+}
+html[data-store] .header-action {
+  border-radius: 999px;
+  padding-inline: 14px;
+  font-weight: 600;
+}
+html[data-store] .header-action:hover {
+  background: var(--surface);
+  text-decoration: none;
+}
+html[data-store] .header-cart {
+  gap: 6px;
+}
+html[data-store] .count-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 10px;
+  background: var(--ink);
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+}
+html[data-store][data-theme="night"] .count-badge,
+html[data-store][data-theme="midnight"] .count-badge {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+@media (width >= 768px) {
+  html[data-store] {
+    --header-h: 76px;
+  }
+  html[data-store] .site-header-inner {
+    height: var(--header-h);
+    display: flex;
+  }
+  html[data-store] .header-search-row {
+    max-width: 640px;
+  }
+  html[data-store] .wordmark {
+    order: -1;
+    font-size: 26px;
+    margin-inline-end: 12px;
+  }
+  html[data-store] .header-actions {
+    margin-inline-start: auto;
+  }
+}
+
+/* Search suggestions panel */
+html[data-store] .search-panel {
+  position: absolute;
+  inset-inline: 0;
+  top: calc(100% + 8px);
+  z-index: 60;
+  max-height: min(70dvh, 520px);
+  overflow: auto;
+  overscroll-behavior: contain;
+  background: var(--raised);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  padding: 6px;
+  box-shadow: 0 12px 32px rgb(0 0 0 / 0.12);
+}
+@media (width < 768px) {
+  html[data-store] .search-panel {
+    inset-inline-end: calc(-1 * (100vw - 100% - 32px));
+    width: calc(100vw - 32px);
+  }
+}
+html[data-store] .search-panel[hidden] {
+  display: none;
+}
+html[data-store] .search-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+html[data-store] .search-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 48px;
+  padding: 6px 10px;
+  border-radius: 14px;
+  cursor: pointer;
+  color: var(--ink);
+}
+html[data-store] .search-option[aria-selected="true"] {
+  background: var(--surface);
+  outline: 2px solid var(--focus);
+  outline-offset: -2px;
+}
+html[data-store] .search-option-icon {
+  flex: none;
+  width: 20px;
+  height: 20px;
+  background: currentColor;
+  color: var(--muted);
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M10.5 4a6.5 6.5 0 1 0 4.03 11.6L20 21l1-1-5.4-5.47A6.5 6.5 0 0 0 10.5 4z' fill='none' stroke='black' stroke-width='2'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+html[data-store] .search-option-icon[data-kind="history"] {
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 7v5l3 2M4 12a8 8 0 1 0 2.3-5.6M4 4v4h4' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
+}
+html[data-store] .search-option-icon[data-kind="category"] {
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z' fill='none' stroke='black' stroke-width='2'/%3E%3C/svg%3E");
+}
+html[data-store] .search-option-text {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  line-height: 1.35;
+}
+html[data-store] .search-option-meta {
+  color: var(--muted);
+  font-size: var(--text-step--1);
+}
+html[data-store] .search-option-tag {
+  font-size: 12px;
+  color: var(--muted);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 2px 8px;
+}
+html[data-store] .search-option-thumb {
+  flex: none;
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--plate);
+  border: 1px solid var(--line);
+}
+html[data-store] .search-option-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+html[data-store] .search-group-label {
+  display: block;
+  padding: 10px 10px 4px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--muted);
+}
+html[data-store] .search-history-actions {
+  border-top: 1px solid var(--line);
+  margin-top: 4px;
+  padding-top: 4px;
+}
+html[data-store] .search-history-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 4px 8px 8px;
+}
+html[data-store] :is(.search-history-remove, .search-history-clear) {
+  min-height: 36px;
+  padding: 0 12px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--raised);
+  color: var(--ink);
+  font-size: var(--text-step--1);
+  cursor: pointer;
+}
+html[data-store] .search-history-clear {
+  color: var(--link);
+  font-weight: 600;
+  border-color: transparent;
+}
+
+/* ── Bottom bar: four tabs; the current one gets a lime pill behind its icon ── */
+html[data-store] .bottom-dock {
+  background: var(--raised);
+  border-top: 1px solid var(--line);
+}
+html[data-store] .bottom-nav ul {
+  grid-template-columns: repeat(4, 1fr);
+  height: 64px;
+}
+html[data-store] {
+  --nav-h: 64px;
+}
+html[data-store] .bottom-nav-item {
+  position: relative;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--muted);
+}
+html[data-store] .bottom-nav-item svg {
+  width: 56px;
+  height: 30px;
+  padding: 3px 16px;
+  border-radius: 16px;
+}
+html[data-store] .bottom-nav-item[aria-current="page"] {
+  color: var(--ink);
+  font-weight: 700;
+}
+html[data-store] .bottom-nav-item[aria-current="page"] svg {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+html[data-store] .bottom-nav-item .count-badge {
+  position: absolute;
+  top: 4px;
+  inset-inline-start: calc(50% + 8px);
+}
+
+/* ── Footer: store, four link groups, delivery charges, preferences, copyright ── */
+html[data-store] .site-footer {
+  background: var(--surface);
+  border-top: 0;
+  margin-top: 32px;
+  font-size: 14px;
+}
+html[data-store] .site-footer-inner {
+  gap: 24px;
+  padding-block: 32px 24px;
+}
+html[data-store] .footer-top {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 28px 16px;
+}
+html[data-store] .footer-brand {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: 8px;
+  align-content: start;
+}
+html[data-store] .footer-wordmark {
+  margin: 0;
+  font-family: var(--font-family-display);
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+html[data-store] :is(.footer-payment, .footer-contact) {
+  margin: 0;
+  max-width: 44ch;
+  line-height: 1.55;
+}
+html[data-store] .footer-contact {
+  color: var(--muted);
+}
+html[data-store] .footer-contact-list {
+  list-style: none;
+  margin: 4px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 2px;
+}
+html[data-store] .footer-contact-list li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0 8px;
+  min-height: 32px;
+}
+html[data-store] .footer-contact-label {
+  color: var(--muted);
+  min-width: 64px;
+}
+html[data-store] .footer-group {
+  display: grid;
+  align-content: start;
+  gap: 4px;
+}
+html[data-store] .footer-h {
+  margin: 0 0 4px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--muted);
+}
+html[data-store] .footer-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+html[data-store] .footer-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--ink);
+  text-decoration: none;
+  line-height: 1.3;
+}
+html[data-store] .footer-link:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+html[data-store] .footer-delivery {
+  display: grid;
+  gap: 8px;
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+}
+html[data-store] .footer-zones {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+html[data-store] .footer-zones li {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0 12px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: var(--raised);
+}
+html[data-store] .footer-zone-name {
+  font-weight: 600;
+}
+html[data-store] .footer-zone-fee {
+  font-weight: 700;
+}
+html[data-store] .footer-zone-note {
+  grid-column: 1 / -1;
+  color: var(--muted);
+  font-size: 13px;
+}
+html[data-store] .footer-copy {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+@media (width >= 768px) {
+  html[data-store] .footer-top {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  html[data-store] .footer-zones {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  }
+}
+@media (width >= 1024px) {
+  html[data-store] .footer-top {
+    grid-template-columns: minmax(0, 1.6fr) repeat(4, minmax(0, 1fr));
+    gap: 32px;
+  }
+  html[data-store] .footer-brand {
+    grid-column: auto;
+  }
+}
+html[data-store] .footer-prefs {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px 24px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+html[data-store] .theme-switch {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+}
+html[data-store] .theme-switch-label {
+  float: inline-start;
+  font-weight: 700;
+  padding: 0;
+}
+html[data-store] .theme-switch-options {
+  display: inline-flex;
+  padding: 3px;
+  border-radius: 999px;
+  background: var(--raised);
+  border: 1px solid var(--line);
+}
+html[data-store] .theme-switch-option {
+  position: relative;
+}
+html[data-store] .theme-switch-option input {
+  position: absolute;
+  opacity: 0;
+  inset: 0;
+  margin: 0;
+  cursor: pointer;
+}
+html[data-store] .theme-switch-option span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  padding: 0 16px;
+  border-radius: 999px;
+  font-weight: 600;
+  color: var(--muted);
+}
+html[data-store] .theme-switch-option input:checked + span {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+html[data-store] .theme-switch-option input:focus-visible + span {
+  outline: 3px solid var(--focus);
+  outline-offset: 1px;
+}
+html[data-store] .theme-switch-hint {
+  flex-basis: 100%;
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+/* ── Home ── */
+html[data-store] .home {
+  padding-top: 4px;
+}
+html[data-store] .home-h2 {
+  font-family: var(--font-family-display);
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.15;
+  margin: 0 0 12px;
+}
+html[data-store] .home-section {
+  margin-top: 24px;
+}
+html[data-store] .home-section-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+}
+html[data-store] .home-section-head .home-h2 {
+  margin-bottom: 12px;
+}
+
+/* Carousel: swipe with snap; the next slide peeks in. Never rotates on its own. */
+html[data-store] .home-carousel {
+  margin-top: 4px;
+}
+html[data-store] .home-carousel-track {
+  list-style: none;
+  margin: 0 -16px;
+  padding: 0 16px;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: calc(100% - 40px);
+  gap: 10px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: 16px;
+  scrollbar-width: none;
+  overscroll-behavior-x: contain;
+}
+html[data-store] .home-carousel-track::-webkit-scrollbar {
+  display: none;
+}
+html[data-store] .home-carousel-track[data-count="1"] {
+  grid-auto-columns: 100%;
+}
+html[data-store] .home-carousel-slide {
+  scroll-snap-align: start;
+  height: 176px;
+}
+@media (width >= 768px) {
+  html[data-store] .home-carousel-track {
+    margin: 0;
+    padding: 0;
+    scroll-padding-inline: 0;
+    grid-auto-columns: calc((100% - 10px) / 2);
+  }
+  html[data-store] .home-carousel-slide {
+    height: 232px;
+  }
+}
+@media (width >= 1280px) {
+  html[data-store] .home-carousel-track {
+    grid-auto-columns: calc((100% - 20px) / 3);
+  }
+  html[data-store] .home-carousel-track[data-count="2"] {
+    grid-auto-columns: calc((100% - 10px) / 2);
+  }
+}
+html[data-store] .slide {
+  position: relative;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  border-radius: 24px;
+  overflow: hidden;
+  padding: 16px;
+  text-decoration: none;
+  color: var(--ink);
+}
+html[data-store] .slide-banner {
+  padding: 0;
+  background: var(--surface);
+}
+html[data-store] .slide-banner :is(a, img),
+html[data-store] .home-banner :is(a, img) {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+html[data-store] .slide[data-tone="lime"] {
+  background: var(--accent);
+  color: #121a0f;
+}
+html[data-store] .slide[data-tone="ink"] {
+  background: #121a0f;
+  color: #f6f9ef;
+}
+html[data-store][data-theme="night"] .slide[data-tone="ink"],
+html[data-store][data-theme="midnight"] .slide[data-tone="ink"] {
+  background: var(--surface);
+  color: var(--ink);
+}
+html[data-store] .slide[data-tone="tint"] {
+  background: var(--surface);
+}
+html[data-store] .slide[data-tone="plain"] {
+  background: var(--raised);
+  border: 1px solid var(--line);
+}
+html[data-store] .slide-tag {
+  display: inline-flex;
+  align-items: center;
+  height: 26px;
+  padding: 0 10px;
+  border-radius: 13px;
+  font-size: 12px;
+  font-weight: 700;
+  background: #121a0f;
+  color: #c6f432;
+}
+html[data-store] .slide[data-tone="ink"] .slide-tag {
+  background: #c6f432;
+  color: #121a0f;
+}
+html[data-store] .slide-title {
+  font-size: 22px;
+  margin: 0;
+  max-width: 58%;
+  text-wrap: balance;
+}
+html[data-store] .slide-text[data-tone="lime"] .slide-title,
+html[data-store] .slide[data-tone="plain"] .slide-title {
+  max-width: 100%;
+}
+html[data-store] .slide-body {
+  margin: 0;
+  font-size: var(--text-step--1);
+  opacity: 0.9;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+html[data-store] .slide-cta {
+  margin-top: auto;
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  padding: 0 16px;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: var(--text-step--1);
+  background: #121a0f;
+  color: #c6f432;
+  text-decoration: none;
+}
+html[data-store] .slide[data-tone="ink"] .slide-cta {
+  background: #c6f432;
+  color: #121a0f;
+}
+html[data-store] .slide[data-tone="tint"] .slide-cta,
+html[data-store] .slide[data-tone="plain"] .slide-cta {
+  background: var(--ink);
+  color: var(--ground);
+}
+html[data-store] .slide-thumbs {
+  position: absolute;
+  inset-inline-end: 14px;
+  bottom: 14px;
+  display: flex;
+  gap: 8px;
+}
+html[data-store] .slide-thumbs img {
+  width: 64px;
+  height: 64px;
+  border-radius: 16px;
+  background: var(--plate);
+  object-fit: contain;
+}
+html[data-store] .slide-zones {
+  display: grid;
+  gap: 2px;
+  font-size: var(--text-step--1);
+  color: var(--muted);
+}
+html[data-store] .home-carousel-controls {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+  margin-top: 6px;
+}
+html[data-store] .home-carousel-btn {
+  width: 44px;
+  height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--raised);
+  color: var(--ink);
+  cursor: pointer;
+}
+html[data-store] .home-carousel-btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+html[data-store] .home-carousel-count {
+  min-width: 44px;
+  text-align: center;
+  font-size: var(--text-step--1);
+  font-weight: 600;
+  color: var(--muted);
+}
+html[data-store] .home-banner {
+  margin-top: 24px;
+  border-radius: 24px;
+  overflow: hidden;
+  aspect-ratio: 1280 / 560;
+  background: var(--surface);
+}
+html[data-store] .category-banner {
+  margin: 0 0 16px;
+  border-radius: 20px;
+  overflow: hidden;
+  aspect-ratio: 1280 / 400;
+  background: var(--surface);
+}
+html[data-store] .category-banner :is(a, img) {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Category tiles: name, count, one real product photo on a white plate */
+html[data-store] .cat-tiles {
+  gap: 8px;
+}
+html[data-store] .cat-tile {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  min-height: 88px;
+  width: 100%;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  background: var(--raised);
+  color: var(--ink);
+  overflow: hidden;
+}
+html[data-store] .cat-tile:hover {
+  border-color: var(--line-strong);
+}
+html[data-store] .cat-tile-text {
+  display: grid;
+  gap: 2px;
+  max-width: calc(100% - 58px);
+}
+html[data-store] .cat-tiles:not([data-photos]) .cat-tile-text {
+  max-width: 100%;
+}
+html[data-store] .cat-tile-name {
+  font-family: var(--font-family-display);
+  font-weight: 600;
+  font-size: 15px;
+  line-height: 1.15;
+}
+html[data-store] .cat-tile-count {
+  font-size: 12px;
+  color: var(--muted);
+}
+html[data-store] .cat-tile-photo {
+  position: absolute;
+  inset-inline-end: 8px;
+  bottom: 8px;
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--plate);
+}
+html[data-store] .cat-tile-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* Home: at most 8 tiles in 4 columns × 2 rows, then "সব ক্যাটাগরি দেখুন". On phones a tile is a
+   photo square with the name under it; from 768 px it keeps the card look above. */
+html[data-store] .cat-tiles[data-home] {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin-bottom: 12px;
+}
+@media (width < 768px) {
+  html[data-store] .cat-tiles[data-home] {
+    gap: 12px 8px;
+  }
+  html[data-store] .cat-tiles[data-home] .cat-tile {
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    min-height: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    text-align: center;
+    overflow: visible;
+  }
+  html[data-store] .cat-tiles[data-home] .cat-tile-photo {
+    position: static;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1;
+    border-radius: 18px;
+    border: 1px solid var(--line);
+    padding: 8px;
+  }
+  html[data-store] .cat-tiles[data-home]:not([data-photos]) .cat-tile {
+    padding: 12px 4px;
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    background: var(--raised);
+    min-height: 76px;
+    justify-content: center;
+  }
+  html[data-store] .cat-tiles[data-home] .cat-tile-text {
+    max-width: 100%;
+    justify-items: center;
+  }
+  html[data-store] .cat-tiles[data-home] .cat-tile-name {
+    font-size: 12.5px;
+    line-height: 1.25;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    overflow-wrap: anywhere;
+  }
+  html[data-store] .cat-tiles[data-home] .cat-tile-count {
+    display: none;
+  }
+  html[data-store] .cat-tiles[data-home] .cat-tile:hover .cat-tile-photo {
+    border-color: var(--line-strong);
+  }
+}
+html[data-store] .home-all-cats {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 48px;
+  width: 100%;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  background: var(--raised);
+  color: var(--ink);
+  font-weight: 700;
+  text-decoration: none;
+}
+html[data-store] .home-all-cats:hover {
+  background: var(--surface);
+}
+@media (width >= 768px) {
+  html[data-store] .home-all-cats {
+    width: auto;
+    max-width: 320px;
+    margin-inline: auto;
+    padding-inline: 28px;
+  }
+}
+
+/* ── Product cards (KhataGrid markup): photo on a white plate, name, price, a lime + ── */
+html[data-store] .khata-grid {
+  border-top: 0;
+  gap: 16px 10px;
+}
+html[data-store] .khata-item {
+  position: relative;
+  container-type: inline-size;
+  padding: 0;
+  border: 0;
+  gap: 2px;
+}
+html[data-store] .khata-link {
+  gap: 8px;
+}
+html[data-store] .khata-link:focus-visible {
+  outline: 3px solid var(--focus);
+  border-radius: var(--radius-plate);
+}
+html[data-store] .khata-media {
+  border-radius: var(--radius-plate);
+  background: var(--plate);
+  border: 1px solid var(--line);
+}
+html[data-store] .khata-media img {
+  object-fit: contain;
+}
+html[data-store] .khata-media .label-tile {
+  height: 100%;
+  border-radius: 0;
+  background: var(--surface);
+}
+html[data-store] .khata-name {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.3;
+}
+html[data-store] .khata-grid[data-layout="rail"] .khata-name {
+  min-height: 2.6em;
+}
+html[data-store] .khata-item .price-tag-amount {
+  font-size: 18px;
+  font-weight: 700;
+}
+html[data-store] .khata-meta {
+  font-size: 12px;
+}
+html[data-store] .khata-options {
+  color: var(--link);
+  font-weight: 600;
+  text-decoration: none;
+}
+html[data-store] .khata-out {
+  color: var(--danger);
+}
+html[data-store] .khata-item[data-available="no"] .khata-media img {
+  opacity: 0.55;
+}
+html[data-store] .quick-add {
+  position: absolute;
+  inset-inline-end: 8px;
+  top: calc(100cqi - 52px);
+  z-index: 2;
+}
+html[data-store] .quick-add-plus {
+  width: 44px;
+  height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  border: 0;
+  background: var(--accent);
+  color: var(--accent-ink);
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgb(18 26 15 / 0.18);
+}
+html[data-store] .quick-add-stepper {
+  display: flex;
+  align-items: center;
+  height: 44px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--accent-ink);
+  box-shadow: 0 2px 6px rgb(18 26 15 / 0.18);
+}
+html[data-store] .quick-add-step {
+  width: 44px;
+  height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  border-radius: 999px;
+  cursor: pointer;
+}
+html[data-store] .quick-add-qty {
+  min-width: 20px;
+  text-align: center;
+  font-weight: 700;
+}
+html[data-store] .quick-add :is(button:disabled) {
+  cursor: progress;
+  opacity: 0.7;
+}
+html[data-store] .quick-add-plus:active,
+html[data-store] .quick-add-step:active {
+  transform: scale(0.94);
+}
+
+/* Rails: a sideways shelf of the same cards */
+html[data-store] .khata-grid[data-layout="rail"] {
+  grid-template-columns: none;
+  grid-auto-flow: column;
+  grid-auto-columns: 42%;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  margin-inline: -16px;
+  padding-inline: 16px;
+  scroll-padding-inline: 16px;
+  scrollbar-width: none;
+  padding-bottom: 4px;
+}
+html[data-store] .khata-grid[data-layout="rail"] > li {
+  scroll-snap-align: start;
+}
+@media (width >= 768px) {
+  html[data-store] .khata-grid {
+    gap: 24px 16px;
+  }
+  html[data-store] .khata-grid[data-layout="rail"] {
+    grid-auto-columns: calc((100% - 48px) / 4);
+    margin-inline: 0;
+    padding-inline: 0;
+    scroll-padding-inline: 0;
+    scrollbar-width: thin;
+  }
+}
+@media (width >= 1280px) {
+  html[data-store] .khata-grid[data-layout="rail"] {
+    grid-auto-columns: calc((100% - 80px) / 6);
+  }
+}
+
+/* ── Listing pages ── */
+html[data-store] :is(.listing-title, .pdp-title) {
+  font-family: var(--font-family-display);
+  font-weight: 700;
+  font-size: 28px;
+  line-height: 1.15;
+}
+html[data-store] .listing-filters {
+  border-block: 0;
+  padding: 12px;
+  border-radius: var(--radius-card);
+  background: var(--raised);
+  border: 1px solid var(--line);
+}
+html[data-store] .listing-more-summary {
+  border-radius: 999px;
+}
+html[data-store] :is(.chip-link, .variant-chip) {
+  border-color: var(--line);
+  background: var(--raised);
+  font-weight: 600;
+}
+html[data-store] .variant-chip[aria-current="true"] {
+  border-color: var(--ink);
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+html[data-store] .subcats ul {
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  scrollbar-width: none;
+  margin-inline: -16px;
+  padding-inline: 16px;
+}
+html[data-store] .subcats li {
+  flex: none;
+}
+html[data-store] .crumbs a {
+  color: var(--muted);
+}
+html[data-store] .listing-empty {
+  border-top: 0;
+}
+
+/* /categories: department cards */
+html[data-store] .dept-list {
+  border-top: 0;
+  gap: 8px;
+}
+html[data-store] .dept {
+  padding: 8px 16px 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  background: var(--raised);
+}
+html[data-store] .dept-title {
+  font-family: var(--font-family-display);
+  font-weight: 700;
+}
+html[data-store] .dept-children {
+  gap: 6px;
+}
+html[data-store] .dept-children a {
+  min-height: 36px;
+  padding: 0 12px;
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--ink);
+  font-size: var(--text-step--1);
+}
+
+/* ── Product page and cart: same tokens, softer shapes ── */
+html[data-store] .pdp-images img,
+html[data-store] .pdp-media .label-tile {
+  border-radius: 24px;
+  background: var(--plate);
+}
+html[data-store] .pdp-section {
+  border-color: var(--line);
+}
+html[data-store] :is(.cart-line, .cart-summary) {
+  border-radius: var(--radius-card);
+  background: var(--raised);
+  border-color: var(--line);
+}
+html[data-store] .cart-total {
+  font-size: var(--text-step-1);
+}
+html[data-store] .cart-chip {
+  border-radius: 999px;
+}
+
+/* Listing filters on phones and tablets: one row of pills (sort, filters, apply); the filter
+   panel opens to full width below. From 1024 px the sidebar card stays. */
+@media (width < 1024px) {
+  html[data-store] .listing-filters {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    padding: 0;
+    background: none;
+    border: 0;
+    border-radius: 0;
+  }
+  html[data-store] .listing-filters > .field {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+  }
+  html[data-store] .listing-filters > .field .field-label {
+    font-size: var(--text-step--1);
+    color: var(--muted);
+    margin: 0;
+  }
+  html[data-store] .listing-filters > .field .field-input {
+    min-height: 44px;
+    border-radius: 999px;
+    padding-inline: 14px 32px;
+    width: auto;
+  }
+  html[data-store] .listing-more {
+    margin: 0;
+  }
+  html[data-store] .listing-more[open] {
+    flex-basis: 100%;
+    order: 3;
+    padding: 12px;
+    background: var(--raised);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-card);
+  }
+  html[data-store] .listing-more-summary {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    padding: 0 16px;
+    border: 1px solid var(--line-strong);
+    background: var(--raised);
+    font-weight: 600;
+  }
+  html[data-store] .listing-filters > .form-actions {
+    margin: 0;
+    gap: 8px;
+  }
+  html[data-store] .listing-filters > .form-actions .btn {
+    min-height: 44px;
+  }
+}
+
+/* The search pill draws one ring for the whole field (above); its parts do not draw their own. */
+html[data-store] .header-search :is(.header-search-input, .header-search-submit):focus-visible {
+  outline: none;
+}
+html[data-store] .header-search-clear:focus-visible {
+  outline-offset: -4px;
+}
+
+/* Header icons: search toggle and close (phones only), bell (all widths). */
+html[data-store] :is(.header-search-toggle, .header-search-close, .header-icon) {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  border: 0;
+  background: var(--raised);
+  color: var(--ink);
+  cursor: pointer;
+  text-decoration: none;
+}
+html[data-store] :is(.header-search-toggle, .header-icon):hover {
+  background: var(--surface);
+}
+html[data-store] .header-search-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Phones: search and bell are icons; the search opens over the header row. */
+@media (width < 768px) {
+  html[data-store] .site-header-inner {
+    position: relative;
+    gap: 8px;
+  }
+  html[data-store] .header-search-row {
+    flex: none;
+  }
+  html[data-store] .header-search-row > :is(.header-search, .header-search-close) {
+    display: none;
+  }
+  html[data-store] .wordmark {
+    flex: 1;
+    min-width: 0;
+    max-width: none;
+    font-size: 20px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  html[data-store] .header-actions {
+    gap: 0;
+  }
+  html[data-store] :is(.header-search-row[data-expanded], .header-search-row:target) {
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    padding-inline: max(16px, env(safe-area-inset-left, 0px)) max(16px, env(safe-area-inset-right, 0px));
+    background: var(--ground);
+  }
+  html[data-store] :is(.header-search-row[data-expanded], .header-search-row:target) > .header-search-toggle {
+    display: none;
+  }
+  html[data-store] :is(.header-search-row[data-expanded], .header-search-row:target) > :is(.header-search, .header-search-close) {
+    display: flex;
+  }
+  html[data-store] .header-search-input {
+    font-size: 16px; /* 16 px keeps iOS from zooming on focus */
+  }
+}
+@media (width < 768px) and (prefers-reduced-motion: no-preference) {
+  html[data-store] .header-search-row[data-expanded] > .header-search {
+    animation: hb-search-in 160ms var(--ease-out);
+  }
+}
+@keyframes hb-search-in {
+  from {
+    opacity: 0;
+    transform: scaleX(0.96);
+    transform-origin: left center;
+  }
+}
+@media (width >= 768px) {
+  html[data-store] .header-search-row {
+    flex: 1;
+  }
+  html[data-store] :is(.header-search-toggle, .header-search-close) {
+    display: none;
+  }
+  html[data-store] .header-icon {
+    background: transparent;
+  }
+}
+html[data-store] .header-icon svg,
+html[data-store] .header-search-toggle svg {
+  width: 24px;
+  height: 24px;
+  flex: none;
+}
+
+/* ════════════════════════════════════════════════════════════════════════════════════════════
+   Whole site (redesign, part 2): forms, sign-in pages, account, info pages, states and empty
+   states in the Night Bazaar Light language — raised white cards on the ground colour, 20–28 px
+   radii, a lime icon badge per page family, pills for actions. Presentation only.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+
+/* ── Forms ── */
+html[data-store] .form {
+  gap: 18px;
+}
+html[data-store] .field-label {
+  font-size: 14px;
+}
+html[data-store] .field-input {
+  min-height: 50px;
+  padding: 12px 16px;
+  border-width: 1.5px;
+}
+html[data-store] textarea.field-input {
+  min-height: 120px;
+}
+html[data-store] .field-input:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 1px;
+  border-color: var(--focus);
+}
+html[data-store] .field-toggle {
+  min-height: 50px;
+  border-radius: 14px;
+  border-width: 1.5px;
+  background: var(--surface);
+  border-color: var(--line);
+}
+html[data-store] :is(.form-summary, .form-summary-static, .form-success, .pdp-notice, .admin-notice) {
+  border-radius: 14px;
+}
+html[data-store] .field-check {
+  min-height: 44px;
+}
+
+/* ── Sign-in, sign-up, password and e-mail pages (AuthFrame) ── */
+html[data-store] .auth-page {
+  max-width: 28rem;
+  padding-block: 24px 48px;
+}
+html[data-store] .auth-card {
+  padding: 24px 20px 28px;
+  border: 1px solid var(--line);
+  border-radius: 28px;
+  background: var(--raised);
+}
+html[data-store] :is(.auth-badge, .state-badge) {
+  display: inline-grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+html[data-store] .auth-title {
+  margin-top: 14px;
+  font-size: var(--text-step-3);
+}
+html[data-store] .auth-intro {
+  margin-top: 6px;
+  line-height: 1.55;
+}
+html[data-store] .auth-body {
+  margin-top: 20px;
+  padding-top: 0;
+  border-top: 0;
+}
+html[data-store] .auth-body .form {
+  max-width: none;
+}
+html[data-store] .auth-body .form-actions .btn-primary {
+  flex: 1 1 100%;
+}
+html[data-store] .auth-alt-button {
+  max-width: none;
+}
+html[data-store] .auth-details {
+  margin-top: 20px;
+}
+html[data-store] .auth-details > summary {
+  color: var(--link);
+}
+html[data-store] .auth-aside {
+  margin-top: 16px;
+  padding: 8px 20px;
+  border-top: 0;
+  border-radius: 20px;
+  background: var(--surface);
+}
+html[data-store] .auth-links {
+  gap: 0;
+}
+@media (width >= 768px) {
+  html[data-store] .auth-page {
+    padding-top: 48px;
+  }
+  html[data-store] .auth-card {
+    padding: 32px 32px 36px;
+  }
+}
+
+/* ── Account (AccountFrame and the overview tiles) ── */
+html[data-store] .account-page {
+  gap: 20px;
+}
+html[data-store] .account-title {
+  font-size: var(--text-step-3);
+}
+html[data-store] .account-section {
+  max-width: 56rem;
+  margin-top: 20px;
+  padding: 20px;
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  background: var(--raised);
+}
+html[data-store] .account-section-title {
+  font-size: var(--text-step-1);
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+html[data-store] .account-section .cart-line {
+  background: var(--ground);
+}
+html[data-store] .account-hub {
+  padding: 0;
+  border: 0;
+  background: none;
+}
+html[data-store] .account-tiles {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+html[data-store] .account-tile {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 76px;
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: var(--raised);
+  color: var(--ink);
+  text-decoration: none;
+}
+html[data-store] .account-tile:hover {
+  border-color: var(--line-strong);
+}
+html[data-store] .account-tile-icon {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background: var(--surface);
+}
+html[data-store] .account-tile-text {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+html[data-store] .account-tile-title {
+  font-weight: 700;
+}
+html[data-store] .account-tile-hint {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.4;
+}
+html[data-store] .account-tile-go {
+  flex: none;
+  margin-inline-start: auto;
+  color: var(--muted);
+}
+@media (width >= 640px) {
+  html[data-store] .account-tiles {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+html[data-store] .account-avatar {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--accent-ink);
+  font-family: var(--font-family-display);
+  font-weight: 700;
+  font-size: 20px;
+}
+html[data-store] .account-who {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 8px 16px;
+}
+html[data-store] .account-who-text {
+  display: grid;
+  min-width: 0;
+}
+html[data-store] .account-who-name {
+  font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+html[data-store] .account-who-email {
+  color: var(--muted);
+  font-size: 13px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+html[data-store] .account-nav-link {
+  gap: 10px;
+  text-decoration: none;
+}
+html[data-store] .account-signout-btn {
+  gap: 10px;
+  color: var(--ink);
+  font-weight: 600;
+}
+/* Phones and tablets: one scrolling row of pills, sign-out last. */
+@media (width < 1024px) {
+  html[data-store] .account-nav {
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    gap: 8px;
+    margin-inline: calc(-1 * max(16px, env(safe-area-inset-left, 0px)));
+    padding: 2px max(16px, env(safe-area-inset-left, 0px)) 6px;
+    border-bottom: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  html[data-store] .account-nav::-webkit-scrollbar {
+    display: none;
+  }
+  html[data-store] .account-who {
+    display: none;
+  }
+  html[data-store] .account-nav ul {
+    flex-wrap: nowrap;
+    gap: 8px;
+  }
+  html[data-store] .account-nav li {
+    flex: none;
+  }
+  html[data-store] .account-nav-link,
+  html[data-store] .account-signout-btn {
+    min-height: 44px;
+    padding: 0 16px 0 12px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: var(--raised);
+    white-space: nowrap;
+    font-size: 14px;
+  }
+  html[data-store] .account-nav-link[aria-current="page"] {
+    border-color: var(--accent);
+    background: var(--accent);
+    color: var(--accent-ink);
+    font-weight: 700;
+  }
+  html[data-store] .account-signout {
+    flex: none;
+  }
+}
+/* From 1024 px: a sidebar card. */
+@media (width >= 1024px) {
+  html[data-store] .account-page {
+    grid-template-columns: 17rem minmax(0, 1fr);
+    gap: 40px;
+    align-items: start;
+  }
+  html[data-store] .account-nav {
+    position: sticky;
+    top: 96px;
+    padding: 12px;
+    border: 1px solid var(--line);
+    border-radius: 24px;
+    background: var(--raised);
+  }
+  html[data-store] .account-nav ul {
+    gap: 2px;
+  }
+  html[data-store] .account-nav-link {
+    min-height: 44px;
+    padding: 0 12px;
+    border: 0;
+    border-radius: 12px;
+    color: var(--ink);
+  }
+  html[data-store] .account-nav-link:hover {
+    background: var(--ground);
+  }
+  html[data-store] .account-nav-link[aria-current="page"] {
+    border: 0;
+    background: var(--surface);
+    font-weight: 700;
+  }
+  html[data-store] .account-nav-icon {
+    color: var(--muted);
+  }
+  html[data-store] .account-nav-link[aria-current="page"] .account-nav-icon {
+    color: var(--ink);
+  }
+  html[data-store] .account-signout {
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid var(--line);
+  }
+  html[data-store] .account-signout-btn {
+    width: 100%;
+    justify-content: flex-start;
+    min-height: 44px;
+    padding: 0 12px;
+    border-radius: 12px;
+  }
+  html[data-store] .account-signout-btn:hover {
+    background: var(--ground);
+    text-decoration: none;
+  }
+}
+
+/* ── Info pages: the text in a card, the help pages listed beside it ── */
+html[data-store] .info-layout {
+  max-width: 1240px;
+  margin-inline: auto;
+  display: grid;
+  gap: 8px;
+  padding-bottom: 24px;
+}
+html[data-store] .info-body {
+  padding: 20px;
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  background: var(--raised);
+  max-width: none;
+}
+html[data-store] .needs-copy {
+  padding: 12px 16px;
+  border-radius: 14px;
+  background: var(--surface);
+  color: var(--muted);
+}
+html[data-store] .info-nav {
+  margin-inline: max(16px, env(safe-area-inset-left, 0px));
+  padding: 8px;
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  background: var(--raised);
+}
+html[data-store] .info-nav-title {
+  padding: 8px 12px 4px;
+  font-size: 13px;
+  color: var(--muted);
+}
+html[data-store] .info-nav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+html[data-store] .info-nav-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 48px;
+  padding: 0 12px;
+  border-radius: 14px;
+  color: var(--ink);
+  text-decoration: none;
+}
+html[data-store] .info-nav-link svg {
+  color: var(--muted);
+}
+html[data-store] .info-nav-link:hover {
+  background: var(--ground);
+}
+html[data-store] .info-nav-link[aria-current="page"] {
+  background: var(--surface);
+  font-weight: 700;
+}
+html[data-store] .info-nav-link[aria-current="page"] svg {
+  color: var(--ink);
+}
+@media (width >= 1024px) {
+  html[data-store] .info-layout {
+    grid-template-columns: 17rem minmax(0, 1fr);
+    gap: 40px;
+    align-items: start;
+    padding: 0 32px 32px;
+  }
+  html[data-store] .info-layout > .info-page {
+    grid-column: 2;
+    grid-row: 1;
+    width: 100%;
+    max-width: 52rem;
+    margin: 0;
+    padding-inline: 0;
+  }
+  html[data-store] .info-nav {
+    grid-column: 1;
+    grid-row: 1;
+    position: sticky;
+    top: 96px;
+    margin: 76px 0 0;
+  }
+  html[data-store] .info-body {
+    padding: 28px 32px;
+  }
+}
+
+/* ── Full-page states (404, offline, error) ── */
+html[data-store] .state-page {
+  max-width: 32rem;
+  text-align: center;
+  padding-top: 56px;
+}
+html[data-store] .state-badge {
+  width: 72px;
+  height: 72px;
+}
+html[data-store] .state-title {
+  margin-top: 16px;
+  font-size: var(--text-step-3);
+}
+html[data-store] .state-body {
+  margin-inline: auto;
+  color: var(--muted);
+  line-height: 1.55;
+}
+html[data-store] .state-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+}
+
+/* ── Empty states inside pages (empty cart, no deals, no results, no orders) ── */
+html[data-store] .listing-empty {
+  padding: 32px 20px;
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  background: var(--raised);
+  text-align: center;
+}
+html[data-store] .listing-empty-title {
+  font-family: var(--font-family-display);
+  font-weight: 700;
+  font-size: var(--text-step-1);
+}
+html[data-store] .listing-empty .field-hint {
+  margin-inline: auto;
+}
+html[data-store] .listing-empty :is(.btn, .form-actions) {
+  margin-inline: auto;
+}
+
+/* ── Order detail and other ruled lists inside account cards ── */
+html[data-store] .account-section .ledger-row:last-child {
+  border-bottom: 0;
+}
+
+/* Every block of an account page is a card, whichever page built it (notifications, privacy,
+   reviews and the rest use plain sections). */
+html[data-store] .account-content > section:not(.account-hub, .account-section) {
+  max-width: 56rem;
+  margin-top: 20px;
+  padding: 20px;
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  background: var(--raised);
+}
+html[data-store] .account-content > :is(section, .account-section) > :is(h2, h3):first-child {
+  margin-top: 0;
+}
+html[data-store] .account-content > p {
+  max-width: 60ch;
+  line-height: 1.55;
+}
+html[data-store] .account-content .listing-empty-title {
+  font-size: var(--text-step-0);
+}
+html[data-store] .account-content .listing-empty {
+  border: 0;
+  padding: 8px 0;
+  text-align: start;
+}
+/* Checkout: the address and items column is a card like the summary beside it. */
+html[data-store] .cart-grid > section {
+  padding: 20px;
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  background: var(--raised);
+}
+html[data-store] .cart-grid > section .cart-line {
+  background: var(--ground);
+}
+html[data-store] .pdp-h2 {
+  border-bottom: 0;
+}
+html[data-store] .account-content > .listing-empty-title {
+  max-width: 56rem;
+  margin-top: 20px;
+  padding: 24px 20px;
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  background: var(--raised);
+  line-height: 1.5;
+}

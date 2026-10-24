@@ -5,10 +5,11 @@ import type { Locale } from "@/lib/i18n/locales";
 export const fontPresets = ["khata", "plain"] as const;
 export type FontPreset = (typeof fontPresets)[number];
 
-/** The one font file preloaded per locale: the Noto Sans Bengali text subset for that locale's script. */
+/** The one font file preloaded per locale: the storefront text face (Google Sans, redesign
+ * Proposal 03) subset for that locale's script. Noto Sans Bengali stays as the fallback and admin face. */
 export const preloadedFontByLocale: Record<Locale, string> = {
-  bn: "/fonts/v1/noto-sans-bengali-bengali.woff2",
-  en: "/fonts/v1/noto-sans-bengali-latin.woff2",
+  bn: "/fonts/v1/google-sans-bengali.woff2",
+  en: "/fonts/v1/google-sans-latin.woff2",
 };
 
 export function isFontPreset(value: unknown): value is FontPreset {

@@ -2,6 +2,13 @@
 
 Newest first. Each entry: date, phase, done, decided, open, next. Entries are snapshots of their date: "not merged", "open" or "next" describe that day; the current state is in `docs/STATUS.md` (first rows) and `docs/HANDOFF.md`.
 
+## 2026-10-24 — Admin redesign: Proposal A1 approved; Checkpoint 4 build plan for approval
+
+- **Done:** read-only audit of the admin (22 sections, capabilities, workflows) and the implemented storefront tokens. App run under Node 24.22.1 with the disposable in-memory database harness only. Static mockups in `docs/proposals/admin-a1/`.
+- **Decided (owner, 2026-10-24):** Proposal A1 approved as shown: storefront "day" tokens in admin, full-screen mobile menu, fixed sidebar from 1024 px, 7 groups, admin home with 4 work-waiting counts, 2 quick actions and section tiles. Open questions resolved as shown (see `docs/ADMIN-REDESIGN-A1.md` §1).
+- **Open:** Checkpoint 4 build plan (`docs/ADMIN-REDESIGN-A1.md`) waits for owner approval. No code changed.
+- **Next:** on approval, build on `feat/admin-a1` in 6 increments, then Checkpoint 5 screenshots (375/768/1440).
+
 ## 2026-10-23 — Redesign Checkpoint A: audit approved; Motomation installed
 
 - **Owner:** approved the audit as the working baseline; Khata direction retired for the redesign, its live code, classes, `KhataGrid`, font preset, settings enum, data and tests kept until an approved checkpoint; follow Motomation's six checkpoints in order; no implementation before design and build-plan approval.

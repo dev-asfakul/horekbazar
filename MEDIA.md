@@ -7,6 +7,8 @@ Every font, image and other media file the store uses, with its source and licen
 | File | Family | Licence | Source / licence file |
 |---|---|---|---|
 | `noto-sans-bengali-bengali.woff2`, `noto-sans-bengali-latin.woff2`, `noto-sans-bengali-latin-ext.woff2` | Noto Sans Bengali (subsets) | SIL Open Font License 1.1 | https://github.com/notofonts/bengali · `public/fonts/OFL-NotoSansBengali.txt` |
+| `google-sans-bengali.woff2`, `google-sans-latin.woff2`, `google-sans-latin-ext.woff2` | Google Sans (subsets, variable 400–700; storefront text face from the redesign) | SIL Open Font License 1.1 | https://github.com/googlefonts/googlesans · `public/fonts/OFL-GoogleSans.txt` (name only; no affiliation with Google) |
+| `alkatra-bengali.woff2`, `alkatra-latin.woff2`, `alkatra-latin-ext.woff2` | Alkatra (subsets, variable 400–700; storefront display face from the redesign) | SIL Open Font License 1.1 | https://github.com/suman51284/Alkatra · `public/fonts/OFL-Alkatra.txt` |
 | `tiro-bangla-bengali.woff2` | Tiro Bangla (Bengali subset) | SIL Open Font License 1.1 | https://github.com/TiroTypeworks/Indigo · `public/fonts/OFL-TiroBangla.txt` |
 
 OFL allows embedding and redistribution in a commercial template when the licence file travels with the fonts. It does not allow selling the fonts on their own.

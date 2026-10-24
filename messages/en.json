@@ -5,8 +5,22 @@
     "homeLinkLabel": "Home",
     "search": {
       "label": "Search products",
-      "placeholder": "Search products",
-      "submit": "Search"
+      "placeholder": "Search rice, oil, soap",
+      "submit": "Search",
+      "clear": "Clear text",
+      "suggestions": "Suggestions",
+      "products": "Products",
+      "history": "Search history",
+      "clearHistory": "Clear all",
+      "removeHistory": "Remove \"{term}\" from history",
+      "category": "Category",
+      "count": "{count} suggestions",
+      "none": "No suggestions. Press Enter to see all results",
+      "from": "from",
+      "options": "{count} options",
+      "outOfStock": "Out of stock",
+      "open": "Open search",
+      "close": "Close search"
     },
     "categories": "Categories",
     "account": "Account",
@@ -35,8 +49,36 @@
       "infoLabel": "Information",
       "about": "About",
       "contact": "Contact",
-      "faq": "FAQ"
-    }
+      "faq": "FAQ",
+      "categoriesLabel": "Categories",
+      "allCategories": "All categories",
+      "shopLabel": "Shopping",
+      "new": "New arrivals",
+      "deals": "Deals",
+      "search": "Search",
+      "cart": "Cart",
+      "accountLabel": "Account",
+      "account": "My account",
+      "orders": "My orders",
+      "notifications": "Notifications",
+      "helpLabel": "Help",
+      "phone": "Phone",
+      "email": "Email",
+      "address": "Address",
+      "hours": "Open",
+      "deliveryCharges": "Delivery charges",
+      "freeOver": "free over {amount}",
+      "copyright": "© {year} {name}. All rights reserved."
+    },
+    "theme": {
+      "label": "Theme",
+      "auto": "Auto",
+      "light": "Light",
+      "dark": "Dark",
+      "hint": "Auto changes the colours for morning, day, evening and night."
+    },
+    "cartCount": "Cart, {count} items",
+    "bell": "Notifications"
   },
   "setup": {
     "title": "Setup required",
@@ -1823,17 +1865,43 @@
         "deletion_cancelled": "Deletion request: withdrawn",
         "deletion_completed": "Deletion request: completed"
       }
-    }
+    },
+    "tiles": {
+      "orders": "All your orders and where each one is.",
+      "messages": "Ask the store; the answers arrive here.",
+      "notifications": "Turn browser notifications on or off.",
+      "reviews": "Reviews of products you bought.",
+      "rewards": "Your points and their history.",
+      "addresses": "Save and edit delivery addresses.",
+      "profile": "Name, mobile number and e-mail language.",
+      "security": "Password, two-step verification and signed-in devices.",
+      "privacy": "Download your data or ask to delete your account."
+    },
+    "sectionsTitle": "In your account"
   },
   "store": {
     "home": {
       "title": "Online bazar",
-      "heading": "Shop by category",
-      "newHeading": "New products",
+      "heading": "Categories",
+      "newHeading": "New arrivals",
       "allCategories": "All categories",
       "seeAll": "See all",
       "emptyTitle": "No products published yet",
-      "emptyBody": "Products appear here once the store publishes them. Please check back later."
+      "emptyBody": "Products appear here once the store publishes them. Please check back later.",
+      "carouselLabel": "Offers and news",
+      "slideOf": "{n}/{total}",
+      "prevSlide": "Previous slide",
+      "nextSlide": "Next slide",
+      "dealTag": "Latest deals",
+      "dealTitle": "Price drops on {count} products",
+      "dealCta": "See all deals",
+      "newTag": "New arrivals",
+      "newTitle": "{count} new products",
+      "newCta": "See them",
+      "deliveryTag": "Delivery",
+      "deliveryTitle": "Cash on delivery",
+      "productCount": "{count} products",
+      "allCategoriesCta": "See all categories"
     },
     "categories": {
       "title": "Categories",
@@ -1868,7 +1936,13 @@
     },
     "card": {
       "outOfStock": "Out of stock",
-      "options": "{count} options"
+      "options": "{count} options",
+      "add": "Add to cart: {name}",
+      "increase": "One more",
+      "decrease": "One less",
+      "inCart": "In your cart",
+      "added": "Cart updated",
+      "error": "Could not update the cart. Try again"
     },
     "product": {
       "breadcrumb": "You are here",

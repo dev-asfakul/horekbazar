@@ -51,6 +51,11 @@ export const isOwnPublicId = (publicId: string, purpose: MediaPurpose) =>
   publicId.startsWith(`${MEDIA_PURPOSES[purpose]}/`) && /^[A-Za-z0-9_\-/]+$/.test(publicId) && !publicId.includes("..");
 
 /** Delivery URL for an admin thumbnail or preview (square crop, automatic format and quality). */
+/** A fixed-shape crop (banner slots): Cloudinary picks the focus point (g_auto). */
+export function croppedUrl(cloudName: string, publicId: string, width: number, height: number): string {
+  return `https://res.cloudinary.com/${encodeURIComponent(cloudName)}/image/upload/c_fill,g_auto,w_${width},h_${height},f_auto,q_auto/${publicId.split("/").map(encodeURIComponent).join("/")}`;
+}
+
 export function deliveryUrl(cloudName: string, publicId: string, size: number): string {
   return `https://res.cloudinary.com/${encodeURIComponent(cloudName)}/image/upload/c_fill,w_${size},h_${size},f_auto,q_auto/${publicId.split("/").map(encodeURIComponent).join("/")}`;
 }

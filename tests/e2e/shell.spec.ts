@@ -3,6 +3,12 @@
 import { expect, test, type Page } from "@playwright/test";
 import { overlaps, waitForHydration, watchCsp, type Rect } from "./helpers";
 
+/** Redesign: below 768 px the header search is an icon; open it when it is one. */
+async function openSearch(page: import("@playwright/test").Page) {
+  const toggle = page.locator(".header-search-toggle");
+  if (await toggle.isVisible()) await toggle.click();
+}
+
 const widths = [
   { name: "375", width: 375, height: 812, dock: true },
   { name: "768", width: 768, height: 1024, dock: false },
@@ -30,7 +36,11 @@ for (const vp of widths) {
           .map((el) => el.id || el.className.split(" ")[0] || el.tagName.toLowerCase()),
       );
       expect(order.slice(0, 5)).toEqual(["skip-link", "site-header", "main", "site-footer", "bottom-dock"]);
+      // Below 768 px the search is an icon that opens the field (redesign); from 768 px it is open.
+      await expect(page.locator(".header-search-toggle")).toBeVisible({ visible: vp.dock });
+      await openSearch(page);
       await expect(page.locator("#site-search")).toBeVisible();
+      if (vp.dock) await page.locator(".header-search-close").click();
       await expect(page.getByRole("link", { name: "ক্যাটাগরি" }).first()).toBeVisible();
       await expect(page.locator("#bottom-dock")).toBeVisible({ visible: vp.dock });
       // Account and cart live in the header from band M up, and in the dock below it.
@@ -101,6 +111,7 @@ for (const vp of widths) {
     if (vp.dock) test("focus entering the dock right after the search field is fully visible at once", async ({ page }) => {
       await page.goto("/");
       await waitForHydration(page);
+      await openSearch(page);
       await page.locator("#site-search").focus();
       await expect(page.locator("#bottom-dock")).toHaveAttribute("data-hidden", "true");
       const bottoms = await page.evaluate(async () => {
@@ -148,13 +159,16 @@ for (const vp of widths) {
 test.describe("band S interactions (375 px)", () => {
   test.use({ viewport: { width: 375, height: 812 } });
 
-  test("Search in the dock focuses the header field and the dock leaves view and tab order", async ({ page }) => {
+  // Redesign (Proposal 03): search left the dock; the header search pill is always on screen.
+  test("the dock has four items and focusing the header search takes the dock out of view and tab order", async ({ page }) => {
     await page.goto("/");
     await waitForHydration(page);
+    await expect(page.locator("#bottom-dock [data-nav]")).toHaveCount(4);
+    await expect(page.locator("#bottom-dock [data-nav='search']")).toHaveCount(0);
     await page.evaluate(() => window.scrollTo(0, 400));
-    await page.locator("#bottom-dock [data-nav='search']").click();
+    await openSearch(page);
+    await page.locator("#site-search").focus();
     await expect(page.locator("#site-search")).toBeFocused();
-    expect(new URL(page.url()).pathname).toBe("/"); // no navigation
     const field = await rect(page, "#site-search");
     expect(field.top).toBeGreaterThanOrEqual(0);
     await expect(page.locator("#bottom-dock")).toHaveAttribute("data-hidden", "true");
@@ -173,7 +187,8 @@ test.describe("band S interactions (375 px)", () => {
     await expect(page.locator("#bottom-dock [aria-current='page']")).toHaveCount(1);
   });
 
-  test("the wordmark row scrolls away and the search row stays", async ({ page }) => {
+  // Redesign (Proposal 03): one header row (search left, store name right) that stays on screen.
+  test("the header search row stays on screen when scrolling", async ({ page }) => {
     // A short viewport so the setup page is taller than the screen (no fixture content is added).
     await page.setViewportSize({ width: 375, height: 420 });
     await page.goto("/");
@@ -182,9 +197,7 @@ test.describe("band S interactions (375 px)", () => {
     expect(await page.evaluate(() => window.scrollY)).toBeGreaterThan(100);
     const search = await rect(page, ".header-search-row");
     expect(search.top).toBeGreaterThanOrEqual(-0.5);
-    expect(search.top).toBeLessThanOrEqual(1);
-    const wordmark = await rect(page, ".header-wordmark-row");
-    expect(wordmark.bottom).toBeLessThanOrEqual(1);
+    expect(search.top).toBeLessThanOrEqual(12);
   });
 
   test("viewport opts into safe-area insets and the dock pads for them", async ({ page }) => {
@@ -210,8 +223,8 @@ test.describe("language, fonts and motion", () => {
   });
 
   for (const [path, file] of [
-    ["/", "noto-sans-bengali-bengali.woff2"],
-    ["/en", "noto-sans-bengali-latin.woff2"],
+    ["/", "google-sans-bengali.woff2"],
+    ["/en", "google-sans-latin.woff2"],
   ] as const) {
     test(`exactly one font file is preloaded on ${path}`, async ({ page }) => {
       const response = await page.goto(path);
@@ -222,7 +235,7 @@ test.describe("language, fonts and motion", () => {
       const domPreloads = await page.locator("link[rel='preload'][as='font']").evaluateAll((els) => els.map((e) => e.getAttribute("href")));
       expect(domPreloads.every((h) => h === `/fonts/v1/${file}`)).toBe(true);
       await page.evaluate(() => document.fonts.ready);
-      expect(await page.evaluate(() => document.fonts.check('16px "HB Noto Sans Bengali"'))).toBe(true);
+      expect(await page.evaluate(() => document.fonts.check('16px "HB Google Sans"'))).toBe(true);
     });
   }
 
@@ -256,10 +269,17 @@ test.describe("language, fonts and motion", () => {
     await page.emulateMedia({ reducedMotion: "reduce" });
     await page.setViewportSize({ width: 375, height: 812 });
     await page.goto("/");
-    const durations = await page.evaluate(() => ({
-      dock: getComputedStyle(document.getElementById("bottom-dock")!).transitionDuration,
-      button: getComputedStyle(document.querySelector(".btn")!).transitionDuration,
-    }));
+    // Redesign: the header no longer has a .btn (the category button left it), so a test button is
+    // added to check the same stylesheet rule.
+    const durations = await page.evaluate(() => {
+      const probe = document.createElement("button");
+      probe.className = "btn btn-primary";
+      document.querySelector("main")!.append(probe);
+      return {
+        dock: getComputedStyle(document.getElementById("bottom-dock")!).transitionDuration,
+        button: getComputedStyle(probe).transitionDuration,
+      };
+    });
     for (const d of [durations.dock, ...durations.button.split(",")]) expect(parseFloat(d)).toBeLessThanOrEqual(0.00001);
   });
 });

@@ -2,15 +2,18 @@
 // Reduced-motion: no motion. Touch: nav links are 44 px rows.
 // Side navigation from 1024 px, a horizontal list above the content on smaller screens. The current
 // section is marked with aria-current and a ruled underline, never colour alone.
+// Redesign: a sidebar card from 1024 px (who is signed in, then the sections with icons, then sign
+// out); on phones one scrolling row of pills. accountSections() is shared with the overview tiles.
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { getTranslations } from "next-intl/server";
 import { signOutAction } from "@/lib/actions/identity";
-import { getIdentity } from "@/lib/auth/server";
+import { Icon, type IconName } from "@/components/ui/Icon";
+import { getIdentity, getPrincipal } from "@/lib/auth/server";
 import { localeHref } from "@/lib/i18n/href";
 import { getSettings } from "@/lib/modules/settings/settings";
 
-type Section = "overview" | "orders" | "messages" | "notifications" | "reviews" | "rewards" | "addresses" | "profile" | "security" | "privacy";
+export type Section = "overview" | "orders" | "messages" | "notifications" | "reviews" | "rewards" | "addresses" | "profile" | "security" | "privacy";
 
 /** B9: reviews and rewards appear only while the store has them on; messages always. */
 async function engagementFlags() {
@@ -20,43 +23,67 @@ async function engagementFlags() {
   return { reviews: f.reviews, rewards: f.rewards === true };
 }
 
+const ICONS: Record<Section, IconName> = {
+  overview: "user",
+  orders: "orders",
+  messages: "chat",
+  notifications: "bell",
+  reviews: "star",
+  rewards: "gift",
+  addresses: "pin",
+  profile: "id",
+  security: "shield",
+  privacy: "lock",
+};
+
+/** The account sections this store has on, in order, with their icons. */
+export async function accountSections(): Promise<{ key: Section; href: string; icon: IconName }[]> {
+  const flags = await engagementFlags();
+  const keys: Section[] = ["overview", "orders", "messages", "notifications", ...(flags.reviews ? (["reviews"] as const) : []), ...(flags.rewards ? (["rewards"] as const) : []), "addresses", "profile", "security", "privacy"];
+  return keys.map((key) => ({ key, href: key === "overview" ? "/account" : `/account/${key}`, icon: ICONS[key] }));
+}
+
 export async function AccountFrame({ locale, current, title, staff, children }: { locale: "bn" | "en"; current: Section; title: string; staff: boolean; children: ReactNode }) {
   const t = await getTranslations({ locale, namespace: "account" });
-  const flags = await engagementFlags();
-  const items: { key: Section; href: string }[] = [
-    { key: "overview", href: "/account" },
-    { key: "orders", href: "/account/orders" },
-    { key: "messages", href: "/account/messages" },
-    { key: "notifications", href: "/account/notifications" },
-    ...(flags.reviews ? [{ key: "reviews" as const, href: "/account/reviews" }] : []),
-    ...(flags.rewards ? [{ key: "rewards" as const, href: "/account/rewards" }] : []),
-    { key: "addresses", href: "/account/addresses" },
-    { key: "profile", href: "/account/profile" },
-    { key: "security", href: "/account/security" },
-    { key: "privacy", href: "/account/privacy" },
-  ];
+  const items = await accountSections();
+  const user = (await getPrincipal())?.user;
+  const initial = (user?.name || user?.email || "?").trim().charAt(0).toUpperCase();
   return (
     <div className="account-page">
       <nav className="account-nav" aria-label={t("nav.label")}>
+        {user ? (
+          <div className="account-who">
+            <span className="account-avatar" aria-hidden="true">
+              {initial}
+            </span>
+            <span className="account-who-text">
+              <span className="account-who-name">{user.name || user.email}</span>
+              {user.name ? <span className="account-who-email">{user.email}</span> : null}
+            </span>
+          </div>
+        ) : null}
         <ul>
           {items.map((item) => (
             <li key={item.key}>
               <Link href={localeHref(locale, item.href)} className="account-nav-link" aria-current={item.key === current ? "page" : undefined}>
-                {t(`nav.${item.key}`)}
+                <Icon name={item.icon} size={20} className="account-nav-icon" />
+                <span>{t(`nav.${item.key}`)}</span>
               </Link>
             </li>
           ))}
           {staff ? (
             <li>
               <Link href="/admin" className="account-nav-link">
-                {t("nav.admin")}
+                <Icon name="store" size={20} className="account-nav-icon" />
+                <span>{t("nav.admin")}</span>
               </Link>
             </li>
           ) : null}
         </ul>
         <form action={signOutAction} className="account-signout">
           <input type="hidden" name="locale" value={locale} />
-          <button type="submit" className="btn btn-quiet">
+          <button type="submit" className="btn btn-quiet account-signout-btn">
+            <Icon name="logout" size={20} />
             {t("signOut")}
           </button>
         </form>

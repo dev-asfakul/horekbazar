@@ -31,6 +31,7 @@ export default async function ResetPasswordPage({ params, searchParams }: PagePr
   const m = await formMessages(locale);
   return (
     <AuthFrame
+      icon="key"
       title={t("reset.title")}
       aside={
         <ul className="auth-links">

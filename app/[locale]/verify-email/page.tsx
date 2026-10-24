@@ -38,7 +38,7 @@ export default async function VerifyEmailPage({ params, searchParams }: PageProp
   }
   const m = await formMessages(locale);
   return (
-    <AuthFrame title={t("verify.title")}>
+    <AuthFrame icon="mail" title={t("verify.title")}>
       <p role="status" className={result === "ok" ? "form-success" : "admin-notice"} data-result={result}>
         {t(`verify.${result}`)}
       </p>

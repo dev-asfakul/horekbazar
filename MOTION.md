@@ -52,6 +52,12 @@
 | Toasts | 8 px rise + fade | 1 | 200 ms in / 140 ms out | fade only |
 | View Transitions API | not used in v1 (not needed; avoids a browser-support matrix) | — | — | — |
 
+| Theme change (redesign, Proposal 04) | at a clock boundary (05, 11, 17, 20, 00) or when the shopper picks অটো/লাইট/ডার্ক, colours fade (background, text, border only) | 1 | 400 ms `--ease-in-out`, only while `html[data-theme-changing]` is set | instant (rule sits inside `prefers-reduced-motion: no-preference`) |
+| Home carousel (redesign) | native swipe with scroll-snap; the buttons scroll one slide; never rotates on its own | 1 | browser smooth scroll | buttons jump (`behavior: "auto"`) |
+| Quick add (redesign) | "+" becomes − n + after the server confirms; press scale 0.94 | 1 | instant swap | no scale (global rule) |
+| Search suggestions (redesign) | panel appears under the field; no animation | — | — | — |
+
+The theme fade is ambient, not feedback to a tap, so it is allowed past the 250 ms feedback limit.
 All UI feedback stays at or under 250 ms (`gates/rules.md`). Only `transform` and `opacity` are animated; no `width`, `height`, `top`, `left` or grid tracks. Loops (the spinner only) stop when the action ends.
 
 ## Timing sheet

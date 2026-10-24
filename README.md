@@ -12,6 +12,7 @@ Documents:
 - [`SCHEMA.md`](./SCHEMA.md), [`DATA.md`](./DATA.md), [`MOTION.md`](./MOTION.md): data contract, data policy, motion
 - [`MEDIA.md`](./MEDIA.md): every font and image with its source and licence
 - [`docs/LICENSING.md`](./docs/LICENSING.md) and [`THIRD_PARTY_NOTICES.md`](./THIRD_PARTY_NOTICES.md): provisional licensing plan and the dependency licence inventory (draft). There is **no `LICENSE` file yet**: the licence text must be written or reviewed by a lawyer before the template is sold
+- [`docs/REDESIGN-BUILD-PLAN.md`](./docs/REDESIGN-BUILD-PLAN.md), [`docs/REDESIGN-DIRECTION.md`](./docs/REDESIGN-DIRECTION.md), [`docs/REDESIGN-CONTRACT-DELTA.md`](./docs/REDESIGN-CONTRACT-DELTA.md): the storefront redesign (Night Bazaar Light, time-of-day themes, banners, search)
 - [`CHANGELOG.md`](./CHANGELOG.md), [`GATE.md`](./GATE.md), [`CRITIQUE.md`](./CRITIQUE.md): history, the latest design-gate run, the advisory critique
 
 ## Data policy

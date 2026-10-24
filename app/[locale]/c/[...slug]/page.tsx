@@ -4,10 +4,11 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { Breadcrumbs } from "@/components/store/Breadcrumbs";
+import { PlacementBanner } from "@/components/home/PlacementBanner";
 import { ListingView } from "@/components/store/ListingView";
 import { SetupRequired } from "@/components/states/SetupRequired";
 import { localeHref } from "@/lib/i18n/href";
-import { categoryPath, listPublishedProducts, resolveCategoryPath, subtreeIds } from "@/lib/modules/storefront/catalogue";
+import { categoryPath, listPublishedBanners, listPublishedProducts, resolveCategoryPath, subtreeIds } from "@/lib/modules/storefront/catalogue";
 import { loadStore, moneyFormat, shown, shownLang, siteOrigin } from "@/lib/storefront/context";
 import { categoryNames, localeOf, storeMetadata } from "@/lib/storefront/page";
 import { parseListingParams } from "@/lib/storefront/params";
@@ -33,7 +34,7 @@ export default async function CategoryPage({ params, searchParams }: PageProps<"
   const t = await getTranslations({ locale, namespace: "store" });
   const shell = await getTranslations({ locale, namespace: "shell" });
   const parsed = parseListingParams(await searchParams);
-  const listing = await listPublishedProducts(store.db, { categoryIds: subtreeIds(category), ...parsed.query });
+  const [listing, banners] = await Promise.all([listPublishedProducts(store.db, { categoryIds: subtreeIds(category), ...parsed.query }), listPublishedBanners(store.db, "category_top", new Date(), 1)]);
   const origin = await siteOrigin();
   const crumbs = [
     { name: shell("nav.home"), href: localeHref(locale, "/") },
@@ -62,6 +63,7 @@ export default async function CategoryPage({ params, searchParams }: PageProps<"
               </ul>
             </nav>
           ) : null}
+          {banners[0] ? <PlacementBanner store={store} banner={banners[0]} locale={locale} width={1280} height={400} className="category-banner" /> : null}
         </>
       }
       intro={category.description ? <p className="listing-intro">{shown(category.description, locale)}</p> : null}
