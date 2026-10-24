@@ -4,7 +4,7 @@ import { getTranslations } from "next-intl/server";
 import { ListingView } from "@/components/store/ListingView";
 import { SetupRequired } from "@/components/states/SetupRequired";
 import { localeHref } from "@/lib/i18n/href";
-import { listPublishedProducts } from "@/lib/modules/storefront/catalogue";
+import { cachedListing } from "@/lib/storefront/public-cache";
 import { loadStore, moneyFormat } from "@/lib/storefront/context";
 import { categoryNames, localeOf, storeMetadata } from "@/lib/storefront/page";
 import { parseListingParams } from "@/lib/storefront/params";
@@ -23,7 +23,7 @@ export default async function Page({ params, searchParams }: PageProps<"/[locale
   if (!store.ready) return <SetupRequired locale={locale} status={store.status} />;
   const t = await getTranslations({ locale, namespace: "store" });
   const parsed = parseListingParams(await searchParams);
-  const listing = await listPublishedProducts(store.db, { deals: true, ...parsed.query });
+  const listing = await cachedListing(store.db, { deals: true, ...parsed.query });
   return (
     <ListingView
       locale={locale}

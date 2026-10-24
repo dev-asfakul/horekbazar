@@ -3,6 +3,7 @@
 // general settings (settings.write) and delivery zones (delivery.write). Capability checks run on
 // the server in staffContext for every action.
 import { refresh } from "next/cache";
+import { afterPublicWrite } from "@/lib/storefront/invalidate";
 import { ObjectId } from "mongodb";
 import { isOwnPublicId } from "@/lib/adapters/media/cloudinary";
 import {
@@ -85,6 +86,7 @@ export async function createCollectionAction(_: FormState, form: FormData): Prom
   } catch (error) {
     return fail(serviceErrorCode(error), undefined, values);
   }
+  afterPublicWrite("collection");
   refresh();
   return ok("merch_created");
 }
@@ -99,6 +101,7 @@ export async function updateCollectionAction(_: FormState, form: FormData): Prom
   } catch (error) {
     return fail(serviceErrorCode(error), undefined, values);
   }
+  afterPublicWrite("collection");
   refresh();
   return ok("catalogue_saved");
 }
@@ -113,6 +116,7 @@ export async function setCollectionStatusAction(_: FormState, form: FormData): P
   } catch (error) {
     return fail(serviceErrorCode(error));
   }
+  afterPublicWrite("collection");
   refresh();
   return ok(`catalogue_status_${status}`);
 }
@@ -126,6 +130,7 @@ export async function deleteCollectionAction(_: FormState, form: FormData): Prom
   } catch (error) {
     return fail(serviceErrorCode(error));
   }
+  afterPublicWrite("collection");
   refresh();
   return ok("catalogue_deleted");
 }
@@ -161,6 +166,7 @@ export async function createBannerAction(_: FormState, form: FormData): Promise<
   } catch (error) {
     return fail(serviceErrorCode(error), undefined, values);
   }
+  afterPublicWrite("banner");
   refresh();
   return ok("merch_created");
 }
@@ -175,6 +181,7 @@ export async function updateBannerAction(_: FormState, form: FormData): Promise<
   } catch (error) {
     return fail(serviceErrorCode(error), undefined, values);
   }
+  afterPublicWrite("banner");
   refresh();
   return ok("catalogue_saved");
 }
@@ -189,6 +196,7 @@ export async function setBannerStatusAction(_: FormState, form: FormData): Promi
   } catch (error) {
     return fail(serviceErrorCode(error));
   }
+  afterPublicWrite("banner");
   refresh();
   return ok(`catalogue_status_${status}`);
 }
@@ -202,6 +210,7 @@ export async function deleteBannerAction(_: FormState, form: FormData): Promise<
   } catch (error) {
     return fail(serviceErrorCode(error));
   }
+  afterPublicWrite("banner");
   refresh();
   return ok("catalogue_deleted");
 }
@@ -281,6 +290,7 @@ export async function createHomeSectionAction(_: FormState, form: FormData): Pro
   } catch (error) {
     return fail(serviceErrorCode(error), undefined, values);
   }
+  afterPublicWrite("homeSection");
   refresh();
   return ok("merch_created");
 }
@@ -295,6 +305,7 @@ export async function updateHomeSectionAction(_: FormState, form: FormData): Pro
   } catch (error) {
     return fail(serviceErrorCode(error), undefined, values);
   }
+  afterPublicWrite("homeSection");
   refresh();
   return ok("catalogue_saved");
 }
@@ -309,6 +320,7 @@ export async function setHomeSectionStatusAction(_: FormState, form: FormData): 
   } catch (error) {
     return fail(serviceErrorCode(error));
   }
+  afterPublicWrite("homeSection");
   refresh();
   return ok(`catalogue_status_${status}`);
 }
@@ -322,6 +334,7 @@ export async function deleteHomeSectionAction(_: FormState, form: FormData): Pro
   } catch (error) {
     return fail(serviceErrorCode(error));
   }
+  afterPublicWrite("homeSection");
   refresh();
   return ok("catalogue_deleted");
 }
@@ -373,6 +386,7 @@ export async function updateGeneralSettingsAction(_: FormState, form: FormData):
     const detail = (error as { detail?: { field?: string } }).detail;
     return code === "catalogue_invalid" && detail?.field === "accent" ? fail("fix_fields", { accent: "accent_contrast" }, values) : fail(code, undefined, values);
   }
+  afterPublicWrite("settings");
   refresh();
   return ok("settings_saved");
 }
@@ -399,6 +413,7 @@ export async function upsertDeliveryZoneAction(_: FormState, form: FormData): Pr
   } catch (error) {
     return fail(serviceErrorCode(error), undefined, values);
   }
+  afterPublicWrite("settings");
   refresh();
   return ok("settings_zone_saved");
 }
@@ -412,6 +427,7 @@ export async function removeDeliveryZoneAction(_: FormState, form: FormData): Pr
   } catch (error) {
     return fail(serviceErrorCode(error));
   }
+  afterPublicWrite("settings");
   refresh();
   return ok("settings_zone_removed");
 }

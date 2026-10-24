@@ -7,7 +7,8 @@ import { Breadcrumbs } from "@/components/store/Breadcrumbs";
 import { ListingView } from "@/components/store/ListingView";
 import { SetupRequired } from "@/components/states/SetupRequired";
 import { localeHref } from "@/lib/i18n/href";
-import { collectionQuery, listPublishedProducts } from "@/lib/modules/storefront/catalogue";
+import { collectionQuery } from "@/lib/modules/storefront/catalogue";
+import { cachedListing } from "@/lib/storefront/public-cache";
 import { loadStore, moneyFormat, shown, shownLang, siteOrigin } from "@/lib/storefront/context";
 import { categoryNames, localeOf, storeMetadata } from "@/lib/storefront/page";
 import { parseListingParams } from "@/lib/storefront/params";
@@ -34,7 +35,7 @@ export default async function CollectionPage({ params, searchParams }: PageProps
   const t = await getTranslations({ locale, namespace: "store" });
   const shell = await getTranslations({ locale, namespace: "shell" });
   const parsed = parseListingParams(await searchParams);
-  const listing = await listPublishedProducts(store.db, { ...collectionQuery(collection, store.tree), ...parsed.query });
+  const listing = await cachedListing(store.db, { ...collectionQuery(collection, store.tree), ...parsed.query });
   const name = shown(collection.name, locale);
   const crumbs = [
     { name: shell("nav.home"), href: localeHref(locale, "/") },

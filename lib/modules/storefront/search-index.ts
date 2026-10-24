@@ -166,6 +166,8 @@ export function matchIndex(index: SearchIndex, query: string, limit = 60): strin
 const TTL_MS = 60_000;
 let cached: { db: Db; index: SearchIndex } | null = null;
 let building: Promise<SearchIndex> | null = null;
+/** Bumped by `invalidateSearchIndex`: a build that started before a catalogue write is not kept. */
+let generation = 0;
 
 interface RawProduct {
   _id: ObjectId;
@@ -178,7 +180,8 @@ interface RawProduct {
 export async function catalogueIndex(db: Db, now = Date.now()): Promise<SearchIndex> {
   if (cached && cached.db === db && now - cached.index.builtAt < TTL_MS) return cached.index;
   if (building) return building;
-  building = (async () => {
+  const started = generation;
+  const thisBuild = (async () => {
     const cats = await db
       .collection<{ _id: ObjectId; name: { bn?: string; en?: string } }>(CATEGORIES)
       .find({ status: "published" }, { projection: { name: 1 } })
@@ -199,14 +202,25 @@ export async function catalogueIndex(db: Db, now = Date.now()): Promise<SearchIn
       })),
       now,
     );
-    cached = { db, index };
+    if (started === generation) cached = { db, index };
     return index;
   })();
+  building = thisBuild;
   try {
-    return await building;
+    return await thisBuild;
   } finally {
-    building = null;
+    if (building === thisBuild) building = null;
   }
+}
+
+/**
+ * Forgets this process's index after a catalogue write (Phase A, docs/CACHE-INVENTORY.md §3), so the
+ * next search rebuilds from MongoDB. Other server instances catch up within TTL_MS.
+ */
+export function invalidateSearchIndex(): void {
+  generation++;
+  cached = null;
+  building = null;
 }
 
 /** Test hook: forget the cached index. */

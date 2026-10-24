@@ -22,7 +22,8 @@ import { cloudinaryConfig, deliveryUrl } from "@/lib/adapters/media/cloudinary";
 import { formatMoney } from "@/lib/format/money";
 import { localeHref } from "@/lib/i18n/href";
 import { productReviews } from "@/lib/modules/reviews/reviews";
-import { categoryPath, listPublishedProducts } from "@/lib/modules/storefront/catalogue";
+import { categoryPath } from "@/lib/modules/storefront/catalogue";
+import { cachedListing } from "@/lib/storefront/public-cache";
 import { loadStore, moneyFormat, shown, shownLang, siteOrigin } from "@/lib/storefront/context";
 import { categoryNames, localeOf, storeMetadata } from "@/lib/storefront/page";
 import { unitLabels } from "@/lib/storefront/units";
@@ -70,7 +71,7 @@ export default async function ProductPage({ params, searchParams }: PageProps<"/
     ...chain.map((c) => ({ name: shown(c.name, locale), href: localeHref(locale, categoryPath(c)), lang: shownLang(c.name, locale) })),
     { name, href: localeHref(locale, path), lang: shownLang(product.name, locale) },
   ];
-  const related = primaryCategory ? (await listPublishedProducts(store.db, { categoryIds: [primaryCategory.id], sort: "new", pageSize: 9 })).items.filter((i) => i.id !== String(product._id)).slice(0, 8) : [];
+  const related = primaryCategory ? (await cachedListing(store.db, { categoryIds: [primaryCategory.id], sort: "new", pageSize: 9 })).items.filter((i) => i.id !== String(product._id)).slice(0, 8) : [];
   const images = cloud ? product.media : [];
   // B9: published reviews only, while the store has reviews on.
   const reviews = store.settings.features.reviews ? await productReviews(store.db, product._id, 10) : null;

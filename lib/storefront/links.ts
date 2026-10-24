@@ -3,8 +3,8 @@ import "server-only";
 // (Proposal 04b): a published category, collection or product, or one of the storefront's own
 // pages. A link that does not resolve is dropped and the banner shows without one.
 import type { Db } from "mongodb";
-import { PRODUCTS } from "@/lib/modules/catalogue/schema";
-import { listPublishedCollections, type CategoryTree } from "@/lib/modules/storefront/catalogue";
+import type { CategoryTree } from "@/lib/modules/storefront/catalogue";
+import { cachedCollections, cachedProductExists } from "@/lib/storefront/public-cache";
 
 const PAGES = new Set(["/", "/categories", "/new", "/deals", "/search", "/collections", "/cart", "/account", "/about", "/contact", "/faq", "/delivery-policy", "/return-policy", "/privacy-policy", "/terms"]);
 
@@ -22,7 +22,7 @@ export async function resolvesInternal(db: Db, tree: CategoryTree, href: string 
     }
     return true;
   }
-  if (kind === "collections" && rest.length === 1) return (await listPublishedCollections(db)).some((c) => c.slug === decodeURIComponent(rest[0]!));
-  if (kind === "p" && rest.length === 1) return (await db.collection(PRODUCTS).countDocuments({ slug: decodeURIComponent(rest[0]!), status: "published" }, { limit: 1 })) > 0;
+  if (kind === "collections" && rest.length === 1) return (await cachedCollections(db)).some((c) => c.slug === decodeURIComponent(rest[0]!));
+  if (kind === "p" && rest.length === 1) return cachedProductExists(db, decodeURIComponent(rest[0]!));
   return false;
 }

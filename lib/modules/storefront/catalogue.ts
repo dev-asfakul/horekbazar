@@ -31,13 +31,22 @@ export interface CategoryTree {
   bySlug: Map<string, StoreCategory>;
 }
 
-/** Published categories as a tree. A category whose parent is not published is left out with its subtree. */
-export async function categoryTree(db: Db): Promise<CategoryTree> {
-  const docs = await db
+/** The published category rows the tree is built from (also what the public-data cache stores). */
+export type CategoryRow = Pick<CategoryDoc, "_id" | "slug" | "name" | "description" | "parentId" | "position">;
+export async function categoryRows(db: Db): Promise<CategoryRow[]> {
+  return db
     .collection<CategoryDoc>(CATEGORIES)
     .find({ status: "published" }, { projection: { slug: 1, name: 1, description: 1, parentId: 1, position: 1 } })
     .sort({ position: 1, slug: 1 })
     .toArray();
+}
+
+/** Published categories as a tree. A category whose parent is not published is left out with its subtree. */
+export async function categoryTree(db: Db): Promise<CategoryTree> {
+  return buildCategoryTree(await categoryRows(db));
+}
+
+export function buildCategoryTree(docs: CategoryRow[]): CategoryTree {
   const all = new Map<string, StoreCategory>();
   for (const d of docs) {
     all.set(String(d._id), { id: String(d._id), slug: d.slug, name: d.name, description: d.description, parentId: d.parentId ? String(d.parentId) : null, position: d.position, children: [], ancestors: [] });
@@ -303,7 +312,14 @@ export interface ProductPage {
 }
 
 /** A published product by slug with its active priced variants (in position order) and their availability. */
-export async function getPublishedProduct(db: Db, tree: CategoryTree, slug: string): Promise<ProductPage | null> {
+export interface ProductCore {
+  product: ProductDoc;
+  /** Active, priced variants in position order, without stock. */
+  variants: VariantDoc[];
+}
+
+/** The published product and its active variants (no stock): the part the public-data cache may hold. */
+export async function publishedProductCore(db: Db, slug: string): Promise<ProductCore | null> {
   if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug) || slug.length > 80) return null;
   const product = await db.collection<ProductDoc>(PRODUCTS).findOne({ slug, status: "published" });
   if (!product) return null;
@@ -313,21 +329,52 @@ export async function getPublishedProduct(db: Db, tree: CategoryTree, slug: stri
     .sort({ position: 1 })
     .toArray();
   if (variants.length === 0) return null;
+  return { product, variants };
+}
+
+/** Adds the stored availability (always read live) to a product core. */
+export async function productPageWithStock(db: Db, tree: CategoryTree, core: ProductCore): Promise<ProductPage> {
   const stock = await db
     .collection<{ variantId: ObjectId; available: number }>(STOCK)
-    .find({ variantId: { $in: variants.map((v) => v._id) } }, { projection: { variantId: 1, available: 1 } })
+    .find({ variantId: { $in: core.variants.map((v) => v._id) } }, { projection: { variantId: 1, available: 1 } })
     .toArray();
   const available = new Map(stock.map((s) => [String(s.variantId), s.available]));
   return {
-    product,
-    variants: variants.map((v) => ({ ...v, available: available.get(String(v._id)) ?? 0 })),
-    primaryCategory: tree.byId.get(String(product.primaryCategoryId)) ?? null,
+    product: core.product,
+    variants: core.variants.map((v) => ({ ...v, available: available.get(String(v._id)) ?? 0 })),
+    primaryCategory: tree.byId.get(String(core.product.primaryCategoryId)) ?? null,
   };
 }
 
-const visibleNow = (now: Date): Document => ({
+export async function getPublishedProduct(db: Db, tree: CategoryTree, slug: string): Promise<ProductPage | null> {
+  const core = await publishedProductCore(db, slug);
+  return core ? productPageWithStock(db, tree, core) : null;
+}
+
+export const visibleNow = (now: Date): Document => ({
   $and: [{ $or: [{ visibleFrom: { $exists: false } }, { visibleFrom: { $lte: now } }] }, { $or: [{ visibleTo: { $exists: false } }, { visibleTo: { $gt: now } }] }],
 });
+
+/** The same rule as `visibleNow`, applied in memory (absent bound = open; anything but a Date = hidden, as in MongoDB). */
+export function visibleAt(doc: { visibleFrom?: unknown; visibleTo?: unknown }, now: Date): boolean {
+  const from = doc.visibleFrom;
+  const to = doc.visibleTo;
+  if (from !== undefined && !(from instanceof Date && from.getTime() <= now.getTime())) return false;
+  if (to !== undefined && !(to instanceof Date && to.getTime() > now.getTime())) return false;
+  return true;
+}
+
+/** Every published home section with its schedule, in display order (the cache applies `visibleAt`). */
+export async function allPublishedHomeSections(db: Db, limit = 200): Promise<Document[]> {
+  return db.collection(HOME_SECTIONS).find({ status: "published" }).sort({ order: 1, _id: 1 }).limit(limit).toArray();
+}
+
+export const toHomeSection = (d: Document): HomeSection => ({ id: String(d._id), type: String(d.type), data: d.data as Record<string, unknown> });
+
+/** Every published banner with its schedule, newest first (the cache applies placement and `visibleAt`). */
+export async function allPublishedBanners(db: Db, limit = 500): Promise<BannerDoc[]> {
+  return db.collection<BannerDoc>(BANNERS).find({ status: "published" }).sort({ updatedAt: -1 }).limit(limit).toArray();
+}
 
 export async function listPublishedCollections(db: Db): Promise<CollectionDoc[]> {
   return db.collection<CollectionDoc>(COLLECTIONS).find({ status: "published" }).sort({ updatedAt: -1 }).limit(200).toArray();
@@ -355,7 +402,7 @@ export async function listHomeSections(db: Db, now = new Date()): Promise<HomeSe
     .sort({ order: 1, _id: 1 })
     .limit(30)
     .toArray();
-  return docs.map((d) => ({ id: String(d._id), type: String(d.type), data: d.data as Record<string, unknown> }));
+  return docs.map(toHomeSection);
 }
 
 export async function getPublishedBanner(db: Db, id: string, now = new Date()): Promise<BannerDoc | null> {

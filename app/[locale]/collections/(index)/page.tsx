@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { SetupRequired } from "@/components/states/SetupRequired";
 import { localeHref } from "@/lib/i18n/href";
-import { listPublishedCollections } from "@/lib/modules/storefront/catalogue";
+import { cachedCollections } from "@/lib/storefront/public-cache";
 import { loadStore, shown, shownLang } from "@/lib/storefront/context";
 import { localeOf, storeMetadata } from "@/lib/storefront/page";
 
@@ -21,7 +21,7 @@ export default async function CollectionsPage({ params }: PageProps<"/[locale]/c
   const store = await loadStore();
   if (!store.ready) return <SetupRequired locale={locale} status={store.status} />;
   const t = await getTranslations({ locale, namespace: "store.collections" });
-  const list = await listPublishedCollections(store.db);
+  const list = await cachedCollections(store.db);
   return (
     <div className="listing" data-testid="collections">
       <header className="listing-head">

@@ -1,26 +1,30 @@
 // Per-request storefront context (B5). One readiness check, one settings read and one category tree
 // per request (React cache). Pages render the setup-required state when `ready` is false.
+// Phase A (D24): "store configured", settings and the category tree come from the public-data cache
+// (lib/storefront/public-cache.ts); the database health check stays live. Storefront rendering only:
+// quotes and checkout read settings from MongoDB themselves.
 import { cache } from "react";
 import { headers } from "next/headers";
 import type { Db } from "mongodb";
-import { getDatabase } from "@/lib/adapters/db/client";
+import { checkDatabase, getDatabase } from "@/lib/adapters/db/client";
 import { moneyFormatFor, type MoneyFormat } from "@/lib/format/money";
 import { localeHref } from "@/lib/i18n/href";
 import { htmlLang, locales, type Locale } from "@/lib/i18n/locales";
 import type { LocalizedText } from "@/lib/modules/catalogue/schema";
-import { getSettings } from "@/lib/modules/settings/settings";
-import { categoryTree, type CategoryTree } from "@/lib/modules/storefront/catalogue";
+import type { getSettings } from "@/lib/modules/settings/settings";
+import type { CategoryTree } from "@/lib/modules/storefront/catalogue";
 import { getSetupStatus, type SetupStatus } from "@/lib/setup/status";
+import { cachedCategoryTree, cachedSettings, cachedStoreConfigured } from "@/lib/storefront/public-cache";
 
 export type StoreContext =
   | { ready: false; status: SetupStatus }
   | { ready: true; status: SetupStatus; db: Db; settings: Awaited<ReturnType<typeof getSettings>>; tree: CategoryTree };
 
 export const loadStore = cache(async (): Promise<StoreContext> => {
-  const status = await getSetupStatus(process.env);
+  const status = await getSetupStatus(process.env, checkDatabase, cachedStoreConfigured);
   if (!status.ready) return { ready: false, status };
   const db = await getDatabase();
-  const [settings, tree] = await Promise.all([getSettings(db), categoryTree(db)]);
+  const [settings, tree] = await Promise.all([cachedSettings(db), cachedCategoryTree(db)]);
   return { ready: true, status, db, settings, tree };
 });
 
