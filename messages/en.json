@@ -1998,7 +1998,9 @@
       "adding": "Adding…",
       "quantity": "Quantity",
       "viewCart": "View cart",
-      "added": "Added to your cart."
+      "added": "Added to your cart.",
+      "decrease": "Decrease quantity by 1",
+      "increase": "Increase quantity by 1"
     },
     "search": {
       "title": "Search",
@@ -2086,7 +2088,10 @@
       "checkoutOff": "Online ordering is not open yet. When the store opens it, you can order from here.",
       "checkoutFix": "Please fix the problems above before ordering.",
       "signInToSave": "Sign in to keep this cart on your account.",
-      "priceNote": "Prices are checked again at checkout."
+      "priceNote": "Prices are checked again at checkout.",
+      "decrease": "Decrease quantity by 1",
+      "increase": "Increase quantity by 1",
+      "updating": "Updating totals…"
     },
     "checkout": {
       "title": "Checkout",

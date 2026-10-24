@@ -1194,6 +1194,76 @@ html[data-store] .quick-add-step:active {
   transform: scale(0.94);
 }
 
+/* Quantity stepper (Phase B): product page and cart share one "− n +" control */
+html[data-store] .qty-stepper {
+  display: inline-flex;
+  align-items: center;
+  height: 46px;
+  border: 1.5px solid var(--line-strong);
+  border-radius: 999px;
+  background: var(--raised);
+  color: var(--ink);
+}
+html[data-store] .qty-stepper[aria-busy="true"] {
+  border-color: var(--accent);
+}
+html[data-store] .qty-stepper-btn {
+  width: 44px;
+  height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+html[data-store] .qty-stepper-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.38;
+}
+html[data-store] .qty-stepper-input {
+  width: 3ch;
+  min-width: 36px;
+  height: 44px;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+html[data-store] .qty-stepper-input:focus-visible,
+html[data-store] .qty-stepper-btn:focus-visible {
+  outline: 2px solid var(--link);
+  outline-offset: 2px;
+}
+@media (prefers-reduced-motion: no-preference) {
+  html[data-store] .qty-stepper-btn:not(:disabled):active {
+    transform: scale(0.92);
+  }
+}
+html[data-store] .cart-qty {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+html[data-store] .cart-qty-error {
+  flex-basis: 100%;
+  margin: 0;
+}
+html[data-store] .cart-busy[data-pending] :is(dd, .cart-line-total) {
+  opacity: 0.5;
+}
+html[data-store] .cart-busy-note {
+  margin: 4px 0 0;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
 /* Rails: a sideways shelf of the same cards */
 html[data-store] .khata-grid[data-layout="rail"] {
   grid-template-columns: none;

@@ -2,6 +2,14 @@
 
 Newest first. Each entry: date, phase, done, decided, open, next. Entries are snapshots of their date: "not merged", "open" or "next" describe that day; the current state is in `docs/STATUS.md` (first rows) and `docs/HANDOFF.md`.
 
+## 2026-10-25 — Phase B: cart quantity stepper (PR, merged after CI)
+
+- **Owner (2026-10-25):** build Phases B–F one after another, each committed, merged and recorded before the next; no Motomation gate run. Phase A (PR #46) was merged 2026-10-24 as `1a6496d`, so the 2026-10-24 "Next" line below is closed. Inferred B–E scopes and the tracker: `docs/PHASES.md`.
+- **Done:** one reusable quantity stepper on the product page and the cart; cart changes are optimistic in the field, debounced (350 ms) and sent as an absolute quantity; totals stay server-computed and are marked "updating" until the re-priced cart arrives; stock and 99-per-line limits; minimum 1; refusal reverts and is announced; no-JS fallback. Limits moved to `lib/modules/pricing/limits.ts`.
+- **Not changed:** server actions, pricing, stock, cart and checkout rules, schema, dependencies, CSP, `private, no-cache, no-store`.
+- **Checks run locally (Node 24):** lint, typecheck, unit 261, integration 224, build, Playwright signed-in journeys `commerce/cart.spec.ts` and `commerce/checkout.spec.ts` (3 passed, Chromium). Other browser suites left to CI.
+- **Next:** Phase C (navigation feedback).
+
 ## 2026-10-24 — Performance Phase A: public-data cache and invalidation (PR open, not merged)
 
 - **Approved scope (owner, 2026-10-24):** Phase A only, public-data caching and its invalidation; decisions D24–D27 (`docs/BUILD-PLAN.md` §13). Phases B–E not started.
