@@ -28,6 +28,22 @@ const PATHS = {
   logout: "M10 5H5v14h5M14 8l4 4-4 4M18 12H9",
   chevron: "M9 6l6 6-6 6",
   store: "M4 9l1.5-5h13L20 9M4 9v11h16V9M4 9h16M9.5 20v-6h5v6",
+  // Admin (Proposal A1): same 24 px grid and 1.9 stroke.
+  menu: "M4 7h16M4 12h16M4 17h16",
+  close: "M6 6l12 12M18 6L6 18",
+  search: "M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14zM20 20l-4-4",
+  plus: "M12 5v14M5 12h14",
+  back: "M15 6l-6 6 6 6",
+  home: "M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z",
+  tag: "M3 12V4h8l10 10-8 8L3 12zM7.5 8.5h.01",
+  box: "M4 8l8-4 8 4v8l-8 4-8-4V8zM4 8l8 4 8-4M12 12v8",
+  stack: "M12 4l8 4-8 4-8-4 8-4zM4 12l8 4 8-4M4 16l8 4 8-4",
+  image: "M4 5h16v14H4zM4 16l5-5 4 4 3-3 4 4M15.5 9h.01",
+  percent: "M6 18L18 6M7.5 9a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zM16.5 18a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z",
+  ticket: "M3 7h18v3a2 2 0 0 0 0 4v3H3v-3a2 2 0 0 0 0-4V7zM14 7v10",
+  sliders: "M4 7h10M18 7h2M4 17h4M12 17h8M16 5v4M10 15v4",
+  pulse: "M3 12h4l2-5 4 10 2-5h6",
+  tree: "M5 4h6v5H5zM13 15h6v5h-6zM8 9v8.5h5",
 } as const;
 
 export type IconName = keyof typeof PATHS;

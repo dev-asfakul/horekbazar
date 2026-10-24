@@ -124,6 +124,8 @@ test("bulk status changes the selected products on the server, one by one", asyn
   await signIn(page.context());
   await page.goto("/admin/products?q=e2e");
   const form = page.getByTestId("bulk-status-form");
+  // The controls sit behind the "Select products" disclosure (Proposal A1).
+  await form.getByText("Select products").click();
   // Nothing selected: the server refuses with a clear message.
   await form.getByRole("button", { name: "Apply to selected" }).click();
   await expect(form.getByRole("alert")).toHaveText("Select at least one product.");

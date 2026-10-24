@@ -2,6 +2,14 @@
 
 Every font, image and other media file the store uses, with its source and licence (docs/LICENSING.md, Motomation `craft/media.md`). Update this file in the same change that adds, replaces or removes media. Status checked on 2026-10-23.
 
+## Inventory (files kept in this repository)
+
+| File or asset | Source URL | License / usage status | Placeholder? | Replace before production? |
+|---|---|---|---|---|
+| `docs/proposals/admin-a1/` | custom (admin redesign A1 mockups, AI-generated in this project from the storefront design, see docs/ADMIN-REDESIGN-A1.md) | project documentation only; not shipped in the app or the template | no | no |
+
+Fonts, icons and showcase images are listed in their own sections below.
+
 ## Fonts (shipped in `public/fonts/v1/`)
 
 | File | Family | Licence | Source / licence file |

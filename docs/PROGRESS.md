@@ -2,6 +2,15 @@
 
 Newest first. Each entry: date, phase, done, decided, open, next. Entries are snapshots of their date: "not merged", "open" or "next" describe that day; the current state is in `docs/STATUS.md` (first rows) and `docs/HANDOFF.md`.
 
+## 2026-10-24 — Admin redesign A1: built on `feat/admin-a1` (Checkpoint 5, waiting for review)
+
+- **Built (owner approved the plan 2026-10-24):** `app/admin.css` (storefront tokens and fonts, scoped to `html[data-admin]`), new shell (`AdminShell`, `AdminNav`, `AdminTopBar` with the full-screen dialog menu, fixed sidebar from 1024 px), grouped sections and current-page rule, admin home with real capped work counts, quick actions and tiles, nav badges for Orders and Messages, list/filter/form re-skin, "Select products" disclosure, order-detail columns.
+- **Not changed:** business logic, server actions, API routes, auth, 2FA, capabilities and roles, schema, validators, indexes, migrations, dependencies, storefront CSS and components, `messages/bn.json`.
+- **Deviations from the plan:** the menu component is `AdminTopBar.tsx` (top bar and dialog together) instead of `AdminMenu.tsx`; its links render only while it is open, so a page has one navigation landmark; active-section tests live in `tests/unit/admin-sections.test.ts`; `bn.json` gets no admin keys (the admin is English-only and `messages.test` forbids them); `tests/e2e-db/catalogue-admin.spec.ts` opens "Select products" before using the bulk form (one added step); no order-detail screenshot (the disposable preview database has no orders and none were created; the order-detail journeys in `tests/e2e-db/commerce/*` passed).
+- **Tests added:** `tests/unit/admin-sections.test.ts` (20), `tests/integration/admin-work-counts.test.ts` (7), `tests/e2e-db/admin-shell.spec.ts` (5).
+- **Results:** see the PR; only checks that ran are reported there.
+- **Next:** owner review of the Checkpoint 5 screenshots and the PR; then the Motomation gate and critique (Checkpoint 6).
+
 ## 2026-10-24 — Admin redesign: Proposal A1 approved; Checkpoint 4 build plan for approval
 
 - **Done:** read-only audit of the admin (22 sections, capabilities, workflows) and the implemented storefront tokens. App run under Node 24.22.1 with the disposable in-memory database harness only. Static mockups in `docs/proposals/admin-a1/`.

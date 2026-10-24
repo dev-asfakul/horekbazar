@@ -121,7 +121,14 @@
   "admin": {
     "shell": {
       "label": "Admin",
-      "skipToMain": "Skip to main content"
+      "skipToMain": "Skip to main content",
+      "openMenu": "Open menu",
+      "closeMenu": "Close menu",
+      "menu": "Menu",
+      "home": "Home",
+      "backHome": "Go to admin home",
+      "twoFactorOn": "2-step verification on",
+      "twoFactorOff": "2-step verification off"
     },
     "denied": {
       "title": "You do not have permission to view this page",
@@ -228,10 +235,21 @@
       "rewards": "Rewards",
       "notifications": "Notifications",
       "customers": "Customers",
-      "audit": "Audit log"
+      "audit": "Audit log",
+      "home": "Home",
+      "groups": {
+        "sales": "Sales",
+        "customers": "Customers",
+        "catalogue": "Catalogue",
+        "storefront": "Storefront",
+        "marketing": "Marketing",
+        "settings": "Settings",
+        "system": "System"
+      },
+      "waiting": "{count} waiting"
     },
     "home": {
-      "title": "Admin",
+      "title": "Admin home",
       "intro": "Sections your role can use.",
       "signedInAs": "Signed in as {email} · {role}",
       "sections": "Sections",
@@ -256,7 +274,21 @@
       "rewardsDesc": "Loyalty points rules, balances and adjustments.",
       "notificationsDesc": "Browser notification campaigns and the order e-mail log.",
       "customersDesc": "Look up a customer's account, addresses and orders.",
-      "auditDesc": "Who changed what, and when. Read only."
+      "auditDesc": "Who changed what, and when. Read only.",
+      "work": "Work waiting",
+      "workLoading": "Loading…",
+      "workError": "Couldn’t load",
+      "workNone": "Nothing waiting",
+      "workReview": "Review",
+      "countOrders": "Orders awaiting confirmation",
+      "countMessages": "Open messages",
+      "countReturns": "Return requests to review",
+      "countLowStock": "Low-stock items",
+      "quick": "Quick actions",
+      "newProduct": "New product",
+      "findCustomer": "Find a customer",
+      "findCustomerPlaceholder": "Name, e-mail or phone",
+      "findCustomerSubmit": "Search"
     },
     "setup": {
       "title": "Set up the store owner",
@@ -495,7 +527,8 @@
       "bulkSelected": "{count} selected",
       "bulkDone": "{done} of {total} products changed.",
       "bulkFailed": "Not changed:",
-      "bulkHint": "Up to 25 at a time. Each product is checked on its own: publishing needs a published category and a priced active variant."
+      "bulkHint": "Up to 25 at a time. Each product is checked on its own: publishing needs a published category and a priced active variant.",
+      "selectProducts": "Select products"
     },
     "categories": {
       "title": "Categories",

@@ -61,92 +61,99 @@ export default async function AdminOrderPage({ params }: PageProps<"/admin/order
           {t("reason")}: {order.statusReason}
         </p>
       ) : null}
-      <section className="admin-section" aria-labelledby="order-steps">
-        <h2 id="order-steps" className="admin-section-title">
-          {t("status")}
-        </h2>
-        {next.length < all.length ? <p className="field-hint">{t("shipmentDriven")}</p> : null}
-        {all.length === 0 ? (
-          <p className="field-hint">{t("noNext")}</p>
-        ) : next.length === 0 ? null : allowed.length === 0 ? (
-          <p className="field-hint">{t("deny")}</p>
-        ) : (
-          <div className="admin-actions" data-testid="order-actions">
-            {allowed.map((to) => (
-              <ActionForm
-                key={to}
-                action={transitionOrderAction}
-                testId={`order-to-${to}`}
-                hidden={{ orderId: String(order._id), version: String(order.version), to }}
-                fields={NEEDS_REASON.has(to) ? [{ name: "reason", label: t("reason"), hint: t("reasonHint"), required: true, maxLength: 500 }] : []}
-                messages={messages}
-                submitLabel={t(`actions.${to}` as never)}
-                pendingLabel={t(`actions.${to}` as never)}
-                variant={NEEDS_REASON.has(to) ? "danger" : "primary"}
-                layout={NEEDS_REASON.has(to) ? "stack" : "inline"}
-              />
-            ))}
-          </div>
-        )}
-      </section>
-      <ShipmentPanel order={order} shipments={shipments} principal={principal} messages={messages} />
-      <section className="admin-section" aria-labelledby="order-customer">
-        <h2 id="order-customer" className="admin-section-title">
-          {t("address")}
-        </h2>
-        <dl className="ledger">
-          <div className="ledger-row">
-            <dt>{t("customer")}</dt>
-            <dd>
-              {order.customer.name} · <span lang="en">{order.customer.email}</span>
-            </dd>
-          </div>
-          <div className="ledger-row">
-            <dt>{t("phone")}</dt>
-            <dd>
-              <a className="prose-link" href={`tel:${a.phone}`} data-testid="order-phone">
-                {phone}
-              </a>
-            </dd>
-          </div>
-          <div className="ledger-row">
-            <dt>{t("address")}</dt>
-            <dd>
-              {a.name} · {a.line}, {a.area}, {a.district} · {lt(a.zoneName, locale)}
-              {a.landmark ? ` · ${a.landmark}` : ""}
-            </dd>
-          </div>
-          <div className="ledger-row">
-            <dt>{t("payment")}</dt>
-            <dd>{t("cod")}</dd>
-          </div>
-          {order.note ? (
-            <div className="ledger-row">
-              <dt>{t("note")}</dt>
-              <dd>{order.note}</dd>
-            </div>
-          ) : null}
-        </dl>
-      </section>
-      <section className="admin-section" aria-labelledby="order-lines">
-        <h2 id="order-lines" className="admin-section-title">
-          {t("lines")}
-        </h2>
-        <OrderSummary order={order} locale={locale} format={ADMIN_NUMBERS} labels={{ subtotal: t("subtotal"), savings: t("savings"), coupon: t("coupon"), delivery: t("delivery"), grandTotal: t("grandTotal"), free: t("free"), qty: (qty) => t("qty", { qty }) }} />
-      </section>
-      <section className="admin-section" aria-labelledby="order-events">
-        <h2 id="order-events" className="admin-section-title">
-          {t("timeline")}
-        </h2>
-        <ol className="order-timeline">
-          {events.map((e) => (
-            <li key={e.seq}>
-              {t(`statuses.${e.to}`)} · {t("by", { actor: e.actor.type })} <time dateTime={e.createdAt.toISOString()}>{date.format(e.createdAt)}</time>
-              {e.reason ? ` · ${e.reason}` : ""}
-            </li>
-          ))}
-        </ol>
-      </section>
+      {/* Layout only (Proposal A1): status and shipment beside the details from 1024 px. */}
+      <div className="order-columns">
+        <div className="order-side">
+          <section className="admin-section" aria-labelledby="order-steps">
+            <h2 id="order-steps" className="admin-section-title">
+              {t("status")}
+            </h2>
+            {next.length < all.length ? <p className="field-hint">{t("shipmentDriven")}</p> : null}
+            {all.length === 0 ? (
+              <p className="field-hint">{t("noNext")}</p>
+            ) : next.length === 0 ? null : allowed.length === 0 ? (
+              <p className="field-hint">{t("deny")}</p>
+            ) : (
+              <div className="admin-actions" data-testid="order-actions">
+                {allowed.map((to) => (
+                  <ActionForm
+                    key={to}
+                    action={transitionOrderAction}
+                    testId={`order-to-${to}`}
+                    hidden={{ orderId: String(order._id), version: String(order.version), to }}
+                    fields={NEEDS_REASON.has(to) ? [{ name: "reason", label: t("reason"), hint: t("reasonHint"), required: true, maxLength: 500 }] : []}
+                    messages={messages}
+                    submitLabel={t(`actions.${to}` as never)}
+                    pendingLabel={t(`actions.${to}` as never)}
+                    variant={NEEDS_REASON.has(to) ? "danger" : "primary"}
+                    layout={NEEDS_REASON.has(to) ? "stack" : "inline"}
+                  />
+                ))}
+              </div>
+            )}
+          </section>
+          <ShipmentPanel order={order} shipments={shipments} principal={principal} messages={messages} />
+        </div>
+        <div className="order-main">
+          <section className="admin-section" aria-labelledby="order-customer">
+            <h2 id="order-customer" className="admin-section-title">
+              {t("address")}
+            </h2>
+            <dl className="ledger">
+              <div className="ledger-row">
+                <dt>{t("customer")}</dt>
+                <dd>
+                  {order.customer.name} · <span lang="en">{order.customer.email}</span>
+                </dd>
+              </div>
+              <div className="ledger-row">
+                <dt>{t("phone")}</dt>
+                <dd>
+                  <a className="prose-link" href={`tel:${a.phone}`} data-testid="order-phone">
+                    {phone}
+                  </a>
+                </dd>
+              </div>
+              <div className="ledger-row">
+                <dt>{t("address")}</dt>
+                <dd>
+                  {a.name} · {a.line}, {a.area}, {a.district} · {lt(a.zoneName, locale)}
+                  {a.landmark ? ` · ${a.landmark}` : ""}
+                </dd>
+              </div>
+              <div className="ledger-row">
+                <dt>{t("payment")}</dt>
+                <dd>{t("cod")}</dd>
+              </div>
+              {order.note ? (
+                <div className="ledger-row">
+                  <dt>{t("note")}</dt>
+                  <dd>{order.note}</dd>
+                </div>
+              ) : null}
+            </dl>
+          </section>
+          <section className="admin-section" aria-labelledby="order-lines">
+            <h2 id="order-lines" className="admin-section-title">
+              {t("lines")}
+            </h2>
+            <OrderSummary order={order} locale={locale} format={ADMIN_NUMBERS} labels={{ subtotal: t("subtotal"), savings: t("savings"), coupon: t("coupon"), delivery: t("delivery"), grandTotal: t("grandTotal"), free: t("free"), qty: (qty) => t("qty", { qty }) }} />
+          </section>
+          <section className="admin-section" aria-labelledby="order-events">
+            <h2 id="order-events" className="admin-section-title">
+              {t("timeline")}
+            </h2>
+            <ol className="order-timeline">
+              {events.map((e) => (
+                <li key={e.seq}>
+                  {t(`statuses.${e.to}`)} · {t("by", { actor: e.actor.type })} <time dateTime={e.createdAt.toISOString()}>{date.format(e.createdAt)}</time>
+                  {e.reason ? ` · ${e.reason}` : ""}
+                </li>
+              ))}
+            </ol>
+          </section>
+        </div>
+      </div>
     </div>
   );
 }
