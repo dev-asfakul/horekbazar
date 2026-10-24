@@ -7,8 +7,8 @@ Tracker for the phases after Performance Phase A (PR #46, merged as `1a6496d`). 
 | Phase | Scope | Status |
 |---|---|---|
 | B. Cart interaction | One reusable quantity stepper ("− n +") on the product page and the cart. Cart changes show at once, are sent as an absolute quantity after a 350 ms pause (rapid clicks become one write), totals stay the server's and are marked "updating" while a change is on its way. Stock and `MAX_LINE_QTY` limits, minimum 1, keyboard and screen-reader support, no-JS fallback. (= Phase F item 1) | **Done** (PR #47, merged as `7f116b4`) |
-| C. Navigation feedback | Subtle progress indicator for client navigations (customer and admin), the missing admin `loading.tsx` files, no full-screen loaders, no artificial delays, reduced motion. (= Phase F item 5) | **Done** (this PR) |
-| D. Search | 30 s browser cache for search suggestions, cleared on navigation (D27). | Not started |
+| C. Navigation feedback | Subtle progress indicator for client navigations (customer and admin), the missing admin `loading.tsx` files, no full-screen loaders, no artificial delays, reduced motion. (= Phase F item 5) | **Done** (PR #48, merged as `94dac8f`) |
+| D. Search | 30 s browser cache for search suggestions, cleared on navigation (D27; also named as Phase D in `docs/CACHE-INVENTORY.md`). | **Done** (this PR) |
 | E. Notification UX | Push opt-in offered after a meaningful action (order placed) with the existing `PushOptIn`, hidden when VAPID is not configured (B9 acceptance row). | Not started |
 | F. Remaining UX items | Home banner carousel, account navigation without the duplicate horizontal nav, guest checkout with secure order access and claim flow (new decision D28), configurable default language, dynamic footer category links. | Not started |
 
@@ -25,3 +25,10 @@ Tracker for the phases after Performance Phase A (PR #46, merged as `1a6496d`). 
 - **Loading audit:** every storefront and account data route already had a skeleton (account sub-pages share `account/loading.tsx`; static info pages have none and get the bar). Admin: `/admin/notifications` had neither a gate layout nor a skeleton; it now has `gatedLayout` (so the 403/redirect stays real, as in the other sections) and `AdminFormSkeleton`. The admin home keeps no route skeleton on purpose: its setup redirect runs in the page, and a boundary above it would turn that redirect into a streamed 200; its work counts already stream in their own `Suspense`.
 - **Not added:** full-screen loaders, artificial delays, a new dependency.
 - **Tests:** `tests/unit/navigation-progress.test.ts` (4), `tests/e2e-db/navigation-progress.spec.ts` (3: slow navigation shows one bar that clears, same-page link shows none, reduced motion does not animate).
+
+## Phase D record (2026-10-25)
+
+- **New:** `components/shell/suggest-cache.ts`: in-memory (never storage) map of suggestion answers keyed by locale and term, 30 s TTL, at most 40 terms (oldest dropped). `SearchCombobox` shows a cached answer at once without the 150 ms wait or a request (any older request in flight is made stale by the existing counter), stores successful answers only (429, errors and aborted requests are not kept), and clears the cache whenever the pathname changes.
+- **Unchanged (D27):** `/api/search/suggest` behaviour, its `s-maxage=60` header and live product rows; the plain GET form to `/search`; history in local storage.
+- **Known limit (D27, accepted):** within 30 s on one page, suggestions do not notice catalogue changes; the search results page itself is always live.
+- **Tests:** `tests/unit/suggest-cache.test.ts` (4); `tests/e2e-db/storefront.spec.ts` new journey: "mini", "min", "mini" asks the server twice, and after an in-app navigation "mini" is asked again.

@@ -141,6 +141,36 @@ test("search finds whole words and prefixes, and says so when nothing matches", 
   await expect(page.getByTestId("search-prompt")).toBeVisible();
 });
 
+test("search suggestions: a repeated term within 30 s is not asked again; a new page starts fresh (D27)", async ({ page }) => {
+  const asked: string[] = [];
+  page.on("request", (r) => {
+    if (r.url().includes("/api/search/suggest")) asked.push(new URL(r.url()).searchParams.get("q") ?? "");
+  });
+  await page.goto("/en");
+  const box = page.locator("#site-search");
+  const answered = () => page.waitForResponse((r) => r.url().includes("/api/search/suggest") && r.ok());
+  let reply = answered();
+  await box.fill("mini");
+  await reply;
+  await expect(page.getByRole("option", { name: /মিনিকেট চাল|Miniket/ }).first()).toBeVisible();
+  reply = answered();
+  await box.fill("min");
+  await reply;
+  await box.fill("mini");
+  await expect(page.getByRole("option", { name: /মিনিকেট চাল|Miniket/ }).first()).toBeVisible();
+  await page.waitForTimeout(400);
+  expect(asked).toEqual(["mini", "min"]);
+  // An in-app navigation empties the cache.
+  await box.fill("");
+  await page.keyboard.press("Escape");
+  await page.getByRole("contentinfo").getByRole("link", { name: "About" }).click();
+  await expect(page).toHaveURL(/\/en\/about$/);
+  reply = answered();
+  await page.locator("#site-search").fill("mini");
+  await reply;
+  expect(asked).toEqual(["mini", "min", "mini"]);
+});
+
 test("SEO: canonical, hreflang, JSON-LD, sitemap and robots", async ({ page, request }) => {
   await page.goto("/en/p/e2e-miniket-rice");
   const origin = new URL(page.url()).origin;

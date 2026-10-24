@@ -2,6 +2,12 @@
 
 Newest first. Each entry: date, phase, done, decided, open, next. Entries are snapshots of their date: "not merged", "open" or "next" describe that day; the current state is in `docs/STATUS.md` (first rows) and `docs/HANDOFF.md`.
 
+## 2026-10-25 — Phase D: search suggestion cache (PR, merged after CI)
+
+- **Done (D27):** suggestion answers are kept 30 s in this tab's memory per locale and term (at most 40), shown at once on a repeat term without a request, and cleared on every navigation. Server route, its headers and live product rows unchanged. Phase C merged as `94dac8f` (PR #48).
+- **Checks run locally (Node 24):** lint, typecheck, unit (incl. 4 new), build, Playwright `storefront.spec.ts` 9 passed (Chromium, incl. the new suggestion journey).
+- **Next:** Phase E (push opt-in after an order).
+
 ## 2026-10-25 — Phase C: navigation progress and loading gaps (PR, merged after CI)
 
 - **Done:** one thin navigation progress bar for storefront and admin (starts after 150 ms only for real in-app page changes, completes on route commit including error pages, 10 s give-up, reduced motion still); `/admin/notifications` gets its gate layout and a form skeleton. Phase B merged as `7f116b4` (PR #47; one WebKit 768 px shell focus test failed once in CI and passed on re-run, unrelated to the change).
