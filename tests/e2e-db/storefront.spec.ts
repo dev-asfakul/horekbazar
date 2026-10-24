@@ -258,3 +258,56 @@ test("every storefront route has a loading skeleton", async () => {
     expect(existsSync(`app/[locale]/${dir}/loading.tsx`), dir || "/").toBe(true);
   }
 });
+
+test("the store's default language opens new visits; an explicit choice wins; crawlers are never redirected (D31)", async ({ browser, request }) => {
+  const setDefault = (value: "bn" | "en") => db.collection<{ _id: string }>("settings").updateOne({ _id: "settings" }, { $set: { "locale.default": value } });
+  const before = (await getSettings(db)).locale.default;
+  const entry = { "sec-fetch-mode": "navigate", "sec-fetch-dest": "document", "sec-fetch-site": "none" };
+  try {
+    await setDefault("en");
+    // Raw responses: an entry navigation gets a private 307 that keeps path and query …
+    const redirect = await request.get("/c/e2e-food?sort=new", { headers: entry, maxRedirects: 0 });
+    expect(redirect.status()).toBe(307);
+    expect(redirect.headers().location).toMatch(/\/en\/c\/e2e-food\?sort=new$/);
+    expect(redirect.headers()["cache-control"]).toBe("private, no-cache, no-store");
+    // … while a client that sends no Fetch Metadata (crawlers, curl) and a link inside the site are served as is.
+    expect((await request.get("/", { maxRedirects: 0 })).status()).toBe(200);
+    expect((await request.get("/", { headers: { ...entry, "sec-fetch-site": "same-origin" }, maxRedirects: 0 })).status()).toBe(200);
+    // An explicit English URL is never touched.
+    expect((await request.get("/en", { headers: entry, maxRedirects: 0 })).status()).toBe(200);
+
+    // A real browser: a new visit opens in English with matching server-rendered lang (no flash).
+    const fresh = await browser.newContext();
+    const page = await fresh.newPage();
+    await page.goto("/");
+    await expect(page).toHaveURL(/\/en$/);
+    await expect(page.locator("html")).toHaveAttribute("lang", "en");
+    // Choosing Bengali with the switch is remembered and beats the store default on the next visit.
+    await page.getByRole("link", { name: "এই পেজটি বাংলায় দেখুন" }).click();
+    await expect(page).toHaveURL(/\/$/);
+    expect((await fresh.cookies()).find((c) => c.name === "hb-locale")?.value).toBe("bn");
+    await page.goto("/c/e2e-food");
+    await expect(page).toHaveURL(/\/c\/e2e-food$/);
+    await expect(page.locator("html")).toHaveAttribute("lang", "bn");
+    await fresh.close();
+
+    // An invalid stored preference is ignored safely (the store default applies).
+    const odd = await browser.newContext();
+    await odd.addCookies([{ name: "hb-locale", value: "xx", url: new URL(redirect.url()).origin }]);
+    const oddPage = await odd.newPage();
+    await oddPage.goto("/");
+    await expect(oddPage).toHaveURL(/\/en$/);
+    await odd.close();
+
+    // Back to Bengali: new visits stay at "/".
+    await setDefault("bn");
+    const again = await browser.newContext();
+    const againPage = await again.newPage();
+    await againPage.goto("/");
+    await expect(againPage).toHaveURL(/\/$/);
+    await expect(againPage.locator("html")).toHaveAttribute("lang", "bn");
+    await again.close();
+  } finally {
+    await setDefault(before);
+  }
+});

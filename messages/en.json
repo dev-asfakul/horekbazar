@@ -687,6 +687,7 @@
       "accent": "Accent colour",
       "accentHint": "Hex colour like #1E4E9C. It must have at least {ratio}:1 contrast with the page background.",
       "defaultLocale": "Default language",
+      "defaultLocaleHint": "The language a new visitor sees when they open the store's main address. A visitor who picked a language with the switch keeps it. Page addresses do not change: Bengali pages stay at /, English at /en. Takes effect within a minute.",
       "numerals": "Numbers on the Bengali storefront",
       "numeralsBengali": "Bengali digits (১২৩)",
       "numeralsLatin": "Latin digits (123)",
