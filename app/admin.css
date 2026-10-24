@@ -1,0 +1,894 @@
+/* Admin redesign (Proposal A1, docs/ADMIN-REDESIGN-A1.md). Imported only by app/admin/layout.tsx;
+   every rule is scoped to html[data-admin], so the storefront and globals.css are unchanged. The
+   storefront (app/store.css, base light theme) is the visual source of truth: same tokens, fonts,
+   pills, fields and focus ring. Existing class names and test ids are kept; only their look changes.
+   Light only (no dark mode, no time-of-day themes). No inline styles (CSP). Motion: colour only, and
+   the menu fade only under prefers-reduced-motion: no-preference. */
+
+/* Fonts: Google Sans (text) and Alkatra (display), OFL, self-hosted; licences in /public/fonts. */
+@font-face {
+  font-family: "HB Google Sans";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("/fonts/v1/google-sans-bengali.woff2") format("woff2");
+  unicode-range: U+0951-0952, U+0964-0965, U+0980-09FE, U+1CD0, U+1CD2, U+1CD5-1CD6, U+1CD8, U+1CE1, U+1CEA, U+1CED, U+1CF2, U+1CF5-1CF7, U+200C-200D, U+20B9, U+25CC, U+A8F1, U+11DF0-11DF1;
+}
+@font-face {
+  font-family: "HB Google Sans";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("/fonts/v1/google-sans-latin-ext.woff2") format("woff2");
+  unicode-range:
+    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: "HB Google Sans";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("/fonts/v1/google-sans-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "HB Alkatra";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("/fonts/v1/alkatra-bengali.woff2") format("woff2");
+  unicode-range: U+0951-0952, U+0964-0965, U+0980-09FE, U+1CD0, U+1CD2, U+1CD5-1CD6, U+1CD8, U+1CE1, U+1CEA, U+1CED, U+1CF2, U+1CF5-1CF7, U+200C-200D, U+20B9, U+25CC, U+A8F1, U+11DF0-11DF1;
+}
+@font-face {
+  font-family: "HB Alkatra";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("/fonts/v1/alkatra-latin-ext.woff2") format("woff2");
+  unicode-range:
+    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: "HB Alkatra";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("/fonts/v1/alkatra-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* ── Tokens: the storefront base (html[data-store]) values ─────────────────────────────────── */
+html[data-admin] {
+  --ground: #f6f9ef;
+  --surface: #e9f0da;
+  --raised: #ffffff;
+  --ink: #121a0f;
+  --muted: #56604f;
+  --line: #dfe6d2;
+  --line-strong: #7d8a6f;
+  --accent: #c6f432;
+  --accent-ink: #121a0f;
+  --link: #3b6300;
+  --focus: #3b6300;
+  --on-ink: #f6f9ef;
+  --success: #2a6b1f;
+  --warning: #8a5a00;
+  --danger: #b3261e;
+  --radius-card: 20px;
+  --radius-plate: 18px;
+  --font-family-text: "HB Google Sans", "HB Noto Sans Bengali", "Noto Sans Bengali", "HB Fallback Latin", system-ui, sans-serif;
+  --font-family-display: "HB Alkatra", var(--font-family-text);
+  --admin-bar-h: 56px;
+  --admin-sidebar-w: 272px;
+  --sticky-top: var(--admin-bar-h);
+  --dock-h: 0px;
+  color-scheme: light;
+}
+@media (width >= 1024px) {
+  html[data-admin] {
+    --sticky-top: 0px;
+  }
+}
+html[data-admin] body {
+  -webkit-font-smoothing: antialiased;
+  padding-bottom: 0;
+}
+html[data-admin] :is(h1, h2, h3, h4) {
+  font-weight: 700;
+}
+html[data-admin] .font-display {
+  font-weight: 700;
+  line-height: 1.15;
+}
+
+/* globals.css uses --accent as a link and focus colour; lime on white is unreadable, so every such
+   use is moved to --link / --focus here (contrast 7.4:1 on white). */
+html[data-admin] :focus-visible,
+html[data-admin] .field-input:focus-visible,
+html[data-admin] .form-summary:focus-visible,
+html[data-admin] .form-success:focus-visible,
+html[data-admin] .khata-link:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+html[data-admin] .field-input:focus-visible {
+  border-color: var(--focus);
+  outline-offset: 1px;
+}
+html[data-admin] .skip-link {
+  border-color: var(--focus);
+  border-radius: 999px;
+}
+html[data-admin] :is(.prose-link, .admin-index-link, .staff-manage > summary, .auth-details > summary, .btn-quiet) {
+  color: var(--link);
+}
+html[data-admin] .prose-link {
+  font-weight: 500;
+}
+html[data-admin] :is(.field-checkbox, .bulk-check, .field-check input, input[type="checkbox"], input[type="radio"]) {
+  accent-color: var(--link);
+}
+html[data-admin] .variant-chip[aria-current="true"] {
+  border-color: var(--ink);
+}
+html[data-admin] .thread-msg[data-from="staff"] {
+  border-inline-start-color: var(--link);
+}
+
+/* ── Buttons and fields (storefront pills) ─────────────────────────────────────────────────── */
+html[data-admin] .btn {
+  border-radius: 999px;
+  min-height: 48px;
+  padding-inline: 20px;
+  font-weight: 700;
+  transition:
+    background-color 150ms var(--ease-out),
+    border-color 150ms var(--ease-out),
+    color 150ms var(--ease-out);
+}
+html[data-admin] .btn-primary {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+html[data-admin] .btn-primary:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--accent) 88%, #121a0f);
+}
+html[data-admin] .btn-secondary {
+  background: var(--raised);
+  border-color: var(--line-strong);
+  color: var(--ink);
+}
+html[data-admin] .btn-secondary:hover:not(:disabled) {
+  background: var(--surface);
+}
+html[data-admin] .btn-danger {
+  background: var(--raised);
+  border-color: var(--danger);
+  color: var(--danger);
+}
+html[data-admin] .btn-danger:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--danger) 8%, #fff);
+}
+html[data-admin] .field-input {
+  border-radius: 14px;
+  border-width: 1.5px;
+  background: var(--raised);
+  border-color: var(--line-strong);
+  color: var(--ink);
+  min-height: 48px;
+}
+html[data-admin] textarea.field-input {
+  min-height: 96px;
+}
+html[data-admin] .field-toggle {
+  border-radius: 14px;
+  min-height: 48px;
+}
+html[data-admin] .field-label {
+  font-weight: 600;
+}
+
+/* ── Shell: top bar below 1024 px, sidebar from 1024 px ────────────────────────────────────── */
+html[data-admin] .admin-frame {
+  flex: 1 0 auto;
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+}
+html[data-admin] .admin-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: var(--admin-bar-h);
+  padding: 6px max(12px, env(safe-area-inset-right, 0px)) 6px max(12px, env(safe-area-inset-left, 0px));
+  background: var(--ground);
+  border-bottom: 1px solid var(--line);
+}
+html[data-admin] .admin-topbar-title {
+  flex: 1;
+  min-width: 0;
+  font-size: var(--text-step-0);
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+html[data-admin] .admin-topbar-mark,
+html[data-admin] .admin-sidebar .wordmark {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--ink);
+  max-width: 45vw;
+}
+html[data-admin] .admin-circle {
+  flex: none;
+  display: inline-grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  border: 1.5px solid var(--line-strong);
+  background: var(--raised);
+  color: var(--ink);
+  cursor: pointer;
+  transition: background-color 150ms var(--ease-out);
+}
+html[data-admin] .admin-circle:hover {
+  background: var(--surface);
+}
+html[data-admin] .admin-sidebar {
+  display: none;
+}
+html[data-admin] .admin-main {
+  flex: 1 0 auto;
+  min-width: 0;
+}
+@media (width >= 1024px) {
+  html[data-admin] .admin-frame[data-nav] {
+    display: grid;
+    grid-template-columns: var(--admin-sidebar-w) minmax(0, 1fr);
+    align-items: start;
+  }
+  html[data-admin] .admin-frame[data-nav] .admin-topbar {
+    display: none;
+  }
+  /* The sidebar column keeps its colour below the fold; the list scrolls inside, with the
+     identity card and actions pinned at the foot. */
+  html[data-admin] .admin-frame[data-nav] {
+    background: linear-gradient(to right, var(--surface) var(--admin-sidebar-w), var(--ground) var(--admin-sidebar-w));
+  }
+  html[data-admin] .admin-sidebar {
+    position: sticky;
+    top: 0;
+    height: 100dvh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 20px 16px 16px;
+    background: var(--surface);
+    border-inline-end: 1px solid var(--line);
+  }
+}
+html[data-admin] .admin-sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-inline: 8px;
+}
+html[data-admin] .admin-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: var(--ink);
+  color: var(--on-ink);
+  font-size: var(--text-step--1);
+  font-weight: 700;
+}
+
+/* Navigation list (sidebar and menu). The current page gets a lime pill behind its icon. */
+html[data-admin] .admin-navlist {
+  display: grid;
+  gap: 12px;
+}
+html[data-admin] .admin-navlist ul {
+  list-style: none;
+  display: grid;
+  gap: 2px;
+}
+html[data-admin] .admin-navgroup-title {
+  padding: 4px 12px;
+  color: var(--muted);
+  font-size: var(--text-step--1);
+  font-weight: 700;
+}
+html[data-admin] .admin-navitem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 48px;
+  padding: 4px 12px 4px 4px;
+  border-radius: 999px;
+  color: var(--ink);
+  text-decoration: none;
+  font-weight: 500;
+  transition: background-color 150ms var(--ease-out);
+}
+html[data-admin] .admin-navitem:hover {
+  background: color-mix(in srgb, var(--ink) 6%, transparent);
+}
+html[data-admin] .admin-navicon {
+  flex: none;
+  display: inline-grid;
+  place-items: center;
+  width: 52px;
+  height: 32px;
+  border-radius: 999px;
+  color: var(--muted);
+  transition: background-color 150ms var(--ease-out);
+}
+html[data-admin] .admin-navitem[aria-current="page"] {
+  font-weight: 700;
+}
+html[data-admin] .admin-navitem[aria-current="page"] .admin-navicon {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+html[data-admin] .admin-navlabel {
+  flex: 1;
+  min-width: 0;
+}
+html[data-admin] .admin-badge {
+  flex: none;
+  min-width: 24px;
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: var(--ink);
+  color: var(--on-ink);
+  font-size: var(--text-step--1);
+  font-weight: 700;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+html[data-admin] .admin-sidebar .admin-navlist {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  gap: 6px;
+  align-content: start;
+  margin-inline: -4px;
+  padding-inline: 4px;
+}
+html[data-admin] .admin-sidebar .admin-navitem {
+  min-height: 40px;
+  padding-block: 2px;
+}
+html[data-admin] .admin-sidebar .admin-navicon {
+  height: 30px;
+}
+html[data-admin] .admin-sidebar .admin-identity {
+  padding: 10px;
+}
+
+/* Identity card and the View store / Sign out actions. */
+html[data-admin] .admin-identity {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: var(--radius-plate);
+  background: var(--raised);
+  border: 1px solid var(--line);
+}
+html[data-admin] .admin-avatar {
+  flex: none;
+  display: inline-grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--accent-ink);
+  font-weight: 700;
+}
+html[data-admin] .admin-identity-text {
+  display: grid;
+  min-width: 0;
+}
+html[data-admin] .admin-identity-name {
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+html[data-admin] .admin-identity-role {
+  color: var(--muted);
+  font-size: var(--text-step--1);
+}
+html[data-admin] .admin-panel-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+html[data-admin] .admin-panel-actions .btn,
+html[data-admin] .admin-panel-actions form {
+  width: 100%;
+}
+html[data-admin] .admin-signout {
+  font-size: inherit;
+}
+html[data-admin] .admin-panel-actions[data-variant="sidebar"] {
+  margin-top: auto;
+}
+html[data-admin] .admin-sidebar .admin-identity + .admin-panel-actions {
+  margin-top: 0;
+}
+
+/* Full-screen menu: a native modal dialog. */
+html[data-admin] .admin-menu {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: var(--ground);
+  color: var(--ink);
+}
+html[data-admin] .admin-menu[open] {
+  display: flex;
+  flex-direction: column;
+}
+html[data-admin] .admin-menu::backdrop {
+  background: var(--ground);
+}
+html[data-admin]:has(.admin-menu[open]) {
+  overflow: hidden;
+}
+html[data-admin] .admin-menu-head {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: var(--admin-bar-h);
+  padding: max(6px, env(safe-area-inset-top, 0px)) max(12px, env(safe-area-inset-right, 0px)) 6px max(12px, env(safe-area-inset-left, 0px));
+  border-bottom: 1px solid var(--line);
+}
+html[data-admin] .admin-menu-head .admin-topbar-title {
+  margin: 0;
+  font-size: var(--text-step-0);
+}
+html[data-admin] .admin-menu-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px max(16px, env(safe-area-inset-right, 0px)) 0 max(16px, env(safe-area-inset-left, 0px));
+}
+html[data-admin] .admin-menu-body .admin-navlist {
+  width: 100%;
+  max-width: 560px;
+}
+html[data-admin] .admin-menu-body .admin-identity {
+  max-width: 560px;
+}
+html[data-admin] .admin-panel-actions[data-variant="menu"] {
+  position: sticky;
+  bottom: 0;
+  margin-top: auto;
+  margin-inline: calc(-1 * max(16px, env(safe-area-inset-left, 0px)));
+  padding: 12px max(16px, env(safe-area-inset-right, 0px)) max(12px, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px));
+  background: var(--ground);
+  border-top: 1px solid var(--line);
+}
+@media (width >= 768px) {
+  html[data-admin] .admin-menu-body .admin-navgroup:not(:has(.admin-navgroup-title)) {
+    grid-column: 1 / -1;
+  }
+  html[data-admin] .admin-menu-body .admin-navlist {
+    max-width: none;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+    gap: 16px 24px;
+  }
+  html[data-admin] .admin-panel-actions[data-variant="menu"] {
+    grid-template-columns: repeat(2, minmax(0, 240px));
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  html[data-admin] .admin-menu[open] {
+    animation: admin-menu-in 150ms var(--ease-out);
+  }
+}
+@keyframes admin-menu-in {
+  from {
+    opacity: 0;
+  }
+}
+
+/* ── Pages ─────────────────────────────────────────────────────────────────────────────────── */
+html[data-admin] .admin-page {
+  max-width: 1120px;
+  padding: 24px max(16px, env(safe-area-inset-right, 0px)) 48px max(16px, env(safe-area-inset-left, 0px));
+}
+@media (width >= 1024px) {
+  html[data-admin] .admin-page {
+    padding: 40px 40px 64px;
+  }
+}
+html[data-admin] .admin-title {
+  font-family: var(--font-family-display);
+  font-size: var(--text-step-3);
+  font-weight: 700;
+  line-height: 1.15;
+}
+html[data-admin] .admin-breadcrumb a {
+  color: var(--link);
+}
+html[data-admin] .admin-section {
+  margin-top: 32px;
+}
+/* A section that holds a form or details (not a list of records) reads as a white card. */
+html[data-admin] .admin-section:not(:has(.record-table, .record-cards, .staff-rows, .admin-tiles, .work-cards, .health-rows, .admin-empty, .admin-section)) {
+  padding: 20px;
+  background: var(--raised);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+}
+html[data-admin] .admin-section-title {
+  font-family: var(--font-family-display);
+  font-size: var(--text-step-1);
+  font-weight: 700;
+  padding-bottom: 0;
+  border-bottom: 0;
+  margin-bottom: 12px;
+}
+html[data-admin] .admin-notice {
+  border-radius: var(--radius-plate);
+  border-inline-start-width: 4px;
+  background: color-mix(in srgb, var(--warning) 8%, #fff);
+}
+html[data-admin] .admin-flash,
+html[data-admin] .form-success {
+  border-radius: var(--radius-plate);
+  border-inline-start-width: 4px;
+  background: color-mix(in srgb, var(--success) 8%, #fff);
+}
+html[data-admin] :is(.form-summary, .form-summary-static) {
+  border-radius: var(--radius-plate);
+  border-inline-start-width: 4px;
+  background: color-mix(in srgb, var(--danger) 6%, #fff);
+}
+html[data-admin] .admin-empty {
+  border-radius: var(--radius-card);
+  background: var(--raised);
+  border: 1.5px dashed var(--line-strong);
+}
+html[data-admin] .admin-empty-title {
+  font-family: var(--font-family-display);
+}
+
+/* Lists: staff/ledger rows and record cards are white plates; tables are a rounded white card. */
+html[data-admin] .staff-rows,
+html[data-admin] .admin-index {
+  display: grid;
+  gap: 10px;
+}
+html[data-admin] .staff-row,
+html[data-admin] .admin-index li {
+  padding: 14px 16px;
+  background: var(--raised);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-plate);
+}
+html[data-admin] .record-cards {
+  gap: 10px;
+}
+html[data-admin] .record-card {
+  padding: 14px;
+  border-radius: var(--radius-plate);
+  border-color: var(--line);
+}
+html[data-admin] .record-thumb,
+html[data-admin] .record-thumb > * {
+  border-radius: 12px;
+}
+html[data-admin] .record-table {
+  border-collapse: separate;
+  border-spacing: 0;
+  background: var(--raised);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  overflow: hidden;
+}
+html[data-admin] .record-table th,
+html[data-admin] .record-table td {
+  padding: 12px 16px;
+}
+html[data-admin] .record-table th {
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
+}
+html[data-admin] .record-table tr:last-child td {
+  border-bottom: 0;
+}
+html[data-admin] .record-table tbody tr:hover td {
+  background: color-mix(in srgb, var(--surface) 45%, #fff);
+}
+html[data-admin] .record-link {
+  color: var(--ink);
+}
+html[data-admin] .status-chip {
+  padding: 3px 10px;
+  border-color: transparent;
+  background: color-mix(in srgb, currentColor 10%, #fff);
+}
+html[data-admin] .status-chip[data-tone="archived"] {
+  border-color: currentColor;
+}
+html[data-admin] .ledger-row {
+  border-bottom-color: var(--line);
+}
+
+/* Filters: a compact surface panel; single-select filters are a pill row. */
+html[data-admin] .admin-filters {
+  border-radius: var(--radius-card);
+  background: var(--surface);
+  padding: 16px;
+}
+html[data-admin] .admin-filter {
+  margin-top: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 8px 12px;
+  padding: 12px 16px;
+  border-radius: var(--radius-card);
+  background: var(--surface);
+}
+html[data-admin] .admin-filter .field-label {
+  flex-basis: 100%;
+}
+html[data-admin] .admin-filter .field-input {
+  width: auto;
+  min-width: 12rem;
+  flex: 1 1 12rem;
+  border-radius: 999px;
+}
+html[data-admin] .admin-pager .btn {
+  min-width: 48px;
+}
+
+/* Bulk status (products): collapsed behind "Select products". */
+html[data-admin] .bulk-details {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-plate);
+  background: var(--raised);
+}
+html[data-admin] .bulk-details > summary {
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-inline: 16px;
+  font-weight: 700;
+  color: var(--link);
+  cursor: pointer;
+}
+html[data-admin] .bulk-details[open] > summary {
+  border-bottom: 1px solid var(--line);
+}
+html[data-admin] .bulk-details .bulk-fieldset {
+  border: 0;
+  padding: 12px 16px 16px;
+}
+html[data-admin] .add-block,
+html[data-admin] .media-row {
+  border-radius: var(--radius-plate);
+}
+html[data-admin] .product-preview-image,
+html[data-admin] .media-row img {
+  border-radius: 14px;
+}
+
+/* ── Admin home ────────────────────────────────────────────────────────────────────────────── */
+html[data-admin] .work-cards {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+@media (width >= 768px) {
+  html[data-admin] .work-cards {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+html[data-admin] .work-card {
+  display: grid;
+  align-content: start;
+  gap: 4px;
+  height: 100%;
+  min-height: 112px;
+  padding: 14px 16px;
+  border-radius: var(--radius-plate);
+  background: var(--raised);
+  border: 1px solid var(--line);
+  color: var(--ink);
+  text-decoration: none;
+  transition: border-color 150ms var(--ease-out);
+}
+html[data-admin] a.work-card:hover {
+  border-color: var(--line-strong);
+}
+html[data-admin] .work-card[data-waiting] {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-ink);
+}
+html[data-admin] .work-count {
+  font-family: var(--font-family-display);
+  font-size: var(--text-step-3);
+  font-weight: 700;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+html[data-admin] .work-label {
+  font-weight: 600;
+  font-size: var(--text-step--1);
+}
+html[data-admin] .work-card[data-state="error"] .work-count,
+html[data-admin] .work-card[data-state="loading"] .work-count {
+  font-family: var(--font-family-text);
+  font-size: var(--text-step-0);
+  color: var(--muted);
+}
+html[data-admin] .quick-actions {
+  display: grid;
+  gap: 12px;
+}
+@media (width >= 768px) {
+  html[data-admin] .quick-actions {
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: end;
+  }
+}
+html[data-admin] .quick-find {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: end;
+}
+html[data-admin] .quick-find .field {
+  flex: 1 1 16rem;
+  min-width: 0;
+}
+html[data-admin] .quick-find .field-input {
+  border-radius: 999px;
+}
+html[data-admin] .admin-tiles {
+  list-style: none;
+  display: grid;
+  gap: 10px;
+}
+@media (width >= 768px) {
+  html[data-admin] .admin-tiles {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (width >= 1280px) {
+  html[data-admin] .admin-tiles {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+html[data-admin] .admin-tile {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  height: 100%;
+  padding: 14px 16px;
+  border-radius: var(--radius-plate);
+  background: var(--raised);
+  border: 1px solid var(--line);
+  color: var(--ink);
+  text-decoration: none;
+  transition: border-color 150ms var(--ease-out);
+}
+html[data-admin] .admin-tile:hover {
+  border-color: var(--line-strong);
+}
+html[data-admin] .admin-tile-icon {
+  flex: none;
+  display: inline-grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: var(--surface);
+}
+html[data-admin] .admin-tile-text {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+html[data-admin] .admin-tile-name {
+  font-weight: 700;
+}
+html[data-admin] .admin-tile-desc {
+  color: var(--muted);
+  font-size: var(--text-step--1);
+}
+html[data-admin] .admin-group + .admin-group {
+  margin-top: 24px;
+}
+html[data-admin] .admin-group-title {
+  margin-bottom: 8px;
+  color: var(--muted);
+  font-size: var(--text-step--1);
+  font-weight: 700;
+}
+
+/* ── Order detail: two columns from 1024 px ────────────────────────────────────────────────── */
+@media (width >= 1024px) {
+  html[data-admin] .order-columns {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 360px;
+    gap: 0 32px;
+    align-items: start;
+  }
+  html[data-admin] .order-side {
+    grid-column: 2;
+    grid-row: 1;
+  }
+  html[data-admin] .order-main {
+    grid-column: 1;
+    grid-row: 1;
+  }
+}
+
+/* Sidebar foot: the two actions share the 240 px row without wrapping. */
+html[data-admin] .admin-panel-actions[data-variant="sidebar"] .btn {
+  min-height: 44px;
+  padding-inline: 10px;
+  gap: 6px;
+  font-size: var(--text-step--1);
+  white-space: nowrap;
+}
+
+/* Filters from 768 px: a compact grid (search wider), Apply aligned with the fields. */
+@media (width >= 768px) {
+  html[data-admin] .admin-filters {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+    gap: 12px;
+    align-items: end;
+  }
+  html[data-admin] .admin-filters > * {
+    margin-top: 0;
+  }
+  html[data-admin] .admin-filters > .field:first-child:has(input) {
+    grid-column: span 2;
+  }
+  html[data-admin] .admin-filters > .btn {
+    justify-self: start;
+  }
+}
+html[data-admin] .admin-filters .field-input {
+  border-radius: 999px;
+}
+html[data-admin] .admin-filters select[multiple].field-input {
+  border-radius: 14px;
+}
+
+/* Name over its sub-line in table cells (slug, SKU). */
+html[data-admin] .record-table td > .record-sub {
+  display: block;
+}
