@@ -2222,6 +2222,42 @@ select[multiple].field-input {
   flex: 1;
 }
 
+/* Navigation progress (Phase C, components/shell/NavigationProgress.tsx): a 3 px bar along the top
+   edge while an in-app link is on its way; never a full-screen loader. It eases towards 90 % and
+   fills when the route commits. Reduced motion: no movement, the bar only appears and fades. */
+.nav-progress {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 1000;
+  height: 3px;
+  background: var(--link, currentColor);
+  transform-origin: 0 50%;
+  transform: scaleX(0.9);
+  pointer-events: none;
+}
+.nav-progress[data-state="done"] {
+  transform: scaleX(1);
+  opacity: 0;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .nav-progress[data-state="active"] {
+    animation: hb-nav-progress 8s cubic-bezier(0.1, 0.7, 0.2, 1) both;
+  }
+  .nav-progress[data-state="done"] {
+    transition:
+      transform 120ms ease-out,
+      opacity 200ms ease-out 40ms;
+  }
+}
+@keyframes hb-nav-progress {
+  from {
+    transform: scaleX(0.08);
+  }
+  to {
+    transform: scaleX(0.9);
+  }
+}
+
 /* Loading skeletons (static, no shimmer; DESIGN.md). Sized like the content they stand in for. */
 .sk-bone {
   display: block;

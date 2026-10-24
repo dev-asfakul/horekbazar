@@ -6,10 +6,12 @@ import "../globals.css";
 import "../admin.css";
 import type { Metadata, Viewport } from "next";
 import { connection } from "next/server";
+import { Suspense } from "react";
 import { preload } from "react-dom";
 import { getTranslations } from "next-intl/server";
 import type { AdminNavGroup } from "@/components/admin/AdminNav";
 import { AdminShell, type AdminShellIdentity } from "@/components/admin/AdminShell";
+import { NavigationProgress } from "@/components/shell/NavigationProgress";
 import { groupSections, sectionsFor, type AdminSectionKey } from "@/lib/admin/sections";
 import { countWork, formatWorkCount, WORK_COUNTS, type WorkCountKey } from "@/lib/admin/work-counts";
 import { freshInstallDefaults } from "@/config/defaults";
@@ -119,6 +121,9 @@ export default async function AdminLayout({ children }: LayoutProps<"/admin">) {
         <a href="#main" className="skip-link">
           {t("shell.skipToMain")}
         </a>
+        <Suspense fallback={null}>
+          <NavigationProgress label="Loading" />
+        </Suspense>
         <AdminShell
           label={t("shell.label")}
           groups={groups}

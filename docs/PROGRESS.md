@@ -2,6 +2,13 @@
 
 Newest first. Each entry: date, phase, done, decided, open, next. Entries are snapshots of their date: "not merged", "open" or "next" describe that day; the current state is in `docs/STATUS.md` (first rows) and `docs/HANDOFF.md`.
 
+## 2026-10-25 — Phase C: navigation progress and loading gaps (PR, merged after CI)
+
+- **Done:** one thin navigation progress bar for storefront and admin (starts after 150 ms only for real in-app page changes, completes on route commit including error pages, 10 s give-up, reduced motion still); `/admin/notifications` gets its gate layout and a form skeleton. Phase B merged as `7f116b4` (PR #47; one WebKit 768 px shell focus test failed once in CI and passed on re-run, unrelated to the change).
+- **Not changed:** routes, status codes, server logic, schema, dependencies, CSP, cache headers.
+- **Checks run locally (Node 24):** lint, typecheck, unit (incl. 4 new), build, full signed-in Playwright suite `playwright.db.config.ts` 41 passed / 1 skipped (Chromium). Three-engine suite left to CI.
+- **Next:** Phase D (search suggestion cache).
+
 ## 2026-10-25 — Phase B: cart quantity stepper (PR, merged after CI)
 
 - **Owner (2026-10-25):** build Phases B–F one after another, each committed, merged and recorded before the next; no Motomation gate run. Phase A (PR #46) was merged 2026-10-24 as `1a6496d`, so the 2026-10-24 "Next" line below is closed. Inferred B–E scopes and the tracker: `docs/PHASES.md`.

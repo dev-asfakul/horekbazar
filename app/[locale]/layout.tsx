@@ -6,11 +6,13 @@ import type { Metadata, Viewport } from "next";
 import { headers } from "next/headers";
 import { notFound } from "next/navigation";
 import { connection } from "next/server";
+import { Suspense } from "react";
 import { preload } from "react-dom";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages, getTranslations, setRequestLocale } from "next-intl/server";
 import { BottomDock } from "@/components/shell/BottomDock";
 import { BottomNav } from "@/components/shell/BottomNav";
+import { NavigationProgress } from "@/components/shell/NavigationProgress";
 import { OfflineSupport } from "@/components/shell/OfflineSupport";
 import { SiteFooter } from "@/components/shell/SiteFooter";
 import { SiteHeader } from "@/components/shell/SiteHeader";
@@ -71,6 +73,10 @@ export default async function LocaleLayout({ children, params }: LayoutProps<"/[
         <a href="#main" className="skip-link">
           {t("skipToMain")}
         </a>
+        {/* Suspense: the bar reads the search params, which must not opt the page out of streaming. */}
+        <Suspense fallback={null}>
+          <NavigationProgress label={(await getTranslations({ locale, namespace: "common" }))("loading")} />
+        </Suspense>
         <SiteHeader locale={locale} storeName={storeName} cartCount={cartCount} format={format} />
         <main id="main" tabIndex={-1}>
           <NextIntlClientProvider locale={locale} messages={clientMessages} timeZone="Asia/Dhaka">
