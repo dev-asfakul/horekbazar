@@ -11,13 +11,12 @@ import { SearchCombobox, type SearchLabels } from "@/components/shell/SearchComb
 export function HeaderSearch({ action, locale, labels, openLabel, closeLabel }: { action: string; locale: string; labels: SearchLabels; openLabel: string; closeLabel: string }) {
   const [expanded, setExpanded] = useState(false);
   const toggle = useRef<HTMLAnchorElement>(null);
-  const first = useRef(true);
+  // Move focus only when `expanded` actually changes, never on mount (StrictMode runs effects twice).
+  const last = useRef(expanded);
 
   useEffect(() => {
-    if (first.current) {
-      first.current = false;
-      return;
-    }
+    if (last.current === expanded) return;
+    last.current = expanded;
     if (expanded) document.getElementById("site-search")?.focus();
     else toggle.current?.focus();
   }, [expanded]);

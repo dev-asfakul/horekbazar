@@ -211,7 +211,7 @@ html[data-store] .field-check input {
   accent-color: var(--link);
 }
 
-/* ── Header: search pill first, store name on the right (Proposal 03) ── */
+/* ── Header: store name top left, then search, then actions (Proposal 03, owner amendment 2026-10-24) ── */
 html[data-store] .site-header {
   position: sticky;
   top: 0;
@@ -331,7 +331,6 @@ html[data-store][data-theme="midnight"] .count-badge {
     max-width: 640px;
   }
   html[data-store] .wordmark {
-    order: -1;
     font-size: 26px;
     margin-inline-end: 12px;
   }
@@ -1463,7 +1462,7 @@ html[data-store] .header-search-row {
   from {
     opacity: 0;
     transform: scaleX(0.96);
-    transform-origin: left center;
+    transform-origin: right center;
   }
 }
 @media (width >= 768px) {
