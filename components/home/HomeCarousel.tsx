@@ -1,19 +1,19 @@
 "use client";
 // Tier: build. Use-when: the top of the home page only (Proposal 03; banners from Proposal 04b).
 // Avoid-when: anything a shopper must see — slides past the first are optional extras.
-// Reduced-motion: no automatic advance (a Play button still offers it) and buttons jump instead of
-// gliding. Touch: native swipe with scroll-snap; 44 px buttons.
-// HomeCarousel: slides are server-rendered children; this adds previous/next, one indicator per
-// position, a pause/play control and (Phase F, owner 2026-10-25) automatic advance every 6 s.
-// WCAG 2.2.2: the movement can be paused with a visible button, and it also holds while the pointer
-// is over the carousel, while anything in it has keyboard focus, while the tab is hidden, and after
-// a swipe or a press until the shopper leaves it alone again. At the end it returns to the start.
-// When every slide already fits (wide screens with few slides) there is nothing to move and
-// nothing advances. The live counter is silent while it advances on its own (APG carousel).
-// Without JavaScript it is a plain horizontally scrolling list. 0 slides: nothing; 1 slide: no controls.
+// HomeCarousel (owner 2026-10-25, D29 revised): a stack of cards on every screen size. One slide is
+// in front; the next two sit behind it, smaller and dimmed, peeking out at the inline end. Moving
+// on sends the front card to the back of the stack and brings the next one forward.
+// Controls: previous/next buttons, one indicator per slide, a swipe on touch or mouse. There is no
+// pause button (owner decision). Automatic advance every 6 s holds while the pointer is over the
+// carousel, while anything in it has keyboard focus and while the tab is hidden, and stops for the
+// rest of the visit once the shopper moves it themselves (APG carousel). Never under reduced
+// motion: the cards then change without gliding. The live counter is silent while it advances.
+// Cards behind the front one are inert (not focusable, hidden from assistive technology).
+// Without JavaScript the first slide is in front and the controls stay disabled.
+// 0 slides: nothing; 1 slide: no stack and no controls.
 import { Children, useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { useHydrated } from "@/components/shell/use-browser-state";
-import { toBengaliDigits } from "@/lib/format/money";
 
 const REDUCE = "(prefers-reduced-motion: reduce)";
 function onMotionChange(cb: () => void) {
@@ -27,115 +27,70 @@ function onVisibility(cb: () => void) {
 }
 
 export const AUTOPLAY_MS = 6000;
+/** Horizontal travel (px) that counts as a swipe rather than a tap. */
+export const SWIPE_PX = 40;
 
 export interface CarouselLabels {
   label: string;
   prev: string;
   next: string;
-  pause: string;
-  play: string;
   /** "Slide {n}" with {n} already in the store's digits, one per slide. */
   goTo: string[];
   /** "1/4" in the store's digits, one per slide. */
   counter: string[];
-  /** The store shows Bengali digits (for the "n/stops" counter on wide screens). */
-  bengali: boolean;
 }
 
-/** Scroll offsets the track can actually reach, one per stop (exported for tests). */
-export function stops(offsets: number[], maxScroll: number): number[] {
-  const out: number[] = [];
-  for (const o of offsets) {
-    const v = Math.max(0, Math.min(o, maxScroll));
-    if (out.length === 0 || v - out[out.length - 1]! > 2) out.push(v);
-  }
-  if (out.length > 0 && maxScroll - out[out.length - 1]! > 2) out.push(maxScroll);
-  return out.length ? out : [0];
-}
-
-/** The stop nearest to a scroll position (exported for tests). */
-export function nearest(list: number[], at: number): number {
-  let best = 0;
-  for (let i = 1; i < list.length; i++) if (Math.abs(list[i]! - at) < Math.abs(list[best]! - at)) best = i;
-  return best;
+/** Place of slide `i` in the stack when `index` is in front: 0 front, 1 and 2 behind, 3 hidden (exported for tests). */
+export function stackPos(i: number, index: number, count: number): 0 | 1 | 2 | 3 {
+  const d = (((i - index) % count) + count) % count;
+  return d > 2 ? 3 : (d as 0 | 1 | 2);
 }
 
 export function HomeCarousel({ children, labels }: { children: React.ReactNode; labels: CarouselLabels }) {
-  const track = useRef<HTMLUListElement>(null);
   const slides = Children.toArray(children);
   const count = slides.length;
   const ready = useHydrated();
   const [index, setIndex] = useState(0);
-  const [positions, setPositions] = useState<number[]>(() => slides.map((_, i) => i));
-  // Pause reasons: the shopper's button, the pointer over it, focus in it, a recent touch or press.
-  const [userPaused, setUserPaused] = useState<boolean | null>(null); // null: not chosen (reduced motion decides)
+  const [stopped, setStopped] = useState(false); // the shopper moved it: no more automatic advance
   const [hover, setHover] = useState(false);
   const [focus, setFocus] = useState(false);
   const hidden = useSyncExternalStore(onVisibility, () => document.visibilityState === "hidden", () => false);
   const reduce = useSyncExternalStore(onMotionChange, () => window.matchMedia(REDUCE).matches, () => false);
-  const [touchedAt, setTouchedAt] = useState(0);
-  const offsets = useRef<number[]>([0]);
+  const drag = useRef<{ x: number; y: number; id: number } | null>(null);
+  const swiped = useRef(false);
 
-  // Measure where the track can stop (depends on the screen width); re-measure on resize.
-  useEffect(() => {
-    const el = track.current;
-    if (!el || count < 2) return;
-    const measure = () => {
-      const pad = parseFloat(getComputedStyle(el).paddingInlineStart || "0");
-      const items = [...el.children] as HTMLElement[];
-      const list = stops(
-        items.map((i) => i.offsetLeft - el.offsetLeft - pad),
-        el.scrollWidth - el.clientWidth,
-      );
-      offsets.current = list;
-      setPositions(list.map((_, i) => i));
-      setIndex(nearest(list, Math.abs(el.scrollLeft)));
-    };
-    // ResizeObserver also reports once right after observe(), which takes the first measurement.
-    const ro = new ResizeObserver(measure);
-    ro.observe(el);
-    let frame = 0;
-    const onScroll = () => {
-      cancelAnimationFrame(frame);
-      frame = requestAnimationFrame(() => setIndex(nearest(offsets.current, Math.abs(el.scrollLeft))));
-    };
-    el.addEventListener("scroll", onScroll, { passive: true });
-    return () => {
-      ro.disconnect();
-      el.removeEventListener("scroll", onScroll);
-      cancelAnimationFrame(frame);
-    };
-  }, [count]);
+  const go = useCallback((to: number) => setIndex(((to % count) + count) % count), [count]);
+  const move = (to: number) => {
+    setStopped(true);
+    go(to);
+  };
 
-  const go = useCallback((to: number) => {
-    const el = track.current;
-    if (!el) return;
-    const list = offsets.current;
-    const i = ((to % list.length) + list.length) % list.length;
-    const rtl = getComputedStyle(el).direction === "rtl";
-    const motion = !window.matchMedia(REDUCE).matches;
-    el.scrollTo({ left: rtl ? -list[i]! : list[i]!, behavior: motion ? "smooth" : "auto" });
-    setIndex(i);
-  }, []);
-
-  const stopsCount = positions.length;
-  const paused = userPaused ?? reduce;
-  const holding = hover || focus || hidden;
-  const moving = ready && stopsCount > 1 && !paused && !holding;
-
-  // One timer per resting moment: any interaction (touchedAt) or index change restarts the 6 s.
+  const moving = ready && count > 1 && !stopped && !reduce && !hover && !focus && !hidden;
   useEffect(() => {
     if (!moving) return;
     const id = window.setTimeout(() => go(index + 1), AUTOPLAY_MS);
     return () => window.clearTimeout(id);
-  }, [moving, index, touchedAt, go]);
+  }, [moving, index, go]);
 
   if (count === 0) return null;
   const many = count > 1;
-  const touched = () => setTouchedAt(Date.now());
-  const shownCounter = labels.counter[index] ?? "";
-  const wide = `${index + 1}/${stopsCount}`;
-  const counterText = stopsCount === count ? shownCounter : labels.bengali ? toBengaliDigits(wide) : wide;
+
+  const onPointerDown = (e: React.PointerEvent) => {
+    if (!many || !ready || (e.pointerType === "mouse" && e.button !== 0)) return;
+    drag.current = { x: e.clientX, y: e.clientY, id: e.pointerId };
+    swiped.current = false;
+  };
+  const onPointerUp = (e: React.PointerEvent) => {
+    const d = drag.current;
+    drag.current = null;
+    if (!d || d.id !== e.pointerId) return;
+    const dx = e.clientX - d.x;
+    if (Math.abs(dx) < SWIPE_PX || Math.abs(dx) < Math.abs(e.clientY - d.y)) return;
+    swiped.current = true;
+    // Swiping towards the start brings the next card forward (as on a scrolling row).
+    const rtl = getComputedStyle(e.currentTarget).direction === "rtl";
+    move(index + ((dx < 0) !== rtl ? 1 : -1));
+  };
 
   return (
     <section
@@ -149,66 +104,48 @@ export function HomeCarousel({ children, labels }: { children: React.ReactNode; 
       onFocus={() => setFocus(true)}
       onBlur={(e) => !e.currentTarget.contains(e.relatedTarget as Node | null) && setFocus(false)}
     >
-      <ul className="home-carousel-track" ref={track} data-count={count} onPointerDown={touched} onWheel={touched}>
-        {slides.map((s, i) => (
-          <li key={i} className="home-carousel-slide" aria-roledescription="slide" aria-label={labels.counter[i]}>
-            {s}
-          </li>
-        ))}
+      <ul
+        className="home-carousel-track"
+        data-count={count}
+        onPointerDown={onPointerDown}
+        onPointerUp={onPointerUp}
+        onPointerCancel={() => (drag.current = null)}
+        // A swipe that ends over a link is not a click on it; a dragged image or link is not dragged away.
+        onClickCapture={(e) => {
+          if (swiped.current) {
+            e.preventDefault();
+            e.stopPropagation();
+            swiped.current = false;
+          }
+        }}
+        onDragStart={(e) => many && e.preventDefault()}
+      >
+        {slides.map((s, i) => {
+          const pos = many ? stackPos(i, index, count) : 0;
+          return (
+            <li key={i} className="home-carousel-slide" data-pos={pos} aria-roledescription="slide" aria-label={labels.counter[i]} inert={pos !== 0} aria-hidden={pos !== 0 || undefined}>
+              {s}
+            </li>
+          );
+        })}
       </ul>
       {many ? (
         // Rendered on the server too (no layout shift); the buttons work once the page is interactive.
-        // When every slide fits there is nothing to move: the row keeps its space but is hidden.
-        <div className="home-carousel-controls" data-ready={ready || undefined} data-fits={ready && stopsCount < 2 ? "" : undefined}>
-          <button type="button" className="home-carousel-btn home-carousel-toggle" onClick={() => setUserPaused(!paused)} disabled={!ready || stopsCount < 2} aria-label={paused ? labels.play : labels.pause} data-testid="carousel-toggle">
-            <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false">
-              {paused ? <path d="M8 5v14l11-7z" fill="currentColor" /> : <path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z" fill="currentColor" />}
-            </svg>
-          </button>
+        <div className="home-carousel-controls" data-ready={ready || undefined}>
           <span className="home-carousel-dots" role="group" aria-label={labels.label}>
             {slides.map((_, i) => (
-              <button
-                key={i}
-                type="button"
-                className="home-carousel-dot"
-                hidden={i >= stopsCount}
-                aria-label={labels.goTo[i]}
-                aria-current={i === index ? "true" : undefined}
-                disabled={!ready}
-                onClick={() => {
-                  touched();
-                  go(i);
-                }}
-              />
+              <button key={i} type="button" className="home-carousel-dot" aria-label={labels.goTo[i]} aria-current={i === index ? "true" : undefined} disabled={!ready} onClick={() => move(i)} />
             ))}
           </span>
-          <button
-            type="button"
-            className="home-carousel-btn"
-            onClick={() => {
-              touched();
-              go(index - 1);
-            }}
-            disabled={!ready || stopsCount < 2}
-            aria-label={labels.prev}
-          >
+          <button type="button" className="home-carousel-btn" onClick={() => move(index - 1)} disabled={!ready} aria-label={labels.prev}>
             <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false">
               <path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </button>
           <span className="home-carousel-count" aria-live={moving ? "off" : "polite"} data-testid="carousel-count">
-            {counterText}
+            {labels.counter[index] ?? ""}
           </span>
-          <button
-            type="button"
-            className="home-carousel-btn"
-            onClick={() => {
-              touched();
-              go(index + 1);
-            }}
-            disabled={!ready || stopsCount < 2}
-            aria-label={labels.next}
-          >
+          <button type="button" className="home-carousel-btn" onClick={() => move(index + 1)} disabled={!ready} aria-label={labels.next}>
             <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false">
               <path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
             </svg>

@@ -786,8 +786,6 @@
       "slideOf": "{n}/{total}",
       "prevSlide": "আগের স্লাইড",
       "nextSlide": "পরের স্লাইড",
-      "pauseSlides": "স্লাইড থামান",
-      "playSlides": "স্লাইড চালু করুন",
       "goToSlide": "স্লাইড {n}",
       "dealTag": "লেটেস্ট ডিল",
       "dealTitle": "{count}টি প্রোডাক্টে দাম কমেছে",

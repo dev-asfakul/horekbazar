@@ -118,7 +118,7 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
 
   // ── Carousel: banners, the hero text, real deals, real new arrivals, real delivery facts ──
   const slides: React.ReactNode[] = [];
-  for (const [i, b] of topBanners.entries()) slides.push(<PlacementBanner key={`b${i}`} store={store} banner={b} locale={locale} width={1280} height={704} eager={i === 0} className="slide slide-banner" sizes="(min-width: 1280px) 400px, (min-width: 768px) 50vw, 90vw" />);
+  for (const [i, b] of topBanners.entries()) slides.push(<PlacementBanner key={`b${i}`} store={store} banner={b} locale={locale} width={1280} height={704} eager={i === 0} className="slide slide-banner" sizes="(min-width: 1280px) 1200px, 95vw" />);
   const hero = sections.find((s) => s.type === "hero");
   if (hero) {
     const d = hero.data as { title?: LocalizedText; subtitle?: LocalizedText; ctaLabel?: LocalizedText; href?: string };
@@ -243,7 +243,7 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
     <div className="home" data-testid="home">
       <h1 className="sr-only">{storeName}</h1>
       <HomeCarousel
-        labels={{ label: t("home.carouselLabel"), prev: t("home.prevSlide"), next: t("home.nextSlide"), pause: t("home.pauseSlides"), play: t("home.playSlides"), goTo: slides.map((_, i) => t("home.goToSlide", { n: count(i + 1) })), counter, bengali: format.numerals === "bengali" }}
+        labels={{ label: t("home.carouselLabel"), prev: t("home.prevSlide"), next: t("home.nextSlide"), goTo: slides.map((_, i) => t("home.goToSlide", { n: count(i + 1) })), counter }}
       >
         {slides}
       </HomeCarousel>

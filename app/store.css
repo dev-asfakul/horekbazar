@@ -726,52 +726,110 @@ html[data-store] .home-section-head .home-h2 {
   margin-bottom: 12px;
 }
 
-/* Carousel: swipe with snap; the next slide peeks in. Phase F: advances every 6 s with a pause
-   control (HomeCarousel); never under reduced motion unless the shopper presses Play. */
+/* Carousel (D29 revised): a stack of cards. The front card fills the row less the peek; the two
+   cards behind it are smaller, dimmed and offset to the inline end so their edges show. Moving on
+   sends the front card to the back. Reduced motion: no gliding. */
 html[data-store] .home-carousel {
+  --stack-peek: 14px;
+  --slide-h: 176px;
   margin-top: 4px;
 }
 html[data-store] .home-carousel-track {
   list-style: none;
-  margin: 0 -16px;
-  padding: 0 16px;
+  margin: 0;
+  padding: 0;
   display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: calc(100% - 40px);
-  gap: 10px;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  scroll-padding-inline: 16px;
-  scrollbar-width: none;
-  overscroll-behavior-x: contain;
+  padding-inline-end: calc(var(--stack-peek) * 2);
+  touch-action: pan-y;
+  user-select: none;
+  -webkit-user-select: none;
 }
-html[data-store] .home-carousel-track::-webkit-scrollbar {
-  display: none;
+html[data-store] .home-carousel-track[data-count="1"],
+html[data-store] .home-carousel-track[data-count="2"] {
+  padding-inline-end: var(--stack-peek);
 }
 html[data-store] .home-carousel-track[data-count="1"] {
-  grid-auto-columns: 100%;
+  padding-inline-end: 0;
 }
 html[data-store] .home-carousel-slide {
-  scroll-snap-align: start;
-  height: 176px;
+  grid-area: 1 / 1;
+  position: relative;
+  height: var(--slide-h);
+  border-radius: 24px;
+  transform-origin: right center;
+  transition:
+    transform 420ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 320ms ease,
+    filter 320ms ease;
+}
+html[data-store][dir="rtl"] .home-carousel-slide {
+  transform-origin: left center;
+}
+html[data-store] .home-carousel-slide[data-pos="0"] {
+  z-index: 3;
+  box-shadow: 0 10px 24px -14px rgb(0 0 0 / 0.55);
+}
+html[data-store] .home-carousel-slide[data-pos="1"] {
+  z-index: 2;
+  transform: translateX(var(--stack-peek)) scale(0.92);
+  filter: brightness(0.82);
+}
+html[data-store] .home-carousel-slide[data-pos="2"] {
+  z-index: 1;
+  transform: translateX(calc(var(--stack-peek) * 2)) scale(0.84);
+  filter: brightness(0.66);
+}
+html[data-store] .home-carousel-slide[data-pos="3"] {
+  z-index: 0;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateX(calc(var(--stack-peek) * 2)) scale(0.8);
+  transition:
+    transform 420ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 320ms ease,
+    visibility 0s linear 420ms;
+}
+html[data-store][dir="rtl"] .home-carousel-slide[data-pos="1"] {
+  transform: translateX(calc(var(--stack-peek) * -1)) scale(0.92);
+}
+html[data-store][dir="rtl"] :is(.home-carousel-slide[data-pos="2"], .home-carousel-slide[data-pos="3"]) {
+  transform: translateX(calc(var(--stack-peek) * -2)) scale(0.84);
+}
+@media (prefers-reduced-motion: reduce) {
+  html[data-store] .home-carousel-slide {
+    transition: none;
+  }
+}
+html[data-store] .home-carousel-slide > .slide {
+  height: 100%;
+}
+/* The cards behind keep a visible edge on every tone and theme. */
+html[data-store] .home-carousel-slide:is([data-pos="1"], [data-pos="2"]) > .slide {
+  outline: 1px solid var(--line-strong);
+  outline-offset: -1px;
 }
 @media (width >= 768px) {
-  html[data-store] .home-carousel-track {
-    margin: 0;
-    padding: 0;
-    scroll-padding-inline: 0;
-    grid-auto-columns: calc((100% - 10px) / 2);
-  }
-  html[data-store] .home-carousel-slide {
-    height: 232px;
+  html[data-store] .home-carousel {
+    --stack-peek: 20px;
+    --slide-h: 248px;
   }
 }
 @media (width >= 1280px) {
-  html[data-store] .home-carousel-track {
-    grid-auto-columns: calc((100% - 20px) / 3);
+  html[data-store] .home-carousel {
+    --stack-peek: 26px;
+    --slide-h: 300px;
   }
-  html[data-store] .home-carousel-track[data-count="2"] {
-    grid-auto-columns: calc((100% - 10px) / 2);
+  /* One wide card: larger type and more room so it does not look empty. */
+  html[data-store] .home-carousel .slide:not(.slide-banner) {
+    padding: 28px 32px;
+    gap: 10px;
+  }
+  html[data-store] .home-carousel .slide-title {
+    font-size: var(--text-step-4);
+  }
+  html[data-store] .home-carousel .slide-body {
+    font-size: var(--text-step-0);
+    max-width: 60ch;
   }
 }
 html[data-store] .slide {
@@ -899,7 +957,7 @@ html[data-store] .home-carousel-controls {
   align-items: center;
   justify-content: flex-end;
   gap: 4px;
-  margin-top: 6px;
+  margin-top: 8px;
 }
 html[data-store] .home-carousel-btn {
   width: 44px;
@@ -917,15 +975,10 @@ html[data-store] .home-carousel-btn:disabled {
   opacity: 0.4;
   cursor: default;
 }
-html[data-store] .home-carousel-controls[data-fits] {
-  visibility: hidden;
-}
-html[data-store] .home-carousel-toggle {
-  margin-inline-end: auto;
-}
 html[data-store] .home-carousel-dots {
   display: inline-flex;
   align-items: center;
+  margin-inline-end: auto;
 }
 /* 24 px hit area (WCAG 2.5.8) around an 8 px dot; the current one is a longer bar, not colour alone. */
 html[data-store] .home-carousel-dot {
@@ -949,9 +1002,6 @@ html[data-store] .home-carousel-dot::before {
 html[data-store] .home-carousel-dot[aria-current="true"]::before {
   width: 18px;
   background: var(--ink);
-}
-html[data-store] .home-carousel-dot[hidden] {
-  display: none;
 }
 html[data-store] .home-carousel-dot:focus-visible,
 html[data-store] .home-carousel-btn:focus-visible {
