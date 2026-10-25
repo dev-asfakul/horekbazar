@@ -171,30 +171,52 @@ test("search suggestions: a repeated term within 30 s is not asked again; a new 
   expect(asked).toEqual(["mini", "min", "mini"]);
 });
 
-test("home carousel advances on its own, pauses on hover, focus and the button, and not under reduced motion (Phase F)", async ({ browser }) => {
-  const context = await browser.newContext({ viewport: { width: 375, height: 800 } });
-  const page = await context.newPage();
-  await page.goto("/en");
-  const carousel = page.getByTestId("home-carousel");
-  const slides = await carousel.locator(".home-carousel-slide").count();
-  test.skip(slides < 2, "needs two or more slides");
-  await expect(carousel).toHaveAttribute("data-autoplay", "on");
-  await expect(page.getByTestId("carousel-count")).toHaveText(`1/${slides}`);
-  await expect(page.getByTestId("carousel-count")).toHaveText(`2/${slides}`, { timeout: 9000 });
-  await expect(carousel.getByRole("button", { name: "Slide 2" })).toHaveAttribute("aria-current", "true");
-  // Keyboard focus inside holds it; the button pauses it and says Play.
-  await carousel.getByRole("button", { name: "Next slide" }).focus();
-  await expect(carousel).toHaveAttribute("data-autoplay", "off");
-  await carousel.getByRole("button", { name: "Pause slides" }).click();
-  await expect(carousel.getByRole("button", { name: "Play slides" })).toBeVisible();
-  await carousel.getByRole("button", { name: "Slide 1" }).click();
-  await expect(page.getByTestId("carousel-count")).toHaveText(`1/${slides}`);
-  await context.close();
+test("home carousel is a stack: advances on its own, holds on focus, stops once moved by hand, swipes, no pause button, not under reduced motion (D29)", async ({ browser }) => {
+  for (const width of [375, 1440]) {
+    const context = await browser.newContext({ viewport: { width, height: 800 }, hasTouch: width === 375 });
+    const page = await context.newPage();
+    await page.goto("/en");
+    const carousel = page.getByTestId("home-carousel");
+    const slides = carousel.locator(".home-carousel-slide");
+    const n = await slides.count();
+    test.skip(n < 2, "needs two or more slides");
+    await expect(carousel.getByRole("button", { name: /pause|play/i })).toHaveCount(0);
+    // One card in front; the others are behind it and cannot be reached.
+    await expect(slides.nth(0)).toHaveAttribute("data-pos", "0");
+    await expect(slides.nth(1)).toHaveAttribute("data-pos", "1");
+    await expect(slides.nth(1)).toHaveAttribute("inert", "");
+    const right = (i: number) => slides.nth(i).evaluate((el) => el.getBoundingClientRect().right);
+    expect(await right(1)).toBeGreaterThan(await right(0)); // its edge shows
+    await page.mouse.move(0, 790); // pointer away from the carousel
+    await expect(carousel).toHaveAttribute("data-autoplay", "on");
+    await expect(page.getByTestId("carousel-count")).toHaveText(`1/${n}`);
+    await expect(page.getByTestId("carousel-count")).toHaveText(`2/${n}`, { timeout: 9000 });
+    await expect(slides.nth(1)).toHaveAttribute("data-pos", "0");
+    await expect(slides.nth(0)).not.toHaveAttribute("data-pos", "0");
+    // Keyboard focus inside holds it; pressing a control stops it for the visit.
+    await carousel.getByRole("button", { name: "Next slide" }).focus();
+    await expect(carousel).toHaveAttribute("data-autoplay", "off");
+    await carousel.getByRole("button", { name: "Slide 1" }).click();
+    await expect(page.getByTestId("carousel-count")).toHaveText(`1/${n}`);
+    await page.locator("body").focus();
+    await page.mouse.move(0, 790);
+    await expect(carousel).toHaveAttribute("data-autoplay", "off");
+    // A horizontal swipe brings the next card forward.
+    const box = await slides.nth(0).evaluate((el) => { const r = el.getBoundingClientRect(); return { x: r.x, y: r.y, width: r.width, height: r.height }; });
+    const y = box.y + box.height / 2;
+    await page.mouse.move(box.x + box.width * 0.8, y);
+    await page.mouse.down();
+    await page.mouse.move(box.x + box.width * 0.2, y, { steps: 5 });
+    await page.mouse.up();
+    await expect(page.getByTestId("carousel-count")).toHaveText(`2/${n}`);
+    await expect(page).toHaveURL(/\/en$/); // the swipe did not follow a link
+    await context.close();
+  }
 
   const still = await browser.newContext({ viewport: { width: 375, height: 800 }, reducedMotion: "reduce" });
   const p2 = await still.newPage();
   await p2.goto("/en");
-  await expect(p2.getByTestId("home-carousel").getByRole("button", { name: "Play slides" })).toBeEnabled();
+  await expect(p2.getByTestId("home-carousel").getByRole("button", { name: "Next slide" })).toBeEnabled();
   await expect(p2.getByTestId("home-carousel")).toHaveAttribute("data-autoplay", "off");
   await still.close();
 });
